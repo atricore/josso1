@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns="urn:org:josso:core"
+       xmlns:def-sdselector="urn:org:josso:default:secdomainselector"
+       xmlns:def-sdregistry="urn:org:josso:default:secdomainregistry"
+       xmlns:simple-sdmatcher="urn:org:josso:simple:secdomainmatcher"
+       xmlns:vhost-sdmatcher="urn:org:josso:vhost:secdomainmatcher"
+       xmlns:appcxt-sdmatcher="urn:org:josso:appctx:secdomainmatcher"
+       xmlns:def-auth="urn:org:josso:default:authenticator"
+       xmlns:basic-authscheme="urn:org:josso:basic:authscheme"
+       xmlns:bind-authscheme="urn:org:josso:bind:authscheme"
+       xmlns:ntlm-authscheme="urn:org:josso:ntlm:authscheme"
+       xmlns:strong-authscheme="urn:org:josso:strong:authscheme"
+       xmlns:memory-istore="urn:org:josso:memory:identitystore"
+       xmlns:def-identitymgr="urn:org:josso:default:identitymgr"
+       xmlns:def-identityprv="urn:org:josso:default:identityprovider"
+       xmlns:def-sessionmgr="urn:org:josso:default:sessionmgr"
+       xmlns:memory-sstore="urn:org:josso:memory:sessionstore"
+       xmlns:def-sidgen="urn:org:josso:default:sessionidgen"
+       xmlns:def-assertionmgr="urn:org:josso:default:assertionmgr"
+       xmlns:memory-astore="urn:org:josso:memory:assertionstore"
+       xmlns:def-aidgen="urn:org:josso:default:assertionidgen"
+       xmlns:def-auditmgr="urn:org:josso:default:auditmgr"
+       xmlns:logger-atrailhandler="urn:org:josso:logger:audittrailhandler"
+       xmlns:def-eventmgr="urn:org:josso:default:eventmgr"
+       xmlns:def-pwdmgr="urn:org:josso:default:passwordmgr"
+       xmlns:def-pwdgen="urn:org:josso:default:passwordgenerator"
+       xmlns:email-pwddist="urn:org:josso:email:passworddistributor"
+       xmlns:simple-lostpwd="urn:org:josso:simple:lostpasswordprocess"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- ================================================================== -->
+    <!-- JOSSO Gateway Configuration using Spring + XBean                   -->
+    <!--                                                                    -->
+    <!-- since JOSSO 1.8                                                    -->
+    <!-- ================================================================== -->
+
+    <!-- To keep things organized when using multiple security domains, prepend the domain name
+    to component ids,  in our case all componetes use the 'josso' prefix -->
+
+    <!-- ================================================================== -->
+    <!-- Some components are configured in different files to make          -->
+    <!-- configuraiton easier                                               -->
+    <!-- ================================================================== -->
+
+    <s:import resource="josso-gateway-jmx.xml" />
+
+    <!-- JOSSO Security Domain 1 -->
+    <s:import resource="josso1/josso-gateway-domain.xml"/>
+
+    <!-- JOSSO Security Domain A -->
+    <s:import resource="jossoA/josso-gateway-domain.xml"/>
+
+
+
+    <!-- ================================================================== -->
+    <!-- Here we define gateway core structure                              -->
+    <!-- ================================================================== -->
+    <gateway>
+
+        <sso-domain-selector>
+            <def-sdselector:default-domain-selector/>
+        </sso-domain-selector>
+
+        <sso-domains-registry>
+            <def-sdregistry:default-domains-registry/>
+        </sso-domains-registry>
+
+        <!-- ===================================================================== -->
+        <!-- SSO Security Domains, here we have only one domain configured : josso -->
+        <!-- Most components are configured elsewhere and referenced here to make  -->
+        <!-- configuration easier.                                                 -->
+        <!--                                                                       -->
+        <!-- Unless you have multimple security domains, you will not need to      -->
+        <!-- change this part                                                      -->
+        <!-- ===================================================================== -->
+        <domains>
+            <!-- Security Domain josso-1 -->
+            <s:ref bean="josso-1"/>
+            <!-- Security Domain josso-A -->
+            <s:ref bean="josso-A"/>
+        </domains>
+
+    </gateway>
+
+</s:beans>

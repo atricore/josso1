@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns:ntlm-authscheme="urn:org:josso:ntlm:authscheme"
+         xmlns:ldap-idstore="urn:org:josso:ldap:identitystore"
+         xmlns:core="urn:org:josso:core"
+         xmlns:def-sessionmgr="urn:org:josso:default:sessionmgr"
+         xmlns:def-sidgen="urn:org:josso:default:sessionidgen"
+         xmlns:is-memory="urn:org:josso:memory:identitystore"
+         xmlns:memory-sstore="urn:org:josso:memory:sessionstore"
+         xmlns:def-auth="urn:org:josso:default:authenticator"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+        >
+
+    <s:bean id="ssoContext"
+            class="org.josso.gateway.MutableSSOContext">
+        <s:property name="securityDomain" ref="securityDomain"/>
+    </s:bean>
+
+    <core:domain id="securityDomain">
+        <core:authenticator>
+            <def-auth:authenticator>
+                <core:schemes>
+                    <s:ref bean="josso-ntlm-authentication"/>
+                </core:schemes>
+            </def-auth:authenticator>
+        </core:authenticator>
+
+        <core:protocol-manager>
+            <core:default-protocol-manager>
+                <core:handlers>
+                    <s:ref bean="josso-ntlm-protocol"/>
+                </core:handlers>
+            </core:default-protocol-manager>
+        </core:protocol-manager>
+
+        <core:session-manager>
+            <def-sessionmgr:session-manager
+                    maxInactiveInterval="30"
+                    maxSessionsPerUser="-1"
+                    invalidateExceedingSessions="false"
+                    sessionMonitorInterval="10000">
+
+                <core:session-id-generator>
+                    <def-sidgen:id-generator algorithm="MD5"/>
+                </core:session-id-generator>
+
+                <core:session-store>
+                    <memory-sstore:memory-store/>
+                </core:session-store>
+            </def-sessionmgr:session-manager>
+        </core:session-manager>
+    </core:domain>
+
+    <ntlm-authscheme:ntlm-auth-scheme
+            id="josso-ntlm-authentication">
+
+        <ntlm-authscheme:credentialStore>
+            <s:ref bean="josso-ldap-store"/>
+        </ntlm-authscheme:credentialStore>
+
+        <ntlm-authscheme:credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </ntlm-authscheme:credentialStoreKeyAdapter>
+    </ntlm-authscheme:ntlm-auth-scheme>
+
+    <ldap-idstore:ldap-store
+            id="josso-ldap-store"
+            initialContextFactory="com.sun.jndi.ldap.LdapCtxFactory"
+            providerUrl="ldap://192.168.1.65:389"
+            securityPrincipal="cn=Administrator,cn=USERS,dc=NT-DOMAIN"
+            securityCredential="novascope"
+            securityAuthentication="simple"
+            ldapSearchScope="SUBTREE"
+            usersCtxDN="CN=Users,dc=NT-DOMAIN"
+            principalUidAttributeID="sAMAccountName"
+            uidAttributeID="member"
+            rolesCtxDN="CN=Users,dc=NT-DOMAIN"
+            roleAttributeID="sAMAccountName"
+            credentialQueryString="uid=sAMAccountName"
+            userPropertiesQueryString="mail=mail,cn=description"
+            />
+
+    <core:simple-key-adapter id="josso-simple-key-adapter"/>
+
+    <ntlm-authscheme:ntlm-protocol-handler
+            id="josso-ntlm-protocol"
+            defaultDomain="NT-DOMAIN"
+            domainController="192.168.1.65"
+            loadBalance="false"
+            enableBasic="false"
+            insecureBasic="false"
+            realm=""
+            />
+
+    <!--
+    <s:bean id="securityDomain"
+            class="org.josso.SecurityDomainImpl">
+        <s:property name="protocolManager" ref="protocolManager"/>
+        <s:property name="sessionManager" ref="sessionManager"/>
+    </s:bean>
+
+    <s:bean id="protocolManager"
+            class="org.josso.gateway.protocol.SSOProtocolManagerImpl">
+        <s:property name="handlers">
+            <s:list value-type="org.josso.gateway.protocol.handler.ProtocolHandler">
+                <s:bean id="ntlmProtocolHandler" class="org.josso.gateway.protocol.handler.NtlmProtocolHandler">
+                    <s:property name="defaultDomain" value="NT-DOMAIN"/>
+                    <s:property name="domainController" value="130.5.5.233"/>
+                    <s:property name="enableBasic" value="false"/>
+                    <s:property name="insecureBasic" value="false"/>
+                    <s:property name="loadBalance" value="false"/>
+                </s:bean>
+            </s:list>
+        </s:property>
+    </s:bean>
+
+
+    <s:bean id="sessionManager"
+            class="org.josso.gateway.session.service.SSOSessionManagerImpl">
+        <s:property name="maxInactiveInterval" value="30"/>
+        <s:property name="maxSessionsPerUser" value="-1"/>
+        <s:property name="invalidateExceedingSessions" value="false"/>
+        <s:property name="sessionMonitorInterval" value="1000"/>
+        <s:property name="sessionStore">
+            <s:bean class="org.josso.gateway.session.service.store.MemorySessionStore"/>
+        </s:property>
+        <s:property name="sessionIdGenerator">
+            <s:bean class="org.josso.gateway.session.service.SessionIdGeneratorImpl">
+                <s:property name="algorithm" value="MD5"/>
+            </s:bean>
+        </s:property>
+    </s:bean>
+    -->
+</s:beans>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-parent</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.josso</groupId>
+    <artifactId>agents</artifactId>
+    <name>JOSSO :: Agents</name>
+    <packaging>pom</packaging>
+
+    <profiles>
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>josso-agent-shared</module>
+                <module>josso-agentj14-shared</module>
+                <module>josso-servlet-agent</module>
+                <module>josso-liferay-agent</module>
+                <module>josso-alfresco-agent</module>
+                <module>josso-tomcat50-agent</module>
+                <module>josso-tomcat55-agent</module>
+                <module>josso-tomcat60-agent</module>
+                <module>josso-jboss32-agent</module>
+                <module>josso-jboss40-agent</module>
+                <module>josso-jboss42-agent</module>
+                <module>josso-jbportal27-agent</module>
+                <module>josso-geronimo2-agent</module>
+                <module>josso-weblogic81-agent</module>
+                <module>josso-weblogic92-agent</module>
+                <module>josso-weblogic10-agent</module>
+                <module>josso-php-agent</module>
+                <module>josso-phpBB-agent</module>
+                <module>josso-microsoft-agent</module>
+                <module>josso-apache22-agent</module>
+                <module>josso-wasce2-agent</module>
+                <module>josso-jaspi-agent</module>
+                <module>josso-jboss5-agent</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>main</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>josso-agent-shared</module>
+                <module>josso-agentj14-shared</module>
+                <module>josso-servlet-agent</module>
+                <module>josso-liferay-agent</module>
+                <module>josso-alfresco-agent</module>
+                <module>josso-tomcat50-agent</module>
+                <module>josso-tomcat55-agent</module>
+                <module>josso-tomcat60-agent</module>
+                <module>josso-jboss32-agent</module>
+                <module>josso-jboss40-agent</module>
+                <module>josso-jboss42-agent</module>
+                <module>josso-jbportal27-agent</module>
+                <module>josso-geronimo2-agent</module>
+                <module>josso-php-agent</module>
+                <module>josso-phpBB-agent</module>
+                <module>josso-microsoft-agent</module>
+                <module>josso-apache22-agent</module>
+                <module>josso-wasce2-agent</module>
+                <module>josso-jaspi-agent</module>
+                <module>josso-jboss5-agent</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>weblogic81</id>
+            <modules>
+                <module>josso-weblogic81-agent</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>weblogic92</id>
+            <modules>
+                <module>josso-agent-shared</module>
+                <module>josso-servlet-agent</module>
+                <module>josso-weblogic92-agent</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>weblogic10</id>
+            <modules>
+                <module>josso-agent-shared</module>
+                <module>josso-servlet-agent</module>
+                <module>josso-weblogic10-agent</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>php</id>
+            <modules>
+                <module>josso-php-agent</module>
+            </modules>
+
+        </profile>
+    </profiles>
+</project>

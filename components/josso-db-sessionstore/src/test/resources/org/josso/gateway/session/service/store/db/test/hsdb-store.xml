@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns="urn:org:josso:db:sessionstore"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+        >
+
+
+    <s:bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <s:property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <s:property name="url" value="jdbc:hsqldb:mem:jossodb"/>
+        <s:property name="username" value="sa"/>
+        <s:property name="password" value=""/>
+    </s:bean>
+
+
+    <jdbc-store
+            id="dbStore"
+            driverName="org.hsqldb.jdbcDriver"
+            connectionURL="jdbc:hsqldb:mem:jossodb"
+            connectionName="sa"
+            connectionPassword=""
+            loadQuery="SELECT SESSION_ID, USERNAME, CREATION_TIME, LAST_ACCESS_TIME, ACCESS_COUNT, MAX_INACTIVE_INTERVAL, VALID FROM JOSSO_SESSION WHERE SESSION_ID = ?;"
+            loadAllQuery="SELECT SESSION_ID, USERNAME, CREATION_TIME, LAST_ACCESS_TIME, ACCESS_COUNT, MAX_INACTIVE_INTERVAL, VALID FROM JOSSO_SESSION;"
+            insertDml="INSERT INTO JOSSO_SESSION VALUES (?, ?, ?, ?, ?, ?, ?);"
+            updateDml="UPDATE JOSSO_SESSION SET USERNAME = ?, CREATION_TIME = ?, LAST_ACCESS_TIME = ?, ACCESS_COUNT = ?, MAX_INACTIVE_INTERVAL = ?, VALID = ? WHERE SESSION_ID = ?;"
+            sizeQuery="SELECT COUNT(1) FROM JOSSO_SESSION;"
+            keysQuery="SELECT SESSION_ID FROM JOSSO_SESSION;"
+            loadByUserNameQuery="SELECT SESSION_ID, USERNAME, CREATION_TIME, LAST_ACCESS_TIME, ACCESS_COUNT, MAX_INACTIVE_INTERVAL, VALID FROM JOSSO_SESSION WHERE USERNAME = ?;"
+            loadByValidQuery="SELECT SESSION_ID, USERNAME, CREATION_TIME, LAST_ACCESS_TIME, ACCESS_COUNT, MAX_INACTIVE_INTERVAL, VALID FROM JOSSO_SESSION WHERE VALID = ?;"
+            loadByLastAccessTimeQuery="SELECT SESSION_ID, USERNAME, CREATION_TIME, LAST_ACCESS_TIME, ACCESS_COUNT, MAX_INACTIVE_INTERVAL, VALID FROM JOSSO_SESSION WHERE LAST_ACCESS_TIME = ?;"
+            deleteDml="DELETE FROM JOSSO_SESSION WHERE SESSION_ID = ?;"
+            deleteAllDml="DELETE FROM JOSSO_SESSION;"
+            />
+
+</s:beans>

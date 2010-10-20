@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns="urn:org:josso:rememberme:authscheme"
+       xmlns:core="urn:org:josso:core"
+       xmlns:is-memory="urn:org:josso:memory:identitystore"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+       >
+
+    <core:simple-key-adapter id="josso-simple-keyadapter"/>
+
+    <!-- Basic Authentication scheme configuration -->
+    <rememberme-auth-scheme
+            id="josso-rememberme-authentication" >
+
+        <credentialStore>
+            <s:ref bean="josso-memory-identitystore"/>
+        </credentialStore>
+
+        <credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-keyadapter"/>
+        </credentialStoreKeyAdapter>
+
+    </rememberme-auth-scheme>
+
+    <!-- Memory Identity/Credential store configuration -->
+    <is-memory:memory-store id="josso-memory-identitystore"
+                            credentialsFileName="josso-credentials.xml"
+                            usersFileName="josso-users.xml" />
+
+
+</s:beans>

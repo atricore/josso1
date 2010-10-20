@@ -1,0 +1,67 @@
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns="urn:org:josso:tooling:install"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd,
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- ============================================== -->
+    <!-- Install Platforms                              -->
+    <!-- ============================================== -->
+
+    <!-- Apache Tomcat -->
+
+    <s:bean id="test-installer" class="org.josso.tooling.gshell.install.test.MockInstaller">
+        <s:constructor-arg ref="test"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </s:bean>
+
+    <platform id="test" family="test" platformName="Test Platform" version="1.0.0">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/lib</lib>
+        <conf>${target}/conf</conf>
+        <deploy>${target}/webapps</deploy>
+        <endorsed>${target}/lib</endorsed>
+
+        <josso-conf>${target}/lib</josso-conf>
+        <josso-lib>${target}/lib</josso-lib>
+        <josso-shared>${target}/lib</josso-shared>
+
+        <josso-war-name>josso</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
+    
+    <s:bean id="io" class="org.josso.tooling.gshell.install.test.MockIO" />
+
+    <s:bean id="messagePrinter" class="org.josso.tooling.gshell.core.support.MessagePrinter">
+        <s:constructor-arg ref="io"/>
+    </s:bean>
+
+</s:beans>

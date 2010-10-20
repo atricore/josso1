@@ -1,0 +1,12 @@
+#! /bin/sh
+
+aclocal
+autoheader
+libtoolize --force
+automake --add-missing
+autoconf
+automake
+
+echo "Please run the following command now:"
+echo "configure"
+

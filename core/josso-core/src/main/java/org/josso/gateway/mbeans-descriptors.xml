@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<mbeans-descriptors>
+
+    <mbean name="WebserviceGatewayServiceLocator"
+           className="org.josso.util.mbeans.JOSSOBaseMBean"
+           description="Service Locator for Gateway Services available as Webservices."
+           domain="josso"
+           group="SessionManager"
+           type="org.josso.gateway.WebserviceGatewayServiceLocator">
+
+        <attribute name="className"
+                   description="Fully qualified class name of the managed object"
+                   type="java.lang.String"
+                   writeable="false"/>
+
+        <attribute name="endpoint"
+                   description="SOAP end point, e.g. localhost:8080"
+                   type="java.lang.String"
+                   writeable="true"/>
+
+        <attribute name="transportSecurity"
+                   description="Transport security used in SOAP messages, valid values are : none, confidential"
+                   type="java.lang.String"
+                   writeable="true"/>
+
+        <attribute name="username"
+                   description="Username used to authenticate SOAP messages"
+                   type="java.lang.String"
+                   writeable="true"/>
+
+        <attribute name="password"
+                   description="Passowrd used to authenticate SOAP messages (writeable only)"
+                   type="java.lang.String"
+                   writeable="true"
+                   readable="false"/>
+
+    </mbean>
+
+    <mbean name="SSOGatewayInfo"
+           className="org.josso.util.mbeans.JOSSOBaseMBean"
+           description="JOSSO Gateway Information"
+           domain="josso"
+           group="SSOGatewayInfo"
+           type="org.josso.gateway.SSOSecurityDomainInfo">
+
+        <attribute name="className"
+                   description="Fully qualified class name of the managed object"
+                   type="java.lang.String"
+                   writeable="false"/>
+
+        <attribute name="maxSessionCount"
+                   description="Max number of open sessions"
+                   type="java.lang.Long"
+                   writeable="false"/>
+
+
+        <attribute name="sessionCount"
+                   description="Total number of open sessions"
+                   type="java.lang.Long"
+                   writeable="false"/>
+
+        <attribute name="name"
+                   description="Product name"
+                   type="java.lang.String"
+                   writeable="false"/>
+
+        <attribute name="fullName"
+                   description="Product full name"
+                   type="java.lang.String"
+                   writeable="false"/>
+
+        <attribute name="version"
+                   description="Product version"
+                   type="java.lang.String"
+                   writeable="false"/>
+
+        <operation name="listSessions"
+                   description="Lists all SSO sessions"
+                   impact="INFO"
+                   returnType="java.util.Collection"/>
+
+        <operation name="listUserSessions"
+                   description="Lists all SSO sessions related to a user"
+                   impact="INFO"
+                   returnType="java.util.Collection">
+            <parameter name="username"
+                       description="SSO username"
+                       type="java.lang.String"/>
+        </operation>
+
+        <operation name="invalidateUserSessions"
+                   description="Invalidate all open SSO sessions related to the given user"
+                   impact="ACTION"
+                   returnType="void">
+            <parameter name="username"
+                       description="SSO username"
+                       type="java.lang.String"/>
+        </operation>
+
+
+        <operation name="invalidateAll"
+                   description="Invalidate all open SSO sessions"
+                   impact="ACTION"
+                   returnType="void"/>
+
+        <operation name="invalidate"
+                   description="Invalidate SSO session whose id is specified"
+                   impact="ACTION"
+                   returnType="void">
+            <parameter name="sessionId"
+                       description="SSO Session Id"
+                       type="java.lang.String"/>
+        </operation>
+
+        <operation name="checkValidSessions"
+                   description="Force a check to detectec expired SSO sessions"
+                   impact="ACTION"
+                   returnType="void"/>
+
+        <operation name="userExists"
+                   description="Validates that the received username matchs an existing user."
+                   impact="INFO"
+                   returnType="boolean">
+            <parameter name="username"
+                       description="User login name"
+                       type="java.lang.String"/>
+
+        </operation>
+
+
+    </mbean>
+
+
+</mbeans-descriptors>

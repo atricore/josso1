@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>agents</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>josso-jboss5-agent</artifactId>
+    <packaging>jar</packaging>
+    <name>JOSSO :: JBoss 5 Agent</name>
+    <description>JBoss 5 Agent</description>
+
+	<properties>
+        <jboss-version>5.1.0.GA</jboss-version>
+        <jboss-security-version>2.0.3.SP1</jboss-security-version>
+        <tomcat-version>5.5.23</tomcat-version>
+    </properties>
+    
+    <dependencies>
+
+        <!-- =================================================== -->
+        <!-- JOSSO dependencies, not provided by the container   -->
+        <!-- =================================================== -->
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-protocol-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-ws</artifactId>
+        </dependency>
+
+		<dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-jaspi-agent</artifactId>
+        </dependency>
+        
+        <!-- =================================================== -->
+        <!-- Compile dependencies,     provided by the container -->
+        <!-- =================================================== -->
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+		<dependency>
+            <groupId>tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>${tomcat-version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+		<dependency>
+            <groupId>org.jboss.javaee</groupId>
+			<artifactId>jboss-jaspi-api</artifactId>
+			<version>1.0.0.GA</version>
+            <scope>provided</scope>
+        </dependency>
+                
+        <dependency>
+            <groupId>org.jboss.jbossas</groupId>
+            <artifactId>jboss-as-tomcat</artifactId>
+            <version>${jboss-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.security</groupId>
+            <artifactId>jboss-security-spi</artifactId>
+            <version>${jboss-security-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jboss.security</groupId>
+            <artifactId>jbosssx</artifactId>
+            <version>${jboss-security-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- =================================================== -->
+        <!-- Runtime dependencies, not provided by the container -->
+        <!-- =================================================== -->
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

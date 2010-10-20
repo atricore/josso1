@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns="urn:org:josso:ldap:identitystore"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+        >
+
+    <ldap-store
+            id="josso-ldap-store"
+            initialContextFactory="com.sun.jndi.ldap.LdapCtxFactory"
+            providerUrl="ldap://localhost:10389"
+            securityPrincipal="uid=admin,ou=system"
+            securityCredential="secret"
+            securityAuthentication="simple"
+            ldapSearchScope="SUBTREE"
+            usersCtxDN="ou=People,dc=my-domain,dc=com"
+            principalUidAttributeID="uid"
+            uidAttributeID="uniquemember"
+            rolesCtxDN="ou=Roles,dc=my-domain,dc=com"
+            roleAttributeID="cn"
+            credentialQueryString="uid=username,userPassword=password"
+            updateableCredentialAttribute="userPassword"
+            userPropertiesQueryString="mail=mail,cn=description"
+            />
+
+</s:beans>

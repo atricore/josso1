@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<s:beans
+        xmlns="urn:org:josso:virtual:identitystore"
+        xmlns:memory-istore="urn:org:josso:memory:identitystore"
+        xmlns:s="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+        >
+
+    <virtual-store
+            id="test-vis">
+
+        <sources>
+            <source alias="source-1">
+                <backing-store>
+                    <memory-istore:memory-store id="identity-store-1"
+                                                credentialsFileName="store1/credentials.xml"
+                                                usersFileName="store1/users.xml" s:scope="singleton"/>
+                </backing-store>
+            </source>
+            <source alias="source-2">
+                <backing-store>
+                    <memory-istore:memory-store id="identity-store-2"
+                                                credentialsFileName="store2/credentials.xml"
+                                                usersFileName="store2/users.xml" s:scope="singleton"/>
+                </backing-store>
+            </source>
+        </sources>
+
+        <mapping-policy>
+            <rule-based-mapping-policy>
+                <user-mapping-rules>
+                    <select-all-users/>
+                    <user-mapping-script>
+                        <selectRule>scripts/select-test.bsh</selectRule>
+                    </user-mapping-script>
+                    <merge-properties/>
+                </user-mapping-rules>
+                <roles-mapping-rules>
+                    <select-all-roles/>
+                    <merge-roles/>
+                    <role-mapping-expression language="beanshell">
+                        <validateExpression>
+                            log.debug("Validating that we have at least 3 output roles");
+
+                            if (transformedRoles.size() == 3)
+                            outcome.setObject(new Boolean(false));
+                            else
+                            outcome.setObject(new Boolean(true));
+                        </validateExpression>
+                    </role-mapping-expression>
+                </roles-mapping-rules>
+                <credentials-mapping-rules>
+                    <select-all-credentials/>
+                    <merge-credentials/>
+                </credentials-mapping-rules>
+                <uid-mapping-rules>
+                    <select-first-uid/>
+                    <qualify-uid namespace="dc=org,dc=josso"/>
+                </uid-mapping-rules>
+            </rule-based-mapping-policy>
+        </mapping-policy>
+
+    </virtual-store>
+
+</s:beans>

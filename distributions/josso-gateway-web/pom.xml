@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!--
+    ~ JOSSO: Java Open Single Sign-On
+    ~
+    ~ Copyright 2004-2008, Atricore, Inc.
+    ~
+    ~ This is free software; you can redistribute it and/or modify it
+    ~ under the terms of the GNU Lesser General Public License as
+    ~ published by the Free Software Foundation; either version 2.1 of
+    ~ the License, or (at your option) any later version.
+    ~
+    ~ This software is distributed in the hope that it will be useful,
+    ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    ~ Lesser General Public License for more details.
+    ~
+    ~ You should have received a copy of the GNU Lesser General Public
+    ~ License along with this software; if not, write to the Free
+    ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+    ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+    -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>distributions</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>josso-gateway-web</artifactId>
+    <packaging>war</packaging>
+    <name>JOSSO :: WebApp distribution</name>
+    <description>WebApp distribution</description>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-db-assertionstore</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-assertionidgen</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-memory-assertionstore</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-assertionmgr</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-auditmgr</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-logger-audittrailhandler</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-authenticator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-basic-authscheme</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-bind-authscheme</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-ntlm-authscheme</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-strong-authscheme</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-rememberme-authscheme</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-eventmgr</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-protocol</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-db-identitystore</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-ldap-identitystore</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-memory-identitystore</artifactId>
+        </dependency>
+
+		<dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-virtual-identitystore</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-identitymgr</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-identityprovider</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-appctx-secdomainmatcher</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-secdomainregistry</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-secdomainselector</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-simple-secdomainmatcher</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-vhost-secdomainmatcher</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-db-sessionstore</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-sessionidgen</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-memory-sessionstore</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-sessionmgr</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-serialized-sessionstore</artifactId>
+        </dependency>
+
+        <!--
+        TODO : Verify that we use spring 2.x instead of 1.2.x
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-spring-security</artifactId>
+                    </dependency>
+        -->
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-passwordmanager</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-default-passwordgenerator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-email-passworddistributor</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-simple-lostpasswordprocess</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-ws</artifactId>
+        </dependency>
+
+        <!-- 3rd party dependencies -->
+
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <warSourceDirectory>src/main/webapp/</warSourceDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>${jetty-version}</version>
+                <configuration>
+                    <connectors>
+                        <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                            <port>${jetty.port}</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                    </connectors>
+                    <systemProperties>
+                        <!-- enable easy connection to JConsole -->
+                        <systemProperty>
+                            <name>com.sun.management.jmxremote</name>
+                            <value></value>
+                        </systemProperty>
+                    </systemProperties>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <jetty.port>8080</jetty.port>
+    </properties>
+
+</project>

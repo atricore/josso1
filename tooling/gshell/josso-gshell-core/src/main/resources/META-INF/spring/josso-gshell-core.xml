@@ -1,0 +1,106 @@
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="branding" class="org.josso.tooling.gshell.core.branding.JOSSOBranding">
+        <constructor-arg ref="versionLoader" />
+        <constructor-arg ref="terminal" />
+    </bean>
+
+    <bean id="versionLoader" class="org.apache.geronimo.gshell.branding.PropertiesVersionLoader">
+        <constructor-arg value="/josso-version.properties" />
+    </bean>
+
+    <bean id="terminal" class="org.josso.tooling.gshell.core.spring.TerminalFactoryBean" />
+
+    <bean id="promptReader" class="org.apache.geronimo.gshell.console.PromptReader" init-method="initialize">
+        <constructor-arg ref="terminal" />
+        <constructor-arg ref="io" />
+    </bean>
+
+    <bean id="commandExecutor" class="org.josso.tooling.gshell.core.spring.SpringCommandExecutor" init-method="init">
+        <property name="commandLineBuilder" ref="commandLineBuilder" />
+        <property name="commandRegistry" ref="commandRegistry" />
+        <property name="env" ref="environment" />
+        <property name="layoutManager" ref="commandRegistry" />
+    </bean>
+
+    <bean id="interactiveShell" class="org.apache.geronimo.gshell.DefaultShell">
+        <constructor-arg ref="shellInfo" />
+        <constructor-arg ref="branding" />
+        <constructor-arg ref="commandExecutor" />
+        <constructor-arg ref="terminal" />
+        <constructor-arg ref="environment" />
+        <constructor-arg ref="io" />
+        <constructor-arg ref="history" />
+        <property name="prompter" ref="prompter" />
+    </bean>
+
+    <bean id="shellInfo" class="org.apache.geronimo.gshell.DefaultShellInfo" init-method="initialize">
+        <constructor-arg ref="branding" />
+    </bean>
+
+    <bean id="commandRegistry" class="org.josso.tooling.gshell.core.spring.SpringCommandRegistry">
+        <constructor-arg ref="environment" />
+    </bean>
+
+    <bean id="commandLineBuilder" class="org.josso.tooling.gshell.core.spring.SpringCommandLineBuilder">
+        <property name="environment" ref="environment" />
+        <property name="executor" ref="commandExecutor" />
+    </bean>
+
+    <bean id="environment" class="org.springframework.aop.framework.ProxyFactoryBean">
+      <property name="targetSource">
+          <bean class="org.josso.tooling.gshell.core.spring.EnvironmentTargetSource" />
+      </property>
+    </bean>
+
+    <bean id="io" class="org.josso.tooling.gshell.core.spring.ProxyIO" />
+
+    <bean id="messagePrinter" class="org.josso.tooling.gshell.core.support.MessagePrinter">
+        <constructor-arg ref="io"/>
+    </bean>
+
+    <bean id="history" class="org.apache.geronimo.gshell.console.FileHistory">
+        <constructor-arg ref="branding" />
+    </bean>
+
+    <bean id="prompter" class="org.josso.tooling.gshell.core.spring.Prompter">
+        <constructor-arg ref="shellInfo" />
+        <constructor-arg ref="environment" />
+        <property name="branding" ref="branding" />
+    </bean>
+
+    <bean id="gshell" class="org.josso.tooling.gshell.core.spring.GShell" >
+                      <!-- init-method="start" destroy-method="stop" --> 
+        <constructor-arg ref="interactiveShell" />
+        <property name="start" value="true" />
+    </bean>
+</beans>

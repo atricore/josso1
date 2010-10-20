@@ -1,0 +1,158 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich"
+                template="layout/template.xhtml">
+                       
+<ui:define name="body">
+    
+    <h:messages globalOnly="true" styleClass="message" id="globalMessages"/>
+
+    <h:form id="role" styleClass="edit">
+    
+        <rich:panel>
+            <f:facet name="header">#{roleHome.managed ? 'Edit' : 'Add'} Role</f:facet>
+
+
+            <s:decorate id="nameDecoration" template="layout/edit.xhtml">
+                <ui:define name="label">name</ui:define>
+                <h:inputText id="name" 
+                       disabled="#{roleHome.managed}"
+                       required="true"
+                           size="32"
+                      maxlength="32"
+                          value="#{roleHome.instance.name}">
+                    <a:support event="onblur" reRender="nameDecoration" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="descriptionDecoration" template="layout/edit.xhtml">
+                <ui:define name="label">description</ui:define>
+                <h:inputText id="description" 
+                           size="64"
+                      maxlength="64"
+                          value="#{roleHome.instance.description}">
+                    <a:support event="onblur" reRender="descriptionDecoration" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+        
+            <div style="clear:both">
+                <span class="required">*</span> 
+                required fields
+            </div>
+            
+        </rich:panel>
+                
+        <div class="actionButtons">
+
+            <h:commandButton id="save" 
+                          value="Save" 
+                         action="#{roleHome.persist}"
+                       disabled="#{!roleHome.wired}"
+                       rendered="#{!roleHome.managed}"/>  
+                          			  
+            <h:commandButton id="update" 
+                          value="Save" 
+                         action="#{roleHome.update}"
+                       rendered="#{roleHome.managed}"/>
+                        			  
+            <h:commandButton id="delete" 
+                          value="Delete" 
+                         action="#{roleHome.remove}"
+                      immediate="true"
+                       rendered="#{roleHome.managed}"/>
+                    
+            <s:button id="done" 
+                   value="Done"
+             propagation="end"
+                    view="/Role.xhtml"
+                rendered="#{roleHome.managed}"/>
+                
+            <s:button id="cancel" 
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty roleFrom ? 'RoleList' : roleFrom}.xhtml"
+                rendered="#{!roleHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="userRoles">
+        <div class="association" id="userRolesChildren">
+        
+            <h:outputText value="There are no userRoles associated with this role." 
+                       rendered="#{empty roleHome.userRoles}"/>
+        
+            <rich:dataTable value="#{roleHome.userRoles}" 
+                           var="userRole" 
+                      rendered="#{not empty roleHome.userRoles}" 
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="userRolesTable">
+                <h:column>
+                    <f:facet name="header">id</f:facet>
+                    <h:outputText value="#{userRole.id}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">action</f:facet>
+                    <s:link view="/UserRole.xhtml" 
+                              id="selectuserRole" 
+                           value="Select"
+                     propagation="none">
+                        <f:param name="userRoleId" 
+                                value="#{userRole.id}"/>
+                        <f:param name="userRoleFrom" value="Role"/>
+                    </s:link>
+                </h:column>
+            </rich:dataTable>
+        
+        </div>
+          
+        <f:subview rendered="#{roleHome.managed}" id="userRoles">
+        <div class="actionButtons">
+            <s:button id="adduserRole" 
+                   value="Add userRole"
+                    view="/UserRoleEdit.xhtml"
+             propagation="none">
+                 <f:param name="roleName" 
+                         value="#{roleHome.instance.name}"/>
+                 <f:param name="userRoleFrom" value="Role"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

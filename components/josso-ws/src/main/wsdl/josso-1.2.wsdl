@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+
+<definitions name="josso"
+             targetNamespace="urn:org:josso:gateway:ws:1.2:wsdl"
+             xmlns:josso="urn:org:josso:gateway:ws:1.2:wsdl"
+             xmlns:jossop="urn:org:josso:gateway:ws:1.2:protocol"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <!-- ================================================================================ -->
+    <!-- Protocol types definition                                                        -->
+    <!-- ================================================================================ -->
+    <types>
+        <xsd:schema  elementFormDefault="qualified"
+                   xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+                   xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+                   jaxb:extensionBindingPrefixes="xjc"
+                   jaxb:version="2.0">
+
+              <xsd:annotation>
+                <xsd:appinfo>
+                    <jaxb:globalBindings>
+                        <xjc:serializable/>
+                    </jaxb:globalBindings>
+                </xsd:appinfo>
+              </xsd:annotation>
+
+            <xsd:import namespace="urn:org:josso:gateway:ws:1.2:protocol" schemaLocation="josso-1.2.xsd"/>
+        </xsd:schema>
+    </types>
+
+    <!-- ================================================================================ -->
+    <!-- SSOIdentityProvider                                                              -->
+    <!-- ================================================================================ -->
+
+    <message name="ResolveAuthenticationAssertionRequestMessage">
+        <part name="ResolveAuthenticationAssertionRequest" element="jossop:ResolveAuthenticationAssertionRequest"/>
+    </message>
+
+    <message name="ResolveAuthenticationAssertionResponseMessage">
+        <part name="ResolveAuthenticationAssertionResponse" element="jossop:ResolveAuthenticationAssertionResponse"/>
+    </message>
+
+    <message name="AssertIdentityWithSimpleAuthenticationRequestMessage">
+        <part name="AssertIdentityWithSimpleAuthenticationRequest"
+              element="jossop:AssertIdentityWithSimpleAuthenticationRequest"/>
+    </message>
+
+    <message name="AssertIdentityWithSimpleAuthenticationResponseMessage">
+        <part name="AssertIdentityWithSimpleAuthenticationResponse"
+              element="jossop:AssertIdentityWithSimpleAuthenticationResponse"/>
+    </message>
+
+    <message name="GlobalSignoffRequestMessage">
+        <part name="GlobalSignoffRequest" element="jossop:GlobalSignoffRequest"/>
+    </message>
+
+    <message name="GlobalSignoffResponseMessage">
+        <part name="GlobalSignoffResponse" element="jossop:GlobalSignoffResponse"/>
+    </message>
+
+    <!-- faults -->
+    <message name="SSOIdentityProviderErrorMessage">
+        <part name="SSOIdentityProviderError" element="jossop:SSOIdentityProviderError"/>
+    </message>
+
+    <message name="AssertionNotValidErrorMessage">
+        <part name="AssertionNotValidError" element="jossop:AssertionNotValidError"/>
+    </message>
+
+
+    <portType name="SSOIdentityProvider">
+
+        <operation name="resolveAuthenticationAssertion">
+            <input message="josso:ResolveAuthenticationAssertionRequestMessage"
+                   name="ResolveAuthenticationAssertionRequestInput"/>
+            <output message="josso:ResolveAuthenticationAssertionResponseMessage"
+                    name="ResolveAuthenticationAssertionResponseOutput"/>
+            <fault name="SSOIdentityProviderFault" message="josso:SSOIdentityProviderErrorMessage"/>
+            <fault name="AssertionNotValidFault" message="josso:AssertionNotValidErrorMessage"/>
+        </operation>
+
+        <operation name="assertIdentityWithSimpleAuthentication">
+            <input message="josso:AssertIdentityWithSimpleAuthenticationRequestMessage"
+                   name="AssertIdentityWithSimpleAuthenticationRequestInput"/>
+            <output message="josso:AssertIdentityWithSimpleAuthenticationResponseMessage"
+                    name="AssertIdentityWithSimpleAuthenticationResponseOutput"/>
+            <fault name="SSOIdentityProviderFault" message="josso:SSOIdentityProviderErrorMessage"/>
+        </operation>
+
+        <operation name="globalSignoff">
+            <input message="josso:GlobalSignoffRequestMessage" name="GlobalSignoffRequestInput"/>
+            <output message="josso:GlobalSignoffResponseMessage" name="GlobalSignoffRequestOutput"/>
+            <fault name="SSOIdentityProviderFault" message="josso:SSOIdentityProviderErrorMessage"/>
+        </operation>
+
+    </portType>
+
+    <!-- ================================================================================ -->
+    <!-- SSOIdentityManager                                                               -->
+    <!-- ================================================================================ -->
+
+    <message name="FindUserInSessionRequestMessage">
+        <part name="FindUserInSessionRequest" element="jossop:FindUserInSessionRequest"/>
+    </message>
+
+    <message name="FindUserInSessionResponseMessage">
+        <part name="FindUserInSessionResponse" element="jossop:FindUserInSessionResponse"/>
+    </message>
+
+    <message name="FindUserInSecurityDomainRequestMessage">
+        <part name="FindUserInSecurityDomainRequest" element="jossop:FindUserInSecurityDomainRequest"/>
+    </message>
+
+    <message name="FindUserInSecurityDomainResponseMessage">
+        <part name="FindUserInSecurityDomainResponse" element="jossop:FindUserInSecurityDomainResponse"/>
+    </message>
+
+    <message name="FindRolesBySSOSessionIdRequestMessage">
+        <part name="FindRolesBySSOSessionIdRequest" element="jossop:FindRolesBySSOSessionIdRequest"/>
+    </message>
+
+    <message name="FindRolesBySSOSessionIdResponseMessage">
+        <part name="FindRolesBySSOSessionIdResponse" element="jossop:FindRolesBySSOSessionIdResponse"/>
+    </message>
+
+    <message name="UserExistsRequestMessage">
+        <part name="UserExistsRequest" element="jossop:UserExistsRequest"/>
+    </message>
+
+    <message name="UserExistsResponseMessage">
+        <part name="UserExistsResponse" element="jossop:UserExistsResponse"/>
+    </message>
+
+    <!-- faluts -->
+    <message name="SSOIdentityManagerErrorMessage">
+        <part name="SSOIdentityManagerError" element="jossop:SSOIdentityManagerError"/>
+    </message>
+
+    <message name="NoSuchUserErrorMessage">
+        <part name="NoSuchUserError" element="jossop:NoSuchUserError"/>
+    </message>
+    <message name="InvalidSessionErrorMessage">
+        <part name="InvalidSessionError" element="jossop:InvalidSessionError"/>
+    </message>
+
+    <portType name="SSOIdentityManager">
+
+        <operation name="findUserInSession">
+            <input message="josso:FindUserInSessionRequestMessage" name="FindUserInSessionRequestInput"/>
+            <output message="josso:FindUserInSessionResponseMessage" name="FindUserInSessionResponseOutput"/>
+
+            <fault name="SSOIdentityManagerErrorFault" message="josso:SSOIdentityManagerErrorMessage"/>
+            <fault name="NoSuchUserErrorFault" message="josso:NoSuchUserErrorMessage"/>
+            <fault name="InvalidSessionErrorFault" message="josso:InvalidSessionErrorMessage"/>
+        </operation>
+
+        <operation name="findUserInSecurityDomain">
+            <input message="josso:FindUserInSecurityDomainRequestMessage" name="FindUserInSecurityDomainRequestInput"/>
+            <output message="josso:FindUserInSecurityDomainResponseMessage"
+                    name="FindUserInSecurityDomainResponseOutput"/>
+            <fault name="SSOIdentityManagerErrorFault" message="josso:SSOIdentityManagerErrorMessage"/>
+            <fault name="NoSuchUserErrorFault" message="josso:NoSuchUserErrorMessage"/>
+        </operation>
+
+        <operation name="findRolesBySSOSessionId">
+            <input message="josso:FindRolesBySSOSessionIdRequestMessage" name="FindRolesBySSOSessionIdRequestInput"/>
+            <output message="josso:FindRolesBySSOSessionIdResponseMessage"
+                    name="FindRolesBySSOSessionIdResponseOutput"/>
+            <fault name="SSOIdentityManagerErrorFault" message="josso:SSOIdentityManagerErrorMessage"/>
+            <fault name="InvalidSessionErrorFault" message="josso:InvalidSessionErrorMessage"/>
+        </operation>
+
+        <operation name="userExists">
+            <input message="josso:UserExistsRequestMessage" name="UserExistsRequestInput"/>
+            <output message="josso:UserExistsResponseMessage" name="UserExistsResponseOutput"/>
+            <fault name="SSOIdentityManagerErrorFault" message="josso:SSOIdentityManagerErrorMessage"/>
+        </operation>
+
+    </portType>
+
+    <!-- ================================================================================ -->
+    <!-- SSOSessionManager                                                                -->
+    <!-- ================================================================================ -->
+
+    <message name="AccessSessionRequestMessage">
+        <part name="AccessSessionRequest" element="jossop:AccessSessionRequest"/>
+    </message>
+
+    <message name="AccessSessionResponseMessage">
+        <part name="AccessSessionResponse" element="jossop:AccessSessionResponse"/>
+    </message>
+
+    <message name="SessionRequestMessage">
+        <part name="SessionRequest" element="jossop:SessionRequest"/>
+    </message>
+
+    <message name="SessionResponseMessage">
+        <part name="SessionResponse" element="jossop:SessionResponse"/>
+    </message>
+
+
+    <!-- fault messages, reuse them ?! -->
+
+    <message name="SSOSessionErrorMessage">
+        <part name="SSOSessionError" element="jossop:SSOSessionError"/>
+    </message>
+
+    <message name="NoSuchSessionErrorMessage">
+        <part name="NoSuchSessionError" element="jossop:NoSuchSessionError"/>
+    </message>
+
+    <portType name="SSOSessionManager">
+        <operation name="accessSession">
+
+            <input message="josso:AccessSessionRequestMessage" name="AccessSessionRequestInput"/>
+            <output message="josso:AccessSessionResponseMessage" name="AccessSessionResponseOutput"/>
+
+            <fault message="josso:SSOSessionErrorMessage" name="SSOSessionErrorFault"/>
+            <fault message="josso:NoSuchSessionErrorMessage" name="NoSuchSessionErrorFault"/>
+
+
+        </operation>
+
+        <operation name="getSession">
+
+            <input message="josso:SessionRequestMessage" name="SessionRequestInput"/>
+            <output message="josso:SessionResponseMessage" name="SessionResponseOutput"/>
+
+            <fault message="josso:SSOSessionErrorMessage" name="SSOSessionErrorFault"/>
+            <fault message="josso:NoSuchSessionErrorMessage" name="NoSuchSessionErrorFault"/>
+
+        </operation>
+
+    </portType>
+
+    <!-- =============================================================================== -->
+    <!--The SOAP bindings to the abstract services follow                                -->
+    <!-- =============================================================================== -->
+
+    <binding name="SSOIdentityProviderSOAPBinding" type="josso:SSOIdentityProvider">
+
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+
+        <operation name="resolveAuthenticationAssertion">
+
+            <soap:operation style="document" />
+
+            <input name="ResolveAuthenticationAssertionRequestInput">
+                <soap:body use="literal"/>
+            </input>
+
+            <output name="ResolveAuthenticationAssertionResponseOutput">
+                <soap:body use="literal"/>
+            </output>
+
+            <fault name="AssertionNotValidFault">
+                <soap:fault name="AssertionNotValidFault" use="literal"/>
+            </fault>
+
+            <fault name="SSOIdentityProviderFault">
+                <soap:fault name="SSOIdentityProviderFault" use="literal"/>
+            </fault>
+
+        </operation>
+
+        <operation name="assertIdentityWithSimpleAuthentication">
+
+            <soap:operation style="document" />
+
+            <input name="AssertIdentityWithSimpleAuthenticationRequestInput">
+                <soap:body use="literal"/>
+            </input>
+
+            <output name="AssertIdentityWithSimpleAuthenticationResponseOutput">
+                <soap:body use="literal"/>
+            </output>
+
+            <fault name="SSOIdentityProviderFault">
+                <soap:fault name="SSOIdentityProviderFault" use="literal"/>
+            </fault>
+
+        </operation>
+
+        <operation name="globalSignoff">
+
+            <soap:operation style="document" />
+
+            <input name="GlobalSignoffRequestInput">
+                <soap:body use="literal"/>
+            </input>
+
+            <output name="GlobalSignoffRequestOutput">
+                <soap:body use="literal"/>
+            </output>
+
+            <fault name="SSOIdentityProviderFault">
+                <soap:fault name="SSOIdentityProviderFault" use="literal"/>
+            </fault>
+
+        </operation>
+
+
+    </binding>
+
+    <binding name="SSOIdentityManagerSOAPBinding" type="josso:SSOIdentityManager">
+
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+
+        <operation name="findUserInSession">
+
+            <soap:operation style="document"/>
+
+            <input name="FindUserInSessionRequestInput">
+                <soap:body use="literal" />
+            </input>
+
+            <output name="FindUserInSessionResponseOutput">
+                <soap:body use="literal" />
+            </output>
+
+            <fault name="SSOIdentityManagerErrorFault">
+                <soap:fault name="SSOIdentityManagerErrorFault" use="literal"/>
+            </fault>
+
+            <fault name="NoSuchUserErrorFault">
+                <soap:fault name="NoSuchUserErrorFault"  use="literal"/>
+            </fault>
+
+            <fault name="InvalidSessionErrorFault">
+                <soap:fault name="InvalidSessionErrorFault" use="literal"/>
+            </fault>
+
+        </operation>
+
+        <operation name="findUserInSecurityDomain">
+
+            <soap:operation style="document" />
+
+            <input name="FindUserInSecurityDomainRequestInput">
+                <soap:body use="literal"/>
+            </input>
+
+            <output name="FindUserInSecurityDomainResponseOutput">
+                <soap:body use="literal"/>
+            </output>
+
+            <fault name="SSOIdentityManagerErrorFault">
+                <soap:fault name="SSOIdentityManagerErrorFault" use="literal"/>
+            </fault>
+
+            <fault name="NoSuchUserErrorFault">
+                <soap:fault name="NoSuchUserErrorFault" use="literal"/>
+            </fault>
+
+        </operation>
+
+        <operation name="findRolesBySSOSessionId">
+
+            <soap:operation style="document" />
+
+            <input name="FindRolesBySSOSessionIdRequestInput">
+                <soap:body use="literal"/>
+            </input>
+
+            <output name="FindRolesBySSOSessionIdResponseOutput">
+                <soap:body use="literal"/>
+            </output>
+
+            <fault name="SSOIdentityManagerErrorFault">
+                <soap:fault name="SSOIdentityManagerErrorFault" use="literal"/>
+            </fault>
+
+            <fault name="InvalidSessionErrorFault">
+                <soap:fault name="InvalidSessionErrorFault" use="literal"/>
+            </fault>
+
+        </operation>
+
+        <operation name="userExists">
+
+            <soap:operation style="document" />
+
+            <input name="UserExistsRequestInput">
+                <soap:body use="literal"/>
+            </input>
+
+            <output name="UserExistsResponseOutput">
+                <soap:body use="literal"/>
+            </output>
+
+            <fault name="SSOIdentityManagerErrorFault">
+                <soap:fault name="SSOIdentityManagerErrorFault" use="literal"/>
+            </fault>
+
+        </operation>
+
+
+    </binding>
+
+    <!-- Binding SOAP -->
+
+    <binding name="SSOSessionManagerSOAPBinding" type="josso:SSOSessionManager">
+
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+
+        <operation name="accessSession">
+
+            <soap:operation style="document"/>
+
+            <input name="AccessSessionRequestInput">
+                <soap:body use="literal"/>
+            </input>
+
+            <output name="AccessSessionResponseOutput">
+                <soap:body use="literal"/>
+            </output>
+
+            <fault name="SSOSessionErrorFault">
+                <soap:fault name="SSOSessionErrorFault" use="literal"/>
+            </fault>
+
+            <fault name="NoSuchSessionErrorFault">
+                <soap:fault name="NoSuchSessionErrorFault" use="literal"/>
+            </fault>
+        </operation>
+
+        <operation name="getSession">
+
+            <soap:operation style="document" />
+
+            <input name="SessionRequestInput">
+                <soap:body use="literal" />
+            </input>
+
+            <output name="SessionResponseOutput">
+                <soap:body use="literal" />
+            </output>
+
+            <fault name="SSOSessionErrorFault">
+                <soap:fault name="SSOSessionErrorFault" use="literal"/>
+            </fault>
+
+            <fault name="NoSuchSessionErrorFault">
+                <soap:fault name="NoSuchSessionErrorFault" use="literal"/>
+            </fault>
+        </operation>
+
+
+    </binding>
+
+    <!--The concrete service bound to the SOAP bidning follows-->
+    <service name="SSOIdentityProviderWS">
+        <port name="SSOIdentityProviderSoap" binding="josso:SSOIdentityProviderSOAPBinding">
+            <soap:address location="http://replace this !"/>
+        </port>
+    </service>
+
+    <service name="SSOIdentityManagerWS">
+        <port name="SSOIdentityManagerSoap" binding="josso:SSOIdentityManagerSOAPBinding">
+            <soap:address location="http://replace this !"/>
+        </port>
+    </service>
+
+    <service name="SSOSessionManagerWS">
+        <port name="SSOSessionManagerSoap" binding="josso:SSOSessionManagerSOAPBinding">
+            <soap:address location="http://replace this !"/>
+        </port>
+    </service>
+
+</definitions>

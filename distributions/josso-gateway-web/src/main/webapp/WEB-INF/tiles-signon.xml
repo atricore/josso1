@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+       "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<!-- ====================================================== -->
+<!--                                                        -->
+<!-- Definitions for Tiles :                                -->
+<!-- This file contains definitions for Josso Web App.      -->
+<!--                                                        -->
+<!-- ====================================================== -->
+
+<tiles-definitions>
+
+    <!-- ============================================================= -->
+    <!-- Singon General layout definition                              -->
+    <!-- ============================================================= -->
+    <definition name="josso.signon.layout" template="/josso-layout.jsp">
+        <put name="josso.page.title" value="Signon" type="string" />
+    </definition>
+
+    <definition name="josso.signon.loginResult" extends="josso.signon.layout">
+        <put name="josso.page.title" value="Login Result" type="string"/>
+        <put name="josso.body" value="/signon/loginResult.jsp" />
+    </definition>
+
+    <definition name="josso.signon.info" extends="josso.signon.layout">
+        <put name="josso.page.title" value="Info" type="string"/>
+        <put name="josso.body" value="/signon/info.jsp" />
+    </definition>
+
+    <definition name="josso.signon.usernamePasswordLogin" extends="josso.signon.layout">
+        <put name="josso.page.title" value="Login" type="string"/>
+        <put name="josso.body" value="/signon/usernamePasswordLogin.jsp"/>
+    </definition>
+
+</tiles-definitions>

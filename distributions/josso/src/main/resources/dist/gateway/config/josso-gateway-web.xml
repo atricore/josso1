@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns="urn:org:josso:core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        urn:org:josso:core http://www.josso.org/schema/josso-core.xsd">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- SSO Web configuration                                                        -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!--                                                                              -->
+    <!-- Other optional attriburtes :                                                 -->
+    <!--                                                                              -->
+    <!-- customLoginURL="http://192.168.1.53:8080/partnerapp/partner-login.jsp"       -->
+    <!--                                                                              -->
+    <!-- MS P3P HTTP header setup:                                                    -->
+    <!-- sendP3PHeader                                                                -->
+    <!-- P3PHeaderValue                                                               -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <web-configuration id="josso-web-configuraiton"
+                       rememberMeEnabled="true"
+                       sessionTokenOnClient="true"
+                       sessionTokenSecure="false"
+                       sendP3PHeader="false">
+
+        <!-- List of trusted host names where partner applications are deployed
+        <trustedHosts>
+            <s:value>localhost</s:value>
+        </trustedHosts>         
+        -->
+        
+    </web-configuration>
+
+    <!-- MS IE : Platform for Privacy Preferences (P3P) using default P3P Header value-->
+    <!--
+    <web-configuration id="josso-web-configuraiton"
+                       rememberMeEnabled="true"
+                       sessionTokenOnClient="false"
+                       sessionTokenSecure="false"
+                       sendP3PHeader="true" />
+    -->
+
+    <!-- MS IE : Platform for Privacy Preferences (P3P) using custom P3P Header value-->
+    <!--
+    <web-configuration id="josso-web-configuraiton"
+                       rememberMeEnabled="true" 
+                       sessionTokenOnClient="false"
+                       sessionTokenSecure="false"
+                       sendP3PHeader="true"
+                       P3PHeaderValue="CP=&quot;CAO PSA OUR&quot;" />
+    -->
+    
+</s:beans>

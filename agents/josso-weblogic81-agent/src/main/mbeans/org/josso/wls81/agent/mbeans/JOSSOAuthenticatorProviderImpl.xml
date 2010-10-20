@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE MBeanType SYSTEM
+        "commo.dtd">
+<!-- MBean Definition File (MDF) for the JOSSO Authenticator Provider Implementation. -->
+
+
+<!-- Declare your mbean.
+
+     We must extend the weblogic.management.security.authentication.Authenticator mbean.
+
+     The Name and DisplayName must be the same.
+     They specify the name that will appear on the
+     console for this provider.
+
+     Set the PeristPolicy to "OnUpdate" so that if an attribute
+     value is changed, the new value is written to disk immediately.
+     See the "Developing Security Services" manual for more info.
+
+     Note that since this is an xml document, you can't use double
+     quotes directly.  Instead you need to use &quot;
+
+     Note that setting "Writeable" to "false" on an attribute
+     makes the attribute read-only.  The default is read-write.
+<MBeanType
+ Name          = "JOSSOAuthenticator"
+ DisplayName   = "JOSSOAuthenticator"
+ Package       = "org.josso.wls81.agent.mbeans"
+ Extends       = "weblogic.management.security.authentication.Authenticator"
+ Implements    = "weblogic.management.security.authentication.ServletAuthenticationFilter"
+ PersistPolicy = "OnUpdate"
+>
+-->
+<MBeanType
+ Name          = "JOSSOAuthenticator"
+ DisplayName   = "JOSSOAuthenticator"
+ Package       = "org.josso.wls81.agent.mbeans"
+ Extends       = "weblogic.management.security.authentication.Authenticator"
+ PersistPolicy = "OnUpdate"
+>
+
+ <!-- You must set the value of the ProviderClassName attribute
+      (inherited from the weblogic.management.security.Provider mbean)
+      to the name of the java class you wrote that implements the
+      weblogic.security.spi.AuthenticationProvider interface.
+
+      You can think of the provider's mbean as the factory
+      for your provider's runtime implementation.
+ -->
+ <MBeanAttribute
+  Name          = "ProviderClassName"
+  Type          = "java.lang.String"
+  Writeable     = "false"
+  Preprocessor  = "weblogic.management.configuration.LegalHelper.checkClassName(value)"
+  Default       = "&quot;org.josso.wls81.agent.mbeans.JOSSOAuthenticationProviderImpl&quot;"
+ />
+
+ <!-- You must set the value of the Description attribute
+      (inherited from the weblogic.management.security.Provider mbean)
+      to a brief description of your provider.
+      It is displayed in the console.
+ -->
+ <MBeanAttribute
+  Name          = "Description"
+  Type          = "java.lang.String"
+  Writeable     = "false"
+  Default       = "&quot;JOSSO Authentication Provider&quot;"
+ />
+
+ <!-- You must set the value of the Version attribute
+      (inherited from the weblogic.management.security.Provider mbean)
+      to your provider's version.  There is no required format.
+ -->
+ <MBeanAttribute
+  Name          = "Version"
+  Type          = "java.lang.String"
+  Writeable     = "false"
+  Default       = "&quot;1.8.4-SNAPSHOT&quot;"
+ />
+
+ <!-- JOSSO specific attributes go here.
+
+      Note: custom attributes do not appear in the
+      console in WLS 7.0.  Use the admin command line tool
+      (java weblogic.Admin) to view and set their values.
+
+ -->
+
+</MBeanType>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!--
+IdentityMemoryStore user definitions.
+-->
+<josso-users>
+    <users>
+        <user>
+            <name>user1</name>
+            <!-- Optionally, define some properties for this user -->
+            <properties>
+                <property>
+                    <name>user.phoneNumber</name>
+                    <value>444-555-666</value>
+                </property>
+
+            </properties>
+            <!-- Optional comma sepparated set of roles, must be defined below -->
+            <roles>role3</roles>
+        </user>
+        <user>
+            <name>user2</name>
+            <!-- Optionally, define some properties for this user -->
+            <properties>
+                <property>
+                    <name>user.name</name>
+                    <value>User 2 Name</value>
+                </property>
+                <property>
+                    <name>user.lastName</name>
+                    <value>User 2 Last Name</value>
+                </property>
+                <property>
+                    <name>user.registrationDate</name>
+                    <value>2004/09/10</value>
+                </property>
+            </properties>
+            <!-- Optional comma sepparated set of roles, must be defined below -->
+            <roles>role2</roles>
+        </user>
+        <user>
+            <name>user3</name>
+            <!-- Optionally, define some properties for this user -->
+            <properties>
+                <property>
+                    <name>user.name</name>
+                    <value>User 3 Name</value>
+                </property>
+                <property>
+                    <name>user.lastName</name>
+                    <value>User 3 Last Name</value>
+                </property>
+                <property>
+                    <name>user.registrationDate</name>
+                    <value>2005/01/1</value>
+                </property>
+            </properties>
+            <!-- Optional comma sepparated set of roles, must be defined below -->
+            <roles>role1</roles>
+        </user>
+    </users>
+    <!-- Roles definitions -->
+    <roles>
+        <role>
+            <name>role1</name>
+        </role>
+        <role>
+            <name>role2</name>
+        </role>
+        <role>
+            <name>role3</name>
+        </role>
+    </roles>
+</josso-users>

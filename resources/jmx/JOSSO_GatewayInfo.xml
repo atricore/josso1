@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE Dashboard PUBLIC "-//MC4J//DTD Dashboard 1.0//EN" "http://mc4j.sourceforge.net/Dashboard_1_0.dtd">
+
+<!--
+    Created on : October 6, 2002, 10:01 PM
+    Author     : ghinkl
+-->
+
+<Dashboard version="1.0" name="JOSSO Gateway Info">
+  <Description>This dashboard displays basic information related to the overall execution of a JOSSO Gateway.</Description>
+
+  <DashboardMatch type="Global" location="/JOSSO/Gateway">
+
+      <BeanMatch id="SSOGatewayInfoMBean" type="Single">
+          <Condition type="BeanObjectNameCondition" filter="^josso:type=SSOGatewayInfo$"/>
+      </BeanMatch>
+
+  </DashboardMatch>
+
+  
+  <LayoutManager type="java.awt.BorderLayout"/>
+  <Content>
+    
+    <!-- *** The header section displays title and a refresh control *** -->
+    <Component type="javax.swing.JPanel">
+        <Constraint type="BorderConstraints" direction="NORTH"/>
+        <LayoutManager type="java.awt.BorderLayout"/>
+        <Border type="javax.swing.border.EmptyBorder" top="(Literal)2" left="(Literal)5" bottom="(Literal)2" right="(Literal)5"/>
+        <Content>
+            <Component type="javax.swing.JPanel">
+                <Constraint type="BorderConstraints" direction="CENTER"/>
+                <LayoutManager type="java.awt.BorderLayout"/>
+                <Content>
+                    <Component type="javax.swing.JLabel" id="titleLable">
+                        <Constraint type="BorderConstraints" direction="CENTER"/>
+                        <Attribute name="text" value="DashboardName"/>
+                        <Attribute name="font" value="(Literal)SansSerif bold 20"/>
+                        <Attribute name="foreground" value="(Literal)0x666666"/>
+                    </Component>
+                    <Component type="javax.swing.JTextArea">
+                        <Constraint type="BorderConstraints" direction="SOUTH"/>
+                        <Attribute name="text" value="DashboardDescription"/>
+                        <Attribute name="font" value="(Literal)DialogInput bold 14"/>
+                        <Attribute name="opaque" value="(Literal)false"/>
+                        <Attribute name="editable" value="(Literal)false"/>
+                    </Component>
+                </Content>
+            </Component>
+            <Component type="org.mc4j.console.dashboard.components.RefreshControlComponent">
+                <Constraint type="BorderConstraints" direction="EAST"/>
+                <Attribute name="refreshDelay" value="(Literal)1000"/>
+            </Component>
+        </Content>
+    </Component>
+    
+    <Component type="javax.swing.JSplitPane">
+        <Constraint type="BorderConstraints" direction="CENTER"/>
+        <Attribute name="orientation" value="(Literal)HORIZONTAL_SPLIT"/>
+        <Attribute name="preferredSize" value="(Literal)400,300"/>
+        <Attribute name="minimumSize" value="(Literal)400,300"/>
+        <Attribute name="leftComponent">
+        
+            <Component type="javax.swing.JScrollPane">
+                <Constraint type="java.awt.GridBagConstraints" anchor="NORTH" gridx="1" gridy="1" weightx="1" weighty="1" fill="BOTH"/>
+                <Content>
+                    <Component type="org.mc4j.console.dashboard.components.AttributeListComponent">
+                        <Attribute name="beanNode" value="SSOGatewayInfoMBean"/>
+                        <!--Attribute name="MBeanNode" value="MBeanNode"/-->
+                        <!--Attribute name="AttributeName" value="(Literal)BuildDate"/-->
+                        <Attribute name="Label" value="(Literal)Gateway Information"/>
+                        <Attribute name="background" value="(Literal)0xFFFFFF"/>
+
+                        <Border type="javax.swing.border.TitledBorder">
+                            <Attribute name="title" value="(Literal)MBean Attributes"/>
+                        </Border>
+                    </Component>
+                 </Content>
+            </Component>
+        </Attribute>
+
+        <Attribute name="rightComponent">
+            <Component type="javax.swing.JPanel">
+
+                <LayoutManager type="java.awt.GridBagLayout"/>
+
+                <Content>
+                    <Component type="javax.swing.JPanel">
+                        <Constraint type="java.awt.GridBagConstraints" anchor="NORTH" gridx="1" gridy="1" weightx="0.5" weighty="0.5" fill="BOTH"/>
+                        <Content>
+                            <Component type="org.mc4j.console.dashboard.components.NumericAttributeMeter">
+                                <Attribute name="beanNode" value="SSOGatewayInfoMBean"/>
+                                <Attribute name="preferredSize" value="(Literal)150,150"/>
+                                <Attribute name="maxAttributeName" value="(Literal)maxSessionCount"/>
+                                <Attribute name="currentAttributeName" value="(Literal)sessionCount"/>
+                                <Attribute name="minimumSize" value="(Literal)50,50"/>    
+                                <Attribute name="label" value="(Literal)Session Count"/>
+                                <Attribute name="updateInterval" value="(Literal)10000"/>
+                            </Component>
+                        </Content>
+                    </Component>
+                    
+                    <Component type="org.mc4j.console.dashboard.components.NumericAttributeGraph">
+                        <Attribute name="beanNode" value="SSOGatewayInfoMBean"/>
+                        <Constraint type="java.awt.GridBagConstraints" anchor="NORTH" gridx="1" gridy="2" widthx="2" weightx="0.5" weighty="0.5" fill="BOTH" insets="3,3,3,3"/>
+                        <Attribute name="preferredSize" value="(Literal)100,100"/>
+                        <Attribute name="attributeName" value="(Literal)sessionCount"/>
+                        <Attribute name="updateInterval" value="(Literal)10000"/>
+                    </Component>
+
+                </Content>
+            </Component>
+        
+        </Attribute>
+        
+    </Component>
+    
+    <!-- List of methods to execute -->
+    <Component type="org.mc4j.console.dashboard.components.OperationListComponent">
+        <Attribute name="beanNode" value="SSOGatewayInfoMBean"/>
+        <Constraint type="BorderConstraints" direction="SOUTH"/>
+        <Attribute name="format" value="(Literal)BUTTON_ONLY_FORMAT"/>
+
+        <Border type="javax.swing.border.TitledBorder">
+            <Attribute name="title" value="(Literal)JOSSO Actions"/>
+        </Border>
+    </Component>
+
+  </Content>
+</Dashboard>

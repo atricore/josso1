@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://geronimo.apache.org/xml/ns/j2ee/web-2.0.1" 
+         xmlns:naming="http://geronimo.apache.org/xml/ns/naming-1.2" 
+         xmlns:sec="http://geronimo.apache.org/xml/ns/security-2.0" 
+         xmlns:sys="http://geronimo.apache.org/xml/ns/deployment-1.2">
+         
+	<sys:environment>
+		<sys:moduleId>
+      		<sys:groupId>org.josso</sys:groupId>
+      		<sys:artifactId>josso-partner-wasce-web</sys:artifactId>
+      		<sys:version>1.8.4-SNAPSHOT</sys:version>
+      		<sys:type>car</sys:type>
+    	</sys:moduleId>
+	    <sys:dependencies>
+	    	<sys:dependency>
+                <sys:groupId>org.apache.geronimo.framework</sys:groupId>
+                <sys:artifactId>j2ee-security</sys:artifactId>
+                <sys:type>car</sys:type>
+            </sys:dependency>
+	    </sys:dependencies>
+    	</sys:environment>
+  
+	<context-root>/partnerapp</context-root>
+	
+	<security-realm-name>josso</security-realm-name>
+	
+	<sec:security>
+    	<sec:default-principal>
+      		<sec:principal name="anonymous" class="org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal"/>
+    	</sec:default-principal>
+    </sec:security>
+    
+</web-app>

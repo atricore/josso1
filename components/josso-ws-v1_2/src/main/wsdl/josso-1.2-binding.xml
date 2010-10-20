@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jxb:bindings version="1.0" wsdlLocation="metadata-admin.wsdl"
+              xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+              xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+              xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <jxb:bindings schemaLocation="josso-1.2.xsd" node="/xs:schema">
+        <jxb:globalBindings xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+                            xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <jxb:serializable/>
+        </jxb:globalBindings>
+    </jxb:bindings>
+</jxb:bindings>

@@ -1,0 +1,138 @@
+# Required initializer
+AC_INIT
+
+AC_CONFIG_AUX_DIR(build)
+
+# Automake initialization
+AM_INIT_AUTOMAKE(apache_josso_module, 1.0)
+
+
+sinclude(build/apr_common.m4)
+sinclude(build/find_apr.m4)
+sinclude(build/find_apu.m4)
+sinclude(build/find_openssl.m4)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CPP
+AC_PROG_LIBTOOL
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+echo $ac_n "${nl}Configuring Apache Portable Runtime library...${nl}"
+
+APR_FIND_APR("$srcdir/apr", "./apr", 1, [0 1])
+
+if test "$apr_found" = "no"; then
+  AC_MSG_ERROR([APR not found.  Please read the documentation.])
+fi
+
+if test "$apr_found" = "reconfig"; then
+  APR_SUBDIR_CONFIG(apr,
+                    [--prefix=$prefix --exec-prefix=$exec_prefix --libdir=$libdir --includedir=$includedir --bindir=$bindir --datadir=$datadir --with-installbuilddir=$installbuilddir],
+                    [--enable-layout=*|\'--enable-layout=*])
+  dnl We must be the first to build and the last to be cleaned
+  SERF_BUILD_SRCLIB_DIRS="apr $SERF_BUILD_SRCLIB_DIRS"
+  SERF_CLEAN_SRCLIB_DIRS="$SERF_CLEAN_SRCLIB_DIRS apr"
+fi
+
+APR_SETIFNULL(CC, `$apr_config --cc`)
+APR_SETIFNULL(CPP, `$apr_config --cpp`)
+APR_SETIFNULL(APR_LIBTOOL, `$apr_config --apr-libtool`)
+APR_ADDTO(CFLAGS, `$apr_config --cflags`)
+APR_ADDTO(CPPFLAGS, `$apr_config --cppflags`)
+APR_ADDTO(LDFLAGS, `$apr_config --ldflags`)
+SHLIBPATH_VAR=`$apr_config --shlib-path-var`
+APR_BINDIR=`$apr_config --bindir`
+APR_INCLUDES=`$apr_config --includes`
+APR_VERSION=`$apr_config --version`
+APR_CONFIG="$apr_config"
+
+APR_SETIFNULL(LTFLAGS, "--silent")
+AC_SUBST(LTFLAGS)
+
+AC_SUBST(APR_LIBTOOL)
+AC_SUBST(APR_BINDIR)
+AC_SUBST(APR_INCLUDES)
+AC_SUBST(APR_VERSION)
+AC_SUBST(APR_CONFIG)
+
+# Define a macro that is used to parse a --with-apache parameter
+# The macro is named "APACHE_INCLUDE_DIR"
+AC_DEFUN([APACHE_INCLUDE_DIR],[
+
+	AC_ARG_WITH(
+		apache_include,
+		[  --with-apache-include[=DIR]     Apache server include directory],
+		,
+		[with_apache_include="no"]
+	)
+
+	AC_MSG_CHECKING(for Apache include directory)
+
+	if test "$with_apache_inclde" = "no"; then
+		AC_MSG_ERROR( You need to specify the apache include directory using --with-apache-include)
+	else
+		# make sure that a well known include file exists
+		if test -e $with_apache_include/httpd.h; then
+			apache_include_dir=$with_apache_include
+			AC_MSG_RESULT(APACHE found!)
+		else
+			AC_MSG_ERROR( $with_apache_include not found.  Check the value you specified with --with-apache-include)
+		fi
+	fi
+
+])
+
+# Define a macro that is used to parse a --with-apache parameter
+# The macro is named "APACHE_INCLUDE_DIR"
+AC_DEFUN([APACHE_APR_INCLUDE_DIR],[
+
+	AC_ARG_WITH(
+		apr_include,
+		[  --with-apr-include[=DIR]     Apache Portable Runtime include directory],
+		,
+		[with_apr_include="no"]
+	)
+
+	AC_MSG_CHECKING(for APR directory)
+
+	if test "$with_apr_inclde" = "no"; then
+		AC_MSG_ERROR( You need to specify the APR include directory using --with-apr-include)
+	else
+		# make sure that a well known include file exists
+		if test -e $with_apr_include/apr.h; then
+			apr_include_dir=$with_apr_include
+			AC_MSG_RESULT(APR found!)
+		else
+			AC_MSG_ERROR( $with_apr_include not found.  Check the value you specified with --with-apr-include)
+		fi
+	fi
+
+])
+
+
+# Now call the APACHE_DIR macro that was just specified
+APACHE_INCLUDE_DIR
+
+APACHE_APR_INCLUDE_DIR
+
+FIND_OPENSSL
+
+# Save the location of apache into the "apache_include_dir" variable.
+# The AC_SUBST macro causes the variable to be saved in config.status
+AC_SUBST(apache_include_dir)
+
+# Save the location of the apr into the "apr_include_dir" variable.
+# The AC_SUBST macro causes the variable to be saved in config.status
+AC_SUBST(apr_include_dir)
+
+AC_CONFIG_FILES([Makefile \
+    client/Makefile \
+    mod_auth_josso/Makefile \
+    ])
+    
+# Write config.status and the Makefile
+AC_OUTPUT

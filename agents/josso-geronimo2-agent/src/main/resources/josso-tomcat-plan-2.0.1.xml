@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<module xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2">
+    <environment>
+        <moduleId>
+            <groupId>org.apache.geronimo.configs</groupId>
+            <artifactId>tomcat6</artifactId>
+            <version>2.0.1</version>
+            <type>car</type>
+        </moduleId>
+        <dependencies>
+            <dependency>
+                <groupId>javax.xml</groupId>
+                <artifactId>saaj</artifactId>
+                <version>1.2</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>1.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.0</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.0.4</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.6.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.0.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-modeler</groupId>
+                <artifactId>commons-modeler</artifactId>
+                <version>1.0.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-digester</groupId>
+                <artifactId>commons-digester</artifactId>
+                <version>1.8</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.1.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>axis</groupId>
+                <artifactId>axis</artifactId>
+                <version>1.4</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.3</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-discovery</groupId>
+                <artifactId>commons-discovery</artifactId>
+                <version>0.4</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>1.0.2</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>1.0.2</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache</groupId>
+                <artifactId>jakarta-oro</artifactId>
+                <version>1.0</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.rpc</groupId>
+                <artifactId>jaxrpc</artifactId>
+                <version>1.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.8</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mailapi</artifactId>
+                <version>1.3.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso</artifactId>
+                <version>1.7</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-common</artifactId>
+                <version>1.7</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-tomcat60-plugin</artifactId>
+                <version>1.7</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.configs</groupId>
+                <artifactId>j2ee-server</artifactId>
+                <version>2.0.1</version>
+                <type>car</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.configs</groupId>
+                <artifactId>server-security-config</artifactId>
+                <version>2.0.1</version>
+                <type>car</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.configs</groupId>
+                <artifactId>transaction</artifactId>
+                <version>2.0.1</version>
+                <type>car</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.modules</groupId>
+                <artifactId>geronimo-tomcat6</artifactId>
+                <version>2.0.1</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.configs</groupId>
+                <artifactId>jasper</artifactId>
+                <version>2.0.1</version>
+                <type>car</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.configs</groupId>
+                <artifactId>webservices-common</artifactId>
+                <version>2.0.1</version>
+                <type>car</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>catalina-ha</artifactId>
+                <version>6.0.13</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tribes</artifactId>
+                <version>6.0.13</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.extras</groupId>
+                <artifactId>juli</artifactId>
+                <version>6.0.13</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.extras</groupId>
+                <artifactId>juli-adapters</artifactId>
+                <version>6.0.13</version>
+                <type>jar</type>
+            </dependency>
+        </dependencies>
+        <hidden-classes/>
+        <non-overridable-classes/>
+    </environment>
+    <gbean name="CatalinaSystemProperties" class="org.apache.geronimo.system.properties.SystemProperties">
+        <attribute name="systemProperties">org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true</attribute>
+    </gbean>
+    <gbean name="TomcatResources" class="org.apache.geronimo.system.util.DirectoryInitializationGBean">
+        <attribute name="prefix">META-INF/geronimo-tomcat6</attribute>
+        <attribute name="path">var/catalina</attribute>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+    </gbean>
+    <gbean name="TomcatWebManager" class="org.apache.geronimo.tomcat.TomcatManagerImpl"/>
+    <gbean name="TomcatWebContainer" class="org.apache.geronimo.tomcat.TomcatContainer">
+        <attribute name="catalinaHome">var/catalina</attribute>
+        <reference name="EngineGBean">
+            <name>TomcatEngine</name>
+        </reference>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+        <reference name="WebManager">
+            <name>TomcatWebManager</name>
+        </reference>
+    </gbean>
+    <gbean name="TomcatWebConnector" class="org.apache.geronimo.tomcat.connector.Http11ConnectorGBean">
+        <attribute name="name">HTTP</attribute>
+        <attribute name="host">0.0.0.0</attribute>
+        <attribute name="port">8080</attribute>
+        <attribute name="maxHttpHeaderSize">8192</attribute>
+        <attribute name="maxThreads">150</attribute>
+        <attribute name="minSpareThreads">25</attribute>
+        <attribute name="maxSpareThreads">75</attribute>
+        <attribute name="enableLookups">false</attribute>
+        <attribute name="redirectPort">8443</attribute>
+        <attribute name="acceptCount">100</attribute>
+        <attribute name="connectionTimeout">20000</attribute>
+        <attribute name="disableUploadTimeout">true</attribute>
+        <reference name="TomcatContainer">
+            <name>TomcatWebContainer</name>
+        </reference>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+    </gbean>
+    <gbean name="TomcatAJPConnector" class="org.apache.geronimo.tomcat.connector.AJP13ConnectorGBean">
+        <attribute name="name">AJP</attribute>
+        <attribute name="host">0.0.0.0</attribute>
+        <attribute name="port">8019</attribute>
+        <attribute name="minSpareThreads">25</attribute>
+        <attribute name="maxSpareThreads">75</attribute>
+        <attribute name="enableLookups">false</attribute>
+        <attribute name="redirectPort">8443</attribute>
+        <reference name="TomcatContainer">
+            <name>TomcatWebContainer</name>
+        </reference>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+    </gbean>
+    <gbean name="TomcatWebSSLConnector" class="org.apache.geronimo.tomcat.connector.Https11ConnectorGBean">
+        <attribute name="name">HTTPS</attribute>
+        <attribute name="host">0.0.0.0</attribute>
+        <attribute name="port">8443</attribute>
+        <attribute name="maxHttpHeaderSize">8192</attribute>
+        <attribute name="maxThreads">150</attribute>
+        <attribute name="minSpareThreads">25</attribute>
+        <attribute name="maxSpareThreads">75</attribute>
+        <attribute name="enableLookups">false</attribute>
+        <attribute name="acceptCount">100</attribute>
+        <attribute name="disableUploadTimeout">false</attribute>
+        <attribute name="clientAuth">false</attribute>
+        <attribute name="algorithm">Default</attribute>
+        <attribute name="sslProtocol">TLS</attribute>
+        <attribute name="keystoreFile">var/security/keystores/geronimo-default</attribute>
+        <attribute name="keystorePass">secret</attribute>
+        <reference name="TomcatContainer">
+            <name>TomcatWebContainer</name>
+        </reference>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+    </gbean>
+
+    <!--Engine-->
+    <gbean name="TomcatEngine" class="org.apache.geronimo.tomcat.EngineGBean">
+        <attribute name="className">org.apache.geronimo.tomcat.TomcatEngine</attribute>
+        <attribute name="initParams">name=Geronimo</attribute>
+        <reference name="DefaultHost">
+            <name>TomcatHost</name>
+        </reference>
+        <references name="Hosts">
+            <pattern>
+                <type>Host</type>
+            </pattern>
+        </references>
+        <reference name="RealmGBean">
+            <name>JossoTomcatJAASRealm</name>
+        </reference>
+        <reference name="TomcatValveChain">
+            <name>FirstValve</name>
+        </reference>
+        <reference name="MBeanServerReference">
+            <name>MBeanServerReference</name>
+        </reference>
+        <dependency>
+            <name>TomcatResources</name>
+        </dependency>
+    </gbean>
+
+    <!-- Log Manager -->
+    <gbean name="TomcatAccessLogManager" class="org.apache.geronimo.tomcat.TomcatLogManagerImpl">
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+        <references name="LogGBeans">
+            <pattern>
+                <name>LogValve</name>
+            </pattern>
+        </references>
+    </gbean>
+
+    <!--Valves-->
+    <gbean name="FirstValve" class="org.apache.geronimo.tomcat.ValveGBean">
+        <attribute name="className">org.josso.tc60.agent.SSOAgentValve</attribute>
+        <attribute name="initParams">
+            debug=1
+        </attribute>
+        <reference name="NextValve">
+            <name>LogValve</name>
+        </reference>
+    </gbean>
+    <gbean name="LogValve" class="org.apache.geronimo.tomcat.ValveGBean">
+        <attribute name="className">org.apache.catalina.valves.AccessLogValve</attribute>
+        <attribute name="initParams">
+            prefix=0.0.0.0_access_log.
+            suffix=.txt
+            pattern=common
+        </attribute>
+    </gbean>
+
+    <!--Tomcat Realm-->
+    <gbean name="JossoTomcatJAASRealm" class="org.apache.geronimo.tomcat.RealmGBean">
+        <attribute name="className">org.josso.tc60.agent.jaas.CatalinaJAASRealm</attribute>
+        <attribute name="initParams">
+            appName=josso
+            userClassNames=org.josso.gateway.identity.service.BaseUserImpl
+            roleClassNames=org.josso.gateway.identity.service.BaseRoleImpl
+            debug=1
+        </attribute>
+    </gbean>
+
+    <!--Host-->
+    <gbean name="TomcatHost" class="org.apache.geronimo.tomcat.HostGBean">
+        <attribute name="className">org.apache.catalina.core.StandardHost</attribute>
+        <attribute name="initParams">
+            name=0.0.0.0
+            appBase=
+            workDir=work
+        </attribute>
+    </gbean>
+
+</module>
+

@@ -1,0 +1,806 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <globalConfiguration>
+  <parameter name="sendMultiRefs" value="true"/>
+  <parameter name="disablePrettyXML" value="true"/>
+  <parameter name="adminPassword" value="admin"/>
+  <parameter name="dotNetSoapEncFix" value="true"/>
+  <parameter name="enableNamespacePrefixOptimization" value="true"/>
+  <parameter name="sendXMLDeclaration" value="true"/>
+  <parameter name="sendXsiTypes" value="true"/>
+  <parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/>
+  <requestFlow>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="session"/>
+   </handler>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="request"/>
+    <parameter name="extension" value=".jwr"/>
+   </handler>
+  </requestFlow>
+ </globalConfiguration>
+ <handler name="LocalResponder" type="java:org.apache.axis.transport.local.LocalResponder"/>
+ <handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper"/>
+ <handler name="Authenticate" type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+ <service name="AdminService" provider="java:MSG">
+  <parameter name="allowedMethods" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+  <namespace>http://xml.apache.org/axis/wsdd/</namespace>
+ </service>
+ <service name="Version" provider="java:RPC">
+  <parameter name="allowedMethods" value="getVersion"/>
+  <parameter name="className" value="org.apache.axis.Version"/>
+ </service>
+ <service name="SSOSessionManagerSoap" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="urn:org:josso:gateway:ws:1.2:wsdl"/>
+      <parameter name="wsdlServiceElement" value="SSOSessionManagerWS"/>
+      <parameter name="schemaQualified" value="urn:org:josso:gateway:ws:1.2:protocol"/>
+      <parameter name="wsdlServicePort" value="SSOSessionManagerSoap"/>
+      <parameter name="className" value="org.josso.gateway.ws._1_2.wsdl.SSOSessionManagerSOAPBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="SSOSessionManager"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:InvalidSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.InvalidSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOSessionType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOSessionType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AccessSessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AccessSessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:NoSuchUserErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.NoSuchUserErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:ResolveAuthenticationAssertionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.ResolveAuthenticationAssertionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertionNotValidErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertionNotValidErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSecurityDomainRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSecurityDomainRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindRolesBySSOSessionIdResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindRolesBySSOSessionIdResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSORoleType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSORoleType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:GlobalSignoffResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.GlobalSignoffResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AccessSessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AccessSessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:GlobalSignoffRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.GlobalSignoffRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertIdentityWithSimpleAuthenticationResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertIdentityWithSimpleAuthenticationResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSecurityDomainResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSecurityDomainResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSONameValuePairType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSONameValuePairType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertIdentityWithSimpleAuthenticationRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertIdentityWithSimpleAuthenticationRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:UserExistsResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.UserExistsResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOIdentityProviderErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOIdentityProviderErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:UserExistsRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.UserExistsRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:ResolveAuthenticationAssertionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.ResolveAuthenticationAssertionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOIdentityManagerErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOIdentityManagerErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:NoSuchSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.NoSuchSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindRolesBySSOSessionIdRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindRolesBySSOSessionIdRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOUserType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOUserType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+  
+ <service name="SSOIdentityManagerSoap" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="urn:org:josso:gateway:ws:1.2:wsdl"/>
+      <parameter name="wsdlServiceElement" value="SSOIdentityManagerWS"/>
+      <parameter name="schemaQualified" value="urn:org:josso:gateway:ws:1.2:protocol"/>
+      <parameter name="wsdlServicePort" value="SSOIdentityManagerSoap"/>
+      <parameter name="className" value="org.josso.gateway.ws._1_2.wsdl.SSOIdentityManagerSOAPBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="SSOIdentityManager"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:InvalidSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.InvalidSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOSessionType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOSessionType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AccessSessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AccessSessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:NoSuchUserErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.NoSuchUserErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:ResolveAuthenticationAssertionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.ResolveAuthenticationAssertionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertionNotValidErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertionNotValidErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSecurityDomainRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSecurityDomainRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindRolesBySSOSessionIdResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindRolesBySSOSessionIdResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSORoleType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSORoleType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:GlobalSignoffResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.GlobalSignoffResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AccessSessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AccessSessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:GlobalSignoffRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.GlobalSignoffRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertIdentityWithSimpleAuthenticationResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertIdentityWithSimpleAuthenticationResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSecurityDomainResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSecurityDomainResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSONameValuePairType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSONameValuePairType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertIdentityWithSimpleAuthenticationRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertIdentityWithSimpleAuthenticationRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:UserExistsResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.UserExistsResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOIdentityProviderErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOIdentityProviderErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:UserExistsRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.UserExistsRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:ResolveAuthenticationAssertionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.ResolveAuthenticationAssertionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOIdentityManagerErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOIdentityManagerErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:NoSuchSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.NoSuchSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindRolesBySSOSessionIdRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindRolesBySSOSessionIdRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOUserType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOUserType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+  
+ <service name="SSOIdentityProviderSoap" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="urn:org:josso:gateway:ws:1.2:wsdl"/>
+      <parameter name="wsdlServiceElement" value="SSOIdentityProviderWS"/>
+      <parameter name="schemaQualified" value="urn:org:josso:gateway:ws:1.2:protocol"/>
+      <parameter name="wsdlServicePort" value="SSOIdentityProviderSoap"/>
+      <parameter name="className" value="org.josso.gateway.ws._1_2.wsdl.SSOIdentityProviderSOAPBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="SSOIdentityProvider"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:InvalidSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.InvalidSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOSessionType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOSessionType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AccessSessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AccessSessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSessionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSessionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:NoSuchUserErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.NoSuchUserErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:ResolveAuthenticationAssertionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.ResolveAuthenticationAssertionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertionNotValidErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertionNotValidErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSecurityDomainRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSecurityDomainRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindRolesBySSOSessionIdResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindRolesBySSOSessionIdResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSORoleType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSORoleType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:GlobalSignoffResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.GlobalSignoffResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AccessSessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AccessSessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:GlobalSignoffRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.GlobalSignoffRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertIdentityWithSimpleAuthenticationResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertIdentityWithSimpleAuthenticationResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSecurityDomainResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSecurityDomainResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindUserInSessionRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindUserInSessionRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSONameValuePairType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSONameValuePairType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:AssertIdentityWithSimpleAuthenticationRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.AssertIdentityWithSimpleAuthenticationRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:UserExistsResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.UserExistsResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOIdentityProviderErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOIdentityProviderErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:UserExistsRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.UserExistsRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:ResolveAuthenticationAssertionResponseType"
+        type="java:org.josso.gateway.ws._1_2.protocol.ResolveAuthenticationAssertionResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOIdentityManagerErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOIdentityManagerErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:NoSuchSessionErrorType"
+        type="java:org.josso.gateway.ws._1_2.protocol.NoSuchSessionErrorType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:FindRolesBySSOSessionIdRequestType"
+        type="java:org.josso.gateway.ws._1_2.protocol.FindRolesBySSOSessionIdRequestType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="urn:org:josso:gateway:ws:1.2:protocol"
+        qname="ns:SSOUserType"
+        type="java:org.josso.gateway.ws._1_2.protocol.SSOUserType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+  
+ <transport name="http">
+  <requestFlow>
+   <handler type="URLMapper"/>
+   <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </requestFlow>
+  <parameter name="qs:list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs:wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+  <parameter name="qs.list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs.method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs:method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs.wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+ </transport>
+ <transport name="local">
+  <responseFlow>
+   <handler type="LocalResponder"/>
+  </responseFlow>
+ </transport>
+</deployment>

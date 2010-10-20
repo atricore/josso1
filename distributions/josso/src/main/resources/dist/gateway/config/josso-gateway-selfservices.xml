@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns="urn:org:josso:core"
+       xmlns:def-pwdmgr="urn:org:josso:default:passwordmgr"
+       xmlns:def-pwdgen="urn:org:josso:default:passwordgenerator"
+       xmlns:email-pwddist="urn:org:josso:email:passworddistributor"
+       xmlns:simple-lostpwd="urn:org:josso:simple:lostpasswordprocess"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        urn:org:josso:core http://www.josso.org/schema/josso-core.xsd
+        urn:org:josso:default:passwordmgr http://www.josso.org/schema/josso-default-passwordmanager.xsd
+        urn:org:josso:default:passwordgenerator http://www.josso.org/schema/josso-default-passwordgenerator.xsd
+        urn:org:josso:email:passworddistributor http://www.josso.org/schema/josso-email-passworddistributor.xsd
+        urn:org:josso:simple:lostpasswordprocess http://www.josso.org/schema/josso-simple-lostpasswordprocess.xsd
+        ">
+
+    <!-- ================================================================== -->
+    <!-- JOSSO Gateway Selfservices Configuration using Spring + XBean      -->
+    <!--                                                                    -->
+    <!-- since JOSSO 1.8                                                    -->
+    <!-- ================================================================== -->
+
+    <!-- To keep things organized when using multiple security domains, prepend the domain name
+    to component ids,  in our case all componetes use the 'josso' prefix -->
+
+
+    <!-- ===================================================================== -->
+    <!-- SSO Password Manager                                                  -->
+    <!-- ===================================================================== -->
+    <def-pwdmgr:password-manager id="josso-password-manager">
+
+        <def-pwdmgr:processes>
+
+            <lostpassword-process name="josso-simple-lostpassword" xmlns="urn:org:josso:simple:lostpasswordprocess">
+
+                <idGenerator>
+                    <id-generator xmlns="urn:org:josso:core"/>
+                </idGenerator>
+
+                <passwordGenerator>
+                    <s:ref bean="josso-password-generator"/>
+                </passwordGenerator>
+
+                <passwordDistributor>
+                    <s:ref bean="josso-password-distributor"/>
+                </passwordDistributor>
+
+                <credentialProvider>
+                    <s:ref bean="josso-basic-authentication"/>
+                </credentialProvider>
+
+                <identityManager>
+                    <s:ref bean="josso-identity-manager"/>
+                </identityManager>
+
+            </lostpassword-process>
+
+        </def-pwdmgr:processes>
+
+        <def-pwdmgr:process-id-generator>
+            <id-generator/>
+        </def-pwdmgr:process-id-generator>
+
+    </def-pwdmgr:password-manager>
+
+
+    <!-- ===================================================================== -->
+    <!-- SSO Password Distributor                                              -->
+    <!-- ===================================================================== -->
+    <!-- EMail Password Distributor : will distribute passwords using email. -->
+    <!-- The 'mail-to-userproperty' is the SSOUser property name that contains the user email! -->
+    <email-password-distributor id="josso-password-distributor"
+            mail-from="josso@josso.org"
+            mail-to-userproperty="email"
+            mail-subject="JOSSO Password Reset verification e-mail"
+            template="/passwordVerificationEmail.vm"
+            xmlns="urn:org:josso:email:passworddistributor">
+
+        <mail-sender>
+            <s:ref bean="josso-spring-mailsender"/>
+        </mail-sender>
+
+    </email-password-distributor>
+
+
+    <!-- ===================================================================== -->
+    <!-- SSO Password Generator                                                -->
+    <!-- ===================================================================== -->
+    <password-generator id="josso-password-generator"
+            passwordLength="8"
+            useSimpleRandom="false"
+            secureRandomAlgorithm="SHA1PRNG"
+            secureRandomProvider="SUN"
+            generateNumerals="false"
+            generateCapitalLetters="true"
+            includeAmbigousChars="false"
+            includeSpecialSymbols="true"
+            regexStartsNoSmallLetter="false"
+            regexEndsNoSmallLetter="false"
+            regexStartsNoUpperLetter="false"
+            regexEndsNosUpperLetter="false"
+            regexEndsNoDigit="false"
+            regexStartsNoDigit="false"
+            regexStartsNoSymbol="false"
+            regexEndsNoSymbol="false"
+            regexOnlyOneCapital="false"
+            regexOnlyOneSymbol="false"
+            regexAtLeastTwoSymbols="false"
+            regexOnlyOneDigit="false"
+            regexAtLeastTwoDigits="false"
+            maxAttempts="10000"
+            xmlns="urn:org:josso:default:passwordgenerator">
+
+        <filters>
+
+            <!-- Filters generated passwords listed in the black list -->
+            <blacklist-passwordfilter>
+                <!-- TODO : This should be in a file! -->
+                <blacklist>
+                    <s:value>password</s:value>
+                    <s:value>changeme</s:value>
+                    <s:value>pwd</s:value>
+                </blacklist>
+            </blacklist-passwordfilter>
+
+            <!-- Filters generated passwords that match any of the regular expressions
+            <regex-passwordfilter>
+                <blacklist>
+                    <s:value>blacklist-regex</s:value>
+                </blacklist>
+            </regex-passwordfilter>
+            -->
+        </filters>
+
+    </password-generator>
+
+</s:beans>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns="urn:org:josso:db:assertionstore"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+        >
+
+
+    <s:bean id="dataSource"
+            class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <s:property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <s:property name="url" value="jdbc:hsqldb:mem:jossodb"/>
+        <s:property name="username" value="sa"/>
+        <s:property name="password" value=""/>
+    </s:bean>
+
+
+    <datasource-store
+            id="dbStore"
+            dsJndiName="jndi:hsqldb/jossoDataSource"
+            sizeQuery="SELECT COUNT(1) FROM JOSSO_ASSERTION;"
+            keysQuery="SELECT ASSERTION_ID FROM JOSSO_ASSERTION;"
+            loadAllQuery="SELECT ASSERTION_ID, SECURITY_DOMAIN_NAME, SSO_SESSION_ID, CREATION_TIME, VALID FROM JOSSO_ASSERTION;"
+            loadQuery="SELECT ASSERTION_ID, SECURITY_DOMAIN_NAME, SSO_SESSION_ID, CREATION_TIME, VALID FROM JOSSO_ASSERTION WHERE ASSERTION_ID = ?;"
+            deleteAllDml="DELETE FROM JOSSO_ASSERTION;"
+            deleteDml="DELETE FROM JOSSO_ASSERTION WHERE ASSERTION_ID = ?;"
+            insertDml="INSERT INTO JOSSO_ASSERTION VALUES (?, ?, ?, ?, ?);"
+            />
+
+</s:beans>

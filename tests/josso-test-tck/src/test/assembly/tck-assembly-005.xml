@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<assembly>
+    <id>005</id>
+
+    <!-- Simple test that assembles a gateway and a partner application using a serlvet agent -->
+
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+
+    <fileSets>
+
+        <!-- =========================================================== -->
+        <!-- One Web Application -->
+        <!-- =========================================================== -->
+        <fileSet>
+            <directory>src/test/resources/partnerapp/generic-servlet/WEB-INF/</directory>
+            <outputDirectory>webapps/webapp1/WEB-INF</outputDirectory>
+            <includes>
+                <include>web.xml</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>src/test/resources/agent/generic-servlet/</directory>
+            <outputDirectory>webapps/webapp1/WEB-INF/classes</outputDirectory>
+            <includes>
+                <include>josso-agent-config.xml</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>src/test/resources/agent/generic-servlet/</directory>
+            <outputDirectory>etc</outputDirectory>
+            <includes>
+                <include>jaas.conf</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>src/test/resources/partnerapp/generic-servlet/</directory>
+            <outputDirectory>webapps/webapp1/</outputDirectory>
+            <includes>
+                <include>*.jsp</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <!-- =========================================================== -->
+        <!-- Gateway Confir for Single security domain -->
+        <!-- =========================================================== -->
+        <fileSet>
+            <directory>src/test/resources/gateway/config/</directory>
+            <outputDirectory>webapps/josso/WEB-INF/classes</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <excludes>
+                <exclude>md</exclude>
+            </excludes>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+
+    </fileSets>
+
+
+    <dependencySets>
+
+        <!-- ================================================================= -->
+        <!-- JOSSO Distribution artifacts                                      -->
+        <!-- ================================================================= -->
+
+        <!-- For now, dependencies are shared with maven
+        <dependencySet>
+            <outputDirectory>webapps/webapp1/WEB-INF/lib</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-agent-shared</include>
+                <include>${pom.groupId}:josso-servlet-agent</include>
+                <include>${pom.groupId}:josso-agents-bin:jar</include>
+            </includes>
+        </dependencySet>
+
+        -->
+
+
+        <!-- JOSSO Agent jars
+        <dependencySet>
+            <outputDirectory>/dist/agents/bin</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-agent-shared</include>
+                <include>${pom.groupId}:josso-tomcat60-agent</include>
+                <include>${pom.groupId}:josso-tomcat55-agent</include>
+                <include>${pom.groupId}:josso-tomcat50-agent</include>
+                <include>${pom.groupId}:josso-jboss42-agent</include>
+                <include>${pom.groupId}:josso-jboss40-agent</include>
+                <include>${pom.groupId}:josso-jboss32-agent</include>
+                <include>${pom.groupId}:josso-geronimo-agent</include>
+                <include>${pom.groupId}:josso-servlet-agent</include>
+                <include>${pom.groupId}:josso-weblogic92-agent:jar</include>
+                <include>${pom.groupId}:josso-weblogic10-agent:jar</include>
+                <include>${pom.groupId}:josso-agents-bin:jar</include>
+            </includes>
+
+        </dependencySet>
+        -->
+
+        <!-- JOSSO Gatway WEB app -->
+        <dependencySet>
+            <outputDirectory>webapps/josso</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-gateway-web</include>
+            </includes>
+        </dependencySet>
+
+    </dependencySets>
+
+</assembly>

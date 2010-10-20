@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>agents</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>josso-weblogic81-agent</artifactId>
+    <packaging>jar</packaging>
+    <name>JOSSO :: WebLogic 8.1 Agent</name>
+    <description>WebLogic 8.1 Agent</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agent-j14compat</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.axis</groupId>
+                    <artifactId>axis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.4</version>
+            <classifier>wl81fix</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+
+
+        <!-- Weblogic 8.1 external dependencies -->
+
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>weblogic</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/weblogic.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>webserviceclient_ssl</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/webserviceclient+ssl.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>webserviceclient_ssl_pj</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/webserviceclient+ssl_pj.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>webserviceclient</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/webserviceclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>apachexmlbeansutil</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/webservices.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wl-j2ee-client</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wl-j2ee-client.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlbase</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlbase.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlcipher</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlcipher.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlclient</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wldb2</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wldb2.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wleorb</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wleorb.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlepool</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlepool.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlinformix</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlinformix.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wljmsclient</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wljmsclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wljtaclient</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wljtaclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wloracle</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wloracle.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlspy</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlspy.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlsqlserver</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlsqlserver.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlsybase</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlsybase.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlutil</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlutil.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlw-lang</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlw-lang.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wlxbean</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wlxbean.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wsclient81</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wsclient81.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>wsse</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/wsse.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>xbean</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/xbean.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>xmlstream</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/xmlstream.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>xmlx</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/xmlx.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+        <dependency>
+            <groupId>weblogic81</groupId>
+            <artifactId>xqrl</artifactId>
+            <version>8.1</version>
+            <systemPath>${env.WEBLOGIC_8_1_HOME}/server/lib/xqrl.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <resources>
+            <resource>
+                <directory>${pom.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${pom.basedir}/src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.4</source>
+                    <target>1.4</target>
+                </configuration>
+            </plugin>
+
+            <!-- Generate mbeans srouce artifact -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>all</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/unix-src.xml</descriptor>
+                                <descriptor>src/main/assembly/windows-src.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
+

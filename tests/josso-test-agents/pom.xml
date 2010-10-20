@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!--
+    ~ JOSSO: Java Open Single Sign-On
+    ~
+    ~ Copyright 2004-2008, Atricore, Inc.
+    ~
+    ~ This is free software; you can redistribute it and/or modify it
+    ~ under the terms of the GNU Lesser General Public License as
+    ~ published by the Free Software Foundation; either version 2.1 of
+    ~ the License, or (at your option) any later version.
+    ~
+    ~ This software is distributed in the hope that it will be useful,
+    ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    ~ Lesser General Public License for more details.
+    ~
+    ~ You should have received a copy of the GNU Lesser General Public
+    ~ License along with this software; if not, write to the Free
+    ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+    ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+    -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>tests</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.josso</groupId>
+    <artifactId>josso-test-agents</artifactId>
+    <packaging>jar</packaging>
+    <name>JOSSO :: Test :: Agents</name>
+    <description>Test :: Agents</description>
+
+    <dependencies>
+
+        <!-- =============================================================== -->
+        <!-- JOSSO Core and components used by agents                        -->
+        <!-- =============================================================== -->
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-protocol-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-ws</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-vhost-secdomainmatcher</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-appctx-secdomainmatcher</artifactId>
+        </dependency>
+
+
+        <!-- =============================================================== -->
+        <!-- JOSSO Agents                                                    -->
+        <!-- =============================================================== -->
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-tomcat60-agent</artifactId>
+        </dependency>
+
+        <!-- TODO : Add other agents -->
+
+        <!-- =============================================================== -->
+        <!-- 3rd party dependencies, needed to run agents                    -->
+        <!-- =============================================================== -->
+
+        <!-- TODO : The set of dependencies could be inherited from agent poms ? -->
+
+        <!-- Spring runtime -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+
+
+</project>

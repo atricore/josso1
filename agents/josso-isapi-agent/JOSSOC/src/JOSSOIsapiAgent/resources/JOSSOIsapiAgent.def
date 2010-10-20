@@ -1,0 +1,10 @@
+LIBRARY	     "JOSSOIsapiAgent"
+
+EXPORTS
+   HttpFilterProc
+   GetFilterVersion
+   TerminateFilter
+   GetExtensionVersion
+   HttpExtensionProc
+   TerminateExtension
+   DllMain

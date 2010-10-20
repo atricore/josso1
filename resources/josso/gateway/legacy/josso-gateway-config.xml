@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<gateway>
+
+    <!-- This is an optional component, only usefull when using multiple security domains.
+    <sso-domain-selector>
+        <class>org.josso.gateway.DomainSelectorImpl</class>
+    </sso-domain-selector>
+    -->
+
+
+    <domains>
+
+        <domain>
+            <name>MySecurityDomain1</name>
+            <type>web</type>
+
+            <!--sso-web-configuration-->
+
+                <!-- Session token properties -->
+                <!--session-token-->
+
+                    <!-- Optional : Use a secure session token, a secure channel like SSL must be available for this to work
+                    <secure>false</secure>
+                    -->
+
+
+                <!--/session-token-->
+
+                <!-- This tells the GWY where the login interface is -->
+                <!--customLoginURL>http://192.168.1.11/login.html</customLoginURL-->
+
+            <!--/sso-web-configuration-->
+
+            <!-- Only usefull when using multiple security domains ! -->
+
+            <!-- Domain matcher based on virtual host -->
+            <domain-matchers>
+                <!-- Host or VHost domain matcher, matches the security domain based on the partner app. host name
+                <domain-matcher>
+
+                    <class>org.josso.gateway.VHostSecurityDomainMatcher</class>
+                    <vhosts>www.mydomain-a.com,www.mydomain-b.com</vhosts>
+                </domain-matcher>
+                -->
+
+                <!-- Domain matcher based on application context
+                     Application Web Context security domain matcher, matches the security domain based on the partner web context
+                <domain-matcher>
+
+                    <class>org.josso.gateway.AppContextSecurityDomainMatcher</class>
+                    <appWebContexts>/partnerapp1,/</appWebContexts>
+
+                </domain-matcher>
+                -->
+
+                <!-- Simple Domain Selector, always selects the first configured domain -->
+                <!--
+                <domain-matcher>
+                    <class>org.josso.gateway.SimpleSecurityDomainMatcher</class>
+                </domain-matcher>
+                -->
+            </domain-matchers>
+
+            <authenticator>
+                <class>org.josso.auth.AuthenticatorImpl</class>
+                <authentication-schemes>
+                    <!-- Basic Authentication Scheme -->
+                    <authentication-scheme>
+                        <name>basic-authentication</name>
+                        <class>org.josso.auth.scheme.UsernamePasswordAuthScheme</class>
+
+                        <!--
+                        The message digest algorithm to be used when hashing passwords.
+                        This must be an algorithm supported by the java.security.MessageDigest class
+                        on your installer.
+
+                        In J2SE 1.4.2 you can check :
+                          Java Cryptography Architecture API Specification & Reference - Apendix B : Algorithms
+                          Values are : MD2, MD5, SHA-1, SHA-256, SHA-384, SHA-512,etc.
+
+                          To provide LDAP support, also CRYPT is available.
+                        -->
+                        <hashAlgorithm>MD5</hashAlgorithm>
+
+                        <!-- Supported values are HEX, BASE64. Mandatory if hashAlgorithm was specified -->
+                        <hashEncoding>HEX</hashEncoding>
+
+                        <!-- Some hash algorithms, like CRYPT, use this property.  The default value is 2.
+                        <saltLength>2</saltLength>
+                        -->
+
+                        <ignorePasswordCase>false</ignorePasswordCase>
+                        <ignoreUserCase>false</ignoreUserCase>
+
+                        <!-- ========================================================= -->
+                        <!-- JDBC Credential Store                                     -->
+                        <!--                                                           -->
+                        <!-- Always scape comma chars [,] in queries because           -->
+                        <!-- jakarta commons-configuration uses them to define arrays. -->
+                        <!-- ========================================================= -->
+                        <!--
+                        <credential-store>
+                            <class>org.josso.gateway.identity.service.store.db.JDBCIdentityStore</class>
+
+                            <credentialsQueryString>
+
+                                SELECT login AS username , password AS password FROM josso_user WHERE login = ?
+
+                            </credentialsQueryString>
+                            <connectionName>josso</connectionName>
+                            <connectionPassword>josso</connectionPassword>
+                            <connectionURL>jdbc:oracle:thin:@localhost:1521:josso_db</connectionURL>
+                            <driverName>oracle.jdbc.driver.OracleDriver</driverName>
+                        </credential-store>
+                        <credential-store>
+                            <class>org.josso.gateway.identity.service.store.db.DataSourceIdentityStore</class>
+
+                            <credentialsQueryString>SELECT login AS username , password AS password FROM josso_user WHERE login = ?</credentialsQueryString>
+                            <dsJndiName>java:jdbc/JossoSamplesDB</dsJndiName>
+                        </credential-store>
+                        -->
+
+                        <!-- =============================================================== -->
+                        <!-- LDAP Credential Store                                           -->
+                        <!--                                                                 -->
+                        <!-- Chcek javadoc for configuration details :                       -->
+                        <!-- org.josso.gateway.identity.service.store.ldap.LDAPIdentityStore -->
+                        <!-- =============================================================== -->
+                        <!--
+                        <credential-store>
+                            <class>org.josso.gateway.identity.service.store.ldap.LDAPIdentityStore</class>
+                            <initialContextFactory>com.sun.jndi.ldap.LdapCtxFactory</initialContextFactory>
+                            <providerUrl>ldap://ldaphost</providerUrl>
+                            <securityPrincipal>cn=Manager,dc=my-domain,dc=com</securityPrincipal>
+                            <securityCredential>secret</securityCredential>
+                            <securityAuthentication>simple</securityAuthentication>
+                            <ldapSearchScope>SUBTREE</ldapSearchScope>
+                            <usersCtxDN>ou=People,dc=my-domain,dc=com</usersCtxDN>
+                            <principalUidAttributeID>uid</principalUidAttributeID>
+                            <rolesCtxDN>ou=Roles,dc=my-domain,dc=com</rolesCtxDN>
+                            <uidAttributeID>uniquemember</uidAttributeID>
+                            <roleAttributeID>cn</roleAttributeID>
+                            <credentialQueryString>uid=username,userPassword=password</credentialQueryString>
+                            <userPropertiesQueryString>mail=mail,cn=description</userPropertiesQueryString>
+                        </credential-store>
+                        -->
+
+                        <!-- ================================================= -->
+                        <!-- Memory Credential Store                           -->
+                        <!-- ================================================= -->
+                        <credential-store>
+                            <class>org.josso.gateway.identity.service.store.MemoryIdentityStore</class>
+                            <credentialsFileName>josso-credentials.xml</credentialsFileName>
+                        </credential-store>
+
+                        <!-- ================================================= -->
+                        <!-- Credential Store Key adapter                      -->
+                        <!-- ================================================= -->
+                        <credential-store-key-adapter>
+                            <class>org.josso.gateway.identity.service.store.SimpleIdentityStoreKeyAdapter</class>
+                        </credential-store-key-adapter>
+
+                    </authentication-scheme>
+
+                    <!-- Strong Authentication Scheme -->
+                    <authentication-scheme>
+                        <name>strong-authentication</name>
+                        <class>org.josso.auth.scheme.X509CertificateAuthScheme</class>
+
+                        <!-- ========================================================= -->
+                        <!-- JDBC Credential Store                                     -->
+                        <!--                                                           -->
+                        <!-- Always scape comma chars [,] in queries because           -->
+                        <!-- jakarta commons-configuration uses them to define arrays. -->
+                        <!-- ========================================================= -->
+                        <!--
+                        <credential-store>
+                            <class>org.josso.gateway.identity.service.store.db.JDBCIdentityStore</class>
+
+                            <credentialsQueryString>
+
+                                SELECT login AS username , password AS password FROM josso_user WHERE login = ?
+
+                            </credentialsQueryString>
+                            <connectionName>josso</connectionName>
+                            <connectionPassword>josso</connectionPassword>
+                            <connectionURL>jdbc:oracle:thin:@localhost:1521:josso_db</connectionURL>
+                            <driverName>oracle.jdbc.driver.OracleDriver</driverName>
+                        </credential-store>
+                        -->
+
+                        <!-- =============================================================== -->
+                        <!-- LDAP Credential Store                                           -->
+                        <!--                                                                 -->
+                        <!-- Chcek javadoc for configuration details :                       -->
+                        <!-- org.josso.gateway.identity.service.store.ldap.LDAPIdentityStore -->
+                        <!-- =============================================================== -->
+                        <!--
+                        <credential-store>
+                            <class>org.josso.gateway.identity.service.store.ldap.LDAPIdentityStore</class>
+                            <initialContextFactory>com.sun.jndi.ldap.LdapCtxFactory</initialContextFactory>
+                            <providerUrl>ldap://ldaphost</providerUrl>
+                            <securityPrincipal>cn=Manager,dc=my-domain,dc=com</securityPrincipal>
+                            <securityCredential>secret</securityCredential>
+                            <securityAuthentication>simple</securityAuthentication>
+                            <ldapSearchScope>SUBTREE</ldapSearchScope>
+                            <usersCtxDN>ou=People,dc=my-domain,dc=com</usersCtxDN>
+                            <principalUidAttributeID>uid</principalUidAttributeID>
+                            <rolesCtxDN>ou=Roles,dc=my-domain,dc=com</rolesCtxDN>
+                            <uidAttributeID>uniquemember</uidAttributeID>
+                            <roleAttributeID>cn</roleAttributeID>
+                            <credentialQueryString>uid=username,userCertificate;binary=userCertificate</credentialQueryString>
+                            <userPropertiesQueryString>mail=mail,cn=description</userPropertiesQueryString>
+                        </credential-store>
+                        -->
+
+                        <!-- ================================================= -->
+                        <!-- Memory Credential Store                           -->
+                        <!-- ================================================= -->
+                        <credential-store>
+                            <class>org.josso.gateway.identity.service.store.MemoryIdentityStore</class>
+                            <credentialsFileName>josso-credentials.xml</credentialsFileName>
+                        </credential-store>
+
+                        <!-- ================================================= -->
+                        <!-- Credential Store Key adapter                      -->
+                        <!-- ================================================= -->
+                        <credential-store-key-adapter>
+                            <class>org.josso.gateway.identity.service.store.SimpleIdentityStoreKeyAdapter</class>
+                        </credential-store-key-adapter>
+
+                    </authentication-scheme>
+                </authentication-schemes>
+            </authenticator>
+
+            <sso-identity-manager>
+
+                <class>org.josso.gateway.identity.service.SSOIdentityManagerImpl</class>
+
+                <!-- ========================================================= -->
+                <!-- DataSource Identity Store                                 -->
+                <!--                                                           -->
+                <!-- Always scape comma chars [,] in queries because           -->
+                <!-- jakarta commons-configuration uses them to define arrays. -->
+                <!-- ========================================================= -->
+                <!--
+                <sso-identity-store>
+                    <class>org.josso.gateway.identity.service.store.db.DataSourceIdentityStore</class>
+
+                    <userQueryString>
+                        SELECT login FROM josso_user WHERE login = ?
+                    </userQueryString>
+
+                    <userPropertiesQueryString>
+                        SELECT 'user.description' AS name , description AS value FROM josso_user WHERE login = ?
+                        UNION
+                        SELECT name AS name ,  value AS value FROM josso_user_property WHERE login = ?
+                    </userPropertiesQueryString>
+
+                    <rolesQueryString>
+                        SELECT josso_role.name FROM josso_role , josso_user_role , josso_user WHERE josso_user.login = ? AND josso_user.login = josso_user_role.login AND josso_role.name = josso_user_role.name
+                    </rolesQueryString>
+
+                    <dsJndiName>java:jdbc/JossoSamplesDB</dsJndiName>
+                </sso-identity-store>
+                -->
+                <!-- ========================================================= -->
+                <!-- JDBC Identity Store                                       -->
+                <!--                                                           -->
+                <!-- Always scape comma chars [,] in queries because           -->
+                <!-- jakarta commons-configuration uses them to define arrays. -->
+                <!-- ========================================================= -->
+
+                <!--sso-identity-store>
+                    <class>org.josso.gateway.identity.service.store.db.JDBCIdentityStore</class>
+
+                    <userQueryString>
+                        SELECT login FROM josso_user WHERE login = ?
+                    </userQueryString>
+
+                    You could use a UNION to select properties from different tables/columns :
+                    SELECT 'user.lastName' AS name ,  lastName AS value FROM josso_user WHERE login = ?
+                    UNION
+                    SELECT 'user.name' AS name ,  name AS value FROM josso_user WHERE login = ?
+                    UNION
+                    SELECT name AS name ,  value AS value FROM josso_user_properties WHERE login = ?
+
+                    <userPropertiesQueryString>
+                        SELECT 'user.description' AS name , description AS value FROM josso_user WHERE login = ?
+                        UNION
+                        SELECT name AS name ,  value AS value FROM josso_user_property WHERE login = ?
+                    </userPropertiesQueryString>
+                    <rolesQueryString>
+                        SELECT josso_role.name FROM josso_role , josso_user_role , josso_user WHERE josso_user.login = ? AND josso_user.login = josso_user_role.login AND josso_role.name = josso_user_role.name
+                    </rolesQueryString>
+                    <connectionName>josso</connectionName>
+                    <connectionPassword>josso</connectionPassword>
+                    <connectionURL>jdbc:oracle:thin:@localhost:1521:josso_db</connectionURL>
+                    <driverName>oracle.jdbc.driver.OracleDriver</driverName>
+                </sso-identity-store-->
+
+                <!-- =============================================================== -->
+                <!-- LDAP Identity Store                                             -->
+                <!--                                                                 -->
+                <!-- Chcek javadoc for configuration details :                       -->
+                <!-- org.josso.gateway.identity.service.store.ldap.LDAPIdentityStore -->
+                <!-- ================================================= -->
+                <!--
+                <sso-identity-store>
+                    <class>org.josso.gateway.identity.service.store.ldap.LDAPIdentityStore</class>
+                    <initialContextFactory>com.sun.jndi.ldap.LdapCtxFactory</initialContextFactory>
+                    <providerUrl>ldap://ldaphost</providerUrl>
+                    <securityPrincipal>cn=Manager,dc=my-domain,dc=com</securityPrincipal>
+                    <securityCredential>secret</securityCredential>
+                    <securityAuthentication>simple</securityAuthentication>
+                    <ldapSearchScope>SUBTREE</ldapSearchScope>
+                    <usersCtxDN>ou=People,dc=my-domain,dc=com</usersCtxDN>
+                    <principalUidAttributeID>uid</principalUidAttributeID>
+                    <rolesCtxDN>ou=Roles,dc=my-domain,dc=com</rolesCtxDN>
+                    <uidAttributeID>uniquemember</uidAttributeID>
+                    <roleAttributeID>cn</roleAttributeID>
+                    <credentialQueryString>uid=username,userPassword=password</credentialQueryString>
+                    <userPropertiesQueryString>mail=mail,cn=description</userPropertiesQueryString>
+                </sso-identity-store>
+                -->
+
+                <!-- ================================================= -->
+                <!-- Memory Identity Store                             -->
+                <!-- ================================================= -->
+                <sso-identity-store>
+                    <class>org.josso.gateway.identity.service.store.MemoryIdentityStore</class>
+                    <usersFileName>josso-users.xml</usersFileName>
+                </sso-identity-store>
+
+                <!-- ================================================= -->
+                <!-- Identity Store Key adapter                        -->
+                <!-- ================================================= -->
+                <sso-identity-store-key-adapter>
+                    <class>org.josso.gateway.identity.service.store.SimpleIdentityStoreKeyAdapter</class>
+                </sso-identity-store-key-adapter>
+
+            </sso-identity-manager>
+
+            <sso-session-manager>
+
+                <class>org.josso.gateway.session.service.SSOSessionManagerImpl</class>
+
+                <!--
+                Set the maximum time interval, in minutes, between client requests before the SSO Service will invalidate
+                the session. A negative time indicates that the session should never time out.
+                -->
+                <maxInactiveInterval>30</maxInactiveInterval>
+
+                <!-- Max number of sessions per user, default 1
+                A negative value indicates that an unlimited number of sessions per user is allowed.
+                -->
+                <maxSessionsPerUser>-1</maxSessionsPerUser>
+                <!--
+                If true, when the max number of sessions per user is exceeded,
+                an already existing session will be invalidated to create a new one.
+                If false, when the max number of sessions per user is exceeded,
+                an exception is thrown and the new session is not created.
+                -->
+                <invalidateExceedingSessions>false</invalidateExceedingSessions>
+
+
+                <!--
+                Time interval, in milliseconds, between exired sessions cleanup.
+                -->
+                <sessionMonitorInterval>10000</sessionMonitorInterval>
+
+                <!-- =================================================================== -->
+                <!-- Serialized Session Store                                            -->
+                <!--                                                                     -->
+                <!-- Session Store implementation which uses Java Serialization to       -->
+                <!-- persist Single Sign-On user sessions.                               -->
+                <!-- It allows to reconstruct the session state after a system shutdown. -->
+                <!-- =================================================================== -->
+                <!--
+                <sso-session-store>
+                    <class>org.josso.gateway.session.service.store.SerializedSessionStore</class>
+                    file where serialized sessions will be stored (optional)
+                    <serializedFile>/tmp/josso_sessions.ser</serializedFile>
+                </sso-session-store>
+                -->
+
+
+                <!-- =============================================================== -->
+                <!-- DataSource Session Store                                        -->
+                <!--                                                                 -->
+                <!-- This store persists SSO sessions in a RDBMS, it's useful for   -->
+                <!-- example when multiple SSO servers must share session information-->
+                <!-- like in a cluster.                                              -->
+                <!--                                                                 -->
+                <!-- NOTE :Remember to escape special chars like  < with &lt; , etc  -->
+                <!--                                                                 -->
+                <!--                                                                 -->
+                <!-- Chcek javadoc for configuration details :                       -->
+                <!-- org.josso.gateway.session.service.store.db.DataSourceSessionStore -->
+                <!-- =============================================================== -->
+                <!--
+                <sso-session-store>
+
+                    <class>org.josso.gateway.session.service.store.db.DataSourceSessionStore</class>
+
+                    <dsJndiName>java:jdbc/JossoSamplesDB</dsJndiName>
+
+                    <sizeQuery>SELECT COUNT(*) FROM JOSSO_SESSION</sizeQuery>
+                    <keysQuery>SELECT session_id FROM JOSSO_SESSION</keysQuery>
+                    <loadAllQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION</loadAllQuery>
+                    <loadQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION WHERE session_id = ?</loadQuery>
+                    <loadByUserNameQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION WHERE username = ?</loadByUserNameQuery>
+
+                    <loadByLastAccessTimeQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION WHERE last_access_time &lt; ?</loadByLastAccessTimeQuery>
+                    <loadByValidQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION WHERE valid = ?</loadByValidQuery>
+                    <deleteDml>DELETE FROM JOSSO_SESSION WHERE session_id = ?</deleteDml>
+                    <deleteAllDml>DELETE FROM JOSSO_SESSION</deleteAllDml>
+                    <insertDml>INSERT INTO JOSSO_SESSION (session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid) VALUES (?, ?, ?, ?, ?, ?, ?) </insertDml>
+
+                </sso-session-store>
+                -->
+
+                <!-- =============================================================== -->
+                <!-- Jdbc Session Store                                              -->
+                <!--                                                                 -->
+                <!-- This store persists SSO sessions in a RDBMS, it's usefull for   -->
+                <!-- example when multiple SSO servers must share session information-->
+                <!-- like in a cluster.                                              -->
+                <!--                                                                 -->
+                <!-- NOTE :Remember to escape spetial chars like  < with &lt; , etc  -->
+                <!--                                                                 -->
+                <!-- Chcek javadoc for configuration details :                       -->
+                <!-- org.josso.gateway.session.service.store.db.JdbcSessionStore     -->
+                <!-- =============================================================== -->
+                <!--
+                <sso-session-store>
+
+                    <class>org.josso.gateway.session.service.store.db.JdbcSessionStore</class>
+
+                    <connectionName>josso</connectionName>
+                    <connectionPassword>josso</connectionPassword>
+                    <connectionURL>jdbc:oracle:thin:@localhost:1521:josso_db</connectionURL>
+                    <driverName>oracle.jdbc.driver.OracleDriver</driverName>
+
+                    <sizeQuery>SELECT COUNT(*) FROM JOSSO_SESSION</sizeQuery>
+                    <keysQuery>SELECT session_id FROM JOSSO_SESSION</keysQuery>
+                    <loadAllQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION</loadAllQuery>
+                    <loadQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION WHERE session_id = ?</loadQuery>
+                    <loadByUserNameQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION WHERE username = ?</loadByUserNameQuery>
+
+                    <loadByLastAccessTimeQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION WHERE last_access_time &lt; ?</loadByLastAccessTimeQuery>
+                    <loadByValidQuery>SELECT session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid FROM JOSSO_SESSION WHERE valid = ?</loadByValidQuery>
+                    <deleteDml>DELETE FROM JOSSO_SESSION WHERE session_id = ?</deleteDml>
+                    <deleteAllDml>DELETE FROM JOSSO_SESSION</deleteAllDml>
+                    <insertDml>INSERT INTO JOSSO_SESSION (session_id, userName, creation_time, last_access_time, access_count, max_inactive_interval, valid) VALUES (?, ?, ?, ?, ?, ?, ?) </insertDml>
+                    <updateDml>UPDATE JOSSO_SESSION SET userName = ?, creation_time = ?, last_access_time = ?, access_count = ?, max_inactive_interval = ?, valid = ? WHERE session_id = ?</updateDml>
+
+                </sso-session-store>
+                -->
+
+                <!-- =============================================================== -->
+                <!-- Memory Session Store                                            -->
+                <!-- =============================================================== -->
+                <sso-session-store>
+                    <class>org.josso.gateway.session.service.store.MemorySessionStore</class>
+                </sso-session-store>
+
+                <sso-session-id-generator>
+
+                    <class>org.josso.gateway.session.service.SessionIdGeneratorImpl</class>
+                    <!--
+                    The message digest algorithm to be used when generating session
+                    identifiers.  This must be an algorithm supported by the
+                    java.security.MessageDigest class on your installer.
+
+                    In J2SE 1.4.2 you can check :
+                      Java Cryptography Architecture API Specification & Reference - Apendix A : Standard Names
+                      Values are : MD2, MD5, SHA-1, SHA-256, SHA-384, SHA-512
+                    -->
+                    <algorithm>MD5</algorithm>
+
+                </sso-session-id-generator>
+
+            </sso-session-manager>
+
+            <assertion-manager>
+                <class>org.josso.gateway.assertion.AssertionManagerImpl</class>
+
+                <!-- =============================================================== -->
+                <!-- Store for persisting assertions in memory                       -->
+                <!-- =============================================================== -->
+                <assertion-store>
+                    <class>org.josso.gateway.assertion.service.store.MemoryAssertionStore</class>
+                </assertion-store>
+
+                <!-- =============================================================== -->
+                <!-- Store for persisting assertions in a database                   -->
+                <!-- =============================================================== -->
+                <!--
+                <assertion-store>
+                    <class>org.josso.gateway.assertion.service.store.db.DataSourceAssertionStore</class>
+                    <dsJndiName>java:comp/env/jdbc/josso_db</dsJndiName>
+                    <sizeQuery>SELECT COUNT(*) FROM JOSSO_ASSERTION</sizeQuery>
+                    <keysQuery>SELECT assertion_id FROM JOSSO_ASSERTION</keysQuery>
+                    <loadAllQuery>SELECT assertion_id, security_domain_name, sso_session_id, creation_time, valid FROM JOSSO_ASSERTION</loadAllQuery>
+                    <loadQuery>SELECT assertion_id, security_domain_name, sso_session_id, creation_time, valid FROM JOSSO_ASSERTION WHERE assertion_id = ?</loadQuery>
+                    <loadByValidQuery>SELECT assertion_id,  security_domain_name, sso_session_id, creation_time, valid FROM JOSSO_ASSERTION WHERE valid = ?</loadByValidQuery>
+                    <deleteDml>DELETE FROM JOSSO_ASSERTION WHERE assertion_id = ?</deleteDml>
+                    <deleteAllDml>DELETE FROM JOSSO_ASSERTION</deleteAllDml>
+                    <insertDml>INSERT INTO JOSSO_ASSERTION (assertion_id, security_domain_name, sso_session_id, creation_time, valid) VALUES (?, ?, ?, ?, ?)</insertDml>
+                </assertion-store>
+                -->
+
+                <assertion-id-generator>
+
+                    <class>org.josso.gateway.assertion.service.AssertionIdGeneratorImpl</class>
+                    <!--
+                    The message digest algorithm to be used when generating assertion
+                    identifiers.  This must be an algorithm supported by the
+                    java.security.MessageDigest class on your installer.
+
+                    In J2SE 1.4.2 you can check :
+                      Java Cryptography Architecture API Specification & Reference - Apendix A : Standard Names
+                      Values are : MD2, MD5, SHA-1, SHA-256, SHA-384, SHA-512
+                    -->
+                    <algorithm>MD5</algorithm>
+
+                </assertion-id-generator>
+
+            </assertion-manager>
+            
+            <!-- SSO Audit Manager compoment -->
+            <sso-audit-manager>
+                <class>org.josso.gateway.audit.service.SSOAuditManagerImpl</class>
+
+                <!--
+                List of handlers that will process this request
+                Every handler must have its own unique name.
+                -->
+                <handlers>
+
+                    <!-- This handler logs all audit trails using Log4J, under the given category -->
+                    <handler>
+                        <class>org.josso.gateway.audit.service.handler.LoggerAuditTrailHandler</class>
+                        <name>LoggerAuditTrailHandler</name>
+                        <category>org.josso.gateway.audit.SSO_AUDIT</category>
+                    </handler>
+
+                    <!--
+                    <handler>
+                        <class>MyOtherHandler</class>
+                        <name>MyOhterHandlerName</name>
+                        <myProperty>value</myProperty>
+                    </handler>
+                    -->
+
+                </handlers>
+            </sso-audit-manager>
+
+            <!-- SSO Event Manager component -->
+            <sso-event-manager>
+                <class>org.josso.gateway.event.security.JMXSSOEventManagerImpl</class>
+                <!--
+                JMX Name of the EventManager MBean that will send SSO Events as JMX Notifications
+                The MBean will be registered by the MBeanComponentKeeper.
+                -->
+                <oname>org.josso.gateway:ssoSecurityDomain=MySecurityDomain1,type=SSOEventManager</oname>
+                <!-- You can add your own listeners here : -->
+                <!-- Every listener should have a unique name -->
+
+                <!--
+                <listeners>
+                    <listener>
+                        <class>com.myCompany.MyEventListener</class>
+                        <name>MyEventListenerName</name>
+                        <property1>MyListenerProperty1Value</property1>
+                    </listener>
+                    <listener>
+                        <class>com.myCompany.MyOtherEventListener</class>
+                        <name>MyOtherEventListenerName</name>
+                        <propertyA>MyOtherListenerPropertyAValue</propertyA>
+                    </listener>
+                 </listeners>
+                 -->
+
+            </sso-event-manager>
+
+        </domain>
+
+    </domains>
+</gateway>

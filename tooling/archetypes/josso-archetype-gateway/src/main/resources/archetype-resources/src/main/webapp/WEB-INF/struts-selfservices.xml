@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+    <!-- ======================================================= -->
+    <!-- Forms used by different authentication schemes -->
+    <!-- ======================================================= -->
+    <form-beans>
+
+        <!--
+        Modify this depending on the challenges you are using !
+        -->
+        <form-bean name="requestChallengesForm" type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="email" type="java.lang.String"/>
+        </form-bean>
+
+        <form-bean name="requestAdditionalChallengesForm" type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="secretAnswer" type="java.lang.String"/>
+        </form-bean>
+
+        <!-- This is just used to map request parameters into a form object, the form is never rendered -->
+        <form-bean name="confirmPasswordForm" type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="josso_cmd" type="java.lang.String"/>
+            <form-property name="josso_pssId" type="java.lang.String"/>
+            <form-property name="josso_pwdId" type="java.lang.String"/>
+        </form-bean>
+
+
+    </form-beans>
+
+    <!-- ======================================================= -->
+    <!-- Global forwards common to all auth. schemes -->
+    <!-- ======================================================= -->
+    <global-forwards>
+        <forward name="fatalError" path="josso.error"/>
+        <forward name="authError" path="josso.error"/>
+        <forward name="requestConfirmPassword" path="/selfservices/lostpassword/confirmPassword.do" redirect="true"/>
+    </global-forwards>
+
+    <action-mappings>
+
+        <!-- This will require basic challenges like e-mail address -->
+        <action path="/selfservices/lostpassword/lostPassword"
+                type="org.josso.selfservices.password.LostPasswordAction">
+            <forward name="requestChallenges" path="josso.selfservices.requestChallenges"/>
+        </action>
+
+        <!-- This is where challenges form (email, etc) submites results -->
+        <action path="/selfservices/lostpassword/processChallenges"
+                validate="false"
+                type="org.josso.selfservices.password.LostPasswordAction"
+                name="requestChallengesForm">
+
+            <!-- We may need to require challenges again -->
+            <forward name="requestChallenges" path="josso.selfservices.requestChallenges"/>
+
+            <!-- If basic challenges are ok, we may want to ask for additional challenges like secret answers -->
+            <forward name="requestAdditionalChallenges" path="josso.selfservices.requestAdditionalChallenges"/>
+
+            <!-- If all challenges are ok , we want to confirm the password -->
+            <forward name="confirmPassword" path="josso.selfservices.passwordDistributed"/>
+
+            <!-- Hide auth errors from password reset requestor so the cannot guess emails, etc -->
+            <forward name="authError" path="josso.selfservices.passwordDistributed"/>
+
+        </action>
+
+        <!-- Used in more complex scenarios -->
+        <action path="/selfservices/lostpassword/requestAdditionalChallenges"
+                validate="false"
+                type="org.josso.selfservices.password.LostPasswordAction"
+                name="requestAdditionalChallengesForm">
+
+            <forward name="requestAdditionalChallenges" path="josso.selfservices.requestAdditionalChallenges"/>
+
+            <!-- If all challenges are ok , we want to confirm the password -->
+            <forward name="confirmPassword" path="josso.selfservices.passwordDistributed"/>
+        </action>
+
+        <!-- This handles password confirmation -->
+        <action path="/selfservices/lostpassword/confirmPassword"
+                validate="false"
+                type="org.josso.selfservices.password.LostPasswordAction"
+                name="confirmPasswordForm">
+
+            <!-- We may require more chalenges than the ones recieved with the confirmation URL (assertion ,etc). -->
+            <forward name="requestAdditionalConfirmationChallenges" path="josso.selfservices.requestAdditionaConfirmationChallenges"/>
+
+            <!-- If all challenges are ok, go to final state -->
+            <forward name="passwordReseted" path="josso.selfservices.passwordResetted"/>
+        </action>
+
+        <!-- Used in more complex scenarios -->
+        <action path="/selfservices/lostpassword/requestAdditionalConfirmationChallenges"
+                validate="false"
+                type="org.josso.selfservices.password.LostPasswordAction"
+                name="requestAdditionalChallengesForm">
+            <forward name="requestAdditionalConfirmationChallenges" path="josso.selfservices.requestAdditionaConfirmationChallenges"/>
+            <forward name="passwordReseted" path="josso.selfservices.passwordResetted"/>
+        </action>
+
+    </action-mappings>
+
+</struts-config>

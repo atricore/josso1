@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns:basic-authscheme="urn:org:josso:basic:authscheme"
+       xmlns:bind-authscheme="urn:org:josso:bind:authscheme"
+       xmlns:ntlm-authscheme="urn:org:josso:ntlm:authscheme"
+       xmlns:strong-authscheme="urn:org:josso:strong:authscheme"
+       xmlns:rememberme-authscheme="urn:org:josso:rememberme:authscheme"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        urn:org:josso:strong:authscheme http://www.josso.org/schema/josso-strong-authscheme.xsd
+        urn:org:josso:basic:authscheme http://www.josso.org/schema/josso-basic-authscheme.xsd
+        urn:org:josso:bind:authscheme http://www.josso.org/schema/josso-bind-authscheme.xsd
+        urn:org:josso:ntlm:authscheme http://www.josso.org/schema/josso-ntlm-authscheme.xsd
+        urn:org:josso:rememberme:authscheme http://www.josso.org/schema/josso-rememberme-authscheme.xsd
+        ">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Basic Authentication Scheme                -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <basic-authscheme:basic-auth-scheme
+            id="josso-basic-authentication"
+            hashAlgorithm="MD5"
+            hashEncoding="HEX"
+            ignorePasswordCase="false"
+            ignoreUserCase="false">
+
+        <basic-authscheme:credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </basic-authscheme:credentialStore>
+
+        <basic-authscheme:credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </basic-authscheme:credentialStoreKeyAdapter>
+
+    </basic-authscheme:basic-auth-scheme>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Strong Authentication Scheme               -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <strong-authscheme:strong-auth-scheme
+            id="josso-strong-authentication">
+
+        <strong-authscheme:credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </strong-authscheme:credentialStore>
+
+        <strong-authscheme:credentialStoreKeyAdapter>
+            <s:ref bean="josso-certificate-key-adapter"/>
+        </strong-authscheme:credentialStoreKeyAdapter>
+
+		<!--
+		<strong-authscheme:validators>
+            <s:ref bean="ocsp-validator"/>
+            <s:ref bean="crl-validator"/>
+        </strong-authscheme:validators>
+		-->
+        
+    </strong-authscheme:strong-auth-scheme>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- X509 Certificate validators                -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	<!-- Put trustStore file in the directory where      -->
+	<!-- gateway configuration is located.               -->
+	<!-- Other properties: trustPassword, httpProxyHost, --> 
+	<!-- httpProxyPort, caCertAliases                    -->
+	<!--
+	<strong-authscheme:ocsp-validator
+			id="ocsp-validator"
+			url="http://ocsp.example.com"
+			trustStore="/trustStore.jks"
+			ocspResponderCertificateAlias="respondercert">
+
+		<strong-authscheme:trustAnchorCertAliases>
+			<s:value>taCertAlias1</s:value>
+			<s:value>taCertAlias2</s:value>
+		</strong-authscheme:trustAnchorCertAliases>
+	</strong-authscheme:ocsp-validator>
+	
+	<strong-authscheme:crl-validator
+			id="crl-validator"
+			url="http://crl.example.com/crl-v2.crl"
+			trustStore="/trustStore.jks">
+		
+		<strong-authscheme:trustAnchorCertAliases>
+			<s:value>taCertAlias1</s:value>
+			<s:value>taCertAlias2</s:value>
+		</strong-authscheme:trustAnchorCertAliases>
+	</strong-authscheme:crl-validator>
+	-->
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Rememberme Authentication Scheme           -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <rememberme-authscheme:rememberme-auth-scheme
+            id="josso-rememberme-authentication" >
+
+        <rememberme-authscheme:credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </rememberme-authscheme:credentialStore>
+
+        <rememberme-authscheme:credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </rememberme-authscheme:credentialStoreKeyAdapter>
+
+    </rememberme-authscheme:rememberme-auth-scheme>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- NTLM Authentication Scheme                 -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <ntlm-authscheme:ntlm-auth-scheme
+            id="josso-ntlm-authentication">
+
+        <ntlm-authscheme:credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </ntlm-authscheme:credentialStore>
+
+        <ntlm-authscheme:credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </ntlm-authscheme:credentialStoreKeyAdapter>
+    </ntlm-authscheme:ntlm-auth-scheme>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- BIND Authentication Scheme (normally LDAP) -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Requires a be a bindalble credential store ! -->
+    <!-- name attribute is important and must not be changed -->
+    <!--
+    <bind-authscheme:bind-auth-scheme
+            id="josso-bind-authentication"
+            name="basic-authentication"
+            hashAlgorithm="MD5"
+            hashEncoding="HEX"
+            ignorePasswordCase="false"
+            ignoreUserCase="false">
+
+
+        <bind-authscheme:credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </bind-authscheme:credentialStore>
+
+        <bind-authscheme:credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </bind-authscheme:credentialStoreKeyAdapter>
+
+    </bind-authscheme:bind-auth-scheme>
+    -->
+
+
+
+</s:beans>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!--
+  - Sample namespace-based configuration using J2EE security information
+  -
+  - $Id: applicationContext-security.xml 974 2009-01-14 00:39:45Z sgonzalez $
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+
+    <bean id="springSecurityFilterChain" class="org.springframework.security.util.FilterChainProxy">
+        <sec:filter-chain-map path-type="ant">
+            <sec:filter-chain pattern="/**" filters="sif,j2eePreAuthFilter,logoutFilter,etf,fsi"/>
+        </sec:filter-chain-map>
+    </bean>
+
+    <bean id="sif" class="org.springframework.security.context.HttpSessionContextIntegrationFilter"/>
+
+    <sec:authentication-manager alias="authenticationManager" />
+
+    <bean id="preAuthenticatedAuthenticationProvider" class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+        <sec:custom-authentication-provider />
+        <property name="preAuthenticatedUserDetailsService" ref="preAuthenticatedUserDetailsService"/>
+    </bean>
+
+    <bean id="preAuthenticatedUserDetailsService"
+            class="org.springframework.security.providers.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService"/>
+
+    <bean id="j2eePreAuthFilter" class="org.springframework.security.ui.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationDetailsSource" ref="authenticationDetailsSource"/>
+    </bean>
+
+    <bean id="preAuthenticatedProcessingFilterEntryPoint"
+            class="org.springframework.security.ui.preauth.PreAuthenticatedProcessingFilterEntryPoint"/>
+
+	<bean id="logoutFilter" class="org.springframework.security.ui.logout.LogoutFilter">
+		<constructor-arg value="/"/>
+		<constructor-arg>
+			<list>
+				<bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+    <bean id="authenticationDetailsSource" class="org.springframework.security.ui.preauth.j2ee.J2eeBasedPreAuthenticatedWebAuthenticationDetailsSource">
+        <property name="mappableRolesRetriever" ref="j2eeMappableRolesRetriever"/>
+        <property name="userRoles2GrantedAuthoritiesMapper" ref="j2eeUserRoles2GrantedAuthoritiesMapper"/>
+    </bean>
+
+	<bean id="j2eeUserRoles2GrantedAuthoritiesMapper" class="org.springframework.security.authoritymapping.SimpleAttributes2GrantedAuthoritiesMapper">
+	    <property name="convertAttributeToUpperCase" value="true"/>
+    </bean>
+
+	<bean id="j2eeMappableRolesRetriever" class="org.springframework.security.ui.preauth.j2ee.WebXmlMappableAttributesRetriever">
+
+	<property name="webXmlInputStream"><bean factory-bean="webXmlResource" factory-method="getInputStream"/>
+    </property>
+    </bean>
+
+	<bean id="webXmlResource" class="org.springframework.web.context.support.ServletContextResource">
+        <constructor-arg ref="servletContext"/>
+        <constructor-arg value="/WEB-INF/web.xml"/>
+    </bean>
+
+    <bean id="servletContext" class="org.springframework.web.context.support.ServletContextFactoryBean"/>
+
+    <bean id="etf" class="org.springframework.security.ui.ExceptionTranslationFilter">
+        <property name="authenticationEntryPoint" ref="preAuthenticatedProcessingFilterEntryPoint"/>
+    </bean>
+
+	<bean id="httpRequestAccessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+        <property name="allowIfAllAbstainDecisions" value="false"/>
+        <property name="decisionVoters">
+	        <list>
+                <ref bean="roleVoter"/>
+	        </list>
+	    </property>
+    </bean>
+
+	<bean id="fsi" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="accessDecisionManager" ref="httpRequestAccessDecisionManager"/>
+        <property name="objectDefinitionSource">
+            <sec:filter-invocation-definition-source>
+                <sec:intercept-url pattern="/secure/**" access="ROLE_ADMINISTRATOR"/>
+            </sec:filter-invocation-definition-source>
+    	</property>
+    </bean>
+
+    <bean id="roleVoter" class="org.springframework.security.vote.RoleVoter"/>
+
+	<bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter">
+        <property name="wrapperClass" value="org.springframework.security.wrapper.SecurityContextHolderAwareRequestWrapper"/>
+    </bean>
+
+</beans>

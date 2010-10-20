@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns:ldap-istore="urn:org:josso:ldap:identitystore"
+		 xmlns:bind-authscheme="urn:org:josso:bind:authscheme"
+         xmlns:memory-istore="urn:org:josso:memory:identitystore"
+		 xmlns:jbportal-istore="urn:org:josso:jboss:portal:identitystore"
+         xmlns:memory-sstore="urn:org:josso:memory:sessionstore"
+         xmlns:memory-astore="urn:org:josso:memory:assertionstore"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+         urn:org:josso:ldap:identitystore http://www.josso.org/schema/josso-ldap-identitystore.xsd
+		 urn:org:josso:bind:authscheme http://www.josso.org/schema/josso-bind-authscheme.xsd
+         urn:org:josso:memory:identitystore http://www.josso.org/schema/josso-memory-identitystore.xsd
+         urn:org:josso:memory:sessionstore http://www.josso.org/schema/josso-memory-sessionstore.xsd
+         urn:org:josso:memory:assertionstore http://www.josso.org/schema/josso-memory-assertionstore.xsd
+		 urn:org:josso:jboss:portal:identitystore file:///C:/Source/JOSSO_1_8_1_B/josso/agents/josso-jbportal27-agent/target/xbean/josso-jbportal27-agent.xsd"
+        >
+
+    <!-- ===================================================================== -->
+    <!-- JOSSO Identity Store, the id is very important because it is          -->
+    <!-- referenced by the identity manager, auth schemes and who knows where  -->
+    <!-- else.                                                                 -->
+    <!-- ===================================================================== -->
+			
+	<jbportal-istore:jbportal-identity-store id="josso-identity-store" s:scope="singleton" />
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- BIND Authentication Scheme                 -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <bind-authscheme:bind-auth-scheme
+            id="josso-bind-authentication"
+            name="basic-authentication"
+            hashAlgorithm="MD5"
+            hashEncoding="HEX"
+            ignorePasswordCase="false"
+            ignoreUserCase="false">
+
+    
+        <bind-authscheme:credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </bind-authscheme:credentialStore>
+
+        <bind-authscheme:credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </bind-authscheme:credentialStoreKeyAdapter>
+
+    </bind-authscheme:bind-auth-scheme>
+
+    <!-- ===================================================================== -->
+    <!-- JOSSO Session Store, the id is very important because it is           -->
+    <!-- referenced by the session manager and who knows where else            -->
+    <!-- ===================================================================== -->
+    <memory-sstore:memory-store id="josso-session-store"/>
+
+    <!-- ===================================================================== -->
+    <!-- JOSSO Assertion Store, the id is very important because it is         -->
+    <!-- referenced by the assertion manager and who knows where elese         -->
+    <!-- ===================================================================== -->
+    <memory-astore:memory-store id="josso-assertion-store"/>
+
+</s:beans>

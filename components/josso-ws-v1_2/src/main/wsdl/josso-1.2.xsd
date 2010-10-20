@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:org:josso:gateway:ws:1.2:protocol"
+        xmlns:jossop="urn:org:josso:gateway:ws:1.2:protocol"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        elementFormDefault="qualified">
+
+    <!-- JOSSO Protocol Version 1.2 -->
+
+    <!-- ================================================================================ -->
+    <!-- SSOIdentityProvider                                                              -->
+    <!-- ================================================================================ -->
+
+    <element name="ResolveAuthenticationAssertionRequest" type="jossop:ResolveAuthenticationAssertionRequestType"/>
+    <complexType name="ResolveAuthenticationAssertionRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="assertionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="ResolveAuthenticationAssertionResponse" type="jossop:ResolveAuthenticationAssertionResponseType"/>
+    <complexType name="ResolveAuthenticationAssertionResponseType">
+        <sequence>
+            <element name="ssoSessionId" type="string"/>
+            <element name="securityDomain" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="AssertIdentityWithSimpleAuthenticationRequest"
+             type="jossop:AssertIdentityWithSimpleAuthenticationRequestType"/>
+    <complexType name="AssertIdentityWithSimpleAuthenticationRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="securityDomain" type="string"/>
+            <element name="username" type="string"/>
+            <element name="password" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="AssertIdentityWithSimpleAuthenticationResponse"
+             type="jossop:AssertIdentityWithSimpleAuthenticationResponseType"/>
+    <complexType name="AssertIdentityWithSimpleAuthenticationResponseType">
+        <sequence>
+            <element name="assertionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="GlobalSignoffRequest" type="jossop:GlobalSignoffRequestType"/>
+    <complexType name="GlobalSignoffRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="ssoSessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="GlobalSignoffResponse" type="jossop:GlobalSignoffResponseType"/>
+    <complexType name="GlobalSignoffResponseType">
+        <sequence>
+            <element name="ssoSessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <!-- faults -->
+    <element name="SSOIdentityProviderError" type="jossop:SSOIdentityProviderErrorType"/>
+    <complexType name="SSOIdentityProviderErrorType">
+        <sequence>
+            <element name="errMessage" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="AssertionNotValidError" type="jossop:AssertionNotValidErrorType"/>
+    <complexType name="AssertionNotValidErrorType">
+        <sequence>
+            <element name="assertionId" type="string"/>
+        </sequence>
+    </complexType>
+
+
+    <!-- ================================================================================ -->
+    <!-- SSOIdentityManager                                                               -->
+    <!-- ================================================================================ -->
+    <element name="FindUserInSessionRequest" type="jossop:FindUserInSessionRequestType"/>
+    <complexType name="FindUserInSessionRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="ssoSessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="FindUserInSessionResponse" type="jossop:FindUserInSessionResponseType"/>
+    <complexType name="FindUserInSessionResponseType">
+        <sequence>
+            <element ref="jossop:SSOUser" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <element name="FindUserInSecurityDomainRequest" type="jossop:FindUserInSecurityDomainRequestType"/>
+    <complexType name="FindUserInSecurityDomainRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="securityDomain" type="string"/>
+            <element name="username" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="FindUserInSecurityDomainResponse" type="jossop:FindUserInSecurityDomainResponseType"/>
+    <complexType name="FindUserInSecurityDomainResponseType">
+        <sequence>
+            <element ref="jossop:SSOUser" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <element name="FindRolesBySSOSessionIdRequest" type="jossop:FindRolesBySSOSessionIdRequestType"/>
+    <complexType name="FindRolesBySSOSessionIdRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="ssoSessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="FindRolesBySSOSessionIdResponse" type="jossop:FindRolesBySSOSessionIdResponseType"/>
+    <complexType name="FindRolesBySSOSessionIdResponseType">
+        <sequence>
+            <element name="username" type="string" nillable="true"/>
+            <element name="roles" type="jossop:SSORoleType" maxOccurs="unbounded" minOccurs="0"/>
+        </sequence>
+    </complexType>
+
+    <element name="UserExistsRequest" type="jossop:UserExistsRequestType"/>
+    <complexType name="UserExistsRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="securityDomain" type="string"/>
+            <element name="username" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="UserExistsResponse" type="jossop:UserExistsResponseType"/>
+    <complexType name="UserExistsResponseType">
+        <sequence>
+            <element name="userexists" type="boolean"/>
+        </sequence>
+    </complexType>
+
+    <!-- faults -->
+    <element name="SSOIdentityManagerError" type="jossop:SSOIdentityManagerErrorType"/>
+    <complexType name="SSOIdentityManagerErrorType">
+        <sequence>
+            <element name="errMessage" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="NoSuchUserError" type="jossop:NoSuchUserErrorType"/>
+    <complexType name="NoSuchUserErrorType">
+        <sequence>
+            <element name="securityDomain" type="string"/>
+            <element name="username" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="InvalidSessionError" type="jossop:InvalidSessionErrorType"/>
+    <complexType name="InvalidSessionErrorType">
+        <sequence>
+            <element name="sessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <!-- ================================================================================ -->
+    <!-- SSOSessionManager                                                                -->
+    <!-- ================================================================================ -->
+
+    <element name="AccessSessionRequest" type="jossop:AccessSessionRequestType"/>
+    <complexType name="AccessSessionRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="ssoSessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="AccessSessionResponse" type="jossop:AccessSessionResponseType"/>
+    <complexType name="AccessSessionResponseType">
+        <sequence>
+            <element name="ssoSessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="SessionRequest" type="jossop:SessionRequestType"/>
+    <complexType name="SessionRequestType">
+        <sequence>
+            <element name="requester" type="string"/>
+            <element name="sessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="SessionResponse" type="jossop:SessionResponseType"/>
+    <complexType name="SessionResponseType">
+        <sequence>
+            <element ref="jossop:SSOSession" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <!-- faults -->
+
+    <element name="SSOSessionError" type="jossop:SSOSessionErrorType"/>
+    <complexType name="SSOSessionErrorType">
+        <sequence>
+            <element name="errMessage" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="NoSuchSessionError" type="jossop:NoSuchSessionErrorType"/>
+    <complexType name="NoSuchSessionErrorType">
+        <sequence>
+            <element name="sessionId" type="string"/>
+        </sequence>
+    </complexType>
+
+    <!-- ================================================================================ -->
+    <!-- JOSSO entityes                                                                   -->
+    <!-- ================================================================================ -->
+    <element name="SSOSession" type="jossop:SSOSessionType"/>
+    <complexType name="SSOSessionType">
+        <sequence>
+            <element name="id" type="string"/>
+            <element name="creationTime" type="long"/>
+            <element name="lastAccessTime" type="long"/>
+            <element name="maxInactiveInterval" type="int"/>
+            <element name="username" type="string"/>
+            <element name="accessCount" type="long"/>
+            <element name="valid" type="boolean"/>
+        </sequence>
+    </complexType>
+
+    <element name="SSOUser" type="jossop:SSOUserType"/>
+    <complexType name="SSOUserType">
+        <sequence>
+            <!--<element name="properties" type="jossop:ArrayOfSSONameValuePairType"/>-->
+            <element name="properties" type="jossop:SSONameValuePairType" maxOccurs="unbounded" minOccurs="0"/>
+            <element name="name" type="string"/>
+            <element name="securitydomain" type="string"/>
+        </sequence>
+    </complexType>
+
+    <element name="SSORole" type="jossop:SSORoleType"/>
+    <complexType name="SSORoleType">
+        <attribute name="name" type="string" use="required"/>
+    </complexType>
+
+    <element name="SSONameValuePair" type="jossop:SSONameValuePairType"/>
+    <complexType name="SSONameValuePairType">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="value" type="string" use="required"/>
+    </complexType>
+</schema>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns="urn:org:josso:core"
+       xmlns:def-sdselector="urn:org:josso:default:secdomainselector"
+       xmlns:def-sdregistry="urn:org:josso:default:secdomainregistry"
+       xmlns:simple-sdmatcher="urn:org:josso:simple:secdomainmatcher"
+       xmlns:vhost-sdmatcher="urn:org:josso:vhost:secdomainmatcher"
+       xmlns:appcxt-sdmatcher="urn:org:josso:appctx:secdomainmatcher"
+       xmlns:def-auth="urn:org:josso:default:authenticator"
+       xmlns:basic-authscheme="urn:org:josso:basic:authscheme"
+       xmlns:bind-authscheme="urn:org:josso:bind:authscheme"
+       xmlns:ntlm-authscheme="urn:org:josso:ntlm:authscheme"
+       xmlns:strong-authscheme="urn:org:josso:strong:authscheme"
+       xmlns:memory-istore="urn:org:josso:memory:identitystore"
+       xmlns:def-identitymgr="urn:org:josso:default:identitymgr"
+       xmlns:def-identityprv="urn:org:josso:default:identityprovider"
+       xmlns:def-sessionmgr="urn:org:josso:default:sessionmgr"
+       xmlns:memory-sstore="urn:org:josso:memory:sessionstore"
+       xmlns:def-sidgen="urn:org:josso:default:sessionidgen"
+       xmlns:def-assertionmgr="urn:org:josso:default:assertionmgr"
+       xmlns:memory-astore="urn:org:josso:memory:assertionstore"
+       xmlns:def-aidgen="urn:org:josso:default:assertionidgen"
+       xmlns:def-auditmgr="urn:org:josso:default:auditmgr"
+       xmlns:logger-atrailhandler="urn:org:josso:logger:audittrailhandler"
+       xmlns:def-eventmgr="urn:org:josso:default:eventmgr"
+       xmlns:def-pwdmgr="urn:org:josso:default:passwordmgr"
+       xmlns:def-pwdgen="urn:org:josso:default:passwordgenerator"
+       xmlns:email-pwddist="urn:org:josso:email:passworddistributor"
+       xmlns:simple-lostpwd="urn:org:josso:simple:lostpasswordprocess"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <s:import resource="josso-gateway-auth.xml"/>
+    <s:import resource="josso-gateway-selfservices.xml"/>
+    <s:import resource="josso-gateway-stores.xml" />
+    <s:import resource="josso-gateway-web.xml" />
+    <s:import resource="josso-gateway-jmx.xml" />
+
+    <!-- JOSSO Default security domain -->
+    <domain name="josso-1" type="web">
+
+        <sso-web-configuration>
+            <s:ref bean="josso-1-web-configuraiton"/>
+        </sso-web-configuration>
+
+        <matchers>
+            <appcxt-sdmatcher:appctx-matcher appWebContexts="/webapp1,/webapp2"/>
+        </matchers>
+
+        <authenticator>
+            <s:ref bean="josso-1-authenticator"/>
+        </authenticator>
+
+        <identity-manager>
+            <s:ref bean="josso-1-identity-manager"/>
+        </identity-manager>
+
+        <session-manager>
+            <s:ref bean="josso-1-session-manager"/>
+        </session-manager>
+
+        <assertion-manager>
+            <s:ref bean="josso-1-assertion-manager"/>
+        </assertion-manager>
+
+        <identity-provider>
+            <s:ref bean="josso-1-identity-provider"/>
+        </identity-provider>
+
+        <audit-manager>
+            <s:ref bean="josso-1-audit-manager"/>
+        </audit-manager>
+
+        <event-manager>
+            <s:ref bean="josso-1-event-manager"/>
+        </event-manager>
+
+        <!-- Only needed when using NTLM -->
+        <protocol-manager>
+            <s:ref bean="josso-1-protocol-manager"/>
+        </protocol-manager>
+
+        <!-- Only neede for self-services (lost password, etc). -->
+        <password-manager>
+            <s:ref bean="josso-1-password-manager"/>
+        </password-manager>
+
+    </domain>
+
+
+    <!-- ===================================================================== -->
+    <!-- SSO Authenticator, all authentication schemes must be configured here -->
+    <!-- ===================================================================== -->
+    <def-auth:authenticator id="josso-1-authenticator">
+        <schemes>
+            <s:ref bean="josso-1-basic-authentication"/>
+            <s:ref bean="josso-1-strong-authentication"/>
+            <s:ref bean="josso-1-rememberme-authentication"/>
+            <!-- Others like NTLM and BIND go here -->
+        </schemes>
+    </def-auth:authenticator>
+
+    <!-- ===================================================================== -->
+    <!-- SSO Identity manager, referencing identity store                      -->
+    <!-- ===================================================================== -->
+    <def-identitymgr:identity-manager id="josso-1-identity-manager">
+        <identityStore>
+            <s:ref bean="josso-1-identity-store"/>
+        </identityStore>
+        <identityStoreKeyAdapter>
+            <s:ref bean="josso-1-simple-key-adapter"/>
+        </identityStoreKeyAdapter>
+    </def-identitymgr:identity-manager>
+
+    <!-- ===================================================================== -->
+    <!-- SSO Identity provider                                                 -->
+    <!-- ===================================================================== -->
+    <def-identityprv:identity-provider id="josso-1-identity-provider"/>
+
+    <!-- ===================================================================== -->
+    <!-- SSO Session manager, referencing session store                        -->
+    <!-- ===================================================================== -->
+    <def-sessionmgr:session-manager id="josso-1-session-manager"
+            maxInactiveInterval="30"
+            maxSessionsPerUser="-1"
+            invalidateExceedingSessions="false"
+            sessionMonitorInterval="10000">
+
+        <session-id-generator>
+            <def-sidgen:id-generator algorithm="MD5"/>
+        </session-id-generator>
+
+        <session-store>
+            <s:ref bean="josso-1-session-store"/>
+        </session-store>
+
+    </def-sessionmgr:session-manager>
+
+    <!-- ===================================================================== -->
+    <!-- SSO Assertion anager, referencing assertion store                     -->
+    <!-- ===================================================================== -->
+    <def-assertionmgr:assertion-manager id="josso-1-assertion-manager">
+
+        <assertion-id-generator>
+            <def-aidgen:id-generator/>
+        </assertion-id-generator>
+
+        <assertion-store>
+            <s:ref bean="josso-1-assertion-store"/>
+        </assertion-store>
+
+    </def-assertionmgr:assertion-manager>
+
+    <!-- ===================================================================== -->
+    <!-- SSO Audit Manager with audit trail handlers                           -->
+    <!-- ===================================================================== -->
+    <def-auditmgr:audit-manager id="josso-1-audit-manager">
+        <handlers>
+            <logger-atrailhandler:audittrail-logger category="org.josso.AUDIT"/>
+        </handlers>
+    </def-auditmgr:audit-manager>
+
+    <!-- ===================================================================== -->
+    <!-- SSO Protocol Manager with handlers                                    -->
+    <!-- ===================================================================== -->
+    <default-protocol-manager id="josso-1-protocol-manager">
+        <!--
+        <handlers>
+            <ntlm-authscheme:ntlm-protocol-handler/>
+        </handlers>
+        -->
+    </default-protocol-manager>
+
+    <!-- ===================================================================== -->
+    <!-- SSO Event manager, based on spring jmx                                -->
+    <!-- ===================================================================== -->
+    <def-eventmgr:springjmx-event-manager id="josso-1-event-manager">
+        <listeners>
+            <s:ref bean="josso-1-audit-manager"/>
+        </listeners>
+    </def-eventmgr:springjmx-event-manager>
+
+    <!-- ===================================================================== -->
+    <!-- SSO Simple key addapter used in several components                    -->
+    <!-- ===================================================================== -->
+    <simple-key-adapter id="josso-1-simple-key-adapter"/>
+
+    <!-- ===================================================================== -->
+    <!-- Spring Mail Sender bean.  Configure mail delivery settings here       -->
+    <!-- ===================================================================== -->
+    <s:bean id="josso-1-spring-mailsender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <!-- Spring JavaMaileSender properties :
+            protocol, host, port, username, password -->
+        <s:property name="host" value="mail.mycompany.com"/>
+    </s:bean>
+
+</s:beans>

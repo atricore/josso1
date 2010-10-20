@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!--
+    ~ JOSSO: Java Open Single Sign-On
+    ~
+    ~ Copyright 2004-2008, Atricore, Inc.
+    ~
+    ~ This is free software; you can redistribute it and/or modify it
+    ~ under the terms of the GNU Lesser General Public License as
+    ~ published by the Free Software Foundation; either version 2.1 of
+    ~ the License, or (at your option) any later version.
+    ~
+    ~ This software is distributed in the hope that it will be useful,
+    ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    ~ Lesser General Public License for more details.
+    ~
+    ~ You should have received a copy of the GNU Lesser General Public
+    ~ License along with this software; if not, write to the Free
+    ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+    ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+    -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>distributions</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.josso</groupId>
+    <artifactId>josso-agents-j14bin</artifactId>
+    <name>JOSSO :: Agents JDK 1.4 binary</name>
+    <description>Agents JDK 1.4 binary</description>
+    <packaging>jar</packaging>
+
+
+    <dependencies>
+        <!-- JOSSO Agent Core and Agent Components -->
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agent-j14compat</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+
+
+                <executions>
+
+                    <!-- Assemble all agents 3rd party dependencies in .zip and .tar.gz formats -->
+                    <execution>
+                        <id>3rdparty-j14axis</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/3rdparty-j14axis.xml</descriptor>
+                            </descriptors>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                    <!-- Assemble all agents 3rd party dependencies in .zip and .tar.gz formats -->
+                    <execution>
+                        <id>3rdpary-j14</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/3rdparty-j14.xml</descriptor>
+                            </descriptors>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>org.josso</groupId>
+                            <artifactId>josso-common</artifactId>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.josso</groupId>
+                            <artifactId>josso-agent-j14compat</artifactId>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.josso</groupId>
+                            <artifactId>josso-ws</artifactId>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                        </artifactItem>
+                    </artifactItems>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <classesDirectory>target/dependency</classesDirectory>
+
+                    <excludes>
+                        <exclude>org/josso/gateway/SSONameValuePair.class</exclude>
+                        <exclude>org/josso/gateway/identity/SSOUser.class</exclude>
+                    </excludes>
+
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <profiles>
+        <profile>
+            <id>all</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <version>1.8.4-SNAPSHOT</version>
+                    <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>commons-discovery</groupId>
+                    <artifactId>commons-discovery</artifactId>
+                    <version>0.2</version>
+                </dependency>
+                
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>weblogic81</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <version>1.8.4-SNAPSHOT</version>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <version>1.8.4-SNAPSHOT</version>
+                    <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>commons-discovery</groupId>
+                    <artifactId>commons-discovery</artifactId>
+                    <version>0.2</version>
+                </dependency>
+                
+            </dependencies>
+
+
+        </profile>
+
+    </profiles>
+</project>

@@ -1,0 +1,29 @@
+<object runat="server" scope="application" id="josso" progid="JOSSOActiveX.Bean.1"></object>
+
+<!--METADATA TYPE="TypeLib"
+uuid="{FA564C45-6AE6-4610-9C50-C5B2D37AD9BB}"
+-->
+
+<script language="vbscript" runat="server">
+
+	sub Application_OnStart
+	
+	  ' JOSSO Gateway SOAP end point
+	  josso.setProperty "gwy.endpoint", "my-josso-host:8080"
+	  
+	  ' JOSSO Gateway Login/Logout urls
+	  josso.setProperty "gwy.login", "http://my-josso-host:8080/josso/signon/login.do"
+	  josso.setProperty "gwy.logout", "http://my-josso-host:8080/josso/signon/logout.do"
+
+	  ' JOSSO ASP Agent base code i.e. /josso-asp for http://my-host.com/josso-asp/josso.asp, etc
+	  josso.setProperty "agent.basecode", "/partnerapp/josso-asp"
+
+
+	  ' JOSSO Log4J configuration properties (Optional!)
+	  ' josso.setLog4jProperties("c:\josso-wa\log4j.properties")
+	  
+	  ' Initialize josso object
+	  josso.init()
+	end sub
+
+</script>

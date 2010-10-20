@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<assembly>
+    <id>bin</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>server/lib</outputDirectory>
+            <includes>
+                <include>org.josso:josso-tomcat55-agent</include>
+                <include>org.apache.axis:axis</include>
+                <include>commons-beanutils:commons-beanutils</include>
+                <include>commons-collections:commons-collections</include>
+                <include>commons-configuration:commons-configuration</include>
+                <include>commons-digester:commons-digester</include>
+                <include>commons-discovery:commons-discovery</include>
+                <include>commons-httpclient:commons-httpclient</include>
+                <include>commons-lang:commons-lang</include>
+                <include>org.apache.axis:axis-jaxrpc</include>
+                <include>org.apache.axis:axis-saaj</include>
+                <include>org.apache.axis:axis-wsdl4j</include>
+                <include>org.springframework:spring-aop</include>
+                <include>org.springframework:spring-beans</include>
+                <include>org.springframework:spring-context</include>
+                <include>org.springframework:spring-core</include>
+                <include>org.springframework:spring-jmx</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>common/lib</outputDirectory>
+            <includes>
+                <include>org.josso:josso-agent-shared</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+</assembly>
+        

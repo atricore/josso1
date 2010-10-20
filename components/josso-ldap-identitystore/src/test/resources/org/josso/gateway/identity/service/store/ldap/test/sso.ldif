@@ -1,0 +1,72 @@
+#
+# Sample LDIF file for creating a entries for holding Single Sign-On users
+# and roles.
+#
+# Version: $Id: sso.ldif 543 2008-03-18 21:34:58Z sgonzalez $
+#
+# Organization DEFINITION
+
+dn: dc=com
+dc: com
+o: com
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+
+dn: dc=my-domain,dc=com
+dc: my-domain
+o: my-domain
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+
+# OU DEFINITIONS
+# People OU - for holding records of all individuals
+dn: ou=People,dc=my-domain,dc=com
+ou: People
+objectClass: top
+objectClass: organizationalUnit
+
+# Roles OU - for holding records of roles and the users to which those roles
+# have been assigned
+dn: ou=Roles,dc=my-domain,dc=com
+ou: Roles
+objectClass: top
+objectClass: organizationalUnit
+
+# PEOPLE ENTRIES
+dn: uid=user1,ou=People,dc=my-domain,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+sn: User1 SN
+cn: User1 CN
+uid: user1
+userpassword: user1pwd
+mail: user1@josso.org
+
+dn: uid=user2,ou=People,dc=my-domain,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+sn: User2 SN
+cn: User2 CN
+uid: user2
+userpassword: user2pwd
+mail: user2@josso.org
+
+# ROLES ENTRIES
+dn: cn=role1,ou=Roles,dc=my-domain,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: role1
+uniqueMember: uid=user1,ou=People,dc=my-domain,dc=com
+
+dn: cn=role2,ou=Roles,dc=my-domain,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: role2
+uniqueMember: uid=user2,ou=People,dc=my-domain,dc=com
+uniqueMember: uid=user1,ou=People,dc=my-domain,dc=com

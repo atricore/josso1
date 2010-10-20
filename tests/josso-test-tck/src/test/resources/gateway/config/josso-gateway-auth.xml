@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns:basic-authscheme="urn:org:josso:basic:authscheme"
+       xmlns:bind-authscheme="urn:org:josso:bind:authscheme"
+       xmlns:ntlm-authscheme="urn:org:josso:ntlm:authscheme"
+       xmlns:strong-authscheme="urn:org:josso:strong:authscheme"
+       xmlns:rememberme-authscheme="urn:org:josso:rememberme:authscheme"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- Basic Authentication scheme configuration -->
+    <basic-authscheme:basic-auth-scheme
+            id="josso-basic-authentication"
+            hashAlgorithm="MD5"
+            hashEncoding="HEX"
+            ignorePasswordCase="false"
+            ignoreUserCase="false">
+
+        <credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </credentialStore>
+
+        <credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </credentialStoreKeyAdapter>
+
+    </basic-authscheme:basic-auth-scheme>
+
+    <!-- Strong Authentication scheme configuration -->
+    <strong-authscheme:strong-auth-scheme
+            id="josso-strong-authentication">
+
+        <credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </credentialStore>
+
+        <credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </credentialStoreKeyAdapter>
+
+    </strong-authscheme:strong-auth-scheme>
+
+    <!-- Rememberme Authentication scheme configuration -->
+    <rememberme-authscheme:rememberme-auth-scheme
+            id="josso-rememberme-authentication" >
+
+        <credentialStore>
+            <s:ref bean="josso-identity-store"/>
+        </credentialStore>
+
+        <credentialStoreKeyAdapter>
+            <s:ref bean="josso-simple-key-adapter"/>
+        </credentialStoreKeyAdapter>
+
+    </rememberme-authscheme:rememberme-auth-scheme>
+
+    <!-- TODO : Add NTLM, Bind -->
+
+</s:beans>

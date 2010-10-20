@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+
+    <s:bean id="exporter-1" class="org.springframework.jmx.export.MBeanExporter">
+        <!-- Locate Container MBean Server -->
+        <s:property name="server" ref="mBeanServer"/>
+
+        <!-- MBeans -->
+        <s:property name="beans">
+
+            <s:map>
+
+                <!-- Use the security domain name as prefix 'josso:' -->
+                <s:entry key="josso:type=SSOSecurityDomainInfo" value-ref="josso-A-security-domaininfo" />
+
+                <!--
+                Expose only main components, we could also expose stores, auth schemes, etc
+                -->
+                <s:entry key="josso-A:type=Authenticator" value-ref="josso-A-authenticator" />
+                <s:entry key="josso-A:type=SSOSessionManager" value-ref="josso-A-session-manager" />
+                <s:entry key="josso-A:type=SSOAssertionManager" value-ref="josso-A-assertion-manager" />
+                <s:entry key="josso-A:type=SSOIdentityManager" value-ref="josso-A-identity-manager" />
+                <s:entry key="josso-A:type=SSOIdentityProvider" value-ref="josso-A-identity-provider" />
+                <s:entry key="josso-A:type=SSOAuditManager" value-ref="josso-A-identity-provider" />
+                <!-- You can expose more components as MBeans, like stores, etc. -->
+
+                <!-- DO NOT REMOVE THIS ! -->
+                <s:entry key="josso-A:type=SSOEventManager" value-ref="josso-A-event-manager"/>
+            </s:map>
+        </s:property>
+
+        <s:property name="assembler">
+            <s:bean class="org.springframework.jmx.export.assembler.MethodNameBasedMBeanInfoAssembler">
+                <s:property name="methodMappings">
+                    <s:props>
+                        <s:prop key="josso-A:type=SSOSecurityDomainInfo">getFullName,getName,getVersion,getSessionCount,invalidateAll,invalidateSession,invalidateUserSessions,listSessions,listUserSessions,userExists</s:prop>
+                        <s:prop key="josso-A:type=Authenticator">getName,getSchemeNames,getAuthCount,getAuthFailures</s:prop>
+                        <s:prop key="josso-A:type=SSOSessionManager">getName,checkValidSessions,getMaxInactiveInterval,setMaxInactiveInterval,getMaxSessionsPerUser,setMaxSessionsPerUser,getSessionMonitorInterval,setSessionMonitorInterval,isInvalidateExceedingSessions,setInvalidateExceedingSessions</s:prop>
+                        <s:prop key="josso-A:type=SSOAssertionManager">getName,checkPendingAssertions</s:prop>
+                        <s:prop key="josso-A:type=SSOIdentityManager">getName,userExists</s:prop>
+                        <s:prop key="josso-A:type=SSOIdentityProvider">getName</s:prop>
+                        <s:prop key="josso-A:type=SSOAuditManager">getName</s:prop>
+                    </s:props>
+                </s:property>
+            </s:bean>
+        </s:property>
+
+        <!-- Notification Listener-->
+        <s:property name="notificationListenerMappings">
+            <s:map>
+                <s:entry key="*">
+                    <s:ref bean="josso-A-event-manager"/>
+                </s:entry>
+            </s:map>
+        </s:property>
+
+        <s:property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING"/>
+
+    </s:bean>
+
+    <!-- ================================================================ -->
+    <!-- JOSSO MBeans : This are specific information components          -->
+    <!-- ================================================================ -->
+
+    <s:bean name="josso-A-security-domaininfo" class="org.josso.gateway.SSOSecurityDomainInfo">
+        <s:constructor-arg>
+            <!-- This is the security-domain bean name, as defined in the josso-gateway-config.xml file -->
+            <s:ref bean="josso-A"/>
+        </s:constructor-arg>
+    </s:bean>
+
+</s:beans>

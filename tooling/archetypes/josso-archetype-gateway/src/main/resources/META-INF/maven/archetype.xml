@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<archetype>
+    <id>josso-archetype-gateway</id>
+    <resources>
+        <resource>pom.xml</resource>
+        <resource>src/main/resources/josso-gateway-memory-stores.xml</resource>
+        <resource>src/main/resources/josso-gateway-ldap-stores.xml</resource>
+        <resource>src/main/resources/josso-gateway-web.xml</resource>
+        <resource>src/main/resources/josso-gateway-selfservices.xml</resource>
+        <resource>src/main/resources/josso-gateway-stores.xml</resource>
+        <resource>src/main/resources/josso-gateway-jmx.xml</resource>
+        <resource>src/main/resources/josso-gateway-auth.xml</resource>
+        <resource>src/main/resources/josso-users.xml</resource>
+        <resource>src/main/resources/josso-credentials.xml</resource>
+        <resource>src/main/resources/josso-gateway-db-stores.xml</resource>
+        <resource>src/main/resources/josso-gateway-config.xml</resource>
+        <resource>src/main/resources/josso-auth.properties</resource>
+        <resource>src/main/webapp/selfservices/lostpassword/requestAdditionalChallenges.jsp</resource>
+        <resource>src/main/webapp/selfservices/lostpassword/passwordResetted.jsp</resource>
+        <resource>src/main/webapp/selfservices/lostpassword/passwordDistributed.jsp</resource>
+        <resource>src/main/webapp/selfservices/lostpassword/requestChallenges.jsp</resource>
+        <resource>src/main/webapp/selfservices/lostpassword/requestAdditionalConfirmationChallenges.jsp</resource>
+        <resource>src/main/webapp/WEB-INF/tlds/struts-html.tld</resource>
+        <resource>src/main/webapp/WEB-INF/tlds/struts-template.tld</resource>
+        <resource>src/main/webapp/WEB-INF/tlds/struts-tiles.tld</resource>
+        <resource>src/main/webapp/WEB-INF/tlds/struts-nested.tld</resource>
+        <resource>src/main/webapp/WEB-INF/tlds/struts-logic.tld</resource>
+        <resource>src/main/webapp/WEB-INF/tlds/struts-bean.tld</resource>
+        <resource>src/main/webapp/WEB-INF/struts-selfservices.xml</resource>
+        <resource>src/main/webapp/WEB-INF/weblogic.xml</resource>
+        <resource>src/main/webapp/WEB-INF/tiles-selfservices.xml</resource>
+        <resource>src/main/webapp/WEB-INF/jboss-web.xml</resource>
+        <resource>src/main/webapp/WEB-INF/geronimo-web.xml</resource>
+        <resource>src/main/webapp/WEB-INF/tiles-josso.xml</resource>
+        <resource>src/main/webapp/WEB-INF/tiles-signon.xml</resource>
+        <resource>src/main/webapp/WEB-INF/server-config.wsdd</resource>
+        <resource>src/main/webapp/WEB-INF/struts-signon.xml</resource>
+        <resource>src/main/webapp/WEB-INF/web.xml</resource>
+        <resource>src/main/webapp/WEB-INF/classes/ApplicationResources.properties</resource>
+        <resource>src/main/webapp/WEB-INF/classes/passwordVerificationEmail.vm</resource>
+        <resource filtered="false">src/main/webapp/resources/img/body.gif</resource>
+        <resource filtered="false">src/main/webapp/resources/img/highlight-top.jpg</resource>
+        <resource filtered="false">src/main/webapp/resources/img/icons.gif</resource>
+        <resource filtered="false">src/main/webapp/resources/img/buttons.jpg</resource>
+        <resource filtered="false">src/main/webapp/resources/img/html.gif</resource>
+        <resource filtered="false">src/main/webapp/resources/img/header.jpg</resource>
+        <resource filtered="false">src/main/webapp/resources/img/footer.gif</resource>
+        <resource filtered="false">src/main/webapp/resources/img/body.jpg</resource>
+        <resource filtered="false">src/main/webapp/resources/img/highlight-shadow.jpg</resource>
+        <resource filtered="false">src/main/webapp/resources/img/content/atricore-logo.gif</resource>
+        <resource filtered="false">src/main/webapp/resources/img/content/josso-logo.png</resource>
+        <resource filtered="false">src/main/webapp/resources/img/icon-alert.gif</resource>
+        <resource filtered="false">src/main/webapp/resources/css/reset.css</resource>
+        <resource filtered="false">src/main/webapp/resources/css/screen.css</resource>
+        <resource filtered="false">src/main/webapp/resources/css/ie6.css</resource>
+        <resource filtered="false">src/main/webapp/resources/css/ie7.css</resource>
+        <resource>src/main/webapp/josso-layout.jsp</resource>
+        <resource>src/main/webapp/signon/loginResult.jsp</resource>
+        <resource>src/main/webapp/signon/info.jsp</resource>
+        <resource>src/main/webapp/signon/usernamePasswordLogin.jsp</resource>
+        <resource>src/main/webapp/josso-error.jsp</resource>
+    </resources>
+</archetype>

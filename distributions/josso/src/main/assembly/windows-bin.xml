@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<assembly>
+    <id></id>
+    <!-- intentionally left blank -> http://jira.codehaus.org/browse/MASSEMBLY-301 -->
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <fileSets>
+
+        <!-- Copy over bin separately to get the correct file mode -->
+        <fileSet>
+            <directory>src/main/bin</directory>
+            <outputDirectory>/bin</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <filtered>true</filtered>
+            <fileMode>0755</fileMode>
+            <lineEnding>dos</lineEnding>
+        </fileSet>
+
+        <!-- Copy gshell configuration -->
+
+        <fileSet>
+            <directory>src/main/resources/etc</directory>
+            <outputDirectory>/etc</outputDirectory>
+            <lineEnding>dos</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>src/main/resources/dist/</directory>
+            <outputDirectory>/dist/</outputDirectory>
+            <lineEnding>dos</lineEnding>
+        </fileSet>
+
+        <!-- Some agent components -->
+
+        <fileSet>
+            <directory>${project.build.directory}/3rdparty/josso-agents-bin-${pom.version}/</directory>
+            <outputDirectory>/dist/agents/bin/3rdparty/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.build.directory}/jdk14/3rdparty/josso-agents-j14bin-${pom.version}/</directory>
+            <outputDirectory>/dist/agents/bin/jdk14/3rdparty/</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>${project.build.directory}/jdk14/3rdparty-axis/josso-agents-j14bin-${pom.version}/</directory>
+            <outputDirectory>/dist/agents/bin/jdk14/3rdparty-axis/</outputDirectory>
+        </fileSet>
+
+
+		<fileSet>
+            <directory>${project.build.directory}/repository/</directory>
+            <outputDirectory>/dist/agents/bin/repository/</outputDirectory>
+        </fileSet>
+	
+		<fileSet>
+            <directory>${project.build.directory}/josso-wasce2-agent/</directory>
+            <outputDirectory>/dist/agents/bin/</outputDirectory>
+        </fileSet>
+	
+    </fileSets>
+
+
+    <dependencySets>
+
+        <!-- ================================================================= -->
+        <!-- JOSSO GSHell Console binaries                                     -->
+        <!-- ================================================================= -->
+        <!-- Exclude all josso dependencies from lib because we will handpick them below -->
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <unpack>false</unpack>
+
+            <excludes>
+                <exclude>org.acegisecurity:acegi-security:jar:1.0.5</exclude>
+                <exclude>org.springframework:spring:jar:2.0.6</exclude>
+                <exclude>org.springframework:spring-support:jar:1.2.9</exclude>
+                <exclude>org.springframework:spring-remoting:jar:1.2.9</exclude>
+                <exclude>org.springframework:spring-jdbc:jar:1.2.9</exclude>
+                <exclude>org.springframework:spring-dao:jar:1.2.9</exclude>
+                <exclude>${pom.groupId}:*</exclude>
+            </excludes>
+        </dependencySet>
+
+
+        <!-- Only this josso dependencies are needed to run the console -->
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <unpack>false</unpack>
+
+            <includes>
+                <include>${pom.groupId}:josso-core</include>
+                <include>${pom.groupId}:josso-common</include>
+                <include>${pom.groupId}:josso-gshell-bootstrap</include>
+                <include>${pom.groupId}:josso-gshell-core</include>
+                <include>${pom.groupId}:josso-gshell-install</include>
+            </includes>
+        </dependencySet>
+
+        <!-- Console bootstrap jar -->
+
+        <!-- Remove the version from the bootstrap jar -->
+        <dependencySet>
+            <outputDirectory>/lib/boot</outputDirectory>
+            <!--
+            Sets the mapping pattern for all dependencies included in this assembly.
+            Default is ${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}.
+            (Since 2.2-beta-2; 2.2-beta-1 uses ${artifactId}-${version}${dashClassifier?}.${extension})
+
+            The default value is ${artifact.artifactId}-${artifact.version}${dashClassifier?}.${artifact.extension}
+            -->
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <unpack>false</unpack>
+            <useStrictFiltering>true</useStrictFiltering>
+
+            <includes>
+                <include>${pom.groupId}:josso-gshell-bootstrap</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>/lib/boot</outputDirectory>
+            <unpack>false</unpack>
+            <useStrictFiltering>true</useStrictFiltering>
+
+            <includes>
+                <include>org.codehaus.plexus:plexus-classworlds</include>
+            </includes>
+        </dependencySet>
+
+        <!-- ================================================================= -->
+        <!-- JOSSO Distribution artifacts                                      -->
+        <!-- ================================================================= -->
+
+        <!-- JOSSO Agent jars -->
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/lib</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>*:jar</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/bin</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-agent-shared</include>
+                <include>${pom.groupId}:josso-tomcat60-agent</include>
+                <include>${pom.groupId}:josso-tomcat55-agent</include>
+                <include>${pom.groupId}:josso-tomcat50-agent</include>
+                <include>${pom.groupId}:josso-jbportal27-agent</include>
+                <include>${pom.groupId}:josso-jaspi-agent</include>
+                <include>${pom.groupId}:josso-jboss5-agent</include>				
+                <include>${pom.groupId}:josso-jboss42-agent</include>
+                <include>${pom.groupId}:josso-jboss40-agent</include>
+                <include>${pom.groupId}:josso-jboss32-agent</include>
+                <include>${pom.groupId}:josso-geronimo-agent</include>
+                <include>${pom.groupId}:josso-liferay-agent</include>
+                <include>${pom.groupId}:josso-alfresco-agent</include>
+                <include>${pom.groupId}:josso-servlet-agent</include>
+                <include>${pom.groupId}:josso-weblogic92-agent:jar</include>
+                <include>${pom.groupId}:josso-weblogic10-agent:jar</include>
+                <include>${pom.groupId}:josso-agents-bin:jar</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/dist/agents/bin/jdk14</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-weblogic81-agent:jar</include>
+                <include>${pom.groupId}:josso-agents-j14bin:jar</include>
+                <include>${pom.groupId}:josso-agentj14-shared:jar</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/src/josso-weblogic81-agent-mbeans-src</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-weblogic81-agent:zip:mbeans-src</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/src/josso-weblogic92-agent-mbeans-src</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-weblogic92-agent:zip:mbeans-src</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/src/josso-weblogic10-agent-mbeans-src</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-weblogic10-agent:tar.gz:mbeans-src</include>
+            </includes>
+        </dependencySet>
+
+        <!-- JOSSO Client jars -->
+        <dependencySet>
+            <outputDirectory>/dist/client/bin</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-core</include>
+                <include>${pom.groupId}:josso-common</include>
+                <include>${pom.groupId}:josso-spring-security</include>
+                <include>${pom.groupId}:josso-protocol-client</include>
+                <include>${pom.groupId}:josso-ws</include>
+            </includes>
+        </dependencySet>
+
+        <!-- JOSSO Non-Java Agents -->
+        <dependencySet>
+            <outputDirectory>/dist/agents/src</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-php-agent:zip</include>
+            </includes>
+        </dependencySet>
+        
+        <dependencySet>
+            <outputDirectory>/dist/agents/src</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-phpBB-agent:zip</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/src</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-microsoft-agent:zip</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/src</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-apache22-agent:zip</include>
+            </includes>
+        </dependencySet>
+
+        <!-- JOSSO Gatway WEB app -->
+        <dependencySet>
+            <outputDirectory>/dist/gateway/apps/</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-gateway-web</include>
+            </includes>
+        </dependencySet>
+
+        <!-- JOSSO Samples -->
+        <dependencySet>
+            <outputDirectory>/dist/samples/apps</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-partner-jboss-app</include>
+                <include>${pom.groupId}:josso-partner-jboss5-app</include>
+                <include>${pom.groupId}:josso-partner-wl10-app</include>
+                <include>${pom.groupId}:josso-partner-wl92-app</include>
+                <include>${pom.groupId}:josso-partner-wl81-app</include>
+                <include>${pom.groupId}:josso-partner-tomcat-web</include>
+                <include>${pom.groupId}:josso-partner-jetty-web</include>
+                <include>${pom.groupId}:josso-partner-php</include>
+                <include>${pom.groupId}:josso-partner-asp</include>
+                <include>${pom.groupId}:spring-security-contacts</include>
+                <include>${pom.groupId}:josso-partner-wasce-web</include>
+            </includes>
+        </dependencySet>
+
+    </dependencySets>
+
+
+</assembly>

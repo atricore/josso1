@@ -1,0 +1,107 @@
+--------------------------------------------------
+Patch 1 | (/index.php)
+--------------------------------------------------
+@@ -3431,16 +3431,519 @@
+ lt);%0A%7D%0A%0A
++$s_hidden_fields = array();%0A%0Aif ($config%5B'auth_method'%5D == 'josso') %7B%0A%09$phpbbUrl = getPhpbbUrl();%0A%09$originalUrl = $phpbbUrl . append_sid(%22/ucp.$phpEx%22, 'mode=login');%0A%09$originalUrl = str_replace('../', '', $originalUrl);%0A%09%0A%09$s_hidden_fields%5B'sid'%5D = $user-%3Esession_id;%0A%09$s_hidden_fields%5B'josso_cmd'%5D = 'login';%0A%09$s_hidden_fields%5B'josso_back_to'%5D = $phpbbUrl . '/josso-security-check.php';%0A%09$s_hidden_fields%5B'josso_on_error'%5D = $originalUrl;%0A%7D%0A%0A$s_hidden_fields = build_hidden_fields($s_hidden_fields);%0A%0A
+ // Assig
+@@ -4884,16 +4884,340 @@
+  : false
++,%0A%0A%09'USERNAME_CREDENTIAL'%09=%3E ($config%5B'auth_method'%5D == 'josso') ? 'josso_username' : 'username',%0A%09'PASSWORD_CREDENTIAL'%09=%3E ($config%5B'auth_method'%5D == 'josso') ? 'josso_password' : 'password',%0A%09'AUTOLOGIN'%09%09%09%09=%3E ($config%5B'auth_method'%5D == 'josso') ? 'josso_rememberme' : 'autologin',%0A%09'S_HIDDEN_FIELDS' %09%09=%3E $s_hidden_fields
+ ,%0A%0A%09'U_M
+
+--------------------------------------------------
+Patch 2 | (/includes/functions.php)
+--------------------------------------------------
+@@ -73569,33 +73569,212 @@
+ ot_path, $config
++, $josso_agent
+ ;
++%0A%0A%09if ($config%5B'auth_method'%5D == 'josso' && !$_SESSION%5B'OPTIONAL_LOGIN_EXECUTED'%5D) %7B%0A%09%09$_SESSION%5B'OPTIONAL_LOGIN_EXECUTED'%5D = true;%0A%09%09jossoRequestOptionalLogin();%0A%09%7D
+ %0A%0A%09if (!class_ex
+@@ -74335,24 +74335,328 @@
+ N_AUTH_FAIL'
++);%0A%09%09%7D%0A%09%09if ($config%5B'auth_method'%5D == 'josso' && $josso_agent-%3EgetUserInSession()) %7B%0A%09%09%09$phpbbUrl = getPhpbbUrl();%0A%09%09%09$originalUrl = $phpbbUrl . substr(str_replace('&amp;', '&', build_url()), 1);%0A%09%09%09$originalUrl = str_replace('../', '', $originalUrl);%0A%09%09%09forceRedirect(jossoCreateLogoutUrl($originalUrl)
+ );%0A%09%09%7D%0A%09%09tri
+@@ -79272,1129 +79272,3196 @@
+ %7D%0A%0A%09
+-$s_hidden_fields = build_hidden_fields($s_hidden_fields);%0A%0A%09$template-%3Eassign_vars(array(%0A%09%09'LOGIN_ERROR'%09%09=%3E $err,%0A%09%09'LOGIN_EXPLAIN'%09%09=%3E $l_explain,%0A%0A%09%09'U_SEND_PASSWORD' %09%09=%3E ($config%5B'email_enable'%5D) ? append_sid(%22%7B$phpbb_root_path%7Ducp.$phpEx%22, 'mode=sendpassword') : '',%0A%09%09'U_RESEND_ACTIVATION'%09=%3E ($config%5B'require_activation'%5D == USER_ACTIVATION_SELF && $config%5B'email_enable'%5D) ? append_sid(%22%7B$phpbb_root_path%7Ducp.$phpEx%22, 'mode=resend_act') : '',%0A%09%09'U_TERMS_USE'%09%09%09=%3E append_sid(%22%7B$phpbb_root_path%7Ducp.$phpEx%22, 'mode=terms'),%0A%09%09'U_PRIVACY'%09%09%09%09=%3E append_sid(%22%7B$phpbb_root_path%7Ducp.$phpEx%22, 'mode=privacy'),%0A%0A%09%09'S_DISPLAY_FULL_LOGIN'%09=%3E ($s_display) ? true : false,%0A%09%09'S_HIDDEN_FIELDS' %09%09=%3E $s_hidden_fields,%0A%0A%09%09'S_ADMIN_AUTH'%09%09%09=%3E $admin,%0A%09%09'USERNAME'%09%09%09%09=%3E ($admin) ? $user-%3Edata%5B'username'%5D : '',%0A%0A%09%09'USERNAME_CREDENTIAL'%09=%3E 'username',%0A%09%09'PASSWORD_CREDENTIAL'%09=%3E ($admin) ? 'password_' . $credential : 'password',%0A%09));%0A%0A%09page_header($user-%3Elang%5B'LOGIN'%5D, false);%0A%0A%09$template-%3Eset_filenames(array(%0A%09%09'body' =%3E 'login_body.html')%0A%09);%0A%09make_jumpbox(append_sid(%22%7B$phpbb_root_path%7Dviewforum.$phpEx%22));%0A%0A%09page_footer()
++if ($config%5B'auth_method'%5D == 'josso') %7B%0A%09%09// If we use existing $_SESSION%5B'JOSSO_ORIGINAL_URL'%5D there is a bug %0A%09%09// in case there is unfinished login attempt and user will be redirected %0A%09%09// to the wrong page, so we are storing the url on every login retry%0A%09%09// (this was tested in various use cases).%0A%09%09$phpbbUrl = getPhpbbUrl();%0A%09%09$originalUrl = $phpbbUrl . substr(str_replace('&amp;', '&', build_url()), 1);%0A%09%09$originalUrl = str_replace('../', '', $originalUrl);%0A%09%09$originalUrl = removeUrlParameters($originalUrl, array('josso_error_type', 'josso_username'));%0A%09%09$_SESSION%5B'JOSSO_ORIGINAL_URL'%5D = $originalUrl;%0A%09%09%0A%09%09$s_hidden_fields%5B'josso_cmd'%5D = 'login';%0A%09%09$s_hidden_fields%5B'josso_back_to'%5D = $phpbbUrl . '/josso-security-check.php';%0A%09%09$s_hidden_fields%5B'josso_on_error'%5D = $originalUrl;%0A%09%7D%0A%0A%09$s_hidden_fields = build_hidden_fields($s_hidden_fields);%0A%0A%09$errMsg = $err;%0A%09if (isset($_GET%5B'josso_error_type'%5D)) %7B%0A%09%09if ($_GET%5B'josso_error_type'%5D == 'AUTH_FAILED_NO_USER') %7B%0A%09%09%09$errMsg = $user-%3Elang%5B'LOGIN_ERROR_USERNAME'%5D;%0A%09%09%7D else %7B%0A%09%09%09$errMsg = $user-%3Elang%5B'LOGIN_ERROR_EXTERNAL_AUTH_JOSSO'%5D;%0A%09%09%7D%0A%09%7D%0A%0A%09$template-%3Eassign_vars(array(%0A%09%09'LOGIN_ERROR'%09%09=%3E $errMsg,%0A%09%09'LOGIN_EXPLAIN'%09%09=%3E $l_explain,%0A%0A%09%09'U_SEND_PASSWORD' %09%09=%3E ($config%5B'email_enable'%5D) ? append_sid(%22%7B$phpbb_root_path%7Ducp.$phpEx%22, 'mode=sendpassword') : '',%0A%09%09'U_RESEND_ACTIVATION'%09=%3E ($config%5B'require_activation'%5D == USER_ACTIVATION_SELF && $config%5B'email_enable'%5D) ? append_sid(%22%7B$phpbb_root_path%7Ducp.$phpEx%22, 'mode=resend_act') : '',%0A%09%09'U_TERMS_USE'%09%09%09=%3E append_sid(%22%7B$phpbb_root_path%7Ducp.$phpEx%22, 'mode=terms'),%0A%09%09'U_PRIVACY'%09%09%09%09=%3E append_sid(%22%7B$phpbb_root_path%7Ducp.$phpEx%22, 'mode=privacy'),%0A%0A%09%09'S_DISPLAY_FULL_LOGIN'%09=%3E ($s_display) ? true : false,%0A%09%09'S_HIDDEN_FIELDS' %09%09=%3E $s_hidden_fields,%0A%0A%09%09'S_ADMIN_AUTH'%09%09%09=%3E $admin,%0A%09%09'USERNAME'%09%09%09%09=%3E ($admin) ? $user-%3Edata%5B'username'%5D : $_GET%5B'josso_username'%5D,%0A%0A%09%09'USERNAME_CREDENTIAL'%09=%3E ($config%5B'auth_method'%5D == 'josso') ? 'josso_username' : 'username',%0A%09%09'PASSWORD_CREDENTIAL'%09=%3E ($config%5B'auth_method'%5D == 'josso') ? 'josso_password' : (($admin) ? 'password_' . $credential : 'password'),%0A%0A%09%09'AUTOLOGIN'%09%09%09%09=%3E ($config%5B'auth_method'%5D == 'josso') ? 'josso_rememberme' : 'autologin',%0A%09));%0A%0A%09page_header($user-%3Elang%5B'LOGIN'%5D, false);%0A%0A%09$template-%3Eset_filenames(array(%0A%09%09'body' =%3E 'login_body.html')%0A%09);%0A%09make_jumpbox(append_sid(%22%7B$phpbb_root_path%7Dviewforum.$phpEx%22));%0A%0A%09page_footer();%0A%7D%0A%0Afunction getPhpbbUrl() %7B%0A%09global $config;%0A%0A%09$phpbbUrl = $config%5B'server_protocol'%5D . $config%5B'server_name'%5D;%0A%09if ($config%5B'server_port'%5D != '80' && $config%5B'server_port'%5D != '443') %7B%0A%09%09$phpbbUrl = $phpbbUrl . ':' . $config%5B'server_port'%5D;%0A%09%7D%0A%09if ($config%5B'script_path'%5D != '/') %7B%0A%09%09$phpbbUrl = $phpbbUrl . $config%5B'script_path'%5D;%0A%09%7D%0A%09return $phpbbUrl;%0A%7D%0A%0Afunction removeUrlParameters($url, $params = NULL) %7B%0A%09$index = strpos($url, '?');%0A%09$urlWithoutParams = substr($url, 0, $index); %0A%0A%09$newparams = array();%0A%09preg_match_all('%7C(%5B%5E?&#=%5D+)=(%5B%5E?&#=%5D+)(#%7B0,%7D%5B%5E?&#=%5D*)%7C', $url, $out, PREG_SET_ORDER);%0A%09%0A%09foreach($out as $elem)%0A%09%09if(!in_array($elem%5B1%5D, $params))%0A%09%09%09$newparams%5B%5D = %22%7B$elem%5B1%5D%7D=%7B$elem%5B2%5D%7D%22;%0A%0A%09return $urlWithoutParams . '?' . implode('&',$newparams) . $out%5Bcount($out)-1%5D%5B3%5D
+ ;%0A%7D%0A
+@@ -123099,16 +123099,106 @@
+ N'%09%09=%3E (
++$config%5B'auth_method'%5D == 'josso') ? $phpbb_root_path . 'josso-authenticate.' . $phpEx : (
+ (!define
+@@ -123402,16 +123402,36 @@
+ ect' =%3E 
++removeUrlParameters(
+ str_repl
+@@ -123458,16 +123458,62 @@
+ ild_url(
++)), array('josso_error_type', 'josso_username'
+ )))),%0A%0A%09
+
+--------------------------------------------------
+Patch 3 | (/includes/functions_user.php)
+--------------------------------------------------
+@@ -6531,32 +6531,250 @@
+ sql_ary));%0A%0A%09// 
++Remove josso_groups from $remaining_vars%0A%09if ($config%5B'auth_method'%5D == 'josso') %7B%0A%09%09foreach ($remaining_vars as $key =%3E $value) %7B%0A%09%09%09if ($value == 'josso_groups') %7B%0A%09%09%09%09unset($remaining_vars%5B$key%5D);%0A%09%09%09%7D%0A%09%09%7D%0A%09%7D%0A%09%0A%09// 
+ Now fill our sql
+@@ -8728,24 +8728,903 @@
+ _add_log'%5D);
++%0A%09%09%7D%0A%0A%09%09// Place josso user in additional groups%0A%09%09if ($config%5B'auth_method'%5D == 'josso' && isset($user_row%5B'josso_groups'%5D) && %0A%09%09%09%09%09is_array($user_row%5B'josso_groups'%5D) && sizeof($user_row%5B'josso_groups'%5D)) %7B%0A%09%09%09%0A%09%09%09foreach($user_row%5B'josso_groups'%5D as $group) %7B%0A%09%09%09%09$sql = 'SELECT group_id%0A%09%09%09%09%09FROM ' . GROUPS_TABLE . %22%0A%09%09%09%09%09WHERE group_name = '%22 . $group . %22'%0A%09%09%09%09%09AND group_type = %22 . GROUP_SPECIAL;%0A%09%09%09%09$result = $db-%3Esql_query($sql);%0A%09%09%09%09$add_group_id = (int) $db-%3Esql_fetchfield('group_id');%0A%09%09%09%09$db-%3Esql_freeresult($result);%0A%0A%09%09%09%09if ($add_group_id)%09// TODO: Maybe we should create all nonexistent groups?%0A%09%09%09%09%7B%0A%09%09%09%09%09// Because these actions only fill the log unneccessarily we skip the add_log() entry with a little hack. :/%0A%09%09%09%09%09$GLOBALS%5B'skip_add_log'%5D = true;%0A%09%09%09%09%09%0A%09%09%09%09%09group_user_add($add_group_id, $user_id);%0A%09%09%09%09%09%0A%09%09%09%09%09unset($GLOBALS%5B'skip_add_log'%5D);%0A%09%09%09%09%7D%0A%09%09%09%7D%0A
+ %0A%09%09%7D%0A%09%7D%0A%0A%09//
+
+--------------------------------------------------
+Patch 4 | (/language/en/common.php)
+--------------------------------------------------
+@@ -15000,32 +15000,115 @@
+ ,%0A%09'LOGIN_ERROR_
++EXTERNAL_AUTH_JOSSO'%09=%3E 'You have not been authenticated by JOSSO.',%0A%09'LOGIN_ERROR_
+ PASSWORD'%09%09%09%09=%3E 
+
+--------------------------------------------------
+Patch 5 | (/styles/prosilver/template/index_body.html)
+--------------------------------------------------
+@@ -1391,30 +1391,56 @@
+ me=%22
+-username
++%7BUSERNAME_CREDENTIAL%7D
+ %22 id=%22
+-username
++%7BUSERNAME_CREDENTIAL%7D
+ %22 si
+@@ -1573,30 +1573,56 @@
+ me=%22
+-password
++%7BPASSWORD_CREDENTIAL%7D
+ %22 id=%22
+-password
++%7BPASSWORD_CREDENTIAL%7D
+ %22 si
+@@ -1781,32 +1781,36 @@
+ me=%22
+-autologin
++%7BAUTOLOGIN%7D
+ %22 id=%22
+-autologin
++%7BAUTOLOGIN%7D
+ %22 /%3E
+@@ -1831,24 +1831,45 @@
+ -- ENDIF --%3E
++%0A%09%09%09%7BS_HIDDEN_FIELDS%7D
+ %0A%09%09%09%3Cinput t
+
+--------------------------------------------------
+Patch 6 | (/styles/prosilver/template/login_body.html)
+--------------------------------------------------
+@@ -1540,32 +1540,36 @@
+ me=%22
+-autologin
++%7BAUTOLOGIN%7D
+ %22 id=%22
+-autologin
++%7BAUTOLOGIN%7D
+ %22 ta
+

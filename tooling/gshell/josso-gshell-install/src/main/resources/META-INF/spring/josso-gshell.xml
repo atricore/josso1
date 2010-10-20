@@ -1,0 +1,361 @@
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns="urn:org:josso:tooling:install"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd,
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- ============================================== -->
+    <!-- Install Commands                               -->
+    <!-- ============================================== -->
+
+    <!-- List all available platforms -->
+    <list-platforms/>
+
+    <list-installers/>
+
+    <install-java-agent>
+        <s:property name="versionLoader" ref="versionLoader"/>
+    </install-java-agent>
+
+    <install-web-gateway>
+        <s:property name="versionLoader" ref="versionLoader"/>
+    </install-web-gateway>
+
+    <install-web-samples>
+        <s:property name="versionLoader" ref="versionLoader"/>
+    </install-web-samples>
+
+    <!-- ============================================== -->
+    <!-- Install Platforms                              -->
+    <!-- ============================================== -->
+
+    <!-- Apache Tomcat -->
+
+    <tomcat-installer id="tc60-installer">
+        <s:constructor-arg ref="tc60"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </tomcat-installer>
+
+    <tomcat-installer id="tc55-installer">
+        <s:constructor-arg ref="tc55"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </tomcat-installer>
+
+    <tomcat-installer id="tc50-installer">
+        <s:constructor-arg ref="tc50"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </tomcat-installer>
+
+    <platform id="tc60" family="tomcat" platformName="Apache Tomcat" version="6.0.x">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/lib</lib>
+        <conf>${target}/conf</conf>
+        <deploy>${target}/webapps</deploy>
+        <endorsed>${target}/lib</endorsed>
+
+        <josso-conf>${target}/lib</josso-conf>
+        <josso-lib>${target}/lib</josso-lib>
+        <josso-shared>${target}/lib</josso-shared>
+
+        <josso-war-name>josso</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
+
+    <platform id="tc55" family="tomcat" platformName="Apache Tomcat" version="5.5.x">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/server/lib</lib>
+        <conf>${target}/conf</conf>
+        <deploy>${target}/webapps</deploy>
+        <endorsed>${target}/common/endorsed</endorsed>
+
+        <josso-conf>${target}/common/classes</josso-conf>
+        <josso-lib>${target}/server/lib</josso-lib>
+        <josso-shared>${target}/common/lib</josso-shared>
+
+        <josso-war-name>josso</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
+
+    <platform id="tc50" family="tomcat" platformName="Apache Tomcat" version="5.0.x">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/server/lib</lib>
+        <conf>${target}/conf</conf>
+        <deploy>${target}/webapps</deploy>
+        <endorsed>${target}/common/endorsed</endorsed>
+
+        <josso-conf>${target}/common/classes</josso-conf>
+        <josso-lib>${target}/server/lib</josso-lib>
+        <josso-shared>${target}/common/lib</josso-shared>
+
+        <josso-war-name>josso</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
+
+    <!-- JBoss -->
+
+    <jboss-installer id="jb5-installer">
+        <s:constructor-arg ref="jb5"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </jboss-installer>
+
+    <jboss-installer id="jb42-installer">
+        <s:constructor-arg ref="jb42"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </jboss-installer>
+
+    <jboss-installer id="jb40-installer">
+        <s:constructor-arg ref="jb40"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </jboss-installer>
+
+    <jboss-installer id="jb32-installer">
+        <s:constructor-arg ref="jb32"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </jboss-installer>
+
+    <platform id="jb5" family="jboss" platformName="JBoss AS" version="5.x">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/server/${instance}/lib</lib>
+        <conf>${target}/server/${instance}/conf</conf>
+        <deploy>${target}/server/${instance}/deploy</deploy>
+        <endorsed>${target}/lib/endorsed</endorsed>
+
+        <josso-conf>${target}/server/${instance}/conf</josso-conf>
+        <josso-lib>${target}/server/${instance}/lib</josso-lib>
+        <josso-shared>${target}/server/${instance}/lib</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
+
+    <platform id="jb42" family="jboss" platformName="JBoss AS" version="4.2.x">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/server/${instance}/lib</lib>
+        <conf>${target}/server/${instance}/conf</conf>
+        <deploy>${target}/server/${instance}/deploy</deploy>
+        <endorsed>${target}/lib/endorsed</endorsed>
+
+        <josso-conf>${target}/server/${instance}/conf</josso-conf>
+        <josso-lib>${target}/server/${instance}/lib</josso-lib>
+        <josso-shared>${target}/server/${instance}/lib</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
+
+    <platform id="jb40" family="jboss" platformName="JBoss AS" version="4.0.2+">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/server/${instance}/lib</lib>
+        <conf>${target}/server/${instance}/conf</conf>
+        <deploy>${target}/server/${instance}/deploy</deploy>
+        <endorsed>${target}/lib/endorsed</endorsed>
+
+        <josso-conf>${target}/server/${instance}/conf</josso-conf>
+        <josso-lib>${target}/server/${instance}/lib</josso-lib>
+        <josso-shared>${target}/server/${instance}/lib</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
+
+    <platform id="jb32" family="jboss" platformName="JBoss AS" version="3.2.6+">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/server/${instance}/lib</lib>
+        <conf>${target}/server/${instance}/conf</conf>
+        <deploy>${target}/server/${instance}/deploy</deploy>
+        <endorsed>${target}/lib/endorsed</endorsed>
+
+        <josso-conf>${target}/server/${instance}/conf</josso-conf>
+        <josso-lib>${target}/server/${instance}/lib</josso-lib>
+        <josso-shared>${target}/server/${instance}/lib</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
+
+
+    <!-- Weblogic : Note 8.1 IS NOT SUPPORTED -->
+
+    <weblogic-installer id="wl92-installer">
+        <s:constructor-arg ref="wl92"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </weblogic-installer>
+
+    <weblogic-installer id="wl10-installer">
+        <s:constructor-arg ref="wl10"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </weblogic-installer>
+
+    <platform id="wl92" family="weblogic" platformName="Weblogic" version="9.2+">
+
+        <bin>${target}/${domain}/bin</bin>
+        <lib>${target}/${domain}/lib</lib>
+        <conf>${target}/${domain}/config</conf>
+
+        <deploy>${target}/${domain}/autodeploy</deploy>
+        <endorsed>${target}/${domain}/lib</endorsed>
+
+        <josso-conf>${target}/${domain}/</josso-conf>
+        <josso-lib>${target}/${domain}/lib</josso-lib>
+        <josso-shared>${target}/${domain}/lib/</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>false</josso-war-exploded>
+
+    </platform>
+
+    <platform id="wl10" family="weblogic" platformName="Weblogic" version="10.0+">
+
+        <bin>${target}/${domain}/bin</bin>
+        <lib>${target}/${domain}/lib</lib>
+        <conf>${target}/${domain}/config</conf>
+        <deploy>${target}/${domain}/autodeploy</deploy>
+        <endorsed>${target}/${domain}/lib</endorsed>
+
+        <josso-conf>${target}/${domain}/</josso-conf>
+        <josso-lib>${target}/${domain}/lib</josso-lib>
+        <josso-shared>${target}/${domain}/lib/</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>false</josso-war-exploded>
+
+    </platform>
+
+    <!-- WASCE -->
+
+    <wasce-installer id="wc21-installer">
+        <s:constructor-arg ref="wc21"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </wasce-installer>
+
+    <platform id="wc21" family="wasce" platformName="WASCE" version="2.1">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/lib</lib>
+        <conf>${target}/var/config</conf>
+        <deploy>${target}/deploy</deploy>
+        <endorsed>${target}/lib/endorsed</endorsed>
+
+        <josso-conf>${target}/var/shared/classes</josso-conf>
+        <josso-lib>${target}/var/shared/lib</josso-lib>
+        <josso-shared>${target}/var/shared/lib</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>false</josso-war-exploded>
+
+    </platform>
+
+    <!-- JEE -->
+
+    <jee-installer id="jee-installer">
+        <s:constructor-arg ref="jee"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </jee-installer>
+
+
+    <platform id="jee" family="jee" platformName="JEE Generic Application Server" version="any">
+
+        <!--
+        <bin>${target}/bin</bin>
+        <lib>${target}/server/${instance}/lib</lib>
+        <conf>${target}/server/${instance}/conf</conf>
+
+        <endorsed>${target}/lib/endorsed</endorsed>
+
+        <josso-conf>${target}/server/${instance}/conf</josso-conf>
+        <josso-lib>${target}/server/${instance}/lib</josso-lib>
+        <josso-shared>${target}/server/${instance}/lib</josso-shared>
+        -->
+
+        <deploy>${target}</deploy>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>false</josso-war-exploded>
+
+    </platform>
+
+    <!-- Liferay "platform"  -->
+    <liferay-installer id="liferay-installer">
+        <s:constructor-arg ref="liferay"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </liferay-installer>
+
+    <platform id="liferay" family="jee" platformName="Liferay" version="5.2.x">
+        <lib>${target}/WEB-INF/lib</lib>
+        <conf>${target}/WEB-INF/classes</conf>
+    </platform>
+
+
+    <!-- Alfresco "platform"  -->
+    <alfresco-installer id="alfresco-installer">
+        <s:constructor-arg ref="alfresco"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </alfresco-installer>
+
+    <platform id="alfresco" family="jee" platformName="Alfresco" version="3.3">
+        <lib>${target}/WEB-INF/lib</lib>
+        <conf>${target}/WEB-INF/classes</conf>
+    </platform>
+
+    <!-- phpBB installer  -->
+    <phpbb-installer id="phpbb-installer">
+        <s:constructor-arg ref="phpBB"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </phpbb-installer>
+
+    <!-- Non-Java Platforms -->
+
+    <platform id="apache" family="non-java" platformName="Apache HTTP Server (perl, python, php, etc.)" version="2.2"/>
+
+    <platform id="php4" family="non-java" platformName="PHP" version="4.x"/>
+
+    <platform id="php5" family="non-java" platformName="PHP" version="5.x"/>
+
+    <platform id="phpBB" family="non-java" platformName="PHP" version="3.x"/>
+
+    <platform id=".net" family="ms" platformName="MS .Net" version="2.x"/>
+
+    <platform id="asp" family="ms" platformName="MS Asp" version="x.x"/>
+
+
+</beans>

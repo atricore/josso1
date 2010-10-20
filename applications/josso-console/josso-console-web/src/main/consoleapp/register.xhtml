@@ -1,0 +1,62 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="layout/template.xhtml">
+                       
+<ui:define name="body">
+
+    <h1>register</h1>
+    <p>Generated action page</p>
+
+    <h:messages globalOnly="true" styleClass="message"/>
+    
+    <h:form id="Register">
+        <s:validateAll>
+        <div class="formRow">
+            <h:outputLabel for="password">Password<em>*</em></h:outputLabel>
+            <h:inputSecret id="password" value="#{register.password}" required="true"/>
+           
+        </div>
+        
+        <div class="formRow">
+            <h:outputLabel for="confirmPassword">Confirm password<em>*</em></h:outputLabel>
+            <h:inputSecret id="confirmPassword" value="#{register.confirm}" required="true"/>
+        </div>
+        
+        <div>
+            <h:commandButton id="register" value="register!" 
+                action="#{register.register}"/>     			  
+        </div>
+        </s:validateAll>
+    </h:form>
+    
+</ui:define>
+
+</ui:composition>
+

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE Dashboard PUBLIC "-//MC4J//DTD Dashboard 1.0//EN" "http://mc4j.sourceforge.net/Dashboard_1_0.dtd">
+
+<Dashboard version="1.0" name="JOSSO Session Meter">
+  <Description>This dashboard displays session usage of JOSSO Gateway.</Description>
+
+  <DashboardMatch type="Global" location="/JOSSO/Gateway">
+      <BeanMatch id="SSOGatewayInfoMBean" type="Single">
+          <Condition type="BeanObjectNameCondition" filter="^josso:type=SSOGatewayInfo$"/>
+      </BeanMatch>
+  </DashboardMatch>
+
+
+    <!--
+  <Context name="Match" type="java.lang.String" value="jboss.system:type=ServerInfo"/>
+  -->
+  
+  <LayoutManager type="java.awt.BorderLayout"/>
+  <Content>
+    
+    <!-- *** The header section displays title and a refresh control *** -->
+    <Component type="javax.swing.JPanel">
+        <Constraint type="BorderConstraints" direction="NORTH"/>
+        <LayoutManager type="java.awt.BorderLayout"/>
+        <Border type="javax.swing.border.EmptyBorder" top="(Literal)2" left="(Literal)5" bottom="(Literal)2" right="(Literal)5"/>
+        <Content>
+            <Component type="javax.swing.JPanel">
+                <Constraint type="BorderConstraints" direction="CENTER"/>
+                <LayoutManager type="java.awt.BorderLayout"/>
+                <Content>
+                    <Component type="javax.swing.JLabel" id="titleLable">
+                        <Constraint type="BorderConstraints" direction="CENTER"/>
+                        <Attribute name="text" value="DashboardName"/>
+                        <Attribute name="font" value="(Literal)SansSerif bold 20"/>
+                        <Attribute name="foreground" value="(Literal)0x666666"/>
+                    </Component>
+                    <Component type="javax.swing.JTextArea">
+                        <Constraint type="BorderConstraints" direction="SOUTH"/>
+                        <Attribute name="text" value="DashboardDescription"/>
+                        <Attribute name="font" value="(Literal)DialogInput bold 14"/>
+                        <Attribute name="opaque" value="(Literal)false"/>
+                        <Attribute name="editable" value="(Literal)false"/>
+                    </Component>
+                </Content>
+            </Component>
+        </Content>
+    </Component>
+    
+
+    <Component type="org.mc4j.console.dashboard.components.NumericAttributeGaugeMeter">
+        <Constraint type="BorderConstraints" direction="CENTER"/>
+        <Attribute name="beanNode" value="SSOGatewayInfoMBean"/>
+        <Attribute name="maxAttributeName" value="(Literal)maxSessionCount"/>
+        <Attribute name="currentAttributeName" value="(Literal)sessionCount"/>
+        <!--<Attribute name="minimumSize" value="(Literal)50,50"/>-->
+        <Attribute name="label" value="(Literal)Sessions"/>
+        <Attribute name="updateInterval" value="(Literal)10000"/>
+        <Attribute name="warningPoint" value="(Literal)0.7"/>
+        <Attribute name="criticalPoint" value="(Literal)0.95"/>
+        <Attribute name="title" value="(Literal)JOSSO Sessions"/>
+        <Attribute name="units" value="(Literal)SSO Sessions"/>
+
+    </Component>
+
+  </Content>
+</Dashboard>

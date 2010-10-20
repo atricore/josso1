@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean name="josso-wl82-agent"  class="org.josso.wls81.agent.WLSSSOAgent" >
+
+        <property name="sessionAccessMinInterval" value="1000"/>
+
+        <!-- Gateway LOGIN and LOGOUT URLs -->
+        <property name="gatewayLoginUrl" value="http://localhost:8080/josso/signon/login.do"/>
+        <property name="gatewayLogoutUrl" value="http://localhost:8080/josso/signon/logout.do"/>
+
+        <!-- Gateway WS Endpoint setup -->
+        <property name="gatewayServiceLocator">
+            <bean class="org.josso.gateway.WebserviceGatewayServiceLocator">
+                <property name="endpoint" value="localhost:8080"/>
+                <!-- Other properties for ws-service-locator :
+                username, password, servicesWebContext, transportSecurity
+                -->
+            </bean>
+        </property>
+
+        <!-- Agent Configuration -->
+        <property name="configuration">
+
+            <bean class="org.josso.agent.SSOAgentConfigurationImpl">
+
+                <!-- Partner Applications : Add your own applications -->
+                <property name="ssoPartnerApps">
+                    <list>
+                        <!-- ===================================================================================== -->
+
+                        <bean id="MySimplePartnerApp" class="org.josso.agent.SSOPartnerAppConfig">
+                            <property name="context" value="/simple-partnerapp"/>
+                        </bean>
+
+                        <!-- ===================================================================================== -->
+
+                        <bean id="MyPartnerApp1" class="org.josso.agent.SSOPartnerAppConfig">
+
+                            <property name="context" value="/partnerapp"/>
+
+                            <!-- relative to app ctx, used when on login/logout without backto info -->
+                            <property name="defaultResource" value="/josso/index.jsp"/>
+                            
+                            <property name="ignoredUrlPatterns" value="/resources/*,/partner-login.jsp"/>
+
+                            <property name="securityContextPropagationConfig">
+                                <bean class="org.josso.agent.SecurityContextPropagationConfig">
+                                    <property name="binding" value="HTTP_REQ_ATTRS"/>
+                                    <property name="rolesPlaceHolder" value="currentUserRoles"/>
+                                    <property name="userPlaceHolder" value="currentLoginName"/>
+                                    <property name="propertiesPlaceHolder" value="currentUserProperty"/>
+                                </bean>
+                            </property>
+                        </bean>
+
+                        <!-- ===================================================================================== -->
+
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+        <!-- Only useful when configuring multiple security domains -->
+        <!-- You can configure your own parameter builder to send parameters to your SecurityDomainMatcher  -->
+        <!--
+        <property name="parametersBuilders">
+            <list>
+                <bean class="org.josso.agent.http.VHostParametersBuilder"/>
+                <bean class="org.josso.agent.http.AppContextParametersBuilder"/>
+            </list>
+        </property>
+        -->
+    </bean>
+
+</beans>

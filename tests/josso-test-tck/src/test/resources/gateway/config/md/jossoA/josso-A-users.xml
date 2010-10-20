@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!--
+IdentityMemoryStore user definitions.
+-->
+<josso-users>
+    <users>
+        <user>
+            <name>userA</name>
+            <!-- Optionally, define some properties for this user -->
+            <properties>
+                <property>
+                    <name>user.name</name>
+                    <value>User A Name</value>
+                </property>
+                <property>
+                    <name>user.lastName</name>
+                    <value>User A Last Name</value>
+                </property>
+                <property>
+                    <name>user.registrationDate</name>
+                    <value>2004/09/11</value>
+                </property>
+                <property>
+                    <name>email</name>
+                    <value>userA@josso.org</value>
+                </property>
+            </properties>
+            <!-- Optional comma sepparated set of roles, must be defined below -->
+            <roles>roleA , roleB</roles>
+        </user>
+
+        <user>
+            <name>sgonzalez</name>
+            <!-- Optionally, define some properties for this user -->
+            <properties>
+                <property>
+                    <name>user.name</name>
+                    <value>Sebastian</value>
+                </property>
+                <property>
+                    <name>user.lastName</name>
+                    <value>Gonzalez Oyuela</value>
+                </property>
+                <property>
+                    <name>user.registrationDate</name>
+                    <value>2004/09/11</value>
+                </property>
+                <property>
+                    <name>email</name>
+                    <value>sgonzalez@josso.org</value>
+                </property>
+            </properties>
+            <!-- Optional comma sepparated set of roles, must be defined below -->
+            <roles>roleA , roleB</roles>
+        </user>
+
+        <user>
+            <name>userB</name>
+            <!-- Optionally, define some properties for this user -->
+            <properties>
+                <property>
+                    <name>user.name</name>
+                    <value>User B Name</value>
+                </property>
+                <property>
+                    <name>user.lastName</name>
+                    <value>User B Last Name</value>
+                </property>
+                <property>
+                    <name>user.registrationDate</name>
+                    <value>2004/09/10</value>
+                </property>
+                <property>
+                    <name>email</name>
+                    <value>userB@josso.org</value>
+                </property>
+            </properties>
+            <!-- Optional comma sepparated set of roles, must be defined below -->
+            <roles>roleB</roles>
+        </user>
+        <user>
+            <name>userC</name>
+            <!-- Optionally, define some properties for this user -->
+            <properties>
+                <property>
+                    <name>user.name</name>
+                    <value>User C Name</value>
+                </property>
+                <property>
+                    <name>user.lastName</name>
+                    <value>User C Last Name</value>
+                </property>
+                <property>
+                    <name>user.registrationDate</name>
+                    <value>2005/01/1</value>
+                </property>
+            </properties>
+            <!-- Optional comma sepparated set of roles, must be defined below -->
+            <roles>roleA</roles>
+        </user>
+    </users>
+    <!-- Roles definitions -->
+    <roles>
+        <role>
+            <name>roleA</name>
+        </role>
+        <role>
+            <name>roleB</name>
+        </role>
+
+    </roles>
+</josso-users>

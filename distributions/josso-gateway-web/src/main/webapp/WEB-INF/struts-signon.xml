@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+    <!-- ======================================================= -->
+    <!-- Forms used by different authentication schemes -->
+    <!-- ======================================================= -->
+    <form-beans>
+
+        <form-bean name="usernamePasswordLoginForm" type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="josso_username" type="java.lang.String"/>
+            <form-property name="josso_password" type="java.lang.String"/>
+            <form-property name="josso_rememberme" type="java.lang.Boolean"/>
+            <form-property name="josso_cmd" type="java.lang.String"/>
+            <form-property name="josso_back_to" type="java.lang.String"/>
+        </form-bean>
+        <!-- New forms needed for other auth. schemes go here -->
+    </form-beans>
+
+    <!-- ======================================================= -->
+    <!-- Global forwards common to all auth. schemes -->
+    <!-- ======================================================= -->
+    <global-forwards>
+
+        <forward name="josso" path="http://www.josso.org" redirect="yes"/>
+
+        <!-- Login entry point -->
+        <forward name="login" path="/signon/login.do" />
+        <forward name="logout" path="/signon/logout.do" />
+        <forward name="info" path="/signon/info.do" />
+        
+        <!-- This forwards use struts tiles deffinitions ... -->
+        <!-- Login result, use a tile name defined in tiles-signon.xml instead of a .jsp file name -->
+        <forward name="login-result" path="josso.signon.loginResult" />
+        <!-- General error page, use a tile name defined in tiles-signon.xml instead of a .jsp file name -->
+        <forward name="error" path="josso.error" />
+
+    </global-forwards>
+    
+    <!-- ======================================================= -->
+    <!-- Action mappings                                         -->
+    <!-- ======================================================= -->
+    <action-mappings >
+
+        <!--
+        Generic entry point to SSO login, this action will redirect to the proper action
+        based on the configured authentication scheme.
+        -->
+        <action path="/signon/login"
+            type="org.josso.gateway.signon.LoginSelectorAction" >
+            <!-- Different login for each authentication scheme -->
+
+            <forward name="username-password" path="/signon/usernamePasswordLogin.do"/>
+
+            <forward name="basic-authentication" path="/signon/usernamePasswordLogin.do"/>
+            <forward name="strong-authentication" path="/signon/strongAuthenticationLogin.do"/>
+            <forward name="rememberme-authentication" path="/signon/rememberMeLogin.do"/>
+
+            <forward name="ntlm-authentication" path="/signon/ntlmLogin.do?josso_cmd=login"/>
+        </action>
+
+        <action path="/signon/logout"
+            type="org.josso.gateway.signon.LogoutAction">
+            <forward name="success" path="/signon/login.do"/>
+        </action>
+
+        <action path="/signon/info"
+            type="org.josso.gateway.signon.InfoAction">
+            <!-- use a tile name defined in tiles-signon.xml instead of a .jsp file name -->
+            <forward name="success" path="josso.signon.info"/>
+        </action>
+
+        <!-- ======================================================= -->
+        <!-- Specific action mappings for different auth schemes.    -->
+        <!-- ======================================================= -->
+
+        <!-- Struts action used for username-password authentication scheme -->
+        <action path="/signon/usernamePasswordLogin"
+            type="org.josso.gateway.signon.UsernamePasswordLoginAction"
+            name="usernamePasswordLoginForm"
+            validate="false">
+            <!-- use a tile name defined in tiles-signon.xml instead of a .jsp file name -->
+            <forward name="login-page" path="josso.signon.usernamePasswordLogin" />
+        </action>
+
+        <!-- Struts action used for strong authentication scheme -->
+        <action path="/signon/strongAuthenticationLogin"
+            type="org.josso.gateway.signon.StrongLoginAction"
+            name="strongAuthenticationLogin"
+            validate="false">
+            <!-- use a tile name defined in tiles-signon.xml instead of a .jsp file name -->
+            <forward name="login-page" path="josso.signon.usernamePasswordLogin"/>
+        </action>
+
+        <!-- Struts action used for remember me authentication scheme -->
+        <action path="/signon/rememberMeLogin"
+            type="org.josso.gateway.signon.RememberMeLoginAction"
+            name="remembermeAuthenticationLogin"
+            validate="false">
+            <!-- use a tile name defined in tiles-signon.xml instead of a .jsp file name -->
+            <forward name="login-page" path="josso.signon.usernamePasswordLogin"/>
+        </action>
+        <!-- New actions needed for other auth.schemes go here -->
+
+        <!-- Struts action used for ntlm authentication scheme -->
+        <action path="/signon/ntlmLogin"
+            type="org.josso.gateway.signon.NtlmLoginAction"
+            name="ntlmLoginForm"
+            validate="false">
+            <!-- use a tile name defined in tiles-signon.xml instead of a .jsp file name -->
+            <forward name="login-page" path="josso.signon.loginResult"/>
+        </action>
+    </action-mappings>
+
+    <!-- ======================================================= -->
+    <!-- Tiles plug-in setting settings                          -->
+    <!-- Here we specified the tiles plug-in.                    -->
+    <!-- This plug-in register appropriate Request Processor     -->
+    <!-- ======================================================= -->
+    <controller processorClass="org.apache.struts.tiles.TilesRequestProcessor"
+        inputForward="true"
+        nocache="true"/>
+
+    <!-- ======================================================= -->
+    <!-- Associated Messages Ressource settings                  -->
+    <!-- ======================================================= -->
+    <message-resources null="false"
+        parameter="ApplicationResources"/>
+
+    <!-- ======================================================= -->
+    <!-- Struts Plug-ins                                         -->
+    <!-- ======================================================= -->
+
+    <!-- Tiles plugin : Some parameters are defined at web.xml  -->
+    <plug-in className="org.apache.struts.tiles.TilesPlugin">
+        <set-property property="moduleAware" value="true"/>
+    </plug-in>
+
+
+</struts-config>

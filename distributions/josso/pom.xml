@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!--
+    ~ JOSSO: Java Open Single Sign-On
+    ~
+    ~ Copyright 2004-2008, Atricore, Inc.
+    ~
+    ~ This is free software; you can redistribute it and/or modify it
+    ~ under the terms of the GNU Lesser General Public License as
+    ~ published by the Free Software Foundation; either version 2.1 of
+    ~ the License, or (at your option) any later version.
+    ~
+    ~ This software is distributed in the hope that it will be useful,
+    ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    ~ Lesser General Public License for more details.
+    ~
+    ~ You should have received a copy of the GNU Lesser General Public
+    ~ License along with this software; if not, write to the Free
+    ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+    ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+    -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>distributions</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.josso</groupId>
+    <artifactId>josso</artifactId>
+    <name>JOSSO :: Distribution</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <geronimo-version>2.1.4</geronimo-version>
+    </properties>
+
+    <dependencies>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- JOSSO GShell Console                                                  -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-gshell-bootstrap</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-gshell-core</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-gshell-install</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- JOSSO Agents                                                          -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agents-j14bin</artifactId>
+            <classifier>3rdparty-j14</classifier>
+            <type>tar.gz</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agents-j14bin</artifactId>
+            <classifier>3rdparty-j14axis</classifier>
+            <type>tar.gz</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agents-j14bin</artifactId>
+            <type>jar</type>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agents-bin</artifactId>
+            <classifier>3rdparty</classifier>
+            <type>tar.gz</type>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agents-bin</artifactId>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agent-shared</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agentj14-shared</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-jboss32-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-jboss40-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-jboss42-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-jbportal27-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-tomcat50-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-tomcat55-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-tomcat60-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-geronimo-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-liferay-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-alfresco-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-servlet-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-jaspi-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-jboss5-agent</artifactId>
+        </dependency>
+
+        <!-- JOSSO Client dependency -->
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-spring-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-protocol-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-ws</artifactId>
+        </dependency>
+
+
+        <!-- JOSSO Non-Java Agents -->
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-php-agent</artifactId>
+            <version>${pom.version}</version>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-phpBB-agent</artifactId>
+            <version>${pom.version}</version>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-microsoft-agent</artifactId>
+            <version>${pom.version}</version>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-apache22-agent</artifactId>
+            <version>${pom.version}</version>
+            <type>tar.gz</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-apache22-agent</artifactId>
+            <version>${pom.version}</version>
+            <type>zip</type>
+        </dependency>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- JOSSO Gateway                                                         -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-gateway-web</artifactId>
+            <version>${pom.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- JOSSO Samples                                                         -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-jboss-app</artifactId>
+            <type>ear</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-jboss5-app</artifactId>
+            <type>ear</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-tomcat-web</artifactId>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-jetty-web</artifactId>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>spring-security-contacts</artifactId>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-php</artifactId>
+            <version>${pom.version}</version>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-asp</artifactId>
+            <version>${pom.version}</version>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-wasce-web</artifactId>
+            <version>${pom.version}</version>
+            <type>war</type>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <resources>
+            <resource>
+                <directory>${pom.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${pom.basedir}/src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+
+            <!-- Unpack some agent files -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.josso</groupId>
+                                    <artifactId>josso-agents-bin</artifactId>
+                                    <version>${pom.version}</version>
+                                    <classifier>3rdparty</classifier>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>${project.build.directory}/3rdparty</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.josso</groupId>
+                                    <artifactId>josso-agents-j14bin</artifactId>
+                                    <version>${pom.version}</version>
+                                    <classifier>3rdparty-j14</classifier>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>${project.build.directory}/jdk14/3rdparty</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.josso</groupId>
+                                    <artifactId>josso-agents-j14bin</artifactId>
+                                    <version>${pom.version}</version>
+                                    <classifier>3rdparty-j14axis</classifier>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>${project.build.directory}/jdk14/3rdparty-axis</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.josso</groupId>
+                                    <artifactId>josso-wasce-agent</artifactId>
+                                    <version>${pom.version}</version>
+                                    <classifier>repo</classifier>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.josso</groupId>
+                                    <artifactId>josso-wasce-agent</artifactId>
+                                    <version>${pom.version}</version>
+                                    <type>car</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/josso-wasce2-agent</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unix-bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/unix-bin.xml</descriptor>
+                                <descriptor>src/main/assembly/windows-bin.xml</descriptor>
+                            </descriptors>
+                            <finalName>${pom.artifactId}-${pom.version}</finalName>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <profiles>
+
+        <profile>
+            <id>all</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-partner-wl81-app</artifactId>
+                    <type>ear</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic92-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic92-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic92-agent</artifactId>
+                    <type>jar</type>
+                </dependency>
+
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-partner-wl92-app</artifactId>
+                    <type>ear</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic10-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic10-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic10-agent</artifactId>
+                    <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-partner-wl10-app</artifactId>
+                    <type>ear</type>
+                </dependency>
+
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>weblogic81</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic81-agent</artifactId>
+                    <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-partner-wl81-app</artifactId>
+                    <type>ear</type>
+                </dependency>
+
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>weblogic92</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic92-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic92-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic92-agent</artifactId>
+                    <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-partner-wl92-app</artifactId>
+                    <type>ear</type>
+                </dependency>
+
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>weblogic10</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic10-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic10-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic10-agent</artifactId>
+                    <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-partner-wl10-app</artifactId>
+                    <type>ear</type>
+                </dependency>
+
+
+            </dependencies>
+        </profile>
+
+    </profiles>
+
+</project>

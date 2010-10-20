@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+       xmlns:strong-authscheme="urn:org:josso:strong:authscheme"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        urn:org:josso:strong:authscheme http://www.josso.org/schema/josso-strong-authscheme.xsd
+        ">
+    
+	<strong-authscheme:ocsp-validator
+			id="ocsp-validator"
+			url="http://ocsp.globaltrustfinder.com"
+			trustStore="trustStore.jks"
+			trustPassword="password"
+			ocspResponderCertificateAlias="respondercert">
+
+		<strong-authscheme:trustAnchorCertAliases>
+			<s:value>testca2</s:value>
+		</strong-authscheme:trustAnchorCertAliases>
+	</strong-authscheme:ocsp-validator>
+	
+	<strong-authscheme:crl-validator
+			id="crl-validator"
+			url="http://www.ascertia.com/onlineca/crls/AscertiaTestCA/TestL2CA1.crl"
+			trustStore="trustStore.jks"
+			trustPassword="password">
+		
+		<strong-authscheme:trustAnchorCertAliases>
+			<s:value>testca2</s:value>
+		</strong-authscheme:trustAnchorCertAliases>
+	</strong-authscheme:crl-validator>
+	
+</s:beans>

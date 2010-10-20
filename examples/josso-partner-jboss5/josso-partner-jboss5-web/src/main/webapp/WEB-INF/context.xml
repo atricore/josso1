@@ -1,0 +1,3 @@
+<Context>
+	<Valve className="org.josso.jb5.agent.JOSSOJASPIAuthenticator" />
+</Context>

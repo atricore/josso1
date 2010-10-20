@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+ xmlns:agent="urn:org:josso:agent:core" xmlns:genSvlt="urn:org:josso:agent:generic-servlet"
+ xmlns:protocol="urn:org:josso:protocol:client"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+					 urn:org:josso:agent:core josso-agent.xsd
+					 urn:org:josso:agent:generic-servlet josso-servlet-agent.xsd
+					 urn:org:josso:protocol:client josso-protocol-client.xsd">
+
+ <genSvlt:agent sessionAccessMinInterval="1000"
+  gatewayLoginUrl="http://localhost:8080/josso/signon/login.do"
+  gatewayLogoutUrl="http://localhost:8080/josso/signon/logout.do">
+
+  <genSvlt:configuration>
+   <agent:agent-configuration>
+    <agent:partner-apps>
+     <agent:partner-app id="alfresco" context="/alfresco"/>
+    </agent:partner-apps>
+   </agent:agent-configuration>
+  </genSvlt:configuration>
+
+  <genSvlt:gatewayServiceLocator>
+   <protocol:ws-service-locator endpoint="localhost:8080"/>
+  </genSvlt:gatewayServiceLocator>
+
+  <genSvlt:parametersBuilders>
+   <agent:vhost-parameters-builder/>
+   <agent:appctx-parameters-builder/>
+  </genSvlt:parametersBuilders>
+
+ </genSvlt:agent>
+</s:beans>

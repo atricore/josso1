@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>agents</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>josso-weblogic92-agent</artifactId>
+    <packaging>jar</packaging>
+    <name>JOSSO :: WebLogic 9.2 Agent</name>
+    <description>WebLogic 9.2 Agent</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agent-shared</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-servlet-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+
+
+        <!-- Weblogic 9.2 external dependencies -->
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>apachexmlbeansutil</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/apachexmlbeansutil.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>api</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/api.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>avalon-framework</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/avalon-framework.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>batik</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/batik.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>bea_wls_async_response</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/bea_wls_async_response.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>bea_wls_remote_deployer</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/bea_wls_remote_deployer.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>binxml</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/binxml.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>cssapi</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/cssapi.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>cssimpl</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/cssimpl.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>cssjdkutils</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/cssjdkutils.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>debugging</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/debugging.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>diagnostics-agent</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/diagnostics-agent.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>EccpressoAsn1</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/EccpressoAsn1.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>EccpressoCore</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/EccpressoCore.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>EccpressoJcae</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/EccpressoJcae.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>engapi</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/engapi.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>engimpl</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/engimpl.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>fop</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/fop.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jcom</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jcom.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jconn2</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jconn2.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jconn3</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jconn3.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jConnect</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jConnect.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>JDIProxy</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/JDIProxy.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jms51-interop</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jms51-interop.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jpd</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jpd.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jrmpclient</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jrmpclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jrmp</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jrmp.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jsafeFIPS</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jsafeFIPS.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>jsafe</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/jsafe.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>knex81</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/knex81.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>mejb</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/mejb.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>ojdbc14</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/ojdbc14.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>QueueTransportEJB</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/QueueTransportEJB.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>velocity-dep-1.3.1</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/velocity-dep-1.3.1.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>weblogic</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/weblogic.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>webserviceclient</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/webserviceclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>webservices</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/webservices.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlbase</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlbase.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlcipher</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlcipher.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlclient</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlcommons-logging</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlcommons-logging.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlconnector</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlconnector.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wldb2</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wldb2.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wldeploy</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wldeploy.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlinformix</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlinformix.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wl-j2ee-client</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wl-j2ee-client.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wljmsclient</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wljmsclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wljmxclient</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wljmxclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wllog4j</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wllog4j.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlnmclient</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlnmclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wloracle</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wloracle.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlsafclient</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlsafclient.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wls-api</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wls-api.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlspy</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlspy.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlsqlserver</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlsqlserver.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlsybase</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlsybase.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlutil</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlutil.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlw-lang81-COM</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlw-lang81-COM.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlw-langx</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlw-langx.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlw-system</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlw-system.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlw-wsee-soapfault</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlw-wsee-soapfault.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlxbean81</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlxbean81.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wlxbean</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wlxbean.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>wsse</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/wsse.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>xbean</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/xbean.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>xmlx</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/xmlx.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>xqrl</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/xqrl.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>weblogic92</groupId>
+            <artifactId>xquery</artifactId>
+            <version>9.2</version>
+            <systemPath>${env.WEBLOGIC_9_2_HOME}/server/lib/xquery.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <!-- -->
+
+    </dependencies>
+
+    <build>
+
+        <resources>
+            <resource>
+                <directory>${pom.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${pom.basedir}/src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+
+            <!-- Generate mbeans srouce artifact -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>all</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/unix-src.xml</descriptor>
+                                <descriptor>src/main/assembly/windows-src.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>true</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.xbean</groupId>
+                <artifactId>maven-xbean-plugin</artifactId>
+                <version>${xbean-version}</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <namespace>urn:org:josso:agent:weblogic92</namespace>
+                        </configuration>
+                        <goals>
+                            <goal>mapping</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+

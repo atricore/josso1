@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!--
+JOSSO Agent configuration file.
+-->
+<agent>
+
+    <!-- ============================================================================= -->
+    <!-- JOSSO Agent classes                                                           -->
+    <!--                                                                               -->
+    <!-- DO NOT FORGET TO SELECT THE RIGHT CLASS FOR YOUR PLATFORM                     -->                                                                              -->
+    <!--                                                                               -->
+    <!-- ============================================================================= -->
+
+    <!-- Tomcat Agents -->
+    <!--class>org.josso.tc50.agent.CatalinaSSOAgent</class-->
+    <class>org.josso.tc55.agent.CatalinaSSOAgent</class>
+    <!--class>org.josso.tc60.agent.CatalinaSSOAgent</class-->
+
+    <!-- JBoss Agents -->
+    <!--class>org.josso.jb32.agent.JBossCatalinaSSOAgent</class-->
+    <!--class>org.josso.jb4.agent.JBossCatalinaSSOAgent</class-->
+    <!--class>org.josso.jb42.agent.JBossCatalinaSSOAgent</class-->
+
+    <!-- Web Logic Agents -->
+    <!--class>org.josso.wls92.agent.WLSSSOAgent</class-->
+
+    <!-- Generic Servlet Container agents -->
+    <!--class>org.josso.servlet.agent.GenericServletSSOAgent</class-->
+
+    <!-- ============================================================================= -->
+    <!--                                                                               -->
+    <!-- LOGIN/LOGOUT URLs : Modify host and port values.                              -->
+    <!--                                                                               -->
+    <!-- Use the "customLoginUrl" configuration property in the JOSSO GWY config file  -->
+    <!-- if you want to use adifferent login form.                                     -->
+    <!-- ============================================================================= -->
+    <gatewayLoginUrl>http://localhost:8080/josso/signon/login.do</gatewayLoginUrl>
+    <gatewayLogoutUrl>http://localhost:8080/josso/signon/logout.do</gatewayLogoutUrl>
+
+    <!--
+    Usefull when working in behind a reverse proxy or load balancer with a different host name.
+    Here you should place the reverse proxy or load balancer base URL.
+
+    Note : When using this options, the gatewayLoginURL and gatewayLogoutURL should also point to this host unless
+    the GWY is not behind the proxy or balancer.
+
+    <singlePointOfAccess>http://reverse-proxy-host:8080</singlePointOfAccess>
+
+    <gatewayLoginUrl>http://reverse-proxy-host:8080/josso/signon/login.do</gatewayLoginUrl>
+    <gatewayLogoutUrl>http://reverse-proxy-host:8080/josso/signon/logout.do</gatewayLogoutUrl>
+    -->
+
+    <!-- ============================================================================= -->
+    <!--                                                                               -->
+    <!-- JOSSO Agent runtime setup                                                     -->
+    <!--                                                                               -->
+    <!-- ============================================================================= -->
+
+    <!-- Mininum interval between sso session access , in milliseconds -->
+    <sessionAccessMinInterval>1000</sessionAccessMinInterval>
+
+    <!-- JOSSO Agent service locator configuration -->
+    <service-locator>
+        <class>org.josso.gateway.WebserviceGatewayServiceLocator</class>
+        <endpoint>localhost:8080</endpoint>
+
+        <!-- Associate an identity to SOAP messages
+        <username>wsclient</username>
+        <password>wsclientpwd</password>
+        -->
+
+        <!-- Enabled SSL on the SOAP circuit.
+        <transportSecurity>confidential</transportSecurity>
+        -->
+    </service-locator>
+
+    <!-- Only useful when configuring multiple security domains -->
+    <!-- You can configure your own parameter builder to send parameters to your own SecurityDomainMatcher (or login login ;) ) -->
+    <!--
+    <front-channel>
+        <parameter-builders>
+            <parameter-builder>
+                <class>org.josso.agent.http.VHostParametersBuilder</class>
+            </parameter-builder>
+            <parameter-builder>
+                <class>org.josso.agent.http.AppContextParametersBuilder</class>
+            </parameter-builder>
+        </parameter-builders>
+    </front-channel>
+    -->
+
+    <!-- ============================================================================= -->
+    <!--                                                                               -->
+    <!-- JOSSO Parnter application definicions :                                       -->
+    <!--                                                                               -->
+    <!-- Configure all web applications that should be a josso partner application     -->
+    <!-- within this server.                                                           -->
+    <!-- For each partner application you have to define the proper web-context.      -->
+    <!-- ============================================================================= -->
+    <partner-apps>
+
+        <partner-app>
+            <id>MyPartnerApp1</id>
+            <context>/partnerapp</context>
+            
+            <!-->vhost>www.mydomain-1.com</vhost-->
+
+            <!-- This is an optional feature :
+            You can reference any web resource collection that should not be subject to SSO protection.
+            The SSO agent will not provide identity nor demand authentication to requests matching the
+            security constraint associated to this web resource collections.
+            In order to work, the security constraint must not contain auth-constraints declarations.
+            See sample web.xml file from josso partnerapp.
+            <security-constraint>
+                <ignore-web-resource-collection>public-resources</ignore-web-resource-collection>
+            </security-constraint>
+            -->
+
+            <!-- In addition to the standard JEE security, JOSSO can propagate the security context using
+            alternative mechanisms, such as custom http headers, request attributes and cookies, thus making it available
+            to applications which do not rely on JEE security APIs.
+
+            <security-context-propagation>
+                 <binding>HTTP_HEADERS</binding>
+                 <userPlaceHolder>currentLoginName</userPlaceHolder>
+                 <rolesPlaceHolder>currentUserRoles</rolesPlaceHolder>
+            </security-context-propagation>
+            -->
+        </partner-app>
+
+        <!-- Other partner apps.
+        <partner-app>
+            <context>/partner-app2</context>
+        </partner-app>
+        -->
+
+        <!-- Root context protection
+        <partner-app>
+            <context>/</context>
+        </partner-app>
+         -->
+
+    </partner-apps>
+
+</agent>
+

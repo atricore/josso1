@@ -1,0 +1,70 @@
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util
+  http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="clear" class="org.josso.tooling.gshell.core.commands.builtins.ClearCommand">
+        <constructor-arg ref="terminal" />
+    </bean>
+
+    <bean id="echo" class="org.josso.tooling.gshell.core.commands.builtins.EchoCommand" />
+
+    <bean id="exit" class="org.josso.tooling.gshell.core.commands.builtins.ExitCommand" />
+
+    <bean id="help" class="org.josso.tooling.gshell.core.commands.builtins.HelpCommand">
+        <constructor-arg ref="commandRegistry" />
+        <constructor-arg ref="commandRegistry" />
+        <constructor-arg ref="branding" />
+    </bean>
+
+    <bean id="history-cmd" class="org.josso.tooling.gshell.core.commands.builtins.HistoryCommand">
+        <constructor-arg ref="history" />
+    </bean>
+
+    <bean id="info" class="org.josso.tooling.gshell.core.commands.builtins.InfoCommand">
+        <constructor-arg ref="branding" />
+    </bean>
+
+    <bean id="set" class="org.josso.tooling.gshell.core.commands.builtins.SetCommand" />
+
+    <bean id="source" class="org.josso.tooling.gshell.core.commands.builtins.SourceCommand" />
+
+    <bean id="unset" class="org.josso.tooling.gshell.core.commands.builtins.UnsetCommand" />
+
+    <bean id="grep" class="org.josso.tooling.gshell.core.commands.utils.GrepCommand" />
+
+    <bean id="cat" class="org.josso.tooling.gshell.core.commands.utils.CatCommand" />
+
+    <bean id="exec" class="org.josso.tooling.gshell.core.commands.utils.ExecuteCommand" />
+
+    <bean id="java" class="org.josso.tooling.gshell.core.commands.utils.JavaCommand" />
+
+    <bean id="sleep" class="org.josso.tooling.gshell.core.commands.utils.SleepCommand" />
+
+</beans>

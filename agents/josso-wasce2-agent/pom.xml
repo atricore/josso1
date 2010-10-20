@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+  
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>agents</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+    
+    <groupId>org.josso</groupId>
+    <artifactId>josso-wasce-agent</artifactId>
+    <version>1.8.4-SNAPSHOT</version>
+
+    <name>JOSSO :: Websphere AS CE Agent</name>
+    <packaging>car</packaging>
+
+    <description>JOSSO :: Websphere AS CE Agent</description>
+
+    <properties>
+        <josso-version>${project.parent.version}</josso-version>
+
+		<commons-lang-version>2.0</commons-lang-version>
+		<commons-logging-version>1.0.4</commons-logging-version>
+		<commons-beanutils-version>1.6.1</commons-beanutils-version>
+		<commons-collections-version>3.0</commons-collections-version>
+		<commons-httpclient-version>3.1</commons-httpclient-version>
+		<commons-modeler-version>1.1</commons-modeler-version>
+		<commons-digester-version>1.5</commons-digester-version>
+		<axis-version>1.4</axis-version>
+		<axis-jaxrpc-version>1.4</axis-jaxrpc-version>
+		<axis-saaj-version>1.4</axis-saaj-version>
+		<axis-wsdl4j-version>1.5.1</axis-wsdl4j-version>
+		<axis-ant-version>1.4</axis-ant-version>
+		<commons-codec-version>1.3</commons-codec-version>
+		<commons-discovery-version>0.2</commons-discovery-version>
+		<activation-version>1.1</activation-version>
+		<aopalliance-version>1.0</aopalliance-version>
+		<spring-version>2.5.5</spring-version>
+		<xbean-spring-version>3.4.3</xbean-spring-version>
+		<tomcatVersion>6.0.18</tomcatVersion>
+		
+		<!-- This property is required by the car:package mojo -->
+		<geronimoVersion>2.1.4</geronimoVersion>
+		
+		<geronimoSchemaVersion>1.2</geronimoSchemaVersion>
+		
+		<gbeanDeployer>org.apache.geronimo.framework/geronimo-gbean-deployer/${geronimoVersion}/car</gbeanDeployer>
+        <j2eeDeployer>org.apache.geronimo.configs/j2ee-deployer/${geronimoVersion}/car</j2eeDeployer>
+
+        
+        <PlanServerHostname>0.0.0.0</PlanServerHostname>
+        <PlanHTTPPort>8080</PlanHTTPPort>
+        <PlanHTTPSPort>8443</PlanHTTPSPort>
+        <PlanAJPPort>8019</PlanAJPPort>
+        
+        <wasceTomcatGroupId>org.apache.geronimo.configs</wasceTomcatGroupId>
+        <wasceTomcatArtifactId>tomcat6</wasceTomcatArtifactId>
+    </properties>
+    
+    <dependencies>
+    	<!-- josso agent dependencies -->
+		<dependency>
+		    <groupId>org.josso</groupId>
+		    <artifactId>josso-common</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.josso</groupId>
+		    <artifactId>josso-core</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.josso</groupId>
+		    <artifactId>josso-agent</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.josso</groupId>
+		    <artifactId>josso-protocol-client</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.josso</groupId>
+		    <artifactId>josso-ws</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.josso</groupId>
+		    <artifactId>josso-tomcat60-agent</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>commons-lang</groupId>
+		    <artifactId>commons-lang</artifactId>
+		    <version>${commons-lang-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-logging</groupId>
+		    <artifactId>commons-logging</artifactId>
+		    <version>${commons-logging-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-logging</groupId>
+		    <artifactId>commons-logging-api</artifactId>
+		    <version>${commons-logging-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		    <version>${commons-beanutils-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-collections</groupId>
+		    <artifactId>commons-collections</artifactId>
+		    <version>${commons-collections-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-httpclient</groupId>
+		    <artifactId>commons-httpclient</artifactId>
+		    <version>${commons-httpclient-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-modeler</groupId>
+		    <artifactId>commons-modeler</artifactId>
+		    <version>${commons-modeler-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-digester</groupId>
+		    <artifactId>commons-digester</artifactId>
+		    <version>${commons-digester-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-codec</groupId>
+		    <artifactId>commons-codec</artifactId>
+		    <version>${commons-codec-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>commons-discovery</groupId>
+		    <artifactId>commons-discovery</artifactId>
+		    <version>${commons-discovery-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>axis</groupId>
+		    <artifactId>axis</artifactId>
+		    <version>${axis-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>axis</groupId>
+		    <artifactId>axis-jaxrpc</artifactId>
+		    <version>${axis-jaxrpc-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>axis</groupId>
+		    <artifactId>axis-saaj</artifactId>
+		    <version>${axis-saaj-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>axis</groupId>
+		    <artifactId>axis-wsdl4j</artifactId>
+		    <version>${axis-wsdl4j-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>axis</groupId>
+		    <artifactId>axis-ant</artifactId>
+		    <version>${axis-ant-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>javax.activation</groupId>
+		    <artifactId>activation</artifactId>
+		    <version>${activation-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>aopalliance</groupId>
+		    <artifactId>aopalliance</artifactId>
+		    <version>${aopalliance-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-beans</artifactId>
+		    <version>${spring-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context</artifactId>
+		    <version>${spring-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-core</artifactId>
+		    <version>${spring-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-aop</artifactId>
+		    <version>${spring-version}</version>
+		    <type>jar</type>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.xbean</groupId>
+		    <artifactId>xbean-spring</artifactId>
+		    <version>${xbean-spring-version}</version>
+		    <type>jar</type>
+		</dependency>
+		
+		<!-- geronimo, tomcat dependencies -->
+        <dependency>
+            <groupId>org.apache.geronimo.configs</groupId>
+            <artifactId>j2ee-server</artifactId>
+            <version>${geronimoVersion}</version>
+            <type>car</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.framework</groupId>
+            <artifactId>server-security-config</artifactId>
+            <version>${geronimoVersion}</version>
+            <type>car</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.configs</groupId>
+            <artifactId>transaction</artifactId>
+            <version>${geronimoVersion}</version>
+            <type>car</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.modules</groupId>
+            <artifactId>geronimo-tomcat6</artifactId>
+            <version>${geronimoVersion}</version>
+        </dependency>
+        <!-- Required because tomcat STARTS its default web.xml which has a jasper servlet in it -->
+        <dependency>
+            <groupId>org.apache.geronimo.configs</groupId>
+            <artifactId>jasper</artifactId>
+            <type>car</type>
+            <version>${geronimoVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.configs</groupId>
+            <artifactId>webservices-common</artifactId>
+            <type>car</type>
+            <version>${geronimoVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>catalina</artifactId>
+            <version>6.0.18-G678601</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>catalina-ha</artifactId>
+            <version>${tomcatVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tribes</artifactId>
+            <version>${tomcatVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>coyote</artifactId>
+            <version>${tomcatVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.extras</groupId>
+            <artifactId>juli</artifactId>
+            <version>${tomcatVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.extras</groupId>
+            <artifactId>juli-adapters</artifactId>
+            <version>${tomcatVersion}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.apache.geronimo.framework</groupId>
+            <artifactId>j2ee-security</artifactId>
+            <version>${geronimoVersion}</version>
+            <type>car</type>
+        </dependency>
+		<dependency>
+		    <groupId>org.apache.geronimo.configs</groupId>
+		    <artifactId>sharedlib</artifactId>
+		    <version>${geronimoVersion}</version>
+		    <type>car</type>
+		</dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>wasce</id>
+            <url>http://download.boulder.ibm.com/ibmdl/pub/software/websphere/wasce/repository/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    
+    <build>
+		<resources>
+            <resource>
+                <directory>${pom.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                   <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${pom.basedir}/src/main/resources</directory>
+                <excludes>
+                   <exclude>**/*.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+	    	<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[1.5,)</version>
+                                </requireJavaVersion>
+                                
+                                <!-- Require Maven 2.0.9+ -->
+                                <requireMavenVersion>
+                                    <version>[2.0.9,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.geronimo.genesis.plugins</groupId>
+                <artifactId>tools-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>install-legal-files</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-legal-files</goal>
+                        </goals>
+                        <configuration>
+			    			<fileset>
+								<basedir>${pom.basedir}</basedir>
+								<includes>
+								    <include>geronimo.license.txt</include>
+								    <include>josso.license.txt</include>
+								</includes>
+			    			</fileset>
+			    			<strict>true</strict>
+                        </configuration>
+                    </execution>
+		    		<execution>
+                        <id>verify-legal-files</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>verify-legal-files</goal>
+                        </goals>
+                        <configuration>
+                            <strict>false</strict>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.geronimo.buildsupport</groupId>
+                <artifactId>car-maven-plugin</artifactId>
+				<version>${geronimoVersion}</version>
+                <extensions>true</extensions>
+                <configuration>
+                	<archive>
+                        <!-- Do not include META-INF/maven to avoid long file problems on windows -->
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                    <osiApproved>true</osiApproved>
+                    <useMavenDependencies>
+                        <value>true</value>
+                        <includeVersion>true</includeVersion>
+                    </useMavenDependencies>
+		    		<deploymentConfigs>
+                        <deploymentConfig>${gbeanDeployer}</deploymentConfig>
+						<deploymentConfig>${j2eeDeployer}</deploymentConfig>
+                    </deploymentConfigs>
+                    <category>Tomcat</category>
+                    <commonInstance>
+                        <plugin-artifact>
+                            <geronimo-version>${geronimoVersion}</geronimo-version>
+                            <jvm-version>1.5</jvm-version>
+                            <jvm-version>1.6</jvm-version>
+                            <source-repository>~/.m2/repository/</source-repository>
+                            <source-repository>http://download.boulder.ibm.com/ibmdl/pub/software/websphere/wasce/plugins-2.1.1.2/</source-repository>
+                            <source-repository>http://download.boulder.ibm.com/ibmdl/pub/software/websphere/wasce/repository/</source-repository>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}//car">${groupId}/${artifactId}/${version}/car</artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.4/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.3/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.2/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.1/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
+                        </plugin-artifact>
+                    </commonInstance>
+                    <instance>
+                        <plugin-artifact>
+                            <copy-file relative-to="server" dest-dir="var/catalina">tomcat-base/</copy-file>
+                            <config-xml-content>
+                                <!-- To disable accesslogging uncomment the following lines
+                                <gbean name="TomcatEngine">
+                                    <reference name="TomcatValveChain" />
+                                </gbean>
+                                <gbean name="AccessLogValve" load="false"></gbean>
+                                -->
+                                <gbean name="TomcatWebConnector">
+                                    <attribute name="host">${ServerHostname}</attribute>
+                                    <attribute name="port">${HTTPPort + PortOffset}</attribute>
+                                    <attribute name="redirectPort">${HTTPSPort + PortOffset}</attribute>
+                                    <attribute name="maxHttpHeaderSize">8192</attribute>
+                                    <attribute name="maxThreads">150</attribute>
+                                    <attribute name="minSpareThreads">25</attribute>
+                                    <attribute name="maxSpareThreads">75</attribute>
+                                    <attribute name="enableLookups">false</attribute>
+                                    <attribute name="acceptCount">100</attribute>
+                                    <attribute name="connectionTimeout">${WebConnectorConTimeout}</attribute>
+                                    <attribute name="disableUploadTimeout">true</attribute>
+                                </gbean>
+                                <gbean name="TomcatAJPConnector">
+                                    <attribute name="host">${ServerHostname}</attribute>
+                                    <attribute name="port">${AJPPort + PortOffset}</attribute>
+                                    <attribute name="redirectPort">${HTTPSPort + PortOffset}</attribute>
+                                    <attribute name="minSpareThreads">25</attribute>
+                                    <attribute name="maxSpareThreads">75</attribute>
+                                    <attribute name="enableLookups">false</attribute>
+                                </gbean>
+                                <gbean name="TomcatWebSSLConnector">
+                                    <attribute name="host">${ServerHostname}</attribute>
+                                    <attribute name="port">${HTTPSPort + PortOffset}</attribute>
+                                    <attribute name="maxHttpHeaderSize">8192</attribute>
+                                    <attribute name="maxThreads">150</attribute>
+                                    <attribute name="minSpareThreads">25</attribute>
+                                    <attribute name="maxSpareThreads">75</attribute>
+                                    <attribute name="enableLookups">false</attribute>
+                                    <attribute name="acceptCount">100</attribute>
+                                    <attribute name="disableUploadTimeout">false</attribute>
+                                    <attribute name="clientAuth">false</attribute>
+                                    <attribute name="algorithm">Default</attribute>
+                                    <attribute name="sslProtocol">TLS</attribute>
+                                    <attribute name="keystoreFile">var/security/keystores/geronimo-default</attribute>
+                                    <attribute name="keystorePass">secret</attribute>
+                                    <attribute name="keystoreType">JKS</attribute>
+                                </gbean>
+                                <gbean name="TomcatHost">
+                                    <attribute name="initParams">
+                                        name=${ServerHostname}
+                                        appBase=
+                                        workDir=work
+                                    </attribute>
+                                </gbean>
+                            </config-xml-content>
+                            <config-substitution key="HTTPPort">8080</config-substitution>
+                            <config-substitution key="AJPPort">8009</config-substitution>
+                            <config-substitution key="HTTPSPort">8443</config-substitution>
+                            <config-substitution key="ServerHostname">0.0.0.0</config-substitution>
+                            <config-substitution key="WebConnectorConTimeout">20000</config-substitution>
+                            <config-substitution key="webcontainer">TomcatWebContainer</config-substitution>
+                            <config-substitution key="webcontainerName">tomcat6</config-substitution>
+                        </plugin-artifact>
+                    </instance>
+                </configuration>
+            </plugin>
+	    	<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+                    <!-- Assemble all agent and 3rd party jars as a wasce repository artifacts
+					in .zip and .tar.gz formats -->
+                    <execution>
+                        <id>repo</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/repo.xml</descriptor>
+                            </descriptors>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

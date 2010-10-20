@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+
+<module xmlns="http://geronimo.apache.org/xml/ns/deployment-1.2">
+    <environment>
+        <moduleId>
+            <groupId>console.realm</groupId>
+            <artifactId>JossoSecurityRealm</artifactId>
+            <version>1.0</version>
+            <type>car</type>
+        </moduleId>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.geronimo.framework</groupId>
+                <artifactId>j2ee-security</artifactId>
+                <type>car</type>
+            </dependency>
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-tomcat60-plugin</artifactId>
+                <version>1.7</version>
+                <type>jar</type>
+            </dependency>
+        </dependencies>
+    </environment>
+    <gbean name="JossoSecurityRealm" class="org.apache.geronimo.security.realm.GenericSecurityRealm"
+           xsi:type="dep:gbeanType"
+           xmlns:dep="http://geronimo.apache.org/xml/ns/deployment-1.2"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <attribute name="realmName">josso</attribute>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+        <xml-reference name="LoginModuleConfiguration">
+            <log:login-config xmlns:log="http://geronimo.apache.org/xml/ns/loginconfig-2.0">
+                <log:login-module control-flag="REQUIRED" wrap-principals="false">
+                    <log:login-domain-name>josso</log:login-domain-name>
+                    <log:login-module-class>org.josso.tc60.agent.jaas.SSOGatewayLoginModule</log:login-module-class>
+                    <log:option name="debug">true</log:option>
+                </log:login-module>
+            </log:login-config>
+        </xml-reference>
+    </gbean>
+</module>
+

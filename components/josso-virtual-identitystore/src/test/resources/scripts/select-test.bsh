@@ -1,0 +1,10 @@
+//
+// Scripts that selects all the user from the source set
+//
+log.debug("Select Test Scripting Rule. Number of source users = " + sourceUsers.size());
+
+Collection selectedUsers = new ArrayList();
+selectedUsers.addAll(sourceUsers);
+outcome.setObject(selectedUsers);
+
+

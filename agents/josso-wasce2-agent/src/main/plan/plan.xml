@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<module xmlns="http://geronimo.apache.org/xml/ns/deployment-${geronimoSchemaVersion}">
+    
+    <gbean name="CatalinaSystemProperties" class="org.apache.geronimo.system.properties.SystemProperties">
+        <attribute name="systemProperties">
+        org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true
+        </attribute>
+    </gbean>
+
+    <gbean name="TomcatWebManager" class="org.apache.geronimo.tomcat.TomcatManagerImpl">
+    </gbean>
+
+    <!-- The following is the equivalent of the server.xml file, but done with GBeans -->
+
+    <!-- The TomcatContainer/Service -->
+    <gbean name="TomcatWebContainer" class="org.apache.geronimo.tomcat.TomcatContainer">
+        <attribute name="catalinaHome">var/catalina</attribute>
+        <!--<attribute name="applicationListeners">org.apache.myfaces.webapp.StartupServletContextListener</attribute>-->
+        <reference name="EngineGBean">
+            <name>TomcatEngine</name>
+        </reference>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+        <reference name="WebManager">
+            <name>TomcatWebManager</name>
+        </reference>
+        <reference name="LifecycleListenerChain">
+            <name>AprLifecycleListener</name>
+        </reference>
+    </gbean>
+
+    <gbean name="AprLifecycleListener" class="org.apache.geronimo.tomcat.LifecycleListenerGBean">
+        <attribute name="className">org.apache.geronimo.tomcat.listener.GeronimoAprLifecycleListener</attribute>
+    </gbean>
+
+    <gbean name="TomcatWebConnector" class="org.apache.geronimo.tomcat.connector.Http11ConnectorGBean">
+        <attribute name="name">HTTP</attribute>
+        <attribute name="host">${PlanServerHostname}</attribute>
+        <attribute name="port">${PlanHTTPPort}</attribute>
+        <attribute name="maxHttpHeaderSize">8192</attribute>
+        <attribute name="maxThreads">150</attribute>
+        <attribute name="minSpareThreads">25</attribute>
+        <attribute name="maxSpareThreads">75</attribute>
+        <attribute name="enableLookups">false</attribute>
+        <attribute name="redirectPort">${PlanHTTPSPort}</attribute>
+        <attribute name="acceptCount">100</attribute>
+        <attribute name="connectionTimeout">20000</attribute>
+        <attribute name="disableUploadTimeout">true</attribute>
+        <reference name="TomcatContainer">
+            <name>TomcatWebContainer</name>
+        </reference>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+    </gbean>
+
+    <gbean name="TomcatAJPConnector" class="org.apache.geronimo.tomcat.connector.AJP13ConnectorGBean">
+        <attribute name="name">AJP</attribute>
+        <attribute name="host">${PlanServerHostname}</attribute>
+        <attribute name="port">${PlanAJPPort}</attribute>
+        <attribute name="minSpareThreads">25</attribute>
+        <attribute name="maxSpareThreads">75</attribute>
+        <attribute name="enableLookups">false</attribute>
+        <attribute name="redirectPort">${PlanHTTPSPort}</attribute>
+        <reference name="TomcatContainer">
+            <name>TomcatWebContainer</name>
+        </reference>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+    </gbean>
+
+    <!-- SSL support
+    NOTE: If keystoreFile is a relative path, it is relative to GERONIMO_HOME
+    -->
+    <gbean name="TomcatWebSSLConnector" class="org.apache.geronimo.tomcat.connector.Https11ConnectorGBean">
+        <attribute name="name">HTTPS</attribute>
+        <attribute name="host">${PlanServerHostname}</attribute>
+        <attribute name="port">${PlanHTTPSPort}</attribute>
+        <attribute name="maxHttpHeaderSize">8192</attribute>
+        <attribute name="maxThreads">150</attribute>
+        <attribute name="minSpareThreads">25</attribute>
+        <attribute name="maxSpareThreads">75</attribute>
+        <attribute name="enableLookups">false</attribute>
+        <attribute name="acceptCount">100</attribute>
+        <attribute name="disableUploadTimeout">false</attribute>
+        <attribute name="clientAuth">false</attribute>
+        <attribute name="algorithm">Default</attribute>
+        <attribute name="sslProtocol">TLS</attribute>
+        <attribute name="keystoreFile">var/security/keystores/geronimo-default</attribute>
+        <attribute name="keystorePass">secret</attribute>
+        <attribute name="keystoreType">JKS</attribute>
+        <reference name="TomcatContainer">
+            <name>TomcatWebContainer</name>
+        </reference>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+    </gbean>
+
+    <!-- Engine -->
+    <gbean name="TomcatEngine" class="org.apache.geronimo.tomcat.EngineGBean">
+        <attribute name="className">org.apache.geronimo.tomcat.TomcatEngine</attribute>
+        <attribute name="initParams">
+            name=Geronimo
+        </attribute>
+        <reference name="DefaultHost">
+            <name>TomcatHost</name>
+        </reference>
+        <references name="Hosts">
+            <pattern>
+                <type>Host</type>
+            </pattern>
+        </references>
+        <reference name="RealmGBean">
+            <name>JossoTomcatJAASRealm</name>
+        </reference>
+        <reference name="TomcatValveChain">
+            <name>JossoValve</name>
+        </reference>
+        <reference name="MBeanServerReference">
+            <name>MBeanServerReference</name>
+        </reference>
+        <!-- n.b. is you have more hosts, you want them to start before the engine gbean -->
+        <!-- ensure this by including dependencies like this -->
+        <!--
+        <dependency>
+            <name>MyAdditionalHost</name>
+        </dependency>
+        -->
+    </gbean>
+
+    <gbean name="TomcatAccessLogManager" class="org.apache.geronimo.tomcat.TomcatLogManagerImpl">
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+        <references name="LogGBeans">
+            <pattern>
+                <name>AccessLogValve</name>
+            </pattern>
+        </references>
+    </gbean>
+
+    <!-- Valve -->
+    <gbean name="JossoValve" class="org.apache.geronimo.tomcat.ValveGBean">
+        <attribute name="className">org.josso.tc60.agent.SSOAgentValve</attribute>
+        <attribute name="initParams">
+            debug=1
+        </attribute>
+        <reference name="NextValve">
+	    	<name>AccessLogValve</name>
+		</reference>
+    </gbean>
+    <gbean name="AccessLogValve" class="org.apache.geronimo.tomcat.ValveGBean">
+        <attribute name="className">org.apache.catalina.valves.AccessLogValve</attribute>
+        <attribute name="initParams">
+            prefix=${PlanServerHostname}_access_log.
+            suffix=.txt
+            pattern=common
+        </attribute>
+        <!-- Uncomment this section to add second valve for a chain.  This example consists of the Tomcat
+              AccessLogValve and SingleSignOn. Notice the dependency that chains the AccessLogValve with the
+              SingleSignOnValve.  The valves will be added in the order that they are chained.
+            <reference name="NextValve"><moduleType>J2EEModule</moduleType><name>SingleSignOnValve</name></reference>
+        -->
+    </gbean>
+    <!-- Uncomment this section to add this valve  to the chain.  This example consists of the Tomcat
+          SingleSignOn.
+    <gbean name="SingleSignOnValve" class="org.apache.geronimo.tomcat.ValveGBean">
+        <attribute name="className">org.apache.catalina.authenticator.SingleSignOn</attribute>
+    </gbean>
+    -->
+
+    <!-- Realm -->
+    <gbean name="JossoTomcatJAASRealm" class="org.apache.geronimo.tomcat.RealmGBean">
+		<attribute name="className">org.josso.tc60.agent.jaas.CatalinaJAASRealm</attribute>
+		<attribute name="initParams">
+			appName=josso
+			userClassNames=org.josso.gateway.identity.service.BaseUserImpl
+			roleClassNames=org.josso.gateway.identity.service.BaseRoleImpl
+			debug=1
+		</attribute>
+    </gbean>
+    
+    <!-- This is an example TomcatJAASRealm>
+    <gbean name="TomcatJAASRealm" class="org.apache.geronimo.tomcat.RealmGBean">
+        <attribute name="className">org.apache.geronimo.tomcat.realm.TomcatJAASRealm</attribute>
+        <attribute name="initParams">
+            userClassNames=org.apache.geronimo.security.realm.providers.GeronimoUserPrincipal
+            roleClassNames=org.apache.geronimo.security.realm.providers.GeronimoGroupPrincipal
+        </attribute>
+    </gbean>
+    -->
+    
+    <!-- Host -->
+    <gbean name="TomcatHost" class="org.apache.geronimo.tomcat.HostGBean">
+        <attribute name="className">org.apache.catalina.core.StandardHost</attribute>
+        <attribute name="initParams">
+            name=${ServerHostname}
+            appBase=
+            workDir=work
+        </attribute>
+        <!-- You may attach a Realm to a Host as well.  Only attach to the Engine *or* the Host.
+             Attempting to add the same Realm GBeans to the Engine *and* Host at the same time
+             will result in an error.
+
+             Uncomment this to add the Realm to the Host
+        <reference name="RealmGBean">
+            <name>TomcatJAASRealm</name>
+        </reference>
+        -->
+        <!-- You may attach a Valve chain to a Host as well.  Only attach to the Engine *or* the Host.
+             Attempting to add the same valve GBeans to the Engine *and* Host at the same time
+             will result in an error.
+
+             Uncomment this to add the valve chain to the Host
+        <reference name="TomcatValveChain">
+            <name>AccessLogValve</name>
+        </reference>
+        -->
+    </gbean>
+    
+    <!-- Josso Security Realm -->
+    <gbean name="JossoSecurityRealm" class="org.apache.geronimo.security.realm.GenericSecurityRealm"
+           xsi:type="dep:gbeanType"
+           xmlns:dep="http://geronimo.apache.org/xml/ns/deployment-1.2"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <attribute name="realmName">josso</attribute>
+        <reference name="ServerInfo">
+            <name>ServerInfo</name>
+        </reference>
+        <xml-reference name="LoginModuleConfiguration">
+            <log:login-config xmlns:log="http://geronimo.apache.org/xml/ns/loginconfig-2.0">
+                <log:login-module control-flag="REQUIRED" wrap-principals="false">
+                    <log:login-domain-name>josso</log:login-domain-name>
+                    <log:login-module-class>org.josso.tc60.agent.jaas.SSOGatewayLoginModule</log:login-module-class>
+                    <log:option name="debug">true</log:option>
+                </log:login-module>
+            </log:login-config>
+        </xml-reference>
+    </gbean>
+    
+</module>

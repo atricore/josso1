@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns="urn:org:josso:db:identitystore"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+        >
+
+
+    <s:bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <s:property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <s:property name="url" value="jdbc:hsqldb:mem:jossodb"/>
+        <s:property name="username" value="sa"/>
+        <s:property name="password" value=""/>
+    </s:bean>
+
+
+    <jdbc-store
+            id="dbStore"
+            driverName="org.hsqldb.jdbcDriver"
+            connectionURL="jdbc:hsqldb:mem:jossodb"
+            connectionName="sa"
+            connectionPassword=""
+            userQueryString="SELECT NAME FROM JOSSO_USER WHERE LOGIN = ?;"
+            rolesQueryString="SELECT ROLE FROM JOSSO_USER_ROLE WHERE LOGIN = ?;"
+            credentialsQueryString="SELECT LOGIN AS USERNAME, PASSWORD FROM JOSSO_USER WHERE LOGIN = ?;"
+            userPropertiesQueryString="SELECT NAME, VALUE FROM JOSSO_USER_PROPERTY WHERE LOGIN = ?;"
+            resetCredentialDml="UPDATE JOSSO_USER SET PASSWORD = ? WHERE LOGIN = ?;"
+            relayCredentialQueryString="SELECT LOGIN FROM JOSSO_USER WHERE #?# = ?;"
+            />
+
+</s:beans>

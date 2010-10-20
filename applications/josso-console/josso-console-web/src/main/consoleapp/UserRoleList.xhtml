@@ -1,0 +1,150 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:rich="http://richfaces.org/rich"
+                template="layout/template.xhtml">
+                       
+<ui:define name="body">
+    
+    <h:messages globalOnly="true" styleClass="message" id="globalMessages"/>
+    
+    <h:form id="userRoleSearch" styleClass="edit">
+    
+        <rich:simpleTogglePanel label="UserRole search parameters" switchType="ajax">
+        
+        
+        </rich:simpleTogglePanel>
+        
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Search" action="/UserRoleList.xhtml"/>
+        </div>
+        
+    </h:form>
+    
+    <rich:panel>
+        <f:facet name="header">UserRole search results</f:facet>
+    <div class="results" id="userRoleList">
+
+    <h:outputText value="The userRole search returned no results." 
+               rendered="#{empty userRoleList.resultList}"/>
+               
+    <rich:dataTable id="userRoleList" 
+                var="userRole"
+              value="#{userRoleList.resultList}" 
+           rendered="#{not empty userRoleList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <s:link styleClass="columnHeader"
+                             value="id #{userRoleList.order=='id asc' ? messages.down : ( userRoleList.order=='id desc' ? messages.up : '' )}">
+                    <f:param name="order" value="#{userRoleList.order=='id asc' ? 'id desc' : 'id asc'}"/>
+                </s:link>
+            </f:facet>
+            #{userRole.id}
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <s:link styleClass="columnHeader"
+                             value="role name #{userRoleList.order=='role.name asc' ? messages.down : ( userRoleList.order=='role.name desc' ? messages.up : '' )}">
+                    <f:param name="order" value="#{userRoleList.order=='role.name asc' ? 'role.name desc' : 'role.name asc'}"/>
+                </s:link>
+            </f:facet>
+            #{userRole.role.name}
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <s:link styleClass="columnHeader"
+                             value="username login #{userRoleList.order=='username.login asc' ? messages.down : ( userRoleList.order=='username.login desc' ? messages.up : '' )}">
+                    <f:param name="order" value="#{userRoleList.order=='username.login asc' ? 'username.login desc' : 'username.login asc'}"/>
+                </s:link>
+            </f:facet>
+            #{userRole.username.login}
+        </h:column>
+        <h:column>
+            <f:facet name="header">action</f:facet>
+            <s:link view="/#{empty from ? 'UserRole' : from}.xhtml" 
+                   value="Select" 
+                      id="userRole">
+                <f:param name="userRoleId" 
+                        value="#{userRole.id}"/>
+            </s:link>
+        </h:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+    
+    <div class="tableControl">
+      
+        <s:link view="/UserRoleList.xhtml" 
+            rendered="#{userRoleList.previousExists}" 
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+        
+        <s:link view="/UserRoleList.xhtml" 
+            rendered="#{userRoleList.previousExists}" 
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult" 
+                    value="#{userRoleList.previousFirstResult}"/>
+        </s:link>
+        
+        <s:link view="/UserRoleList.xhtml" 
+            rendered="#{userRoleList.nextExists}" 
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult" 
+                    value="#{userRoleList.nextFirstResult}"/>
+        </s:link>
+        
+        <s:link view="/UserRoleList.xhtml" 
+            rendered="#{userRoleList.nextExists}" 
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult" 
+                    value="#{userRoleList.lastFirstResult}"/>
+        </s:link>
+        
+    </div>
+    
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/UserRoleEdit.xhtml"
+                    id="create" 
+                 value="Create userRole">
+            <f:param name="userRoleId"/>
+        </s:button>
+    </s:div>
+    
+</ui:define>
+
+</ui:composition>
+

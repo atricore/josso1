@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE ejb-jar PUBLIC '-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN' 'http://java.sun.com/dtd/ejb-jar_2_0.dtd'>
+
+<!-- ============================================================== -->
+<!-- Partner Component EJB Descriptor                               -->
+<!--                                                                -->
+<!-- $Id: ejb-jar.xml 974 2009-01-14 00:39:45Z sgonzalez $                                                           -->
+<!-- ============================================================== -->
+<ejb-jar>
+
+    <display-name>Partner Component 1</display-name>
+
+    <enterprise-beans>
+
+        <session>
+            <ejb-name>PartnerComponentEJB</ejb-name>
+            <home>org.josso.samples.ejb.PartnerComponentHome</home>
+            <remote>org.josso.samples.ejb.PartnerComponent</remote>
+            <ejb-class>org.josso.samples.ejb.PartnerComponentEJB</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+            <!--
+            <security-identity>
+                <use-caller-identity/>
+            </security-identity>
+            -->
+            <security-role-ref>
+                <role-name>role1</role-name>
+                <role-link>role1</role-link>
+            </security-role-ref>
+        </session>
+
+
+    </enterprise-beans>
+
+    <assembly-descriptor>
+
+        <security-role>
+            <description>Sample role 1</description>
+            <role-name>role1</role-name>
+        </security-role>
+
+        <security-role>
+            <description>Sample role 2</description>
+            <role-name>role2</role-name>
+        </security-role>
+
+        <method-permission>
+            <description>Security attributes for 'PartnerComponenttEJB' methods</description>
+            <unchecked/>
+            <method>
+                <ejb-name>PartnerComponentEJB</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <method>
+                <ejb-name>PartnerComponentEJB</ejb-name>
+                <method-intf>Home</method-intf>
+                <method-name>*</method-name>
+            </method>
+
+        </method-permission>
+
+        <!-- Transaction Attributes -->
+
+        <container-transaction>
+            <method>
+                <ejb-name>PartnerComponentEJB</ejb-name>
+                <method-name>*</method-name>
+            </method>
+            <trans-attribute>Required</trans-attribute>
+        </container-transaction>
+
+    </assembly-descriptor>
+
+
+</ejb-jar>
+

@@ -1,0 +1,12 @@
+# Required initializer 
+AC_INIT
+
+# Automake initialization
+AM_INIT_AUTOMAKE(mod_auth_josso, 1.0)
+
+# Add a test for a compiler.
+AC_PROG_CC
+AM_PROG_LIBTOOL
+
+# Write config.status and the Makefile
+AC_OUTPUT(Makefile)

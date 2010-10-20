@@ -1,0 +1,240 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                             "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich"
+                template="layout/template.xhtml">
+                       
+<ui:define name="body">
+    
+    <h:messages globalOnly="true" styleClass="message" id="globalMessages"/>
+
+    <h:form id="username" styleClass="edit">
+    
+        <rich:panel>
+            <f:facet name="header">#{usernameHome.managed ? 'Edit' : 'Add'} Username</f:facet>
+
+
+            <s:decorate id="loginDecoration" template="layout/edit.xhtml">
+                <ui:define name="label">login</ui:define>
+                <h:inputText id="login" 
+                       disabled="#{usernameHome.managed}"
+                       required="true"
+                           size="32"
+                      maxlength="32"
+                          value="#{usernameHome.instance.login}">
+                    <a:support event="onblur" reRender="loginDecoration" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="descriptionDecoration" template="layout/edit.xhtml">
+                <ui:define name="label">description</ui:define>
+                <h:inputText id="description" 
+                           size="64"
+                      maxlength="64"
+                          value="#{usernameHome.instance.description}">
+                    <a:support event="onblur" reRender="descriptionDecoration" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="nameDecoration" template="layout/edit.xhtml">
+                <ui:define name="label">name</ui:define>
+                <h:inputText id="name" 
+                           size="64"
+                      maxlength="64"
+                          value="#{usernameHome.instance.name}">
+                    <a:support event="onblur" reRender="nameDecoration" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="passwdDecoration" template="layout/edit.xhtml">
+                <ui:define name="label">passwd</ui:define>
+                <h:inputSecret id="passwd" 
+                       required="true"
+                           size="32"
+                      maxlength="32"
+                    value="#{register.password}">
+                </h:inputSecret>
+            </s:decorate>
+
+            <s:decorate id="confirmDecoration" template="layout/edit.xhtml">
+            <ui:define name="label">confirm</ui:define>
+            <h:inputSecret id="confirm" 
+                required="true"
+                size="32"
+                maxlength="32"
+                value="#{register.confirm}">
+            </h:inputSecret>
+            </s:decorate>
+        
+            <div style="clear:both">
+                <span class="required">*</span> 
+                required fields
+            </div>
+            
+        </rich:panel>
+                
+        <div class="actionButtons">
+
+            <h:commandButton id="save" 
+                          value="Save" 
+                         action="#{register.register}"
+                       disabled="#{!usernameHome.wired}"
+                       rendered="#{!usernameHome.managed}"/>  
+                          			  
+            <h:commandButton id="update" 
+                          value="Save" 
+                         action="#{register.update}"
+                       rendered="#{usernameHome.managed}"/>
+                        			  
+            <h:commandButton id="delete" 
+                          value="Delete" 
+                         action="#{usernameHome.remove}"
+                      immediate="true"
+                       rendered="#{usernameHome.managed}"/>
+                    
+            <s:button id="done" 
+                   value="Done"
+             propagation="end"
+                    view="/Username.xhtml"
+                rendered="#{usernameHome.managed}"/>
+                
+            <s:button id="cancel" 
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty usernameFrom ? 'UsernameList' : usernameFrom}.xhtml"
+                rendered="#{!usernameHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="properties">
+        <div class="association" id="propertiesChildren">
+        
+            <h:outputText value="There are no properties associated with this username." 
+                       rendered="#{empty usernameHome.properties}"/>
+        
+            <rich:dataTable value="#{usernameHome.properties}" 
+                           var="property" 
+                      rendered="#{not empty usernameHome.properties}" 
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="propertiesTable">
+                <h:column>
+                    <f:facet name="header">id</f:facet>
+                    <h:outputText value="#{property.id}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">name</f:facet>
+                    <h:outputText value="#{property.name}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">value</f:facet>
+                    <h:outputText value="#{property.value}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">action</f:facet>
+                    <s:link view="/Property.xhtml" 
+                              id="selectproperty" 
+                           value="Select"
+                     propagation="none">
+                        <f:param name="propertyId" 
+                                value="#{property.id}"/>
+                        <f:param name="propertyFrom" value="Username"/>
+                    </s:link>
+                </h:column>
+            </rich:dataTable>
+        
+        </div>
+          
+        <f:subview rendered="#{usernameHome.managed}" id="properties">
+        <div class="actionButtons">
+            <s:button id="addproperty" 
+                   value="Add property"
+                    view="/PropertyEdit.xhtml"
+             propagation="none">
+                 <f:param name="usernameLogin" 
+                         value="#{usernameHome.instance.login}"/>
+                 <f:param name="propertyFrom" value="Username"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+
+    <rich:tab label="userRoles">
+        <div class="association" id="userRolesChildren">
+        
+            <h:outputText value="There are no userRoles associated with this username." 
+                       rendered="#{empty usernameHome.userRoles}"/>
+        
+            <rich:dataTable value="#{usernameHome.userRoles}" 
+                           var="userRole" 
+                      rendered="#{not empty usernameHome.userRoles}" 
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="userRolesTable">
+                <h:column>
+                    <f:facet name="header">id</f:facet>
+                    <h:outputText value="#{userRole.id}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">action</f:facet>
+                    <s:link view="/UserRole.xhtml" 
+                              id="selectuserRole" 
+                           value="Select"
+                     propagation="none">
+                        <f:param name="userRoleId" 
+                                value="#{userRole.id}"/>
+                        <f:param name="userRoleFrom" value="Username"/>
+                    </s:link>
+                </h:column>
+            </rich:dataTable>
+        
+        </div>
+          
+        <f:subview rendered="#{usernameHome.managed}" id="userRoles">
+        <div class="actionButtons">
+            <s:button id="adduserRole" 
+                   value="Add userRole"
+                    view="/UserRoleEdit.xhtml"
+             propagation="none">
+                 <f:param name="usernameLogin" 
+                         value="#{usernameHome.instance.login}"/>
+                 <f:param name="userRoleFrom" value="Username"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

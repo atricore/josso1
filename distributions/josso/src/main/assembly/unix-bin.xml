@@ -191,6 +191,7 @@
                 <include>${pom.groupId}:josso-servlet-agent</include>
                 <include>${pom.groupId}:josso-weblogic92-agent:jar</include>
                 <include>${pom.groupId}:josso-weblogic10-agent:jar</include>
+                <include>${pom.groupId}:josso-applet-agent</include>
                 <include>${pom.groupId}:josso-agents-bin:jar</include>
             </includes>
 
@@ -301,6 +302,7 @@
                 <include>${pom.groupId}:josso-partner-asp</include>
                 <include>${pom.groupId}:spring-security-contacts</include>
 				<include>${pom.groupId}:josso-partner-wasce-web</include>
+                <include>${pom.groupId}:josso-partner-applet-web</include>
             </includes>
         </dependencySet>
 

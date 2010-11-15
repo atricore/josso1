@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web
+Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- JOSSO web.xml sample descriptor for deploying on Tomcat, JBoss, Geronimo          -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+
+<web-app>
+
+    <display-name>JOSSO Applet Partner Application</display-name>
+
+    <!--
+        Optional, you can export the security context information (roles, user) to HTTP headers
+        Usefull for web applications that don't use JEE security
+    <filter>
+        <filter-name>JOSSOSecurityContextExporterServletFilter</filter-name>
+        <description>JOSSO Security Context Exporter Servlet Filter</description>
+        <filter-class>org.josso.agent.http.SecurityContextExporterFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>JOSSOSecurityContextExporterServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    -->
+
+    <welcome-file-list id="WelcomeFileList">
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <security-constraint>
+        <!-- Sample Security Constraint -->
+        <web-resource-collection>
+
+            <!-- We're going to protect this resource and make it available only to users in "role1". -->
+            <web-resource-name>protected-resources</web-resource-name>
+
+            <url-pattern>/protected/*</url-pattern>
+
+            <http-method>HEAD</http-method>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>PUT</http-method>
+            <http-method>DELETE</http-method>
+
+        </web-resource-collection>
+
+        <!-- NOTE: This role names will be retrieved by Josso using the proper identity store. -->
+        <auth-constraint>
+            <role-name>role1</role-name>
+        </auth-constraint>
+
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+
+    </security-constraint>
+
+    <!-- We only need tomcat to redirect the user -->
+    <login-config>
+
+        <auth-method>FORM</auth-method>
+
+        <form-login-config>
+            <!--
+            NOTE: This will redirect the user to the proper login page provided by JOSSO.
+            -->
+            <form-login-page>/login-redirect.jsp</form-login-page>
+            <form-error-page>/login-redirect.jsp</form-error-page>
+
+
+        </form-login-config>
+
+    </login-config>
+
+    <security-role >
+        <description>Role 1</description>
+        <role-name>role1</role-name>
+    </security-role>
+
+</web-app>

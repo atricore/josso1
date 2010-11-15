@@ -1039,7 +1039,13 @@
                 <artifactId>josso-jboss5-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
-            
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-applet-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
             <!-- JOSSO Reference Console -->
             <dependency>
                 <groupId>org.josso</groupId>
@@ -1189,6 +1195,20 @@
                 <type>war</type>
             </dependency>
 
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-applet-example</artifactId>
+                <version>${pom.version}</version>
+                <type>jar</type>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-applet-web</artifactId>
+                <version>${pom.version}</version>
+                <type>war</type>
+            </dependency>
+            
             <!-- Therd party dependencies -->
 
             <dependency>

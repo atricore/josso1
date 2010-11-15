@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.josso</groupId>
+        <artifactId>josso-partner-applet</artifactId>
+        <version>1.8.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>josso-partner-applet-example</artifactId>
+    <packaging>jar</packaging>
+    <name>JOSSO :: Applet Example</name>
+    <description>Applet Example</description>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-applet-agent</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-protocol-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>0.2</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!--minimizeJar>true</minimizeJar-->
+                            <artifactSet>
+                                <includes>
+                                    <include>org.josso:josso-applet-agent</include>
+                                    <include>org.josso:josso-core</include>
+                                    <include>org.josso:josso-protocol-client</include>
+                                    <include>org.josso:josso-ws</include>
+                                    <include>commons-logging:commons-logging</include>
+                                    <include>org.apache.axis:axis-jaxrpc</include>
+                                    <include>org.apache.axis:axis</include>
+                                    <include>commons-discovery:commons-discovery</include>
+                                    <include>org.apache.axis:axis-saaj</include>
+                                    <include>axis:axis-wsdl4j</include>
+                                </includes>
+                            </artifactSet>
+
+                            <filters>
+                                <filter>
+                                    <artifact>org.josso:josso-core</artifact>
+                                    <includes>
+                                        <include>org/josso/auth/SimplePrincipal.class</include>
+                                        <include>org/josso/gateway/identity/*</include>
+                                        <include>org/josso/gateway/identity/service/*</include>
+                                        <include>org/josso/gateway/identity/exceptions/*</include>
+                                        <include>org/josso/gateway/Constants.class</include>
+                                        <include>org/josso/gateway/GatewayServiceLocator.class</include>
+                                        <include>org/josso/gateway/ServiceLocatorConfigurationError.class</include>
+                                        <include>org/josso/gateway/SSONameValuePair.class</include>
+                                        <include>org/josso/gateway/session/service/SSOSessionManagerService.class</include>
+                                    </includes>
+                                </filter>
+
+                                <filter>
+                                    <artifact>commons-discovery:commons-discovery</artifact>
+                                    <includes>
+                                        <include>org/apache/commons/discovery/*</include>
+                                        <include>org/apache/commons/discovery/jdk/*</include>
+                                        <include>org/apache/commons/discovery/log/*</include>
+                                        <include>org/apache/commons/discovery/resource/**</include>
+                                        <include>org/apache/commons/discovery/tools/*</include>                                        
+                                    </includes>
+                                </filter>
+
+                                <filter>
+                                    <artifact>>org.apache.axis:axis-saaj</artifact>
+                                    <includes>
+                                        <include>javax/xml/soap/SOAPException.class</include>
+                                    </includes>
+                                </filter>
+
+                                <filter>
+                                    <artifact>axis:axis-wsdl4j</artifact>
+                                    <includes>
+                                        <include>javax/wsdl/OperationType.class</include>
+                                    </includes>
+                                </filter>
+                                
+                                <filter>
+                                    <artifact>org.apache.axis:axis-jaxrpc</artifact>
+                                    <includes>
+                                        <include>javax/xml/rpc/*</include>                                        
+                                        <include>javax/xml/rpc/encoding/*</include>
+                                        <include>javax/xml/rpc/holders/*</include>
+                                        <include>javax/xml/rpc/handler/**</include>
+                                    </includes>
+                                </filter>
+
+                                <filter>
+                                    <artifact>org.apache.axis:axis</artifact>
+                                    <includes>
+                                        <include>org/apache/axis/components/logger/LogFactory*</include>
+                                        <include>org/apache/axis/*</include>
+                                        <include>org/apache/axis/client/**</include>
+                                        <include>org/apache/axis/configuration/**</include>
+										<include>org/apache/axis/deployment/wsdd/**</include>
+                                        <include>org/apache/axis/encoding/**</include>
+                                        <include>org/apache/axis/i18n/*</include>
+                                        <include>org/apache/axis/soap/**</include>
+                                        <include>org/apache/axis/schema/**</include>
+                                        <include>org/apache/axis/types/**</include>
+                                        <include>org/apache/axis/message/**</include>
+                                        <include>org/apache/axis/description/**</include>
+                                        <include>org/apache/axis/utils/**</include>
+                                        <include>org/apache/axis/handlers/**</include>
+                                        <include>org/apache/axis/constants/**</include>
+                                        <include>org/apache/axis/transport/**</include>
+                                        <include>org/apache/axis/strategies/**</include>
+                                        <include>org/apache/axis/session/*</include>
+                                        <include>org/apache/axis/components/**</include>
+                                        <include>org/apache/axis/wsdl/**</include>
+                                    </includes>
+                                </filter>
+                                
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jarsigner-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>sign</id>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <keystore>src/main/signing/applet.jks</keystore>
+                    <alias>appletalias</alias>
+                    <storepass>password</storepass>
+                    <keypass>password</keypass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

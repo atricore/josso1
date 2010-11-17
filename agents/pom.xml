@@ -46,6 +46,7 @@
                 <module>josso-servlet-agent</module>
                 <module>josso-liferay-agent</module>
                 <module>josso-alfresco-agent</module>
+                <module>josso-iserver-agent</module>
                 <module>josso-tomcat50-agent</module>
                 <module>josso-tomcat55-agent</module>
                 <module>josso-tomcat60-agent</module>
@@ -78,6 +79,7 @@
                 <module>josso-servlet-agent</module>
                 <module>josso-liferay-agent</module>
                 <module>josso-alfresco-agent</module>
+                <module>josso-iserver-agent</module>
                 <module>josso-tomcat50-agent</module>
                 <module>josso-tomcat55-agent</module>
                 <module>josso-tomcat60-agent</module>

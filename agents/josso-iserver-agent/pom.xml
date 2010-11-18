@@ -124,29 +124,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.actuate.iportal</groupId>
-            <artifactId>iportal-rsse</artifactId>
-            <version>${iserver-version}</version>
-             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.actuate.iportal</groupId>
-            <artifactId>iportal-rsseWsdl</artifactId>
-            <version>${iserver-version}</version>
-             <scope>provided</scope>
-        </dependency>
-
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>spring-extensions-milestone</id>
-            <name>Spring Extensions Milestone Repository</name>
-            <url>http://extensions.springframework.org/milestone</url>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>

@@ -772,7 +772,8 @@ SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const st
 
 string AbstractSSOAgent::getGatewayIdentityManagerServiceEndpoint() {
 	// TODO : Support secure channel
-	string endpoint ("http://");
+	// TODO : Support configuring... hardcoding the use of ssl
+	string endpoint ("https://");
 	endpoint.append(agentConfig->getGatewayEndpoint());
 	endpoint.append("/");
 	endpoint.append(agentConfig->getIdentityManagerServicePath());
@@ -782,7 +783,8 @@ string AbstractSSOAgent::getGatewayIdentityManagerServiceEndpoint() {
 
 string AbstractSSOAgent::getGatewayIdentityProviderServiceEndpoint() {
 	// TODO : Support secure channel
-	string endpoint ("http://");
+	// TODO : Support configuring... hardcoding the use of ssl
+	string endpoint ("https://");
 	endpoint.append(agentConfig->getGatewayEndpoint());
 	endpoint.append("/");
 	endpoint.append(agentConfig->getIdentityProviderServicePath());
@@ -793,7 +795,8 @@ string AbstractSSOAgent::getGatewayIdentityProviderServiceEndpoint() {
 
 string AbstractSSOAgent::getGatewaySessionManagerServiceEndpoint() {
 	// TODO : Support secure channel
-	string endpoint ("http://");
+	// TODO : Support configuring... hardcoding the use of ssl
+	string endpoint ("https://");
 	endpoint.append(agentConfig->getGatewayEndpoint());
 	endpoint.append("/");
 	endpoint.append(agentConfig->getSessionManagerServicePath());

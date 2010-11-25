@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="JOSSOIsapiAgent"
 	ProjectGUID="{48BEB1E9-3080-4803-B8BC-EDE225697D4A}"
 	RootNamespace="JOSSOIsapiAgent"
@@ -40,6 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="-DWITH_OPENSSL"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\..\..\src;..\..\..\..\..\include;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG;WIN32;_WINDOWS"
@@ -64,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib advapi32.lib regex.lib"
+				AdditionalDependencies="ws2_32.lib advapi32.lib regex.lib ssleay32.lib libeay32.lib wsock32.lib"
 				ShowProgress="0"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib"
@@ -206,6 +207,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="-DWITH_OPENSSL"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..\..\..\..\..\src;..\..\..\..\..\include;"
 				PreprocessorDefinitions="NDEBUG;_CONSOLE;WIN32;_WINDOWS"
@@ -227,11 +229,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib advapi32.lib regex.lib"
+				AdditionalDependencies="ws2_32.lib advapi32.lib regex.lib ssleay32.lib libeay32.lib wsock32.lib"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib"
 				GenerateManifest="true"
 				ModuleDefinitionFile="..\..\..\..\..\src\JOSSOIsapiAgent\resources\JOSSOIsapiAgent.def"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 			/>
 			<Tool

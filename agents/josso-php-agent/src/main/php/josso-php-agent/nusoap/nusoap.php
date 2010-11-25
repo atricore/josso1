@@ -7499,7 +7499,7 @@ class nusoap_client extends nusoap_base  {
     function parseResponse($headers, $data) {
 		$this->debug('Entering parseResponse() for data of length ' . strlen($data) . ' headers:');
 		$this->appendDebug($this->varDump($headers));
-		if (!strstr($headers['content-type'], 'text/xml')) {
+		if (!strstr($headers['content-type'], 'text/xml') && !strstr($headers['content.type'], 'text/xml')) {
 			$this->setError('Response not of type text/xml: ' . $headers['content-type']);
 			return false;
 		}

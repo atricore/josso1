@@ -46,8 +46,19 @@
 $josso_gatewayLoginUrl = 'http://localhost:8080/josso/signon/login.do';
 $josso_gatewayLogoutUrl = 'http://localhost:8080/josso/signon/logout.do';
 
+// JOSSO 2 aplliance urls
+//$josso_gatewayLoginUrl = 'http://localhost:8081/IDBUS/TEST/APACHE/JOSSO/SSO/REDIR';
+//$josso_gatewayLogoutUrl = 'http://localhost:8081/IDBUS/TEST/APACHE/JOSSO/SLO/REDIR';
+
+//$josso_sessionManagerServicePath = '/IDBUS/TEST/APACHE/JOSSO/SSOSessionManager/SOAP';
+//$josso_identityManagerServicePath = '/IDBUS/TEST/APACHE/JOSSO/SSOIdentityManager/SOAP';
+//$josso_identityProviderServicePath = '/IDBUS/TEST/APACHE/JOSSO/SSOIdentityProvider/SOAP';
+
 // WS client configuration :
 $josso_endpoint = 'http://localhost:8080';
+//if $josso_wsdl_url is defined $josso_endpoint is ignored
+//it's used for josso2 only
+//$josso_wsdl_url = 'http://localhost/josso/josso-1.2.wsdl';
 
 // This could be also "", it points to the path where JOSSO code is found, for example the josso-security-check.php page.
 // Do not end the baseCode with "/".

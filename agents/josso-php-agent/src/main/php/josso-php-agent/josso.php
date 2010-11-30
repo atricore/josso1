@@ -262,7 +262,8 @@ function createBaseUrl() {
 function createFrontChannelParams() {
     // Add some request parameters like host name
     $host = $_SERVER['HTTP_HOST'];
-    $params = '&josso_partnerapp_host=' . $host;
+    $josso_agent = & jossoagent::getNewInstance();
+    $params = '&josso_partnerapp_host=' . $host . '&josso_partnerapp_id=' . $josso_agent->getRequester();
 
     return $params;
 

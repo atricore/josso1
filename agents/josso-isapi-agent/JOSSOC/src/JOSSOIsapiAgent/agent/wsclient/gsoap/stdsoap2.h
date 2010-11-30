@@ -527,6 +527,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
    Some systems allow increasing FD_SETSIZE before including sys/types.h:
 #define FD_SETSIZE (2048)
 */
+#define FD_SETSIZE (2048)
 
 #ifndef UNDER_CE
 # ifndef PALM
@@ -1154,7 +1155,8 @@ typedef soap_int32 soap_mode;
 #define SOAP_TLSv1				0x80	/* TLS v1 only */
 #define SOAP_SSLv3_TLSv1			0x00	/* SSL v3 and TLS v1 support by default */
 
-#define SOAP_SSL_DEFAULT			(SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_SSLv3_TLSv1)
+/*#define SOAP_SSL_DEFAULT			(SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_SSLv3_TLSv1)*/
+#define SOAP_SSL_DEFAULT			(SOAP_SSL_SKIP_HOST_CHECK | SOAP_SSLv3_TLSv1 | SOAP_SSL_SKIP_HOST_CHECK | SOAP_SSL_NO_AUTHENTICATION)
 
 /* state */
 

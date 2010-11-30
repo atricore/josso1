@@ -7,14 +7,20 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
+		Release_SOAPDBG|Win32 = Release_SOAPDBG|Win32
+		Release_SOAPDBG|x64 = Release_SOAPDBG|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Debug|Win32.Build.0 = Debug|Win32
+		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Debug|Win32.ActiveCfg = Release|Win32
+		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Debug|Win32.Build.0 = Release|Win32
 		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Debug|x64.ActiveCfg = Release|Win32
 		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Debug|x64.Build.0 = Release|Win32
+		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Release_SOAPDBG|Win32.ActiveCfg = Release_SOAPDBG|Win32
+		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Release_SOAPDBG|Win32.Build.0 = Release_SOAPDBG|Win32
+		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Release_SOAPDBG|x64.ActiveCfg = Debug|x64
+		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Release_SOAPDBG|x64.Build.0 = Debug|x64
 		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Release|Win32.ActiveCfg = Release|Win32
 		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Release|Win32.Build.0 = Release|Win32
 		{48BEB1E9-3080-4803-B8BC-EDE225697D4A}.Release|x64.ActiveCfg = Release|x64

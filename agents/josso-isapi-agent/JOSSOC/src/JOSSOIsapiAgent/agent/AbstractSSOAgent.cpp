@@ -508,7 +508,11 @@ bool AbstractSSOAgent::accessSession(string ssoSessionId, SSOAgentRequest *ssoAg
 			EnterCriticalSection(&cacheMapLock);
 			cache.erase(ssoSessionId);
 			LeaveCriticalSection(&cacheMapLock);
-			jk_log(logger, JK_LOG_ERROR, "SOAP Error %d at [%s]", rc, svc.soap_endpoint);
+
+			jk_log(logger, JK_LOG_ERROR, "SOAP Error %d '%s' %s \n\tAt [%s]", rc, 
+				svc.soap_fault_string(), 
+				svc.soap_fault_detail(),
+				svc.soap_endpoint);
 			ok = false;
 		}
 	
@@ -532,6 +536,11 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 	SSOIdentityProviderSOAPBindingProxy svc;
 	svc.soap_endpoint = endpoint.c_str();
 
+	// TODO : Only set timeouts if endpoit is https !!!
+	// TODO : Check timeout units : millis, secs ?
+	svc.send_timeout = 5000;
+	svc.recv_timeout = 5000;
+
 	ns3__ResolveAuthenticationAssertionRequestType *req = new ns3__ResolveAuthenticationAssertionRequestType ();
 	ns3__ResolveAuthenticationAssertionResponseType res;
 
@@ -543,7 +552,10 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 		ssoSessionId.assign(res.ssoSessionId);
 		jk_log(logger, JK_LOG_DEBUG, "Assertion resolved to %s", ssoSessionId.c_str());
 	} else {
-		jk_log(logger, JK_LOG_ERROR, "SOAP Error %d at [%s]", rc, svc.soap_endpoint);
+			jk_log(logger, JK_LOG_ERROR, "SOAP Error %d '%s' %s \n\tAt [%s]", rc, 
+				svc.soap_fault_string(), 
+				svc.soap_fault_detail(),
+				svc.soap_endpoint);
 		ok = false;
 	}
 
@@ -581,7 +593,9 @@ bool AbstractSSOAgent::findUserInSession(const string ssoSessionId, string & pri
 
 		jk_log(logger, JK_LOG_DEBUG, "User found is %s", principal.c_str());
 	} else {
-		jk_log(logger, JK_LOG_ERROR, "SOAP Error %d at [%s]", rc, svc.soap_endpoint);
+		jk_log(logger, JK_LOG_ERROR, "SOAP Error %d '%s' at [%s]", rc, 
+			svc.soap_fault_string(), 
+			svc.soap_endpoint);
 		ok = false;
 	}
 
@@ -620,7 +634,9 @@ bool AbstractSSOAgent::findRolesInSession(const string ssoSessionId, vector<stri
 
 		// jk_log(logger, JK_LOG_DEBUG, "User found is %s", principal.c_str());
 	} else {
-		jk_log(logger, JK_LOG_ERROR, "SOAP Error %d at [%s]", rc, svc.soap_endpoint);
+		jk_log(logger, JK_LOG_ERROR, "SOAP Error %d '%s' at [%s]", rc, 
+			svc.soap_fault_string(), 
+			svc.soap_endpoint);
 		ok = false;
 	}
 

@@ -978,7 +978,7 @@ soap_getchunkchar(struct soap *soap)
     return soap->buf[soap->bufidx++];
   soap->bufidx = 0;
   soap->buflen = soap->chunkbuflen = soap->frecv(soap, soap->buf, SOAP_BUFLEN);
-  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Read %u bytes from socket %d\n", (unsigned int)soap->buflen, soap->socket));
+  DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Read %u bytes from socket %d (chunck)\n", (unsigned int)soap->buflen, soap->socket));
   DBGMSG(RECV, soap->buf, soap->buflen);
   if (soap->buflen)
     return soap->buf[soap->bufidx++];
@@ -2924,6 +2924,7 @@ soap_ssl_client_context(struct soap *soap, unsigned short flags, const char *key
   soap->ssl_flags = flags;
   soap->randfile = randfile;
   soap->fsslverify = (flags & SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE) == 0 ? ssl_verify_callback : ssl_verify_callback_allow_expired_certificate;
+  DBGLOG(TEST, "SOAP SSL Client context configured ....");
   return soap->fsslauth(soap);
 }
 #endif
@@ -3042,9 +3043,11 @@ ssl_auth_init(struct soap *soap)
   if (!soap->ctx)
   { if (!(soap->ctx = SSL_CTX_new(SSLv23_method())))
       return soap_set_receiver_error(soap, "SSL error", "Can't setup context", SOAP_SSL_ERROR);
-    /* Alters the behavior of SSL read/write:
-    SSL_CTX_set_mode(soap->ctx, SSL_MODE_ENABLE_PARTIAL_WRITE | SSL_MODE_AUTO_RETRY);
-    */
+    /* Alters the behavior of SSL read/write: 
+    SSL_CTX_set_mode(soap->ctx, SSL_MODE_AUTO_RETRY);
+	*/
+
+    
   }
   if (soap->randfile)
   { if (!RAND_load_file(soap->randfile, -1))
@@ -6615,9 +6618,9 @@ soap_init(struct soap *soap)
   soap_init_logs(soap);
 #endif
 #ifdef SOAP_DEBUG
-  soap_set_test_logfile(soap, "TEST.log");
-  soap_set_sent_logfile(soap, "SENT.log");
-  soap_set_recv_logfile(soap, "RECV.log");
+  soap_set_test_logfile(soap, "C:\\atricore\\josso-1.8.4-SNAPSHOT\\isapi\\log\\josso_gsoap.log");
+  soap_set_sent_logfile(soap, "C:\\atricore\\josso-1.8.4-SNAPSHOT\\isapi\\log\\josso_gsoap_sent.log");
+  soap_set_recv_logfile(soap, "C:\\atricore\\josso-1.8.4-SNAPSHOT\\isapi\\log\\josso_gsoap_recv.log");
   DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Initializing context\n"));
 #endif
   soap->version = 0;
@@ -6800,8 +6803,8 @@ soap_init(struct soap *soap)
   soap->bio = NULL;
   soap->ssl = NULL;
   soap->ctx = NULL;
- // soap->ssl_flags = SOAP_SSL_DEFAULT;
-  soap->ssl_flags = SOAP_SSL_NO_AUTHENTICATION;
+  soap->ssl_flags = SOAP_SSL_DEFAULT;
+  //soap->ssl_flags = SOAP_SSL_NO_AUTHENTICATION;
   soap->keyfile = NULL;
   soap->password = NULL;
   soap->dhfile = NULL;

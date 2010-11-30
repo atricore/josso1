@@ -612,9 +612,10 @@ static int authenticate_josso_user(request_rec *r)
 		int requireLogin = 1;
 
 		if (jossoSessionId != NULL || isAutomaticLoginRequired(r)) {
-			location = apr_psprintf(r->pool, "%s?josso_cmd=login_optional&josso_partnerapp_host=%s&josso_partnerapp_ctx=%s&josso_back_to=%s%s",
+			location = apr_psprintf(r->pool, "%s?josso_cmd=login_optional&josso_partnerapp_host=%s&josso_partnerapp_id=%s&josso_partnerapp_ctx=%s&josso_back_to=%s%s",
 							   cfg->gatewayLoginUrl,
 							   host,
+							   getRequester(r),
 							   r->uri,
 							   getRequestedUrl(r, 0),
 							   JOSSO_SECURITY_CHECK_URI
@@ -622,9 +623,10 @@ static int authenticate_josso_user(request_rec *r)
 		} else if (isPublicResource(r)) {
 			requireLogin = 0;
 		} else {
-			location = apr_psprintf(r->pool, "%s?josso_partnerapp_host=%s&josso_partnerapp_ctx=%s&josso_back_to=%s%s",
+			location = apr_psprintf(r->pool, "%s?josso_partnerapp_host=%s&josso_partnerapp_id=%s&josso_partnerapp_ctx=%s&josso_back_to=%s%s",
 							   cfg->gatewayLoginUrl,
 							   host,
+							   getRequester(r),
 							   r->uri,
 							   getRequestedUrl(r, 0),
 							   JOSSO_SECURITY_CHECK_URI
@@ -842,7 +844,7 @@ static const char *getSSOIdentityProviderServiceEndpoint(request_rec *r) {
 											 cfg->gatewayEndpointPort,
 											 cfg->identityProviderServicePath);
 
-	return identityProviderSvcEpUrl;
+    return identityProviderSvcEpUrl;
 
 }
 

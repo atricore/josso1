@@ -53,6 +53,8 @@ public:
 
 	static const char *JOSSO_AUTH_LOGIN_OPTIONAL;
 
+	static const long DEFAULT_SOAP_TRANSPORT_TIMEOUT;
+
 	// JK Logger 
 	static jk_logger_t *logger;
 

@@ -748,7 +748,7 @@ static char* findUserInSession(request_rec *r, char *sessionId) {
    setupSSLContext(soap, r);
 
    if (soap_call___ns5__findUserInSession(soap, getSSOIdentityManagerServiceEndpoint(r), NULL, &req, &rsp) == SOAP_OK) {
-	   targetUser = apr_pstrdup(r->pool, rsp.ns3__SSOUser->name);
+	   targetUser = apr_pstrdup(r->pool, rsp.SSOUser->name);
    } else {
 	   //TODO: Error handling
 	   ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Soap error... error code: [%d], error message: [%s]",
@@ -777,7 +777,7 @@ static apr_array_header_t* findRolesBySSOSessionId(request_rec *r, char *session
 	   int i;
 	   for ( i=0; i < rsp.__sizeroles; i++) {
 		   char **roleRef = apr_array_push(targetRoles);
-		   *roleRef = apr_pstrdup(r->pool, rsp.roles[i]->name);
+		   *roleRef = apr_pstrdup(r->pool, rsp.roles[i].name);
 	   }
    } else {
 	   //TODO: Error handling
@@ -1589,15 +1589,15 @@ static int setupSSLContext(struct soap *soap, request_rec *r)
 	if (cfg->GatewayEndpointSSLEnable) {
 		unsigned short flags = SOAP_SSL_NO_AUTHENTICATION;
 		if (cfg->EnableGatewayAuthentication) {
-			flags = SOAP_SSL_DEFAULT | SOAP_SSL_SKIP_HOST_CHECK;
+			flags = SOAP_SSL_SKIP_HOST_CHECK;
 		}
 		soap_ssl_init();
 		result = soap_ssl_client_context(soap,
 				 flags,
-				 NULL, //cfg->sslClientKeyFile,
-				 NULL, //cfg->sslClientKeyFilePass,
-				 cfg->sslServerCertFile,
-				 cfg->sslServerCertDir,
+				 NULL, 	/* keyfile: required only when client must authenticate to server */
+				 NULL, 	/* password to read the key file (not used with GNUTLS) */ 
+				 cfg->sslServerCertFile, 	/* cacert file to store trusted certificates (needed to verify server) */
+				 cfg->sslServerCertDir,	/* if randfile!=NULL: use a file with random data to seed randomness */ 
 				 NULL //cfg->sslRandFile
 			);
 		if (result != SOAP_OK) {

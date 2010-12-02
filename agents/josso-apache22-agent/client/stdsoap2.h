@@ -1,10 +1,10 @@
 /*
-	stdsoap2.h 2.7.14
+	stdsoap2.h 2.7.16
 
 	gSOAP runtime engine
 
 gSOAP XML Web services tools
-Copyright (C) 2000-2009, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
 This part of the software is released under ONE of the following licenses:
 GPL, or the gSOAP public license, or Genivia's license for commercial use.
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 for the specific language governing rights and limitations under the License.
 
 The Initial Developer of the Original Code is Robert A. van Engelen.
-Copyright (C) 2000-2009, Robert van Engelen, Genivia Inc., All Rights Reserved.
+Copyright (C) 2000-2010, Robert van Engelen, Genivia Inc., All Rights Reserved.
 --------------------------------------------------------------------------------
 GPL license.
 
@@ -112,6 +112,15 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 /* gSOAP 2.7.4 and higher: fast look-aside buffering is stable */
 #ifndef WITH_FAST
 # define WITH_FAST
+#endif
+
+/* gSOAP 2.7.15 and higher: always retain CDATA in literal XML, unless WITH_LEAN or WITH_NOCDATA */
+#ifndef WITH_LEAN
+# ifndef WITH_NOCDATA
+#  ifndef WITH_CDATA
+#   define WITH_CDATA
+#  endif
+# endif
 #endif
 
 #ifdef WITH_LEANER
@@ -214,6 +223,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define WITH_LEAN
 #  define HAVE_SSCANF
 # elif defined(WIN32)
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -228,6 +238,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define SOAP_ULONG_FORMAT "%I64u"
 # elif defined(CYGWIN)
 #  define HAVE_POLL
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -242,6 +253,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 # elif defined(__APPLE__)
 #  define HAVE_POLL
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -257,6 +269,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 # elif defined(_AIX43)
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -270,6 +283,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 # elif defined(_AIX41)
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -279,6 +293,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 # elif defined(HP_UX)
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -293,6 +308,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 # elif defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD)
 #  define HAVE_POLL
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -312,6 +328,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define SOAP_LONG_FORMAT "%qd"
 #  define SOAP_ULONG_FORMAT "%qu"
 # elif defined(__VMS)
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -326,6 +343,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 # elif defined(__GLIBC__) || defined(__GNU__)
 #  define HAVE_POLL
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -346,6 +364,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_MBTOWC
 #  define HAVE_ISNAN
 # elif defined(TRU64)
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -363,6 +382,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define SOAP_ULONG_FORMAT "%lu"
 # elif defined(MAC_CARBON)
 #  define WITH_NOIO
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -407,6 +427,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_LOCALTIME
 #  define HAVE_MKTIME
 # elif defined(OS390)
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -420,6 +441,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_WCTOMB
 #  define HAVE_MBTOWC
 # elif defined(AS400)
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -436,6 +458,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 /* QNX does not have a working version of strtof */
 #  undef HAVE_STRTOF
 #  define HAVE_POLL
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -454,7 +477,8 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define SOAP_LONG_FORMAT "%ld"
 #  define SOAP_ULONG_FORMAT "%lu"
 # else
-/* Default asumptions on supported functions */
+/* Default assumptions for supported functions */
+#  define HAVE_SNPRINTF
 #  define HAVE_STRRCHR
 #  define HAVE_STRTOD
 #  define HAVE_SSCANF
@@ -466,13 +490,15 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 #  define HAVE_GETHOSTBYNAME_R
 #  define HAVE_GMTIME_R
 #  define HAVE_LOCALTIME_R
-#  define HAVE_WCTOMB
-#  define HAVE_MBTOWC
+#  ifdef MB_LEN_MAX
+#   define HAVE_WCTOMB
+#   define HAVE_MBTOWC
+#  endif
 # endif
 #endif
 
 /* native Win and HP-UX compilers don't like empty structs */
-#if defined(WIN32) || defined(HP_UX)
+#if defined(WIN32) || defined(HP_UX) || defined(_AIX41) || defined(_AIX43) || defined(VXWORKS)
 # define WITH_NOEMPTYSTRUCT
 #endif
 
@@ -606,7 +632,7 @@ A commercial use license is available from Genivia, Inc., contact@genivia.com
 # else
 #  ifndef __BORLANDC__
 #   include <winsock.h> /* Visual Studio 2005 users: you must install the Platform SDK (R2) */
-/* # include <winsock2.h> */ /* Alternative: use winsock2 (not available with eVC) */
+/* # include <winsock2.h> */ /* Alternative: use winsock2 (not available with eVC), enable this line and comment out the line above */
 #  else
 #   include <winsock2.h> /* Borland C */
 #  endif
@@ -685,9 +711,9 @@ extern "C" {
 # endif
 #elif defined(SOCKLEN_T)
 # define SOAP_SOCKLEN_T SOCKLEN_T
-#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390)
+#elif defined(__socklen_t_defined) || defined(_SOCKLEN_T) || defined(CYGWIN) || defined(FREEBSD) || defined(__FreeBSD__) || defined(OPENBSD) || defined(__QNX__) || defined(QNX) || defined(OS390) || defined(HP_UX)
 # define SOAP_SOCKLEN_T socklen_t
-#elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(HP_UX) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS)
+#elif defined(IRIX) || defined(WIN32) || defined(__APPLE__) || defined(SUN_OS) || defined(OPENSERVER) || defined(TRU64) || defined(VXWORKS)
 # define SOAP_SOCKLEN_T int
 #else
 # define SOAP_SOCKLEN_T size_t
@@ -766,6 +792,7 @@ extern "C" {
 #elif defined(PALM)
 # define soap_int32 Int32
 #elif defined(_AIX)
+# define SOAP_NEW(type) new type	/* AIX compilers don't like new (t) */
 # if defined(_AIX43)
 #  define soap_int32 int32_t
 # else
@@ -819,7 +846,7 @@ extern "C" {
 #endif
 
 #ifndef SOAP_BUFLEN
-# if !defined(WITH_LEAN) || defined(WITH_UDP)
+# if !defined(WITH_LEAN)
 #  define SOAP_BUFLEN (65536) /* buffer length for socket packets, also used by gethostbyname_r and UDP messages, so don't make this too small */
 # else
 #  define SOAP_BUFLEN  (2048) /* lean size */
@@ -894,12 +921,20 @@ extern "C" {
 #endif
 
 #ifdef VXWORKS
+# ifdef WMW_RPM_IO
+#  include "httpLib.h"
+# endif
 # ifdef __INCmathh 
 #  include <private/mathP.h>
 #  ifndef HAVE_ISNAN
 #   define HAVE_ISNAN
 #  endif
-#  define soap_isnan(num) isNan(num)
+#  ifndef soap_isnan
+#   define soap_isnan(num) isNan(num)
+#  endif
+# endif
+# ifdef WM_SECURE_KEY_STORAGE
+#  include <ipcom_key_db.h>
 # endif
 #endif
 
@@ -940,7 +975,7 @@ extern const struct soap_double_nan { unsigned int n1, n2; } soap_double_nan;
 #endif
 
 #ifndef FLT_NAN
-#  define FLT_NAN (*(float*)(void*)&soap_double_nan)
+# define FLT_NAN (*(float*)(void*)&soap_double_nan)
 #endif
 
 #ifndef FLT_PINFTY
@@ -962,7 +997,7 @@ extern const struct soap_double_nan { unsigned int n1, n2; } soap_double_nan;
 #endif
 
 #ifndef DBL_NAN
-#  define DBL_NAN (*(double*)(void*)&soap_double_nan)
+# define DBL_NAN (*(double*)(void*)&soap_double_nan)
 #endif
 
 #ifndef DBL_PINFTY
@@ -1059,17 +1094,18 @@ extern const struct soap_double_nan { unsigned int n1, n2; } soap_double_nan;
 
 /* Codes 600 to 999 are user definable */
 
-/* Exceptional gSOAP HTTP response status codes >= 1000 */
+/* Exceptional gSOAP HTTP server response status codes >= 1000 */
 
 #define SOAP_STOP		1000	/* No HTTP response */
 #define SOAP_FORM		1001	/* Form request/response */
 #define SOAP_HTML		1002	/* Custom HTML response */
 #define SOAP_FILE		1003	/* Custom file-based response */
 
-/* gSOAP HTTP method codes */
+/* gSOAP HTTP method codes (client) */
 
-#define SOAP_POST		2000
-#define SOAP_GET		2001
+#define SOAP_POST		2000	/* POST request */
+#define SOAP_POST_FILE		2001	/* Custom file-based POST request */
+#define SOAP_GET		2002	/* GET request */
 
 /* gSOAP DIME */
 
@@ -1098,37 +1134,37 @@ typedef soap_int32 soap_mode;
 #define SOAP_IO_CHUNK		0x00000003	/* use HTTP chunked transfer AND buffer packets */
 
 #define SOAP_IO_UDP		0x00000004	/* TCP or UDP */
-
 #define SOAP_IO_LENGTH		0x00000008	/* calc message length (internal) */
 #define SOAP_IO_KEEPALIVE	0x00000010	/* keep connection alive */
 
-#define SOAP_ENC_LATIN		0x00000020	/* accept iso-8859-1 encoding */
-#define SOAP_ENC_XML		0x00000040	/* plain XML encoding, no HTTP header */
+#define SOAP_ENC		0x00000FFF	/* IO and ENC mask */
+#define SOAP_ENC_LATIN		0x00000020	/* in: accept iso-8859-1 */
+#define SOAP_ENC_XML		0x00000040	/* out: plain XML encoding, no HTTP header */
 #define SOAP_ENC_DIME		0x00000080
 #define SOAP_ENC_MIME		0x00000100
 #define SOAP_ENC_MTOM		0x00000200
 #define SOAP_ENC_ZLIB		0x00000400
 #define SOAP_ENC_SSL		0x00000800
 
-#define SOAP_ENC		0x00000FFF	/* IO and ENC mask */
-
-#define SOAP_XML_STRICT		0x00001000	/* apply strict validation */
-#define SOAP_XML_INDENT		0x00002000	/* emit indented XML */
-#define SOAP_XML_DEFAULTNS	0x00004000	/* emit XML default namesp. */
-#define SOAP_XML_CANONICAL	0x00008000	/* EXC C14N canonical XML */
-#define SOAP_XML_TREE		0x00010000	/* emit XML tree (no id/ref) */
-#define SOAP_XML_GRAPH		0x00020000
-#define SOAP_XML_NIL		0x00040000
-#define SOAP_XML_DOM		0x00080000
+#define SOAP_XML_STRICT		0x00001000	/* in: strict validation */
+#define SOAP_XML_INDENT		0x00002000	/* out: emit indented XML */
+#define SOAP_XML_IGNORENS	0x00004000	/* in: ignore namespaces */
+#define SOAP_XML_DEFAULTNS	0x00008000	/* out: emit xmlns="..." */
+#define SOAP_XML_CANONICAL	0x00010000	/* out: excC14N canonical XML */
+#define SOAP_XML_TREE		0x00020000	/* out: XML tree (no id/ref) */
+#define SOAP_XML_GRAPH		0x00040000	/* see DOM manual */
+#define SOAP_XML_NIL		0x00080000	/* out: NULLs as xsi:nil */
 
 #define SOAP_C_NOIOB		0x00100000	/* don't fault on array index out of bounds (just ignore) */
 #define SOAP_C_UTFSTRING	0x00200000	/* (de)serialize strings with UTF8 content */
 #define SOAP_C_MBSTRING		0x00400000	/* (de)serialize strings with multi-byte content */
 #define SOAP_C_NILSTRING	0x00800000	/* serialize empty strings as nil (omitted) */
 
-#define SOAP_DOM_TREE		0x01000000
-#define SOAP_DOM_NODE		0x02000000
-#define SOAP_DOM_ASIS		0x04000000
+#define SOAP_XML_DOM		0x01000000
+
+#define SOAP_DOM_TREE		0x02000000
+#define SOAP_DOM_NODE		0x04000000
+#define SOAP_DOM_ASIS		0x08000000
 
 #define SOAP_MIME_POSTCHECK	0x10000000	/* MIME flag (internal) */
 
@@ -1152,7 +1188,7 @@ typedef soap_int32 soap_mode;
 #define SOAP_SSL_RSA				0x20	/* use RSA */
 #define SOAP_SSLv3				0x40	/* SSL v3 only */
 #define SOAP_TLSv1				0x80	/* TLS v1 only */
-#define SOAP_SSLv3_TLSv1			0x00	/* SSL v3 and TLS v1 support by default */
+#define SOAP_SSLv3_TLSv1			0x00	/* SSL v3 and TLS v1 support by default (no SSL v1/v2) */
 
 #define SOAP_SSL_DEFAULT			(SOAP_SSL_REQUIRE_SERVER_AUTHENTICATION | SOAP_SSLv3_TLSv1)
 
@@ -1207,6 +1243,26 @@ typedef soap_int32 soap_mode;
 
 #ifndef SOAP_FREE			/* use libc free */
 # define SOAP_FREE(soap, ptr) free(ptr)
+#endif
+
+#ifndef SOAP_NEW			/* use C++ new operator */
+# if __GNUC__ < 2
+#  define SOAP_NEW(type) new type	/* old form w/o parenthesis */
+# else
+#  define SOAP_NEW(type) new (type)	/* with parenthesis */
+# endif
+#endif
+
+#ifndef SOAP_NEW_COPY			/* use C++ new operator for ::copy() */
+# define SOAP_NEW_COPY(clas) new clas
+#endif
+
+#ifndef SOAP_DELETE			/* use C++ delete operator */
+# define SOAP_DELETE(obj) delete obj
+#endif
+
+#ifndef SOAP_DELETE_ARRAY		/* use C++ delete[] operator */
+# define SOAP_DELETE_ARRAY(obj) delete[] obj
 #endif
 
 #ifdef SOAP_DEBUG
@@ -1659,10 +1715,12 @@ struct SOAP_STD_API soap
   void *(*fplugin)(struct soap*, const char*);
   void *(*fmalloc)(struct soap*, size_t);
 #ifndef WITH_LEANER
-  int (*fprepareinit)(struct soap*);
+  int (*fprepareinitsend)(struct soap*);
+  int (*fprepareinitrecv)(struct soap*);
   int (*fpreparesend)(struct soap*, const char*, size_t);
   int (*fpreparerecv)(struct soap*, const char*, size_t);
-  int (*fpreparefinal)(struct soap*);
+  int (*fpreparefinalsend)(struct soap*);
+  int (*fpreparefinalrecv)(struct soap*);
   void *(*fdimereadopen)(struct soap*, void*, const char*, const char*, const char*);
   void *(*fdimewriteopen)(struct soap*, const char*, const char*, const char*);
   void (*fdimereadclose)(struct soap*, void*);
@@ -1763,8 +1821,8 @@ struct SOAP_STD_API soap
   struct soap_mlist *mht[SOAP_PTRHASH];
 #endif
 #ifndef WITH_LEAN
-  const char *c14ninclude;
-  const char *c14nexclude;
+  const char *wsuid;		/* space-separated string of element tags */
+  const char *c14nexclude;	/* space-separated string of prefixes */
   struct soap_cookie *cookies;
   const char *cookie_domain;
   const char *cookie_path;
@@ -1828,14 +1886,14 @@ struct SOAP_STD_API soap
   unsigned short z_level;	/* compression level to be used (0=none, 1=fast to 9=best) */
   float z_ratio_in;		/* detected compression ratio compressed_length/length of inbound message */
   float z_ratio_out;		/* detected compression ratio compressed_length/length of outbound message */
-#ifdef WMW_RPM_IO
+#ifdef WMW_RPM_IO		/* VxWorks */
   void *rpmreqid;
 #endif
 #ifdef __cplusplus
   soap();
   soap(soap_mode);
   soap(soap_mode, soap_mode);
-  soap(struct soap&);
+  soap(const struct soap&);
   virtual ~soap();
 #else
   void (*dummy)();
@@ -2188,7 +2246,7 @@ SOAP_FMAC1 int SOAP_FMAC2 soap_send_empty_response(struct soap*, int status);
 SOAP_FMAC1 int SOAP_FMAC2 soap_recv_empty_response(struct soap*);
 
 SOAP_FMAC1 int SOAP_FMAC2 soap_send_fault(struct soap*);
-SOAP_FMAC1 int SOAP_FMAC2 soap_recv_fault(struct soap*);
+SOAP_FMAC1 int SOAP_FMAC2 soap_recv_fault(struct soap*, int check);
 
 #ifndef WITH_NOSTDLIB
 SOAP_FMAC1 void SOAP_FMAC2 soap_print_fault(struct soap*, FILE*);
@@ -2347,4 +2405,4 @@ SOAP_FMAC1 extern void SOAP_FMAC2 soap_free_cookies(struct soap*);
 } /* extern "C" */
 #endif
 
-#endif
+#endif /* STDSOAP_H */

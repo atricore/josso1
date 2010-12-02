@@ -31,6 +31,10 @@ public:
 	
 	long  getCacheCleanupMinInterval() { return cacheCleanupMinInterval; }
 
+	bool isSecureTransport() { return secureTransport; }
+
+	bool getSoapTransportTimeout() { return soapTransportTimeout; }
+
 protected:
 
 	char logFile[MAX_PATH + 2];
@@ -52,6 +56,10 @@ protected:
 	long sessionAccessMinInterval;
 	
 	long cacheCleanupMinInterval;
+
+	bool secureTransport;
+
+	long soapTransportTimeout;
 
 	list<SecurityConstraintConfig> secConstraints;
 

@@ -66,6 +66,8 @@ const char *AbstractSSOAgent::JOSSO_AUTH_LOGIN_OPTIONAL = "OPTIONAL";
 
 const ULONGLONG nano100SecInMilliSec = (ULONGLONG)10000;
 
+const long AbstractSSOAgent::DEFAULT_SOAP_TRANSPORT_TIMEOUT = 5;
+
 jk_logger_t *AbstractSSOAgent::logger = NULL;
 
 map<string, FILETIME> cache;
@@ -225,6 +227,12 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	// Cache cleanup min interval
 	cfg->cacheCleanupMinInterval = ini.GetLongValue("agent", "cacheCleanupMinInterval", DEFAULT_CACHE_CLEANUP_MIN_INTERVAL);
 	
+    // Are we using SSL
+	cfg->secureTransport = ini.GetBoolValue("agent", "secureTransport", false);
+	
+	//If using SSL, what is soap timeout interval
+	cfg->soapTransportTimeout = ini.GetLongValue("agent", "soapTransportTimeout", DEFAULT_SOAP_TRANSPORT_TIMEOUT );
+
     CSimpleIniA::TNamesDepend sections;
     ini.GetAllSections(sections);
 	
@@ -489,6 +497,12 @@ bool AbstractSSOAgent::accessSession(string ssoSessionId, SSOAgentRequest *ssoAg
 	
 		SSOSessionManagerSOAPBindingProxy svc;
 		svc.soap_endpoint = endpoint.c_str();
+
+		// Set timeouts if endpoint is https
+		if(agentConfig->secureTransport){
+			svc.send_timeout = agentConfig->soapTransportTimeout;
+			svc.recv_timeout = agentConfig->soapTransportTimeout;
+		}
 	
 		ns3__AccessSessionRequestType *req = new ns3__AccessSessionRequestType();
 		ns3__AccessSessionResponseType res;
@@ -536,10 +550,11 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 	SSOIdentityProviderSOAPBindingProxy svc;
 	svc.soap_endpoint = endpoint.c_str();
 
-	// TODO : Only set timeouts if endpoit is https !!!
-	// TODO : Check timeout units : millis, secs ?
-	svc.send_timeout = 5000;
-	svc.recv_timeout = 5000;
+	// Set timeouts if endpoint is https
+	if(agentConfig->secureTransport){
+		svc.send_timeout = agentConfig->soapTransportTimeout;
+		svc.recv_timeout = agentConfig->soapTransportTimeout;
+	}
 
 	ns3__ResolveAuthenticationAssertionRequestType *req = new ns3__ResolveAuthenticationAssertionRequestType ();
 	ns3__ResolveAuthenticationAssertionResponseType res;
@@ -571,6 +586,12 @@ bool AbstractSSOAgent::findUserInSession(const string ssoSessionId, string & pri
 
 	SSOIdentityManagerSOAPBindingProxy svc;
 	svc.soap_endpoint = endpoint.c_str();
+
+	// Set timeouts if endpoint is https
+	if(agentConfig->secureTransport){
+		svc.send_timeout = agentConfig->soapTransportTimeout;
+		svc.recv_timeout = agentConfig->soapTransportTimeout;
+	}
 
 	ns3__FindUserInSessionRequestType *req = new ns3__FindUserInSessionRequestType ();
 	ns3__FindUserInSessionResponseType res;
@@ -611,6 +632,12 @@ bool AbstractSSOAgent::findRolesInSession(const string ssoSessionId, vector<stri
 
 	SSOIdentityManagerSOAPBindingProxy svc;
 	svc.soap_endpoint = endpoint.c_str();
+
+	// Set timeouts if endpoint is https
+	if(agentConfig->secureTransport){
+		svc.send_timeout = agentConfig->soapTransportTimeout;
+		svc.recv_timeout = agentConfig->soapTransportTimeout;
+	}
 
 	ns3__FindRolesBySSOSessionIdRequestType *req = new ns3__FindRolesBySSOSessionIdRequestType();
 	ns3__FindRolesBySSOSessionIdResponseType res;
@@ -787,9 +814,13 @@ SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const st
 }
 
 string AbstractSSOAgent::getGatewayIdentityManagerServiceEndpoint() {
-	// TODO : Support secure channel
-	// TODO : Support configuring... hardcoding the use of ssl
-	string endpoint ("https://");
+	//string endpoint ("https://");
+	string endpoint ("");
+	if(agentConfig->secureTransport){
+		endpoint.append("https://");
+	} else {
+		endpoint.append("http://");
+	}
 	endpoint.append(agentConfig->getGatewayEndpoint());
 	endpoint.append("/");
 	endpoint.append(agentConfig->getIdentityManagerServicePath());
@@ -798,9 +829,13 @@ string AbstractSSOAgent::getGatewayIdentityManagerServiceEndpoint() {
 }
 
 string AbstractSSOAgent::getGatewayIdentityProviderServiceEndpoint() {
-	// TODO : Support secure channel
-	// TODO : Support configuring... hardcoding the use of ssl
-	string endpoint ("https://");
+	string endpoint ("");
+	if(agentConfig->secureTransport){
+		endpoint.append("https://");
+	} else {
+		endpoint.append("http://");
+	}
+	//string endpoint ("https://");
 	endpoint.append(agentConfig->getGatewayEndpoint());
 	endpoint.append("/");
 	endpoint.append(agentConfig->getIdentityProviderServicePath());
@@ -810,9 +845,13 @@ string AbstractSSOAgent::getGatewayIdentityProviderServiceEndpoint() {
 
 
 string AbstractSSOAgent::getGatewaySessionManagerServiceEndpoint() {
-	// TODO : Support secure channel
-	// TODO : Support configuring... hardcoding the use of ssl
-	string endpoint ("https://");
+	//string endpoint ("https://");
+	string endpoint ("");
+	if(agentConfig->secureTransport){
+		endpoint.append("https://");
+	} else {
+		endpoint.append("http://");
+	}
 	endpoint.append(agentConfig->getGatewayEndpoint());
 	endpoint.append("/");
 	endpoint.append(agentConfig->getSessionManagerServicePath());

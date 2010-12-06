@@ -35,6 +35,10 @@ public:
 
 	bool getSoapTransportTimeout() { return soapTransportTimeout; }
 
+	bool isSslSkipHostCheck() { return sslSkipHostCheck; }
+
+	bool isSslAllowExpiredCerts() { return sslAllowExpiredCerts; }
+
 protected:
 
 	char logFile[MAX_PATH + 2];
@@ -64,6 +68,12 @@ protected:
 	list<SecurityConstraintConfig> secConstraints;
 
 	list<PartnerAppConfig> apps;
+
+	char caFile[MAX_PATH + 2];
+
+	bool sslSkipHostCheck;
+
+	bool sslAllowExpiredCerts;
 
 	friend class AbstractSSOAgent;
 };

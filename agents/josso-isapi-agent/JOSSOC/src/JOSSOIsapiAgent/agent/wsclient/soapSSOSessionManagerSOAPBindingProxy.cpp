@@ -135,7 +135,7 @@ int SSOSessionManagerSOAPBindingProxy::accessSession(ns3__AccessSessionRequestTy
 	ns3__AccessSessionResponse->soap_get(soap, "ns3:AccessSessionResponse", "ns3:AccessSessionResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)
@@ -189,7 +189,7 @@ int SSOSessionManagerSOAPBindingProxy::getSession(ns3__SessionRequestType *ns3__
 	ns3__SessionResponse->soap_get(soap, "ns3:SessionResponse", "ns3:SessionResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)

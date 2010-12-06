@@ -233,6 +233,17 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	//If using SSL, what is soap timeout interval
 	cfg->soapTransportTimeout = ini.GetLongValue("agent", "soapTransportTimeout", DEFAULT_SOAP_TRANSPORT_TIMEOUT );
 
+
+	const char *caFile = ini.GetValue("agent", "caFile", NULL );
+	if (caFile != NULL) {
+		StringCbCopy(cfg->caFile, MAX_PATH + 2, caFile);
+		syslog(JK_LOG_DEBUG_LEVEL, "'Server Certificate File path: %s", caFile);
+	}
+
+	cfg->sslSkipHostCheck = ini.GetBoolValue("agent", "sslSkipHostCheck", true);
+	cfg->sslAllowExpiredCerts = ini.GetBoolValue("agent", "sslAllowExpiredCerts", true);
+
+
     CSimpleIniA::TNamesDepend sections;
     ini.GetAllSections(sections);
 	
@@ -498,10 +509,17 @@ bool AbstractSSOAgent::accessSession(string ssoSessionId, SSOAgentRequest *ssoAg
 		SSOSessionManagerSOAPBindingProxy svc;
 		svc.soap_endpoint = endpoint.c_str();
 
-		// Set timeouts if endpoint is https
+		// Set ssl parameters if endpoint is https
 		if(agentConfig->secureTransport){
 			svc.send_timeout = agentConfig->soapTransportTimeout;
 			svc.recv_timeout = agentConfig->soapTransportTimeout;
+			svc.cafile = agentConfig->caFile;
+			if(agentConfig->sslSkipHostCheck){
+				svc.ssl_flags = svc.ssl_flags | SOAP_SSL_SKIP_HOST_CHECK;
+			}
+			if(agentConfig->sslAllowExpiredCerts){
+				svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
+			}
 		}
 	
 		ns3__AccessSessionRequestType *req = new ns3__AccessSessionRequestType();
@@ -554,6 +572,13 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 	if(agentConfig->secureTransport){
 		svc.send_timeout = agentConfig->soapTransportTimeout;
 		svc.recv_timeout = agentConfig->soapTransportTimeout;
+		svc.cafile = agentConfig->caFile;
+		if(agentConfig->sslSkipHostCheck){
+			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_SKIP_HOST_CHECK;
+		}
+		if(agentConfig->sslAllowExpiredCerts){
+			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
+		}
 	}
 
 	ns3__ResolveAuthenticationAssertionRequestType *req = new ns3__ResolveAuthenticationAssertionRequestType ();
@@ -591,6 +616,13 @@ bool AbstractSSOAgent::findUserInSession(const string ssoSessionId, string & pri
 	if(agentConfig->secureTransport){
 		svc.send_timeout = agentConfig->soapTransportTimeout;
 		svc.recv_timeout = agentConfig->soapTransportTimeout;
+		svc.cafile = agentConfig->caFile;
+		if(agentConfig->sslSkipHostCheck){
+			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_SKIP_HOST_CHECK;
+		}
+		if(agentConfig->sslAllowExpiredCerts){
+			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
+		}
 	}
 
 	ns3__FindUserInSessionRequestType *req = new ns3__FindUserInSessionRequestType ();
@@ -637,6 +669,13 @@ bool AbstractSSOAgent::findRolesInSession(const string ssoSessionId, vector<stri
 	if(agentConfig->secureTransport){
 		svc.send_timeout = agentConfig->soapTransportTimeout;
 		svc.recv_timeout = agentConfig->soapTransportTimeout;
+		svc.cafile = agentConfig->caFile;
+		if(agentConfig->sslSkipHostCheck){
+			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_SKIP_HOST_CHECK;
+		}
+		if(agentConfig->sslAllowExpiredCerts){
+			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
+		}
 	}
 
 	ns3__FindRolesBySSOSessionIdRequestType *req = new ns3__FindRolesBySSOSessionIdRequestType();
@@ -910,5 +949,6 @@ bool AbstractSSOAgent::match(const string &source, const string &regex_string) {
   return result;
   
 }
+
 
 // ---------------------------------------------------------------------------------------------

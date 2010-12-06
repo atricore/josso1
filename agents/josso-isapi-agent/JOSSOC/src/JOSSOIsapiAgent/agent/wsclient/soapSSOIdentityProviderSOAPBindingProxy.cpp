@@ -135,7 +135,7 @@ int SSOIdentityProviderSOAPBindingProxy::resolveAuthenticationAssertion(ns3__Res
 	ns3__ResolveAuthenticationAssertionResponse->soap_get(soap, "ns3:ResolveAuthenticationAssertionResponse", "ns3:ResolveAuthenticationAssertionResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)
@@ -189,7 +189,7 @@ int SSOIdentityProviderSOAPBindingProxy::assertIdentityWithSimpleAuthentication(
 	ns3__AssertIdentityWithSimpleAuthenticationResponse->soap_get(soap, "ns3:AssertIdentityWithSimpleAuthenticationResponse", "ns3:AssertIdentityWithSimpleAuthenticationResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)
@@ -243,7 +243,7 @@ int SSOIdentityProviderSOAPBindingProxy::globalSignoff(ns3__GlobalSignoffRequest
 	ns3__GlobalSignoffResponse->soap_get(soap, "ns3:GlobalSignoffResponse", "ns3:GlobalSignoffResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)

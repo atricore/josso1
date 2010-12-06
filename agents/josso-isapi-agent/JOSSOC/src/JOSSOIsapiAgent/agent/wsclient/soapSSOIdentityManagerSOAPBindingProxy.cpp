@@ -135,7 +135,7 @@ int SSOIdentityManagerSOAPBindingProxy::findUserInSession(ns3__FindUserInSession
 	ns3__FindUserInSessionResponse->soap_get(soap, "ns3:FindUserInSessionResponse", "ns3:FindUserInSessionResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)
@@ -189,7 +189,7 @@ int SSOIdentityManagerSOAPBindingProxy::findUserInSecurityDomain(ns3__FindUserIn
 	ns3__FindUserInSecurityDomainResponse->soap_get(soap, "ns3:FindUserInSecurityDomainResponse", "ns3:FindUserInSecurityDomainResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)
@@ -243,7 +243,7 @@ int SSOIdentityManagerSOAPBindingProxy::findRolesBySSOSessionId(ns3__FindRolesBy
 	ns3__FindRolesBySSOSessionIdResponse->soap_get(soap, "ns3:FindRolesBySSOSessionIdResponse", "ns3:FindRolesBySSOSessionIdResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)
@@ -297,7 +297,7 @@ int SSOIdentityManagerSOAPBindingProxy::userExists(ns3__UserExistsRequestType *n
 	ns3__UserExistsResponse->soap_get(soap, "ns3:UserExistsResponse", "ns3:UserExistsResponseType");
 	if (soap->error)
 	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
+			return soap_recv_fault(soap, 0);
 		return soap_closesock(soap);
 	}
 	if (soap_body_end_in(soap)

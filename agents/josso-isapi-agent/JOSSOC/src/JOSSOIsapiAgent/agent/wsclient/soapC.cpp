@@ -1634,9 +1634,9 @@ int ns3__SSONameValuePairType::soap_out(struct soap *soap, const char *tag, int 
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns3__SSONameValuePairType(struct soap *soap, const char *tag, int id, const ns3__SSONameValuePairType *a, const char *type)
 {
 	if (!((ns3__SSONameValuePairType*)a)->name.empty())
-		soap_set_attr(soap, "name", ((ns3__SSONameValuePairType*)a)->name.c_str());
+		soap_set_attr(soap, "name", ((ns3__SSONameValuePairType*)a)->name.c_str(), 1);
 	if (!((ns3__SSONameValuePairType*)a)->value.empty())
-		soap_set_attr(soap, "value", ((ns3__SSONameValuePairType*)a)->value.c_str());
+		soap_set_attr(soap, "value", ((ns3__SSONameValuePairType*)a)->value.c_str(), 1);
 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns3__SSONameValuePairType), type))
 		return soap->error;
 	/* transient soap skipped */
@@ -1781,7 +1781,7 @@ int ns3__SSORoleType::soap_out(struct soap *soap, const char *tag, int id, const
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns3__SSORoleType(struct soap *soap, const char *tag, int id, const ns3__SSORoleType *a, const char *type)
 {
 	if (!((ns3__SSORoleType*)a)->name.empty())
-		soap_set_attr(soap, "name", ((ns3__SSORoleType*)a)->name.c_str());
+		soap_set_attr(soap, "name", ((ns3__SSORoleType*)a)->name.c_str(), 1);
 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns3__SSORoleType), type))
 		return soap->error;
 	/* transient soap skipped */
@@ -6060,7 +6060,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out_SOAP_ENV__Reason(struct soap *soap, const cha
 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_SOAP_ENV__Reason), type))
 		return soap->error;
 	if (soap->lang)
-		soap_set_attr(soap, "xml:lang", soap->lang);
+		soap_set_attr(soap, "xml:lang", soap->lang, 1);
 	if (soap_out_string(soap, "SOAP-ENV:Text", -1, &a->SOAP_ENV__Text, ""))
 		return soap->error;
 	return soap_element_end_out(soap, tag);

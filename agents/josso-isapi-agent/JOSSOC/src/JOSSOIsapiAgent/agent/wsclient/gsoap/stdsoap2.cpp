@@ -8551,7 +8551,7 @@ soap_init(struct soap *soap)
   soap->ssl = NULL;
   soap->ctx = NULL;
   soap->session = NULL;
-  soap->ssl_flags = SOAP_SSL_DEFAULT; // | SOAP_SSL_SKIP_HOST_CHECK | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
+  soap->ssl_flags = SOAP_SSL_DEFAULT; 
   soap->keyfile = NULL;
   soap->password = NULL;
   soap->cafile = NULL;  

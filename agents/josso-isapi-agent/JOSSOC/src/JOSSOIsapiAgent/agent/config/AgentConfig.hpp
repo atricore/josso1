@@ -39,6 +39,10 @@ public:
 
 	bool isSslAllowExpiredCerts() { return sslAllowExpiredCerts; }
 
+	char *getUserId() { return userId; }
+
+	char *getPassword() { return password; }
+
 protected:
 
 	char logFile[MAX_PATH + 2];
@@ -74,6 +78,10 @@ protected:
 	bool sslSkipHostCheck;
 
 	bool sslAllowExpiredCerts;
+
+	char userId[INTERNET_MAX_USER_NAME_LENGTH];
+
+	char password[INTERNET_MAX_PASSWORD_LENGTH];
 
 	friend class AbstractSSOAgent;
 };

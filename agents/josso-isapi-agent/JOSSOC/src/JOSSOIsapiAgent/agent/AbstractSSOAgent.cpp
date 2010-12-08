@@ -243,6 +243,18 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	cfg->sslSkipHostCheck = ini.GetBoolValue("agent", "sslSkipHostCheck", true);
 	cfg->sslAllowExpiredCerts = ini.GetBoolValue("agent", "sslAllowExpiredCerts", true);
 
+	const char *userId = ini.GetValue("agent", "userId", NULL );
+	if (userId != NULL) {
+		StringCbCopy(cfg->userId, INTERNET_MAX_USER_NAME_LENGTH, userId);
+	}
+
+	const char *password = ini.GetValue("agent", "password", NULL );
+	if (password != NULL) {
+		StringCbCopy(cfg->password, INTERNET_MAX_PASSWORD_LENGTH, password);
+	} else {
+		syslog(JK_LOG_WARNING_LEVEL, "'HTTP Basic Auth password is null");
+	}
+
 
     CSimpleIniA::TNamesDepend sections;
     ini.GetAllSections(sections);
@@ -521,6 +533,8 @@ bool AbstractSSOAgent::accessSession(string ssoSessionId, SSOAgentRequest *ssoAg
 				svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
 			}
 		}
+		svc.userid = agentConfig->userId;
+		svc.passwd = agentConfig->password;
 	
 		ns3__AccessSessionRequestType *req = new ns3__AccessSessionRequestType();
 		ns3__AccessSessionResponseType res;
@@ -580,6 +594,9 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
 		}
 	}
+	svc.userid = agentConfig->userId;
+	svc.password = agentConfig->password;
+	svc.passwd = agentConfig->password;
 
 	ns3__ResolveAuthenticationAssertionRequestType *req = new ns3__ResolveAuthenticationAssertionRequestType ();
 	ns3__ResolveAuthenticationAssertionResponseType res;
@@ -624,6 +641,8 @@ bool AbstractSSOAgent::findUserInSession(const string ssoSessionId, string & pri
 			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
 		}
 	}
+	svc.userid = agentConfig->userId;
+	svc.passwd = agentConfig->password;
 
 	ns3__FindUserInSessionRequestType *req = new ns3__FindUserInSessionRequestType ();
 	ns3__FindUserInSessionResponseType res;
@@ -677,6 +696,8 @@ bool AbstractSSOAgent::findRolesInSession(const string ssoSessionId, vector<stri
 			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
 		}
 	}
+	svc.userid = agentConfig->userId;
+	svc.passwd = agentConfig->password;
 
 	ns3__FindRolesBySSOSessionIdRequestType *req = new ns3__FindRolesBySSOSessionIdRequestType();
 	ns3__FindRolesBySSOSessionIdResponseType res;

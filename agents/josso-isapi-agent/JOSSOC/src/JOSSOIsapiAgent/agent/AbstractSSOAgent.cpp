@@ -243,12 +243,12 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	cfg->sslSkipHostCheck = ini.GetBoolValue("agent", "sslSkipHostCheck", true);
 	cfg->sslAllowExpiredCerts = ini.GetBoolValue("agent", "sslAllowExpiredCerts", true);
 
-	const char *userId = ini.GetValue("agent", "userId", NULL );
+	const char *userId = ini.GetValue("agent", "basicAuthUserId", NULL );
 	if (userId != NULL) {
 		StringCbCopy(cfg->userId, INTERNET_MAX_USER_NAME_LENGTH, userId);
 	}
 
-	const char *password = ini.GetValue("agent", "password", NULL );
+	const char *password = ini.GetValue("agent", "basicAuthPassword", NULL );
 	if (password != NULL) {
 		StringCbCopy(cfg->password, INTERNET_MAX_PASSWORD_LENGTH, password);
 	} else {

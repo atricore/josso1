@@ -240,8 +240,8 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 		syslog(JK_LOG_DEBUG_LEVEL, "'Server Certificate File path: %s", caFile);
 	}
 
-	cfg->sslSkipHostCheck = ini.GetBoolValue("agent", "sslSkipHostCheck", true);
-	cfg->sslAllowExpiredCerts = ini.GetBoolValue("agent", "sslAllowExpiredCerts", true);
+	cfg->sslSkipHostCheck = ini.GetBoolValue("agent", "sslSkipHostCheck", false);
+	cfg->sslAllowExpiredCerts = ini.GetBoolValue("agent", "sslAllowExpiredCerts", false);
 
 	const char *userId = ini.GetValue("agent", "basicAuthUserId", NULL );
 	if (userId != NULL) {

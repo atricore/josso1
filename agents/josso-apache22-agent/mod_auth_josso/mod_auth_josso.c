@@ -961,12 +961,19 @@ static char *get_cookie (request_rec * r, char *name)
 static char *set_session_cookie (request_rec * r, char *name, char *value, char *path, char *domain)
 {
     apr_pool_t *p = r->pool;
-	const char* new_session_cookie;
+	char* new_session_cookie;
+    const char* cookie_type = apr_psprintf (p, "%s", name);
+    const char* transport = apr_psprintf (p, "%s", ap_http_scheme(r));
 
-	if (domain != NULL)
-    	new_session_cookie = apr_psprintf (p, "%s=%s; path=%s;%s", name, value, path, domain);
+    if (domain != NULL)
+    	new_session_cookie = apr_psprintf (p, "%s=%s; path=%s;%s; HttpOnly", name, value, path, domain);
     else
-    	new_session_cookie = apr_psprintf (p, "%s=%s; path=%s", name, value, path);
+    	new_session_cookie = apr_psprintf (p, "%s=%s; path=%s; HttpOnly", name, value, path);
+
+    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "name: [%s],cookie_type: [%s],ct_result: [%d], https?: [%s]",name,cookie_type,strcmp(cookie_type , JOSSO_SINGLE_SIGN_ON_COOKIE),transport);
+
+    if (!strcmp(transport,"https") & !strcmp(cookie_type , JOSSO_SINGLE_SIGN_ON_COOKIE))
+	    new_session_cookie = apr_psprintf (p, "%s ; Secure", new_session_cookie);
 
     apr_table_add (r->err_headers_out, "Set-Cookie", new_session_cookie);
     apr_table_add (r->headers_out, "Set-Cookie", new_session_cookie);

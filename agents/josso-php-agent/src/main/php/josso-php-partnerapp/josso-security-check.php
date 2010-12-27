@@ -27,7 +27,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this software; if not, write to the Free
 Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/
+ */
 
 // Resolve the assertion :
 
@@ -36,7 +36,11 @@ if (isset($_REQUEST['josso_assertion_id'])) {
 
     $ssoSessionId = $josso_agent->resolveAuthenticationAssertion($assertionId);
 
-    setcookie("JOSSO_SESSIONID", $ssoSessionId, 0, "/"); // session cookie ...
+    if (!empty($_SERVER['HTTPS'])){
+        setcookie("JOSSO_SESSIONID", $ssoSessionId, 0, "/","",1); // secure session cookie ...
+    }else{
+        setcookie("JOSSO_SESSIONID", $ssoSessionId, 0, "/"); // session cookie ...                 1
+    }
     $_COOKIE['JOSSO_SESSIONID'] = $ssoSessionId;
 }
 
@@ -62,12 +66,12 @@ if (isset($backToUrl)) {
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-	<title>JOSSO - PHP Problem</title>
-	<meta name="description" content="Java Open Single Signon">
+    <title>JOSSO - PHP Problem</title>
+    <meta name="description" content="Java Open Single Signon">
 </head>
 
 <body>
-    <h1>JOSSO Encountered a Problem!</h1>
-    <h2>Either you accessed this page directly or no PHP Session support is available!</h2>
+<h1>JOSSO Encountered a Problem!</h1>
+<h2>Either you accessed this page directly or no PHP Session support is available!</h2>
 </body>
 </html>

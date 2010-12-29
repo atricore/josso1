@@ -372,7 +372,12 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				} else {
 
 					// Create JOSSO SESSION ID Cookie
-					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/");
+
+					string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
+					bool secure = false;
+					if(https == "on" || https == "ON") secure = true;
+
+					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/", secure);
 					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/"); // Clean stored referer
 
 					string originalResource = req->getCookie("JOSSO_RESOURCE");

@@ -127,6 +127,10 @@ bool SSOAgentResponse::addHeader(string name, string value) {
 }
 
 bool SSOAgentResponse::setCookie(string name, string value, string path) {
+	return setCookie(name, value, path, false);
+}
+
+bool SSOAgentResponse::setCookie(string name, string value, string path, bool secure) {
 	string cookie = name;
 
 	cookie.append("=");
@@ -141,6 +145,9 @@ bool SSOAgentResponse::setCookie(string name, string value, string path) {
 	cookie.append("0");
 	cookie.append(";");
     */
+	if(secure){
+		cookie.append("Secure;");
+	}
 
 	return addHeader("Set-Cookie", cookie);
 

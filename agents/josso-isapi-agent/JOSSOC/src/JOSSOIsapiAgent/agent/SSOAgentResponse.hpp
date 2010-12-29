@@ -26,6 +26,8 @@ public:
 
 	virtual bool setCookie(string name, string value, string path);
 
+	virtual bool setCookie(string name, string value, string path, bool secure);
+
 	virtual bool flushHeaders() =0;
 
     virtual bool isCommitted() =0;

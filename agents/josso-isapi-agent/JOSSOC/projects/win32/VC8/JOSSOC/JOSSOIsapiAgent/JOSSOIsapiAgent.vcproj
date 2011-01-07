@@ -284,8 +284,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\..\..\src"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS"
+				AdditionalIncludeDirectories="..\..\..\..\..\src;..\..\..\..\..\include;"
+				PreprocessorDefinitions="NDEBUG;_CONSOLE;WIN32;_WINDOWS;WITH_OPENSSL"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -293,7 +293,7 @@
 				ProgramDataBaseFileName="$(IntDir)\JOSSOIsapiAgent_vc80.pdb"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -307,11 +307,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib advapi32.lib"
+				AdditionalDependencies="ws2_32.lib advapi32.lib regex.lib ssleay32.lib libeay32.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\..\..\..\lib64"
 				GenerateManifest="true"
 				ModuleDefinitionFile="..\..\..\..\..\src\JOSSOIsapiAgent\resources\JOSSOIsapiAgent.def"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				TargetMachine="17"
 				AllowIsolation="true"

@@ -34,6 +34,8 @@ public class TestApplet extends Applet {
             lc.login();
 
 			subject = lc.getSubject();
+
+            // this.getAppletContext()
 		} catch (LoginException e) {
 			logger.error(e.getMessage());
 		}

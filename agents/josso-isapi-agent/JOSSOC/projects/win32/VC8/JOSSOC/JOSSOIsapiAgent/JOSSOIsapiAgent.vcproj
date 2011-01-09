@@ -102,7 +102,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory=".\..\..\..\..\..\Build\Win32\VC8\$(ConfigurationName)\x64"
+			OutputDirectory=".\..\..\..\..\..\Build\Win64\VC8\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			>
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib advapi32.lib pcre.lib pcrecpp.lib ssleay32.lib libeay32.lib wsock32.lib"
+				AdditionalDependencies="ws2_32.lib advapi32.lib pcred.lib pcrecppd.lib ssleay32.lib libeay32.lib wsock32.lib"
 				ShowProgress="0"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib64\debug;..\..\..\..\..\lib64"
@@ -265,7 +265,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory=".\..\..\..\..\..\Build\Win32\VC8\$(ConfigurationName)\x64"
+			OutputDirectory=".\..\..\..\..\..\Build\Win64\VC8\$(ConfigurationName)"
 			IntermediateDirectory="$(OutDir)\obj\$(ProjectName)"
 			ConfigurationType="2"
 			>

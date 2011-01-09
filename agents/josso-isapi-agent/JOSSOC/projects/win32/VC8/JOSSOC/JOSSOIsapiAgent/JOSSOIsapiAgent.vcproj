@@ -42,9 +42,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\..\..\src;..\..\..\..\..\include;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG;WIN32;_WINDOWS;DEBUG;WITH_OPENSSL"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG;WIN32;_WINDOWS;DEBUG;WITH_OPENSSL;PCRE_STATIC"
 				StringPooling="false"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				AssemblerListingLocation="$(IntDir)\"
 				ProgramDataBaseFileName="$(IntDir)\JOSSOIsapiAgent_vc80.pdb"
 				WarningLevel="3"
@@ -64,12 +64,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib advapi32.lib regex.lib ssleay32.lib libeay32.lib wsock32.lib"
+				AdditionalDependencies="ws2_32.lib advapi32.lib pcred.lib pcrecppd.lib ssleay32.lib libeay32.lib wsock32.lib"
 				ShowProgress="0"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\..\..\..\lib"
+				AdditionalLibraryDirectories="..\..\..\..\..\lib\debug;..\..\..\..\..\lib"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="MSVCRTD;LIBCMT"
 				ModuleDefinitionFile="..\..\..\..\..\src\JOSSOIsapiAgent\resources\JOSSOIsapiAgent.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)\$(ProjectName).pdb"
@@ -125,8 +125,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\..\src"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG;WIN32;_WINDOWS"
+				AdditionalIncludeDirectories="..\..\..\..\..\src;..\..\..\..\..\include;"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;_DEBUG;WIN32;_WINDOWS;WITH_OPENSSL;PCRE_STATIC"
 				StringPooling="false"
 				RuntimeLibrary="1"
 				AssemblerListingLocation="$(IntDir)\"
@@ -148,9 +148,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib advapi32.lib"
+				AdditionalDependencies="ws2_32.lib advapi32.lib pcre.lib pcrecpp.lib ssleay32.lib libeay32.lib wsock32.lib"
 				ShowProgress="0"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\..\..\..\lib64\debug;..\..\..\..\..\lib64"
+				IgnoreDefaultLibraryNames="MSVCRTD;LIBCMT"
 				ModuleDefinitionFile="..\..\..\..\..\src\JOSSOIsapiAgent\resources\JOSSOIsapiAgent.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)\$(ProjectName).pdb"
@@ -208,7 +210,7 @@
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..\..\..\..\..\src;..\..\..\..\..\include;"
-				PreprocessorDefinitions="NDEBUG;_CONSOLE;WIN32;_WINDOWS;WITH_OPENSSL"
+				PreprocessorDefinitions="NDEBUG;_CONSOLE;WIN32;_WINDOWS;WITH_OPENSSL;PCRE_STATIC"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -227,9 +229,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib advapi32.lib regex.lib ssleay32.lib libeay32.lib wsock32.lib"
+				AdditionalDependencies="ws2_32.lib advapi32.lib pcre.lib pcrecpp.lib ssleay32.lib libeay32.lib wsock32.lib"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib"
 				GenerateManifest="true"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames="MSVCRTD"
 				ModuleDefinitionFile="..\..\..\..\..\src\JOSSOIsapiAgent\resources\JOSSOIsapiAgent.def"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -285,7 +289,7 @@
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\..\..\..\src;..\..\..\..\..\include;"
-				PreprocessorDefinitions="NDEBUG;_CONSOLE;WIN32;_WINDOWS;WITH_OPENSSL"
+				PreprocessorDefinitions="NDEBUG;_CONSOLE;WIN32;_WINDOWS;WITH_OPENSSL;PCRE_STATIC"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -307,10 +311,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib advapi32.lib regex.lib ssleay32.lib libeay32.lib"
-				LinkIncremental="1"
+				AdditionalDependencies="ws2_32.lib advapi32.lib pcre.lib pcrecpp.lib ssleay32.lib libeay32.lib wsock32.lib"
+				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib64"
 				GenerateManifest="true"
+				IgnoreDefaultLibraryNames="MSVCRTD"
 				ModuleDefinitionFile="..\..\..\..\..\src\JOSSOIsapiAgent\resources\JOSSOIsapiAgent.def"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -844,7 +849,19 @@
 			Name="include"
 			>
 			<File
-				RelativePath="..\..\..\..\..\include\regex.h"
+				RelativePath="..\..\..\..\..\include\pcre.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\include\pcre_stringpiece.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\include\pcrecpp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\include\pcrecpparg.h"
 				>
 			</File>
 			<Filter

@@ -14,7 +14,7 @@
 
 #include <JOSSOIsapiAgent/agent/autologin/AbstractAutomaticLoginStrategy.hpp>
 
-#include <regex.h>
+#include <pcrecpp.h>
 
 #ifdef _DEBUG
 #define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
@@ -941,6 +941,60 @@ void AbstractSSOAgent::logSoapFault(struct soap *soap) {
 
 bool AbstractSSOAgent::match(const string &source, const string &regex_string) {
 
+	pcrecpp::RE re(regex_string.c_str());
+
+	bool match = re.PartialMatch(source.c_str());
+
+	return match;
+
+	/*  PCRE using C (NEVER TESTED ... )
+
+	pcre *re;
+    const char *error;
+    int erroffset;
+
+	int rc;
+	int ovector[30];
+
+	bool result = false;
+
+	re = pcre_compile(regex_string.c_str(), 0, &error, &erroffset, NULL);
+	if (re == NULL) {
+		// Regular expression compilation error :
+		jk_log(logger, JK_LOG_ERROR, "pcre_compile error %s at %i . Regex %s", 
+			error, erroffset, regex_string.c_str());
+	} else {
+
+		rc = pcre_exec(re, 
+			NULL,             // We didn't study the pattern
+			source.c_str(),   // The subject string
+			source.size(),    // The subject string size
+			0,                // Start at offset 0 in the subject
+			0,                // Default options
+			ovector,          // vector of integers for substring information
+			30                // number of elements (NOT size in bytes)
+			);
+
+		if (rc >=0 ) {
+			result = true;
+		} else if (rc == PCRE_ERROR_NOMATCH) {
+			result = false; 
+		} else {
+			jk_log(logger, JK_LOG_ERROR, "pcre_exec error %i . Source is %s and regex %s", 
+				rc, source.c_str(), regex_string.c_str());
+			result = false;
+		}
+
+		pcre_free(re);
+	}
+
+	return result;
+
+	
+*/
+	
+
+	/* REGEX Based code
   struct re_pattern_buffer regex;
   struct re_registers regs;
   int n;
@@ -968,6 +1022,7 @@ bool AbstractSSOAgent::match(const string &source, const string &regex_string) {
   }
 
   return result;
+  */
   
 }
 

@@ -24,6 +24,7 @@ package org.josso.tooling.gshell.install.commands;
 
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.VFS;
 import org.apache.geronimo.gshell.command.annotation.CommandComponent;
 import org.josso.tooling.gshell.install.JOSSOScope;
@@ -79,29 +80,34 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
             getInstaller().validatePlatform();
     }
 
-    protected void installJOSSOAgentJars() throws Exception {
+    private void processChildFile(FileObject fileObj) throws Exception { //recursively traverse directories
 
-        FileObject[] agentBins = libsDir.getChildren();
-        for (int i = 0; i < agentBins.length; i++) {
-            FileObject agentBin = agentBins[i];
-            getInstaller().installComponent(createArtifact(libsDir.getURL().toString(), JOSSOScope.AGENT, agentBin.getName().getBaseName()), true);
+        if (fileObj.getType() == FileType.FOLDER) {
+            // Recursively process files in this folder
+            FileObject[] children = fileObj.getChildren();
+            for (FileObject subfile : children) {
+                processChildFile(subfile);
+            }
+        } else {
+            getInstaller().installComponent(createArtifact(fileObj.getParent().getURL().toString(), JOSSOScope.AGENT, fileObj.getName().getBaseName()), true);
         }
+    }
 
+    protected void installJOSSOAgentJars() throws Exception {
+        processChildFile(libsDir);
     }
 
     protected void installJOSSOAgentJarsFromSrc() throws Exception {
 
         if (!srcsDir.exists())
             return;
-        
+
         FileObject[] agentBins = srcsDir.getChildren();
         for (int i = 0; i < agentBins.length; i++) {
             FileObject agentBin = agentBins[i];
             getInstaller().installComponentFromSrc(createArtifact(srcsDir.getURL().toString(), JOSSOScope.AGENT, agentBin.getName().getBaseName()), true);
         }
-
     }
-
 
     protected void installJOSSOAgentConfig() throws Exception {
         FileObject[] libs = confDir.getChildren();
@@ -130,14 +136,14 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
     protected void backupAndRemoveOldArtifacts() throws Exception {
         getInstaller().removeOldComponents(true);
         if (isReplaceConfig()) {
-        	getInstaller().backupAgentConfigurations(false);
+            getInstaller().backupAgentConfigurations(false);
         }
     }
-    
+
     protected void performAdditionalTasks() throws Exception {
         getInstaller().performAdditionalTasks(libsDir);
     }
-    
+
     /**
      * Template method
      */
@@ -190,7 +196,7 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
             printer.printMsg();
 
             performAdditionalTasks();
-            
+
             // 6. Inform outcome
             printer.printMsg(getInstaller().getPlatformDescription() + " JOSSO Agent v." + getJOSSOVersion());
             printer.printOkStatus("Overall Installation", "Successful.");

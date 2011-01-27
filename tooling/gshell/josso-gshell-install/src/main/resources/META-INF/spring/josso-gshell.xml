@@ -343,6 +343,29 @@
         <s:property name="printer" ref="messagePrinter"/>
     </phpbb-installer>
 
+    <!-- IIS installer  -->
+    <iis-installer id="iis-installer-32">
+        <s:constructor-arg ref="iis"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </iis-installer>
+
+    <platform id="iis" family="non-java" platformName="IIS agent 32bit version" version="5.x-7.x">
+        <bin>${target}/bin</bin>
+        <conf>${target}/config</conf>
+        <josso-shared>${target}/log</josso-shared>
+    </platform>
+
+    <iis-installer id="iis-installer-64">
+        <s:constructor-arg ref="iis64"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </iis-installer>
+
+    <platform id="iis64" family="non-java" platformName="IIS agent 64bit version" version="5.x-7.x">
+        <bin>${target}/bin</bin>
+        <conf>${target}/config</conf>
+        <josso-shared>${target}/log</josso-shared>
+    </platform>
+
     <!-- Non-Java Platforms -->
 
     <platform id="apache" family="non-java" platformName="Apache HTTP Server (perl, python, php, etc.)" version="2.2"/>

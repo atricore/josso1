@@ -59,6 +59,7 @@ typedef struct {
     char *sessionAccessMinInterval;
     char *customAuthType;
     int   PHP5SecurityContext;
+    apr_array_header_t *ignoredResources;
     /* SOAP SSL options */
     int   GatewayEndpointSSLEnable;
     int   EnableGatewayAuthentication;
@@ -161,6 +162,7 @@ static const char *createBaseUrl(request_rec *r);
 static const char *getRequestedUrl(request_rec *r, int includeParameters);
 static const char *getContextPath(request_rec *r);
 static int isPublicResource(request_rec *r);
+static int isResourceIgnored(request_rec *r);
 static void prepareNonCacheResponse(request_rec *r);
 static const char *getGatewayEndpointScheme(request_rec *r);
 static int setupSSLContext(struct soap *soap, request_rec *r);
@@ -173,6 +175,7 @@ static int loadRobots(bot_auto_login_rec *bot_auto_login);
 static int setRobotProperty(robot *robot, char *name, char *value, int append, apr_pool_t *mp);
 static void compileRobotRegexp(apr_pool_t *mp);
 static const char *getRequester(request_rec *r);
+static void push_item(apr_array_header_t *arr, const char *item);
 
 module AP_MODULE_DECLARE_DATA auth_josso_module;
 
@@ -186,6 +189,8 @@ static void *create_auth_josso_dir_config(apr_pool_t *p, char *d)
     conf->identityManagerServicePath = DEFAULT_IDENTITY_MANAGER_SERVICE_PATH;
     conf->identityProviderServicePath = DEFAULT_IDENTITY_PROVIDER_SERVICE_PATH;
 
+    conf->ignoredResources = apr_array_make(p, 4, sizeof(char*));
+    
     return conf;
 }
 
@@ -278,6 +283,16 @@ static const char *set_custom_auth_type_slot(cmd_parms *cmd, void *offset,
     auth_josso_config_rec *conf = (auth_josso_config_rec*)offset;
 
     return ap_set_string_slot(cmd, offset, u);
+}
+
+static const char *set_ignored_resources_slot(cmd_parms *cmd, void *offset,
+                                       const char *ignored_resource)
+{
+    auth_josso_config_rec *conf = (auth_josso_config_rec*)offset;
+
+    push_item(conf->ignoredResources, ignored_resource);
+    
+    return NULL;
 }
 
 static const char *set_php5_security_context_slot(cmd_parms *cmd, void *offset,
@@ -427,6 +442,9 @@ static const command_rec auth_josso_cmds[] =
    AP_INIT_TAKE1("CustomAuthType", set_custom_auth_type_slot,
 				  (void *)APR_OFFSETOF(auth_josso_config_rec, customAuthType),
 				  OR_AUTHCFG, "Custom Value for the AUTH_TYPE request parameter"),
+   AP_INIT_ITERATE("IgnoredResource", set_ignored_resources_slot,
+   				  NULL,
+   				  OR_AUTHCFG, "Ignored resource (regex pattern)"),
    AP_INIT_FLAG("PHP5SecurityContext", set_php5_security_context_slot,
 				 (void *)APR_OFFSETOF(auth_josso_config_rec, PHP5SecurityContext),
 				 OR_AUTHCFG,
@@ -513,6 +531,10 @@ static int authenticate_josso_user(request_rec *r)
 		return DECLINED;
 	}
 
+    if (isResourceIgnored(r)) {
+        return OK;
+    }
+    
 	/* The Gateway is relaying to us an assertion reference which it must be resolved */
 	if ( strstr(r->unparsed_uri, JOSSO_SECURITY_CHECK_URI) ) {
 		apr_hash_t *formdata = NULL;
@@ -658,6 +680,10 @@ static int check_user_access(request_rec *r)
     int m = r->method_number;
     const apr_array_header_t *reqs_arr = ap_requires(r);
     require_line *reqs;
+
+    if (isResourceIgnored(r)) {
+        return OK;
+    }
 
     ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r,
 				  "Authorizing SSO user [%s]", r->user);
@@ -1173,8 +1199,8 @@ static int isUrlBasedAutoLoginRequired(urlbased_auto_login_rec *urlbased_auto_lo
 			ap_regex_t *regexp = NULL;
 			regexp = ap_pregcomp(r->pool, urlbased_auto_login->url_patterns[i], REG_NOSUB);
 			if (regexp != NULL) {
-				ap_regmatch_t regm[10];
-				if (!ap_regexec(regexp, requestedUrl, 0, regm, 0)) {
+				ap_regmatch_t regm[AP_MAX_REG_MATCH];
+				if (!ap_regexec(regexp, requestedUrl, AP_MAX_REG_MATCH, regm, 0)) {
 					ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Autologin is not required! Ignored url pattern: %s",
 								  urlbased_auto_login->url_patterns[i]);
 					autoLoginRequired = 0;
@@ -1300,6 +1326,34 @@ static int isPublicResource(request_rec *r)
     }
 
     return 0;
+}
+
+static int isResourceIgnored(request_rec *r)
+{
+    auth_josso_config_rec *cfg = ap_get_module_config(r->per_dir_config, &auth_josso_module);
+
+    int resourceIgnored = 0;
+    if (cfg->ignoredResources->nelts > 0) {
+	    const char *requestedUrl = getRequestedUrl(r, 1);
+	    char **items = cfg->ignoredResources->elts;
+	    int i;
+	    for (i=0; i<cfg->ignoredResources->nelts; i++) {
+		    ap_regex_t *regexp = NULL;
+		    regexp = ap_pregcomp(r->pool, items[i], REG_NOSUB);
+		    if (regexp != NULL) {
+			    ap_regmatch_t regm[AP_MAX_REG_MATCH];
+			    if (!ap_regexec(regexp, requestedUrl, AP_MAX_REG_MATCH, regm, 0)) {
+				    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Ignored resource %s! Ignored url pattern: %s",
+							      requestedUrl, items[i]);
+				    resourceIgnored = 1;
+				    break;
+			    }
+		    } else {
+			    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Regular expression could not be compiled.");
+		    }
+	    }
+    }
+    return resourceIgnored;
 }
 
 static void prepareNonCacheResponse(request_rec *r)
@@ -1579,6 +1633,12 @@ static void compileRobotRegexp(apr_pool_t *mp) {
 	robot_regexps[23] = ap_pregcomp(mp, modified_by_pattern, REG_NOSUB);
 
 	robot_regexps_compiled = 1;
+}
+
+static void push_item(apr_array_header_t *arr, const char *item)
+{
+    char **p = apr_array_push(arr);
+    *p = apr_pstrdup(arr->pool, item);
 }
 
 static const char *getRequester(request_rec *r)

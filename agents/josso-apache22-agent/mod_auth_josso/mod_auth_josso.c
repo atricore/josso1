@@ -1596,7 +1596,7 @@ static int setupSSLContext(struct soap *soap, request_rec *r)
 	if (cfg->GatewayEndpointSSLEnable) {
 		unsigned short flags = SOAP_SSL_NO_AUTHENTICATION;
 		if (cfg->EnableGatewayAuthentication) {
-			flags = SOAP_SSL_SKIP_HOST_CHECK;
+			flags = SOAP_SSL_DEFAULT | SOAP_SSL_SKIP_HOST_CHECK;
 		}
 		soap_ssl_init();
 		result = soap_ssl_client_context(soap,

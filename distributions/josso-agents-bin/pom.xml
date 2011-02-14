@@ -316,5 +316,17 @@
             </dependencies>
         </profile>
 
+        <profile>
+            <id>jdk6</id>
+            <activation>
+                <jdk>1.6</jdk>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-tomcat70-agent</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>

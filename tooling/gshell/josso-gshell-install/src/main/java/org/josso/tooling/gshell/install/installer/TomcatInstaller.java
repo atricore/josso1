@@ -118,6 +118,10 @@ public class TomcatInstaller extends VFSInstaller {
                     getTargetPlatform().getVersion().startsWith("6.0")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
+            } else if (artifact.getBaseName().startsWith("josso-tomcat70-agent") &&
+                    getTargetPlatform().getVersion().startsWith("7.0")) {
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+
             } else {
                 log.debug("Artifact is not valid for selected platform : " + artifact);
             }

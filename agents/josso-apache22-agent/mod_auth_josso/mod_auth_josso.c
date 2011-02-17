@@ -30,6 +30,8 @@
 #define APR_WANT_STRFUNC        /* for strcasecmp */
 #include "apr_want.h"
 #include "apr_hash.h"
+#include "apr_time.h"
+#include "apr_date.h"
 
 #include "ap_config.h"
 #include "httpd.h"
@@ -56,7 +58,7 @@ typedef struct {
 	char *partnerAppId;
     char *context;
     char *defaultResource;
-    char *sessionAccessMinInterval;
+    long  sessionAccessMinInterval;
     char *customAuthType;
     int   PHP5SecurityContext;
     apr_array_header_t *ignoredResources;
@@ -141,6 +143,9 @@ static int robot_regexps_compiled = 0;
 #define JOSSO_AUTH_LOGIN_SUFFICIENT "SUFFICIENT"
 #define JOSSO_AUTH_LOGIN_OPTIONAL "OPTIONAL"
 
+#define JOSSO_LAST_ACCESS_TS_COOKIE "JOSSO_LAST_ACCESS_TS"
+#define JOSSO_SECURITY_CONTEXT_COOKIE "JOSSO_SECURITY_CONTEXT"
+
 static char *resolveAssertion(request_rec *r, const char* assertionId);
 static char *form_value(apr_pool_t *pool, apr_hash_t *form, const char *key);
 static apr_hash_t *parse_form_from_string(request_rec *r, char *args);
@@ -176,6 +181,8 @@ static int setRobotProperty(robot *robot, char *name, char *value, int append, a
 static void compileRobotRegexp(apr_pool_t *mp);
 static const char *getRequester(request_rec *r);
 static void push_item(apr_array_header_t *arr, const char *item);
+static const char *createSecurityContextString(request_rec *r, char *username, apr_array_header_t *roles);
+static char *encode(request_rec *r, char *value);
 
 module AP_MODULE_DECLARE_DATA auth_josso_module;
 
@@ -188,6 +195,7 @@ static void *create_auth_josso_dir_config(apr_pool_t *p, char *d)
     conf->sessionManagerServicePath = DEFAULT_SESSION_MANAGER_SERVICE_PATH;
     conf->identityManagerServicePath = DEFAULT_IDENTITY_MANAGER_SERVICE_PATH;
     conf->identityProviderServicePath = DEFAULT_IDENTITY_PROVIDER_SERVICE_PATH;
+    conf->sessionAccessMinInterval = 1000;
 
     conf->ignoredResources = apr_array_make(p, 4, sizeof(char*));
     
@@ -274,7 +282,7 @@ static const char *set_session_access_min_interval_slot(cmd_parms *cmd, void *of
 {
     auth_josso_config_rec *conf = (auth_josso_config_rec*)offset;
 
-    return ap_set_string_slot(cmd, offset, u);
+    return ap_set_string_slot(cmd, offset, atol(u));
 }
 
 static const char *set_custom_auth_type_slot(cmd_parms *cmd, void *offset,
@@ -499,8 +507,8 @@ static int authenticate_josso_user(request_rec *r)
 
 	const char* location;
 	const char* jossoSessionId;
-	const char* username;
-	const apr_array_header_t* roles;
+	const char* username = NULL;
+	const apr_array_header_t* roles = NULL;
 
 	const char *path = getContextPath(r);
 
@@ -518,6 +526,8 @@ static int authenticate_josso_user(request_rec *r)
 		);
 
 		remove_session_cookie(r, JOSSO_SINGLE_SIGN_ON_COOKIE, path, NULL);
+        remove_session_cookie(r, JOSSO_SECURITY_CONTEXT_COOKIE, path, NULL);
+        remove_session_cookie(r, JOSSO_LAST_ACCESS_TS_COOKIE, path, NULL);
 
 		prepareNonCacheResponse(r);
 		apr_table_setn(r->err_headers_out, "Location", location);
@@ -576,11 +586,62 @@ static int authenticate_josso_user(request_rec *r)
 	/* SSO session present, obtain user and roles information and use it for creating the security context */
 	if (jossoSessionId != NULL) {
 		ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "obtaining user for SSO session [%s]", jossoSessionId );
-		username = findUserInSession(r, jossoSessionId);
+
+		// get cached JOSSO security context
+		int foundCachedSecurityCtx = 0;
+		const char *encodedSecurityCtx = get_cookie(r, JOSSO_SECURITY_CONTEXT_COOKIE);
+		if (encodedSecurityCtx != NULL) {
+		    char *decodedSecurityCtx = apr_palloc(r->pool, sizeof(char*));
+		    apr_base64_decode(decodedSecurityCtx, encodedSecurityCtx);
+
+		    char *pair;
+		    char *eq;
+		    const char *delim = "&";
+		    char *last;
+		    char **ptr;
+
+		    // username
+		    pair = apr_strtok(decodedSecurityCtx, delim, &last);
+		    if (pair != NULL) {
+                eq = strchr(pair, '=');
+                if (eq) {
+                    username = apr_pstrdup(r->pool, ++eq);
+                }
+		    }
+
+		    // roles
+		    pair = apr_strtok(NULL, delim, &last);
+		    if (pair != NULL) {
+			    eq = strchr(pair, '=');
+			    if (eq) {
+                    char *rolesStr = apr_pstrdup(r->pool, eq);
+                    char *role = strtok(++rolesStr, ",");
+                    roles = apr_array_make(r->pool, 0, sizeof(char**));
+                    while (role != NULL) {
+                        ptr = apr_array_push(roles);
+                        *ptr = apr_pstrdup(r->pool, role);
+                        role = strtok(NULL, ",");
+                    }
+			    }
+		    }
+
+		    if (username != NULL && roles != NULL) {
+			    foundCachedSecurityCtx = 1;
+		    }
+		}
+
+        if (username == NULL) {
+		    username = findUserInSession(r, jossoSessionId);
+		}
 
 		if (username != NULL) {
-			ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "obtained user [%s] for session [%s]",
-						  username, jossoSessionId);
+            if (foundCachedSecurityCtx) {
+                ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "obtained user [%s] for session [%s] from cache",
+            			username, jossoSessionId);
+            } else {
+			    ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "obtained user [%s] for session [%s]",
+						username, jossoSessionId);
+			}
 		} else {
 			ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "there is no user for session [%s]",
 						  username);
@@ -589,7 +650,9 @@ static int authenticate_josso_user(request_rec *r)
 		}
 
 		if (username != NULL) {
-			roles = findRolesBySSOSessionId(r, jossoSessionId);
+            if (roles == NULL) {
+			    roles = findRolesBySSOSessionId(r, jossoSessionId);
+			}
 
 			int i;
 			for (i = 0; i < roles->nelts; i++ ) {
@@ -615,8 +678,14 @@ static int authenticate_josso_user(request_rec *r)
 			if (cfg->PHP5SecurityContext == 1)
 				createPHP5SecurityContext(r);
 
+            // cache JOSSO security context
+            if (!foundCachedSecurityCtx) {
+                const char *newSecurityCtx = createSecurityContextString(r, username, roles);
+                char *newEncodedSecurityCtx = encode(r, newSecurityCtx);
+                set_session_cookie(r, JOSSO_SECURITY_CONTEXT_COOKIE, newEncodedSecurityCtx, path, NULL);
+            }
+            
 			// keeping session alive
-			ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Notifying keep alive for SSO session [%s]", jossoSessionId );
 			accessSession(r, jossoSessionId);
 		}
 
@@ -818,6 +887,21 @@ static apr_array_header_t* findRolesBySSOSessionId(request_rec *r, char *session
 }
 
 static void accessSession(request_rec *r, char *sessionId) {
+   auth_josso_config_rec *cfg = ap_get_module_config(r->per_dir_config, &auth_josso_module);
+
+   const char *lastAccessTimeStr = get_cookie(r, JOSSO_LAST_ACCESS_TS_COOKIE);
+   if (lastAccessTimeStr != NULL) {
+        apr_time_t lastAccessTime = apr_date_parse_http(lastAccessTimeStr);
+        if (lastAccessTime != APR_DATE_BAD &&
+   	        ((apr_time_as_msec(apr_time_now()) - apr_time_as_msec(lastAccessTime)) < cfg->sessionAccessMinInterval)) {
+   	            return;
+        }
+   }
+
+   ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Notifying keep alive for SSO session [%s]", sessionId);
+
+   const char* path = getContextPath(r);
+
    struct soap *soap = soap_new();
    struct ns3__AccessSessionRequestType req;
    struct ns3__AccessSessionResponseType rsp;
@@ -828,10 +912,15 @@ static void accessSession(request_rec *r, char *sessionId) {
    setupSSLContext(soap, r);
 
    if (soap_call___ns6__accessSession(soap, getSSOSessionManagerServiceEndpoint(r), NULL, &req, &rsp) == SOAP_OK) {
+        char timeStr[APR_RFC822_DATE_LEN + 1];
+        apr_rfc822_date(timeStr, apr_time_now());
+        set_session_cookie(r, JOSSO_LAST_ACCESS_TS_COOKIE, timeStr, path, NULL);
    } else {
 	   //TODO: Error handling
 	   ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Soap error... error code: [%d], error message: [%s]",
 	   			  soap->error, *soap_faultdetail(soap));
+       remove_session_cookie(r, JOSSO_LAST_ACCESS_TS_COOKIE, path, NULL);
+       remove_session_cookie(r, JOSSO_SECURITY_CONTEXT_COOKIE, path, NULL);
    }
 
    soap_end(soap);
@@ -1639,6 +1728,23 @@ static void push_item(apr_array_header_t *arr, const char *item)
 {
     char **p = apr_array_push(arr);
     *p = apr_pstrdup(arr->pool, item);
+}
+
+static const char *createSecurityContextString(request_rec *r, char *username, apr_array_header_t *roles)
+{
+    return apr_psprintf(r->pool, "username=%s&roles=%s",
+	    username,
+	    apr_array_pstrcat(r->pool, roles, ',')
+    );
+}
+
+static char *encode(request_rec *r, char *value)
+{
+    int inlen = strlen(value);
+    int outsize = apr_base64_encode_len(inlen);
+    char *encodedValue = apr_palloc(r->pool, outsize);
+    apr_base64_encode(encodedValue, value, inlen);
+    return encodedValue;
 }
 
 static const char *getRequester(request_rec *r)

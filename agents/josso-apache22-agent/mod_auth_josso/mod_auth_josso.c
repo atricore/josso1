@@ -195,7 +195,7 @@ static void *create_auth_josso_dir_config(apr_pool_t *p, char *d)
     conf->sessionManagerServicePath = DEFAULT_SESSION_MANAGER_SERVICE_PATH;
     conf->identityManagerServicePath = DEFAULT_IDENTITY_MANAGER_SERVICE_PATH;
     conf->identityProviderServicePath = DEFAULT_IDENTITY_PROVIDER_SERVICE_PATH;
-    conf->sessionAccessMinInterval = 1000;
+    conf->sessionAccessMinInterval = 15000;
 
     conf->ignoredResources = apr_array_make(p, 4, sizeof(char*));
     

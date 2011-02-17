@@ -919,6 +919,7 @@ static void accessSession(request_rec *r, char *sessionId) {
 	   //TODO: Error handling
 	   ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Soap error... error code: [%d], error message: [%s]",
 	   			  soap->error, *soap_faultdetail(soap));
+	   remove_session_cookie(r, JOSSO_SINGLE_SIGN_ON_COOKIE, path, NULL);
        remove_session_cookie(r, JOSSO_LAST_ACCESS_TS_COOKIE, path, NULL);
        remove_session_cookie(r, JOSSO_SECURITY_CONTEXT_COOKIE, path, NULL);
    }

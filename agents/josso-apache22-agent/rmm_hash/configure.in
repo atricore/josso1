@@ -1,0 +1,12 @@
+# Required initializer
+AC_INIT
+
+# Automake initialization
+AM_INIT_AUTOMAKE(rmm_hash, 1.0)
+AM_PROG_LIBTOOL
+
+# Add a test for a compiler.
+AC_PROG_CC
+
+# Write config.status and the Makefile
+AC_OUTPUT(Makefile)

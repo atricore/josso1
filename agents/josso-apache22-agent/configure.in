@@ -131,6 +131,7 @@ AC_SUBST(apr_include_dir)
 
 AC_CONFIG_FILES([Makefile \
     client/Makefile \
+    rmm_hash/Makefile \
     mod_auth_josso/Makefile \
     ])
     

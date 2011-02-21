@@ -45,6 +45,8 @@ public class AssertionManagerImpl implements AssertionManager {
 
     private AssertionMonitor _monitor;
 
+    private Thread _monitorThread;
+    
     private AssertionStore _assertionStore;
 
     private AssertionIdGenerator _assertionIdGenerator;
@@ -57,12 +59,26 @@ public class AssertionManagerImpl implements AssertionManager {
     public void initialize() {
         // Start session monitor.
         _monitor = new AssertionMonitor(this, getAssertionMonitorInterval());
-        Thread t = new Thread(_monitor);
-        t.setDaemon(true);
-        t.setName("JOSSOAssertionMonitor");
-        t.start();
+        _monitorThread = new Thread(_monitor);
+        _monitorThread.setDaemon(true);
+        _monitorThread.setName("JOSSOAssertionMonitor");
+        _monitorThread.start();
     }
 
+    /**
+     * Destroy the manager and free ressource (running threads).
+     */
+    public void destroy() {
+        if (_monitor != null) {
+            _monitor.stop();
+            try {
+                _monitorThread.join();
+            } catch (InterruptedException e) {
+                logger.warn("[destroy()] : main thread interrupted.");
+            }
+        }
+    }
+    
     public void setSecurityDomainName(String securityDomainName) {
         this.securityDomainName = securityDomainName;
     }
@@ -186,6 +202,8 @@ public class AssertionManagerImpl implements AssertionManager {
 
         private AssertionManager _m;
 
+        private boolean _stop;
+
         AssertionMonitor(AssertionManager m) {
             _m = m;
         }
@@ -208,6 +226,7 @@ public class AssertionManagerImpl implements AssertionManager {
          */
         public void run() {
 
+            _stop = false;
             do {
                 try {
 
@@ -232,7 +251,14 @@ public class AssertionManagerImpl implements AssertionManager {
                     logger.warn("Exception received : " + e.getMessage() != null ? e.getMessage() : e.toString(), e);
                 }
 
-            } while (true);
+            } while (!_stop);
+        }
+
+        public void stop() {
+            _stop = true;
+            synchronized (this) {
+                notify(); // wake the thread if it was in a wait.
+            }
         }
     }
 

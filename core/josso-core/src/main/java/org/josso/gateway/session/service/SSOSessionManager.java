@@ -21,15 +21,14 @@
  */
 package org.josso.gateway.session.service;
 
-import java.util.Collection;
-
-import javax.security.auth.Subject;
-
 import org.josso.gateway.session.SSOSession;
 import org.josso.gateway.session.exceptions.NoSuchSessionException;
 import org.josso.gateway.session.exceptions.SSOSessionException;
 import org.josso.gateway.session.exceptions.TooManyOpenSessionsException;
 import org.josso.gateway.session.service.store.SessionStore;
+
+import javax.security.auth.Subject;
+import java.util.Collection;
 
 /**
  * SSO Session Manager Business interface.
@@ -128,6 +127,11 @@ public interface SSOSessionManager extends java.io.Serializable {
      */
     void initialize();
 
+    /**
+     * Destroy the manager and free resources (running threads).
+     */
+    void destroy();
+    
     /**
      * Returns the total number of registerd sessions
      */

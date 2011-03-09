@@ -24,17 +24,16 @@ package org.josso.gateway.session.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.josso.Lookup;
+import org.josso.gateway.SecurityDomainRegistry;
 import org.josso.gateway.session.SSOSession;
 import org.josso.gateway.session.exceptions.NoSuchSessionException;
 import org.josso.gateway.session.exceptions.SSOSessionException;
 import org.josso.gateway.session.exceptions.TooManyOpenSessionsException;
 import org.josso.gateway.session.service.store.SessionStore;
-import org.josso.gateway.SecurityDomainRegistry;
-import org.josso.Lookup;
-
-import java.util.*;
 
 import javax.security.auth.Subject;
+import java.util.*;
 
 /**
  * @org.apache.xbean.XBean element="session-manager"
@@ -73,6 +72,7 @@ public class SSOSessionManagerImpl implements SSOSessionManager {
     private SessionStore _store;
     private SessionIdGenerator _idGen;
     private SessionMonitor _monitor;
+    private Thread _monitorThread;
 
     //------------------------------------------------------
     // SSO Session Manager
@@ -98,10 +98,10 @@ public class SSOSessionManagerImpl implements SSOSessionManager {
         // Start session monitor.
         _monitor = new SessionMonitor(this, getSessionMonitorInterval());
 
-        Thread t = new Thread(_monitor);
-        t.setDaemon(true);
-        t.setName("JOSSOSessionMonitor");
-        t.start();
+        _monitorThread = new Thread(_monitor);
+        _monitorThread.setDaemon(true);
+        _monitorThread.setName("JOSSOSessionMonitor");
+        _monitorThread.start();
 
         // Register sessions in security domain !
         logger.info("[initialize()] : Restore Sec.Domain Registry.=" + _securityDomainName);
@@ -119,6 +119,19 @@ public class SSOSessionManagerImpl implements SSOSessionManager {
 
     }
 
+    /**
+     * Destroy the manager and free resources (running threads).
+     */
+    public synchronized void destroy() {
+        if (_monitor != null) {
+            _monitor.stop();
+            try {
+                _monitorThread.join();
+            } catch (InterruptedException e) {
+                logger.warn("[destroy()] : main thread interrupted.");
+            }
+        }
+    }
 
     /**
      * Initiates a new session. The new session id is returned.
@@ -467,6 +480,8 @@ public class SSOSessionManagerImpl implements SSOSessionManager {
 
         private SSOSessionManager _m;
 
+        private boolean _stop;
+
         SessionMonitor(SSOSessionManager m) {
             _m = m;
         }
@@ -489,6 +504,7 @@ public class SSOSessionManagerImpl implements SSOSessionManager {
          */
         public void run() {
 
+            _stop = false;
             do {
                 try {
 
@@ -513,7 +529,14 @@ public class SSOSessionManagerImpl implements SSOSessionManager {
                     logger.warn("Exception received : " + e.getMessage() != null ? e.getMessage() : e.toString(), e);
                 }
 
-            } while (true);
+            } while (!_stop);
+        }
+
+        public void stop() {
+            _stop = true;
+            synchronized (this) {
+                notify(); // wake the thread if it was in a wait.
+            }
         }
     }
 

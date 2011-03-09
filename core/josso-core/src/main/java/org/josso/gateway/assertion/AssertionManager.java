@@ -37,6 +37,8 @@ public interface AssertionManager {
 
     void initialize();
 
+    void destroy();
+
     void setSecurityDomainName(String securityDomainName);
 
     void setAssertionStore(AssertionStore ss);

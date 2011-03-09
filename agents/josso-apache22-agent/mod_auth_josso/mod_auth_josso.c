@@ -259,6 +259,7 @@ static void *create_auth_josso_dir_config(apr_pool_t *p, char *d)
     conf->identityManagerServicePath = DEFAULT_IDENTITY_MANAGER_SERVICE_PATH;
     conf->identityProviderServicePath = DEFAULT_IDENTITY_PROVIDER_SERVICE_PATH;
     conf->sessionAccessMinInterval = 15000;
+    conf->partnerAppId = "";
 
     conf->ignoredResources = apr_array_make(p, 4, sizeof(char*));
     
@@ -620,8 +621,9 @@ static int authenticate_josso_user(request_rec *r)
 		if (backToPath == NULL) {
 			backToPath = path;
 		}
-		location = apr_psprintf(r->pool, "%s?josso_back_to=%s%s",
+		location = apr_psprintf(r->pool, "%s?josso_partnerapp_id=%s&josso_back_to=%s%s",
 			cfg->gatewayLogoutUrl,
+			getRequester(r),
 			baseUrl,
 			backToPath
 		);

@@ -218,6 +218,19 @@ public class SSOGatewayImpl implements SSOGateway {
     }
 
     public void destroy() {
+        for (int i = 0; i < securityDomains.size(); i++) {
+            SecurityDomain sd = securityDomains.get(i);
+            String name = sd.getName();
+
+            logger.info("Destroying [" + name + " ] SSOAssertionManager ...");
+            sd.getAssertionManager().destroy();
+            logger.info("Destroying [" + name + " ] SSOAssertionManager ... DONE");
+
+            logger.info("Destroying [" + name + " ] SSOSessionManager ...");
+            sd.getSessionManager().destroy();
+            logger.info("Destroying [" + name + " ] SSOSessionManager ... DONE");
+        }
+
         _initialized = false;
     }
 

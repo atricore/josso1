@@ -76,6 +76,10 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
 
             // The first time we access a partner application, we should attempt an automatic login.
         	Boolean autoLoginExecuted = Boolean.parseBoolean(getAgent().getAttribute(hreq, "JOSSO_AUTOMATIC_LOGIN_EXECUTED"));
+            String referer = hreq.getHeader("referer");
+            if (referer == null || "".equals(referer))
+                referer = "NO_REFERER";
+
             // If no referer host is found but we did not executed auto login yet, give it a try.
             if (autoLoginExecuted == null || !autoLoginExecuted) {
 
@@ -83,10 +87,10 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
                     log.debug("No referer found and automatic login was never executed.  Require Autologin!");
 
                 getAgent().setAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_EXECUTED", "TRUE");
+                getAgent().setAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER", referer);
                 return true;
             }
 
-            String referer = hreq.getHeader("referer");
             // If we have a referer host that differs from our we require an autologinSSs
             if (referer != null && !"".equals(referer)) {
 

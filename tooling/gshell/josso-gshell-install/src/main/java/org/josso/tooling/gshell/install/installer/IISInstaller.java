@@ -7,7 +7,6 @@ import org.apache.commons.vfs.FileType;
 import org.josso.tooling.gshell.install.JOSSOArtifact;
 import org.josso.tooling.gshell.install.TargetPlatform;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -170,11 +169,11 @@ public class IISInstaller extends VFSInstaller {
                 "\"LogFile\"=\""+ toWindowsPath(this.targetJOSSOSharedLibDir) +"\\\\josso_isapi.log\"\n" +
                 "\"AgentConfigFile\"=\""+ toWindowsPath(this.targetConfDir) +"\\\\josso-agent-config.ini\"";
 
-        BufferedWriter out = null;
-        OutputStream fos = null;
+        OutputStreamWriter out = null;
+        OutputStream fos;
         try {
-            fos = regConfig.getContent().getOutputStream(true);
-            out = new BufferedWriter(new OutputStreamWriter(fos, "UTF8"));
+            fos = regConfig.getContent().getOutputStream();
+            out = new OutputStreamWriter(fos);
 
             out.write(outStr);
             out.flush();
@@ -198,11 +197,11 @@ public class IISInstaller extends VFSInstaller {
                 "\"CategoryCount\"=dword:00000007\n" +
                 "\"CategoryMessageFile\"=\"" + toWindowsPath(this.targetBinDir) + "\\\\JOSSOIsapiAgent.dll\"";
 
-        BufferedWriter out = null;
-        OutputStream fos = null;
+        OutputStreamWriter out = null;
+        OutputStream fos;
         try {
-            fos = regEventLog.getContent().getOutputStream(true);
-            out = new BufferedWriter(new OutputStreamWriter(fos, "UTF8"));
+            fos = regEventLog.getContent().getOutputStream();
+            out = new OutputStreamWriter(fos);
 
             out.write(outStr);
             out.flush();

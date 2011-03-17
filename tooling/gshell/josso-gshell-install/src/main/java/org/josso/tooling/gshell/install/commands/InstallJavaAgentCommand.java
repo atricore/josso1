@@ -50,6 +50,8 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
     protected FileObject srcsDir;
     protected FileObject trdpartyDir;
     protected FileObject confDir;
+    protected FileObject iis32Dir;
+    protected FileObject iis64Dir;
 
     public InstallJavaAgentCommand() {
         this.setShell("agent");
@@ -73,6 +75,8 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
         srcsDir = homeDir.resolveFile("dist/agents/src");
         trdpartyDir = libsDir.resolveFile("3rdparty");
         confDir = homeDir.resolveFile("dist/agents/config/" + getTargetPlatformId());
+        iis32Dir = libsDir.resolveFile("Win32");
+        iis64Dir = libsDir.resolveFile("Win64");
     }
 
     protected void verifyTarget() throws Exception {
@@ -80,21 +84,22 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
             getInstaller().validatePlatform();
     }
 
-    private void processChildFile(FileObject fileObj) throws Exception { //recursively traverse directories
-
-        if (fileObj.getType() == FileType.FOLDER) {
-            // Recursively process files in this folder
-            FileObject[] children = fileObj.getChildren();
-            for (FileObject subfile : children) {
-                processChildFile(subfile);
+    private void processDir(FileObject dir, boolean recursive) throws Exception { //recursively traverse directories
+        FileObject[] children = dir.getChildren();
+        for (FileObject subfile : children) {
+            if (subfile.getType() == FileType.FOLDER) {
+                if (recursive)
+                    processDir(subfile, recursive);
+            } else {
+                getInstaller().installComponent(createArtifact(subfile.getParent().getURL().toString(), JOSSOScope.AGENT, subfile.getName().getBaseName()), true);
             }
-        } else {
-            getInstaller().installComponent(createArtifact(fileObj.getParent().getURL().toString(), JOSSOScope.AGENT, fileObj.getName().getBaseName()), true);
         }
     }
 
     protected void installJOSSOAgentJars() throws Exception {
-        processChildFile(libsDir);
+        processDir(libsDir, false);
+        processDir(iis32Dir, true);
+        processDir(iis64Dir, true);
     }
 
     protected void installJOSSOAgentJarsFromSrc() throws Exception {

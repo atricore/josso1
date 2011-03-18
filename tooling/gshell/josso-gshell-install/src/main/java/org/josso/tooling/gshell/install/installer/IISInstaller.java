@@ -153,6 +153,9 @@ public class IISInstaller extends VFSInstaller {
         String retStr = fileObj.getName().getURI();
         retStr = retStr.replace("file:///","");
         retStr = retStr.replaceAll("/", "\\\\\\\\");
+        while (retStr.endsWith("\\")) {
+            retStr = retStr.substring(0, retStr.length() - 1);
+        }
         return retStr;
     }
 

@@ -189,6 +189,11 @@ public class IISInstaller extends VFSInstaller {
         }
     }
 
+    @Override
+    public boolean updateAgentConfiguration(String idpHostName, String idpPort, String idpType) {
+        return false;
+    }
+
     private void fillRegEventLogFile(FileObject regEventLog) throws InstallException {
         String outStr = "Windows Registry Editor Version 5.00\n" +
                 "\n" +

@@ -70,8 +70,6 @@ public class IISInstaller extends VFSInstaller {
                     locationStr.contains("Win64") &&  locationStr.contains("Release") &&
                     this.getTargetPlatform().getId().equals("iis64")) {
                 installFile(srcFile, this.targetBinDir, replace);
-            } else if (artifact.getBaseName().startsWith("regex")) {
-                installFile(srcFile, this.targetBinDir, replace);
             } else {
                 log.debug("Artifact is not valid for selected platform : " + artifact);
             }

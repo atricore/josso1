@@ -10,7 +10,7 @@
  *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOisAutomaticLoginRequiredR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -49,8 +49,10 @@
 #include "apr_global_mutex.h"
 
 /* Disable shared memory (caching) */
+/*
 #undef APR_HAS_SHARED_MEMORY
 #define APR_HAS_SHARED_MEMORY 0
+*/
 
 #if APR_HAS_SHARED_MEMORY
 #include "apr_rmm.h"
@@ -77,7 +79,9 @@ typedef struct {
     long  sessionAccessMinInterval;
     char *customAuthType;
     int   PHP5SecurityContext;
+    int   AutoLoginDisabled;
     apr_array_header_t *ignoredResources;
+    apr_array_header_t *automaticStrategies;
     /* SOAP SSL options */
     int   GatewayEndpointSSLEnable;
     int   EnableGatewayAuthentication;
@@ -162,9 +166,6 @@ typedef struct {
 	sso_cache_t *sso_cache;
 } server_conf;
 
-void **automaticStrategies;
-int automaticStrategiesSize = 0;
-
 static ap_regex_t *robot_regexps[24];
 static int robot_regexps_compiled = 0;
 
@@ -223,12 +224,13 @@ static int isAutoLoginRequired(int strategyIndex, request_rec *r);
 static int isDefaultAutoLoginRequired(base_auto_login_rec *default_auto_login, request_rec *r);
 static int isUrlBasedAutoLoginRequired(urlbased_auto_login_rec *urlbased_auto_login, request_rec *r);
 static int isBotAutoLoginRequired(bot_auto_login_rec *bot_auto_login, request_rec *r);
-static char *appendChar(char *value, char ch);
-static int loadRobots(bot_auto_login_rec *bot_auto_login);
+static char *appendChar(apr_pool_t *mp, char *value, char ch);
+static int loadRobots(bot_auto_login_rec *bot_auto_login, apr_pool_t *mp);
 static int setRobotProperty(robot *robot, char *name, char *value, int append, apr_pool_t *mp);
 static void compileRobotRegexp(apr_pool_t *mp);
 static const char *getRequester(request_rec *r);
 static void push_item(apr_array_header_t *arr, const char *item);
+static void addAutoLoginStrategy(apr_array_header_t *strategies, void *strategy);
 static char *encode(request_rec *r, char *value);
 static sso_entry *getSSOEntry(request_rec *r, const char* jossoSessionId);
 static sso_entry *createSSOEntry(request_rec *r, const char *jossoSessionId, const char *username, const apr_array_header_t *roles);
@@ -260,6 +262,7 @@ static void *create_auth_josso_dir_config(apr_pool_t *p, char *d)
     conf->partnerAppId = "";
 
     conf->ignoredResources = apr_array_make(p, 4, sizeof(char*));
+    conf->automaticStrategies = apr_array_make(p, 1, sizeof(void*));
     
     return conf;
 }
@@ -420,22 +423,27 @@ static const char *set_ssl_server_cert_dir_slot(cmd_parms *cmd, void *offset,
     return ap_set_string_slot(cmd, offset, u);
 }
 
+static const char *set_auto_login_disabled_slot(cmd_parms *cmd, void *offset,
+                                       int u)
+{
+    auth_josso_config_rec *conf = (auth_josso_config_rec*)offset;
+
+    return ap_set_flag_slot(cmd, offset, u);
+}
+
 /*
  * example: DefaultAutoLoginStrategy "REQUIRED"
  */
 static const char *set_default_login_strategy_slot(cmd_parms *cmd, void *offset,
                                        const char *mode)
 {
-	if (automaticStrategiesSize == 0) {
-		automaticStrategies = malloc(10 * sizeof *automaticStrategies);
-    }
+    auth_josso_config_rec *conf = (auth_josso_config_rec*)offset;
 
-	base_auto_login_rec *default_auto_login = malloc(sizeof(base_auto_login_rec));
+	base_auto_login_rec *default_auto_login = apr_palloc(conf->automaticStrategies->pool, sizeof(base_auto_login_rec));
 	default_auto_login->strategy = JOSSO_DEFAULT_AUTH_LOGIN_STRATEGY;
 	default_auto_login->mode = mode;
 
-    automaticStrategies[automaticStrategiesSize] = default_auto_login;
-    automaticStrategiesSize++;
+    addAutoLoginStrategy(conf->automaticStrategies, default_auto_login);
 
     return NULL;
 }
@@ -446,11 +454,9 @@ static const char *set_default_login_strategy_slot(cmd_parms *cmd, void *offset,
 static const char *set_urlbased_login_strategy_slot(cmd_parms *cmd, void *offset,
                                        const char *mode, const char *url_patterns)
 {
-	if (automaticStrategiesSize == 0) {
-        automaticStrategies = malloc(10 * sizeof *automaticStrategies);
-    }
+	auth_josso_config_rec *conf = (auth_josso_config_rec*)offset;
 
-	urlbased_auto_login_rec *urlbased_auto_login = malloc(sizeof(urlbased_auto_login_rec));
+	urlbased_auto_login_rec *urlbased_auto_login = apr_palloc(conf->automaticStrategies->pool, sizeof(urlbased_auto_login_rec));
 	urlbased_auto_login->base.strategy = JOSSO_URLBASED_AUTH_LOGIN_STRATEGY;
 	urlbased_auto_login->base.mode = mode;
 	urlbased_auto_login->url_patterns_size = 0;
@@ -463,8 +469,8 @@ static const char *set_urlbased_login_strategy_slot(cmd_parms *cmd, void *offset
         apr_collapse_spaces(token, token);
         token = strtok(NULL, ",");
     }
-    automaticStrategies[automaticStrategiesSize] = urlbased_auto_login;
-    automaticStrategiesSize++;
+
+    addAutoLoginStrategy(conf->automaticStrategies, urlbased_auto_login);
 
     return NULL;
 }
@@ -475,19 +481,17 @@ static const char *set_urlbased_login_strategy_slot(cmd_parms *cmd, void *offset
 static const char *set_bot_login_strategy_slot(cmd_parms *cmd, void *offset,
                                        const char *mode, const char *bots_file)
 {
-	if (automaticStrategiesSize == 0) {
-        automaticStrategies = malloc(10 * sizeof *automaticStrategies);
-    }
+	auth_josso_config_rec *conf = (auth_josso_config_rec*)offset;
 
-	bot_auto_login_rec *bot_auto_login = malloc(sizeof(bot_auto_login_rec));
+	bot_auto_login_rec *bot_auto_login = apr_palloc(conf->automaticStrategies->pool, sizeof(bot_auto_login_rec));
 	bot_auto_login->base.strategy = JOSSO_BOT_AUTH_LOGIN_STRATEGY;
 	bot_auto_login->base.mode = mode;
 	if (bots_file != NULL) {
 		bot_auto_login->bots_file = bots_file;
-		loadRobots(bot_auto_login);
+		loadRobots(bot_auto_login, conf->automaticStrategies->pool);
 	}
-	automaticStrategies[automaticStrategiesSize] = bot_auto_login;
-    automaticStrategiesSize++;
+
+	addAutoLoginStrategy(conf->automaticStrategies, bot_auto_login);
 
     return NULL;
 }
@@ -554,6 +558,10 @@ static const command_rec auth_josso_cmds[] =
 				 "Set to 'On' to create PHP5-specific security context using "
 				 "PHP_AUTH_USER, PHP_AUTH_PW and PHP_AUTH_TYPE server variables"
 				 "(default is Off)."),
+   AP_INIT_FLAG("AutoLoginDisabled", set_auto_login_disabled_slot,
+				 (void *)APR_OFFSETOF(auth_josso_config_rec, AutoLoginDisabled),
+				 OR_AUTHCFG,
+				 "Set to 'On' to disable automatic login (default is Off)"),
    AP_INIT_TAKE1("DefaultAutoLoginStrategy", set_default_login_strategy_slot,
 				  NULL, OR_AUTHCFG, "Default automatic login strategy"),
    AP_INIT_TAKE2("UrlBasedAutoLoginStrategy", set_urlbased_login_strategy_slot,
@@ -1265,21 +1273,23 @@ static int isAutomaticLoginRequired(request_rec *r)
 	// If any sufficient module returns true, this will be true
 	int sufficientFlag = -1;
 
-	if (automaticStrategiesSize == 0) {
+    auth_josso_config_rec *cfg = ap_get_module_config(r->per_dir_config, &auth_josso_module);
+
+	if (cfg->AutoLoginDisabled) {
 	    return 0;
-	    /* TODO FIX ME : produces segmentation fault (somteimes ...)
-		automaticStrategies = malloc(sizeof *automaticStrategies);
-		base_auto_login_rec default_auto_login;
-		default_auto_login.strategy = JOSSO_DEFAULT_AUTH_LOGIN_STRATEGY;
-		default_auto_login.mode = JOSSO_AUTH_LOGIN_SUFFICIENT;
-		automaticStrategies[automaticStrategiesSize] = &default_auto_login;
-		automaticStrategiesSize++;
-		*/
+	}
+
+	if (cfg->automaticStrategies->nelts == 0) {
+	    base_auto_login_rec *default_auto_login = apr_palloc(cfg->automaticStrategies->pool, sizeof(base_auto_login_rec));
+	    default_auto_login->strategy = JOSSO_DEFAULT_AUTH_LOGIN_STRATEGY;
+	    default_auto_login->mode = JOSSO_AUTH_LOGIN_SUFFICIENT;
+	    addAutoLoginStrategy(cfg->automaticStrategies, default_auto_login);
     }
 
+    void **automaticStrategies = cfg->automaticStrategies->elts;
 	int i;
-	for (i=0; i<automaticStrategiesSize; i++) {
-		base_auto_login_rec *autoLoginStrategy = automaticStrategies[i];
+	for (i=0; i<cfg->automaticStrategies->nelts; i++) {
+		base_auto_login_rec *autoLoginStrategy = (base_auto_login_rec*) automaticStrategies[i];
 
         if (!strcmp(autoLoginStrategy->mode, JOSSO_AUTH_LOGIN_SUFFICIENT)) {
 			if (isAutoLoginRequired(i, r)) {
@@ -1313,13 +1323,16 @@ static int isAutomaticLoginRequired(request_rec *r)
 
 static int isAutoLoginRequired(int strategyIndex, request_rec *r)
 {
-	base_auto_login_rec *autoLoginStrategy = automaticStrategies[strategyIndex];
+    auth_josso_config_rec *cfg = ap_get_module_config(r->per_dir_config, &auth_josso_module);
+    
+	void **automaticStrategies = cfg->automaticStrategies->elts;
+	base_auto_login_rec *autoLoginStrategy = (base_auto_login_rec*) automaticStrategies[strategyIndex];
 	if (!strcmp(autoLoginStrategy->strategy, JOSSO_DEFAULT_AUTH_LOGIN_STRATEGY)) {
 		isDefaultAutoLoginRequired(autoLoginStrategy, r);
 	} else if (!strcmp(autoLoginStrategy->strategy, JOSSO_URLBASED_AUTH_LOGIN_STRATEGY)) {
-		isUrlBasedAutoLoginRequired(automaticStrategies[strategyIndex], r);
+		isUrlBasedAutoLoginRequired((urlbased_auto_login_rec*) automaticStrategies[strategyIndex], r);
 	} else if (!strcmp(autoLoginStrategy->strategy, JOSSO_BOT_AUTH_LOGIN_STRATEGY)) {
-		isBotAutoLoginRequired(automaticStrategies[strategyIndex], r);
+		isBotAutoLoginRequired((bot_auto_login_rec*) automaticStrategies[strategyIndex], r);
 	}
 }
 
@@ -1554,12 +1567,12 @@ static const char *getGatewayEndpointScheme(request_rec *r)
 	return scheme;
 }
 
-static char *appendChar(char *value, char ch) {
+static char *appendChar(apr_pool_t *mp, char *value, char ch) {
 	if (value == "" && (ch == ' ' || ch == '\t')) {
         return value;
     }
 	int len = strlen(value);
-    char *ret = (char*)malloc(len * sizeof(char) + 2);
+    char *ret = (char*) apr_pcalloc(mp, len * sizeof(char) + 2);
     strcpy(ret, value);
     ret[len] = ch;
     ret[len+1] = '\0';
@@ -1569,10 +1582,9 @@ static char *appendChar(char *value, char ch) {
 /*
  * Load robots from the file.
  */
-static int loadRobots(bot_auto_login_rec *bot_auto_login)
+static int loadRobots(bot_auto_login_rec *bot_auto_login, apr_pool_t *mp)
 {
 	apr_status_t rv;
-    apr_pool_t *mp;
     apr_file_t *f;
 
     apr_pool_create(&mp, NULL);
@@ -1600,21 +1612,21 @@ static int loadRobots(bot_auto_login_rec *bot_auto_login)
 			if (ch != '\n') {
 				if (ch != ':') {
 					if (!name_found) {
-						name = appendChar(name, ch);
+						name = appendChar(mp, name, ch);
 					} else {
-						value = appendChar(value, ch);
+						value = appendChar(mp, value, ch);
 					}
 				} else {
 					if (!name_found && (!ap_regexec(robot_regexp, name, 0, regm, 0) ||
 							!ap_regexec(modified_regexp, name, 0, regm, 0))) {
 						name_found = 1;
 					} else {
-						value = appendChar(value, ch);
+						value = appendChar(mp, value, ch);
 					}
 				}
 			} else {
 				if (!name_found) {
-					value = strcat(name, value);
+					value = apr_pstrcat(mp, name, value);
 					name = "";
 				}
 				char new_name[50];
@@ -1709,15 +1721,15 @@ static int setRobotProperty(robot *robot, char *name, char *value, int append, a
 		robot->language = value;
 	} else if (!ap_regexec(robot_regexps[19], name, 0, regm, 0)) {
 		if (append && robot->description != NULL && robot->description != "") {
-			strcat(robot->description, " ");
-			strcat(robot->description, value);
+			apr_pstrcat(mp, robot->description, " ");
+			apr_pstrcat(mp, robot->description, value);
 		} else {
 			robot->description = value;
 		}
 	} else if (!ap_regexec(robot_regexps[20], name, 0, regm, 0)) {
 		if (append && robot->history != NULL && robot->history != "") {
-			strcat(robot->history, " ");
-			strcat(robot->history, value);
+			apr_pstrcat(mp, robot->history, " ");
+			apr_pstrcat(mp, robot->history, value);
 		} else {
 			robot->history = value;
 		}
@@ -1815,6 +1827,12 @@ static void push_item(apr_array_header_t *arr, const char *item)
 {
     char **p = apr_array_push(arr);
     *p = apr_pstrdup(arr->pool, item);
+}
+
+static void addAutoLoginStrategy(apr_array_header_t *strategies, void *strategy)
+{
+    void **p = apr_array_push(strategies);
+    *p = strategy;
 }
 
 static char *encode(request_rec *r, char *value)

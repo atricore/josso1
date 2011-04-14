@@ -10,7 +10,7 @@
  *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * MERCHANTABILITY or FITNESS FOisAutomaticLoginRequiredR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -49,10 +49,8 @@
 #include "apr_global_mutex.h"
 
 /* Disable shared memory (caching) */
-/*
 #undef APR_HAS_SHARED_MEMORY
 #define APR_HAS_SHARED_MEMORY 0
-*/
 
 #if APR_HAS_SHARED_MEMORY
 #include "apr_rmm.h"
@@ -1268,12 +1266,15 @@ static int isAutomaticLoginRequired(request_rec *r)
 	int sufficientFlag = -1;
 
 	if (automaticStrategiesSize == 0) {
+	    return 0;
+	    /* TODO FIX ME : produces segmentation fault (somteimes ...)
 		automaticStrategies = malloc(sizeof *automaticStrategies);
 		base_auto_login_rec default_auto_login;
 		default_auto_login.strategy = JOSSO_DEFAULT_AUTH_LOGIN_STRATEGY;
 		default_auto_login.mode = JOSSO_AUTH_LOGIN_SUFFICIENT;
 		automaticStrategies[automaticStrategiesSize] = &default_auto_login;
 		automaticStrategiesSize++;
+		*/
     }
 
 	int i;

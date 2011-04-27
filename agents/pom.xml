@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>josso-parent</artifactId>
-        <version>1.8.5-SNAPSHOT[D</version>
+        <version>1.8.5-SNAPSHOT</version>
     </parent>
 
     <groupId>org.josso</groupId>

@@ -89,7 +89,7 @@
   Name          = "Version"
   Type          = "java.lang.String"
   Writeable     = "false"
-  Default       = "&quot;1.8.5-SNAPSHOT[D&quot;"
+  Default       = "&quot;1.8.5-SNAPSHOT&quot;"
  />
 
  <!-- JOSSO specific attributes go here.

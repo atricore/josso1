@@ -6,7 +6,7 @@
 #
 # Be careful when modifying this script other than for setting env varibles.
 #
-# Run inside josso 1.8.5-SNAPSHOT[D distribution root folder !!!
+# Run inside josso 1.8.5-SNAPSHOT distribution root folder !!!
 #
 ###################################################################################
 
@@ -14,7 +14,7 @@
 
 # JOSSO Version and Home folder, modify accordingly but use absolute folder names!
 
-export JOSSO_VERSION="1.8.5-SNAPSHOT[D"
+export JOSSO_VERSION="1.8.5-SNAPSHOT"
 export JOSSO_HOME=`pwd`
 
 # Weblogic 8.1 Server folder, modify accordingly!

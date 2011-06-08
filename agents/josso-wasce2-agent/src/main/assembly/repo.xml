@@ -31,7 +31,7 @@
     </formats>
 
     <dependencySets>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/josso/josso-common/${josso-version}</outputDirectory>
             <includes>
                 <include>org.josso:josso-common</include>
@@ -43,19 +43,19 @@
                 <include>org.josso:josso-core</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/josso/josso-agent/${josso-version}</outputDirectory>
             <includes>
                 <include>org.josso:josso-agent</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/josso/josso-protocol-client/${josso-version}</outputDirectory>
             <includes>
                 <include>org.josso:josso-protocol-client</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/josso/josso-ws/${josso-version}</outputDirectory>
             <includes>
                 <include>org.josso:josso-ws</include>
@@ -67,67 +67,71 @@
                 <include>org.josso:josso-tomcat60-agent</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/commons-lang/commons-lang/${commons-lang-version}</outputDirectory>
             <includes>
                 <include>commons-lang:commons-lang</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/commons-logging/commons-logging/${commons-logging-version}</outputDirectory>
             <includes>
                 <include>commons-logging:commons-logging</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/commons-logging/commons-logging-api/${commons-logging-version}</outputDirectory>
             <includes>
                 <include>commons-logging:commons-logging-api</include>
             </includes>
         </dependencySet>
-		<dependencySet>
-	    	<outputDirectory>repository/commons-beanutils/commons-beanutils/${commons-beanutils-version}</outputDirectory>
+        <dependencySet>
+            <outputDirectory>repository/commons-beanutils/commons-beanutils/${commons-beanutils-version}
+            </outputDirectory>
             <includes>
                 <include>commons-beanutils:commons-beanutils:jar:${commons-beanutils-version}</include>
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>repository/commons-collections/commons-collections/${commons-collections-version}</outputDirectory>
+            <outputDirectory>repository/commons-collections/commons-collections/${commons-collections-version}
+            </outputDirectory>
             <includes>
                 <include>commons-collections:commons-collections</include>
             </includes>
         </dependencySet>
-		<dependencySet>
-            <outputDirectory>repository/commons-httpclient/commons-httpclient/${commons-httpclient-version}</outputDirectory>
+        <dependencySet>
+            <outputDirectory>repository/commons-httpclient/commons-httpclient/${commons-httpclient-version}
+            </outputDirectory>
             <includes>
                 <include>commons-httpclient:commons-httpclient</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/commons-modeler/commons-modeler/${commons-modeler-version}</outputDirectory>
             <includes>
                 <include>commons-modeler:commons-modeler</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/commons-digester/commons-digester/${commons-digester-version}</outputDirectory>
             <includes>
                 <include>commons-digester:commons-digester</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/commons-codec/commons-codec/${commons-codec-version}</outputDirectory>
             <includes>
                 <include>commons-codec:commons-codec</include>
             </includes>
         </dependencySet>
-		<dependencySet>
-            <outputDirectory>repository/commons-discovery/commons-discovery/${commons-discovery-version}</outputDirectory>
+        <dependencySet>
+            <outputDirectory>repository/commons-discovery/commons-discovery/${commons-discovery-version}
+            </outputDirectory>
             <includes>
                 <include>commons-discovery:commons-discovery</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/axis/axis/${axis-version}</outputDirectory>
             <includes>
                 <include>org.apache.axis:axis</include>
@@ -157,43 +161,43 @@
                 <include>org.apache.axis:axis-ant</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/javax/activation/activation/${activation-version}</outputDirectory>
             <includes>
                 <include>javax.activation:activation</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/aopalliance/aopalliance/${aopalliance-version}</outputDirectory>
             <includes>
                 <include>aopalliance:aopalliance</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/springframework/spring-beans/${spring-version}</outputDirectory>
             <includes>
                 <include>org.springframework:spring-beans</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/springframework/spring-context/${spring-version}</outputDirectory>
             <includes>
                 <include>org.springframework:spring-context</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/springframework/spring-core/${spring-version}</outputDirectory>
             <includes>
                 <include>org.springframework:spring-core</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/springframework/spring-aop/${spring-version}</outputDirectory>
             <includes>
                 <include>org.springframework:spring-aop</include>
             </includes>
         </dependencySet>
-		<dependencySet>
+        <dependencySet>
             <outputDirectory>repository/org/apache/xbean/xbean-spring/${xbean-spring-version}</outputDirectory>
             <includes>
                 <include>org.apache.xbean:xbean-spring</include>

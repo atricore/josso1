@@ -22,10 +22,10 @@
   -->
 
 <module xmlns="http://geronimo.apache.org/xml/ns/deployment-${geronimoSchemaVersion}">
-    
+
     <gbean name="CatalinaSystemProperties" class="org.apache.geronimo.system.properties.SystemProperties">
         <attribute name="systemProperties">
-        org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true
+            org.apache.catalina.STRICT_SERVLET_COMPLIANCE=true
         </attribute>
     </gbean>
 
@@ -171,8 +171,8 @@
             debug=1
         </attribute>
         <reference name="NextValve">
-	    	<name>AccessLogValve</name>
-		</reference>
+            <name>AccessLogValve</name>
+        </reference>
     </gbean>
     <gbean name="AccessLogValve" class="org.apache.geronimo.tomcat.ValveGBean">
         <attribute name="className">org.apache.catalina.valves.AccessLogValve</attribute>
@@ -196,15 +196,15 @@
 
     <!-- Realm -->
     <gbean name="JossoTomcatJAASRealm" class="org.apache.geronimo.tomcat.RealmGBean">
-		<attribute name="className">org.josso.tc60.agent.jaas.CatalinaJAASRealm</attribute>
-		<attribute name="initParams">
-			appName=josso
-			userClassNames=org.josso.gateway.identity.service.BaseUserImpl
-			roleClassNames=org.josso.gateway.identity.service.BaseRoleImpl
-			debug=1
-		</attribute>
+        <attribute name="className">org.josso.tc60.agent.jaas.CatalinaJAASRealm</attribute>
+        <attribute name="initParams">
+            appName=josso
+            userClassNames=org.josso.gateway.identity.service.BaseUserImpl
+            roleClassNames=org.josso.gateway.identity.service.BaseRoleImpl
+            debug=1
+        </attribute>
     </gbean>
-    
+
     <!-- This is an example TomcatJAASRealm>
     <gbean name="TomcatJAASRealm" class="org.apache.geronimo.tomcat.RealmGBean">
         <attribute name="className">org.apache.geronimo.tomcat.realm.TomcatJAASRealm</attribute>
@@ -214,7 +214,7 @@
         </attribute>
     </gbean>
     -->
-    
+
     <!-- Host -->
     <gbean name="TomcatHost" class="org.apache.geronimo.tomcat.HostGBean">
         <attribute name="className">org.apache.catalina.core.StandardHost</attribute>
@@ -242,7 +242,7 @@
         </reference>
         -->
     </gbean>
-    
+
     <!-- Josso Security Realm -->
     <gbean name="JossoSecurityRealm" class="org.apache.geronimo.security.realm.GenericSecurityRealm"
            xsi:type="dep:gbeanType"
@@ -262,5 +262,5 @@
             </log:login-config>
         </xml-reference>
     </gbean>
-    
+
 </module>

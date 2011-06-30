@@ -20,9 +20,9 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   ~
   -->
-  
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -31,7 +31,7 @@
         <artifactId>agents</artifactId>
         <version>1.8.5-SNAPSHOT</version>
     </parent>
-    
+
     <groupId>org.josso</groupId>
     <artifactId>josso-wasce-agent</artifactId>
     <version>1.8.5-SNAPSHOT</version>
@@ -44,204 +44,204 @@
     <properties>
         <josso-version>${project.parent.version}</josso-version>
 
-		<commons-lang-version>2.0</commons-lang-version>
-		<commons-logging-version>1.0.4</commons-logging-version>
-		<commons-beanutils-version>1.6.1</commons-beanutils-version>
-		<commons-collections-version>3.0</commons-collections-version>
-		<commons-httpclient-version>3.1</commons-httpclient-version>
-		<commons-modeler-version>1.1</commons-modeler-version>
-		<commons-digester-version>1.5</commons-digester-version>
-		<axis-version>1.4</axis-version>
-		<axis-jaxrpc-version>1.4</axis-jaxrpc-version>
-		<axis-saaj-version>1.4</axis-saaj-version>
-		<axis-wsdl4j-version>1.5.1</axis-wsdl4j-version>
-		<axis-ant-version>1.4</axis-ant-version>
-		<commons-codec-version>1.3</commons-codec-version>
-		<commons-discovery-version>0.2</commons-discovery-version>
-		<activation-version>1.1</activation-version>
-		<aopalliance-version>1.0</aopalliance-version>
-		<spring-version>2.5.5</spring-version>
-		<xbean-spring-version>3.4.3</xbean-spring-version>
-		<tomcatVersion>6.0.18</tomcatVersion>
-		
-		<!-- This property is required by the car:package mojo -->
-		<geronimoVersion>2.1.4</geronimoVersion>
-		
-		<geronimoSchemaVersion>1.2</geronimoSchemaVersion>
-		
-		<gbeanDeployer>org.apache.geronimo.framework/geronimo-gbean-deployer/${geronimoVersion}/car</gbeanDeployer>
+        <commons-lang-version>2.0</commons-lang-version>
+        <commons-logging-version>1.0.4</commons-logging-version>
+        <commons-beanutils-version>1.6.1</commons-beanutils-version>
+        <commons-collections-version>3.0</commons-collections-version>
+        <commons-httpclient-version>3.1</commons-httpclient-version>
+        <commons-modeler-version>1.1</commons-modeler-version>
+        <commons-digester-version>1.5</commons-digester-version>
+        <axis-version>1.4</axis-version>
+        <axis-jaxrpc-version>1.4</axis-jaxrpc-version>
+        <axis-saaj-version>1.4</axis-saaj-version>
+        <axis-wsdl4j-version>1.5.1</axis-wsdl4j-version>
+        <axis-ant-version>1.4</axis-ant-version>
+        <commons-codec-version>1.3</commons-codec-version>
+        <commons-discovery-version>0.2</commons-discovery-version>
+        <activation-version>1.1</activation-version>
+        <aopalliance-version>1.0</aopalliance-version>
+        <spring-version>2.5.5</spring-version>
+        <xbean-spring-version>3.4.3</xbean-spring-version>
+        <tomcatVersion>6.0.18</tomcatVersion>
+
+        <!-- This property is required by the car:package mojo -->
+        <geronimoVersion>2.1.4</geronimoVersion>
+
+        <geronimoSchemaVersion>1.2</geronimoSchemaVersion>
+
+        <gbeanDeployer>org.apache.geronimo.framework/geronimo-gbean-deployer/${geronimoVersion}/car</gbeanDeployer>
         <j2eeDeployer>org.apache.geronimo.configs/j2ee-deployer/${geronimoVersion}/car</j2eeDeployer>
 
-        
+
         <PlanServerHostname>0.0.0.0</PlanServerHostname>
         <PlanHTTPPort>8080</PlanHTTPPort>
         <PlanHTTPSPort>8443</PlanHTTPSPort>
         <PlanAJPPort>8019</PlanAJPPort>
-        
+
         <wasceTomcatGroupId>org.apache.geronimo.configs</wasceTomcatGroupId>
         <wasceTomcatArtifactId>tomcat6</wasceTomcatArtifactId>
     </properties>
-    
+
     <dependencies>
-    	<!-- josso agent dependencies -->
-		<dependency>
-		    <groupId>org.josso</groupId>
-		    <artifactId>josso-common</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.josso</groupId>
-		    <artifactId>josso-core</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.josso</groupId>
-		    <artifactId>josso-agent</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.josso</groupId>
-		    <artifactId>josso-protocol-client</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.josso</groupId>
-		    <artifactId>josso-ws</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>org.josso</groupId>
-		    <artifactId>josso-tomcat60-agent</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>commons-lang</groupId>
-		    <artifactId>commons-lang</artifactId>
-		    <version>${commons-lang-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-logging</groupId>
-		    <artifactId>commons-logging</artifactId>
-		    <version>${commons-logging-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-logging</groupId>
-		    <artifactId>commons-logging-api</artifactId>
-		    <version>${commons-logging-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-beanutils</groupId>
-		    <artifactId>commons-beanutils</artifactId>
-		    <version>${commons-beanutils-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-collections</groupId>
-		    <artifactId>commons-collections</artifactId>
-		    <version>${commons-collections-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-httpclient</groupId>
-		    <artifactId>commons-httpclient</artifactId>
-		    <version>${commons-httpclient-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-modeler</groupId>
-		    <artifactId>commons-modeler</artifactId>
-		    <version>${commons-modeler-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-digester</groupId>
-		    <artifactId>commons-digester</artifactId>
-		    <version>${commons-digester-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-codec</groupId>
-		    <artifactId>commons-codec</artifactId>
-		    <version>${commons-codec-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>commons-discovery</groupId>
-		    <artifactId>commons-discovery</artifactId>
-		    <version>${commons-discovery-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>axis</groupId>
-		    <artifactId>axis</artifactId>
-		    <version>${axis-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>axis</groupId>
-		    <artifactId>axis-jaxrpc</artifactId>
-		    <version>${axis-jaxrpc-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>axis</groupId>
-		    <artifactId>axis-saaj</artifactId>
-		    <version>${axis-saaj-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>axis</groupId>
-		    <artifactId>axis-wsdl4j</artifactId>
-		    <version>${axis-wsdl4j-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>axis</groupId>
-		    <artifactId>axis-ant</artifactId>
-		    <version>${axis-ant-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>javax.activation</groupId>
-		    <artifactId>activation</artifactId>
-		    <version>${activation-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>aopalliance</groupId>
-		    <artifactId>aopalliance</artifactId>
-		    <version>${aopalliance-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-beans</artifactId>
-		    <version>${spring-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-context</artifactId>
-		    <version>${spring-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-core</artifactId>
-		    <version>${spring-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-aop</artifactId>
-		    <version>${spring-version}</version>
-		    <type>jar</type>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.xbean</groupId>
-		    <artifactId>xbean-spring</artifactId>
-		    <version>${xbean-spring-version}</version>
-		    <type>jar</type>
-		</dependency>
-		
-		<!-- geronimo, tomcat dependencies -->
+        <!-- josso agent dependencies -->
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-agent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-protocol-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-ws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-tomcat60-agent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging-api</artifactId>
+            <version>${commons-logging-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beanutils-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons-collections-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons-httpclient-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-modeler</groupId>
+            <artifactId>commons-modeler</artifactId>
+            <version>${commons-modeler-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+            <version>${commons-digester-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-discovery</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>${commons-discovery-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>${axis-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>${axis-jaxrpc-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-saaj</artifactId>
+            <version>${axis-saaj-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-wsdl4j</artifactId>
+            <version>${axis-wsdl4j-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-ant</artifactId>
+            <version>${axis-ant-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>${activation-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>${aopalliance-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring-version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>${xbean-spring-version}</version>
+            <type>jar</type>
+        </dependency>
+
+        <!-- geronimo, tomcat dependencies -->
         <dependency>
             <groupId>org.apache.geronimo.configs</groupId>
             <artifactId>j2ee-server</artifactId>
@@ -308,18 +308,18 @@
             <artifactId>juli-adapters</artifactId>
             <version>${tomcatVersion}</version>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.apache.geronimo.framework</groupId>
             <artifactId>j2ee-security</artifactId>
             <version>${geronimoVersion}</version>
             <type>car</type>
         </dependency>
-		<dependency>
-		    <groupId>org.apache.geronimo.configs</groupId>
-		    <artifactId>sharedlib</artifactId>
-		    <version>${geronimoVersion}</version>
-		    <type>car</type>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.configs</groupId>
+            <artifactId>sharedlib</artifactId>
+            <version>${geronimoVersion}</version>
+            <type>car</type>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -334,25 +334,25 @@
             </releases>
         </repository>
     </repositories>
-    
+
     <build>
-		<resources>
+        <resources>
             <resource>
                 <directory>${pom.basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                   <include>**/*.xml</include>
+                    <include>**/*.xml</include>
                 </includes>
             </resource>
             <resource>
                 <directory>${pom.basedir}/src/main/resources</directory>
                 <excludes>
-                   <exclude>**/*.xml</exclude>
+                    <exclude>**/*.xml</exclude>
                 </excludes>
             </resource>
         </resources>
         <plugins>
-	    	<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
@@ -366,7 +366,7 @@
                                 <requireJavaVersion>
                                     <version>[1.5,)</version>
                                 </requireJavaVersion>
-                                
+
                                 <!-- Require Maven 2.0.9+ -->
                                 <requireMavenVersion>
                                     <version>[2.0.9,)</version>
@@ -387,17 +387,17 @@
                             <goal>copy-legal-files</goal>
                         </goals>
                         <configuration>
-			    			<fileset>
-								<basedir>${pom.basedir}</basedir>
-								<includes>
-								    <include>geronimo.license.txt</include>
-								    <include>josso.license.txt</include>
-								</includes>
-			    			</fileset>
-			    			<strict>true</strict>
+                            <fileset>
+                                <basedir>${pom.basedir}</basedir>
+                                <includes>
+                                    <include>geronimo.license.txt</include>
+                                    <include>josso.license.txt</include>
+                                </includes>
+                            </fileset>
+                            <strict>true</strict>
                         </configuration>
                     </execution>
-		    		<execution>
+                    <execution>
                         <id>verify-legal-files</id>
                         <phase>verify</phase>
                         <goals>
@@ -412,10 +412,10 @@
             <plugin>
                 <groupId>org.apache.geronimo.buildsupport</groupId>
                 <artifactId>car-maven-plugin</artifactId>
-				<version>${geronimoVersion}</version>
+                <version>${geronimoVersion}</version>
                 <extensions>true</extensions>
                 <configuration>
-                	<archive>
+                    <archive>
                         <!-- Do not include META-INF/maven to avoid long file problems on windows -->
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>
@@ -424,9 +424,9 @@
                         <value>true</value>
                         <includeVersion>true</includeVersion>
                     </useMavenDependencies>
-		    		<deploymentConfigs>
+                    <deploymentConfigs>
                         <deploymentConfig>${gbeanDeployer}</deploymentConfig>
-						<deploymentConfig>${j2eeDeployer}</deploymentConfig>
+                        <deploymentConfig>${j2eeDeployer}</deploymentConfig>
                     </deploymentConfigs>
                     <category>Tomcat</category>
                     <commonInstance>
@@ -435,14 +435,30 @@
                             <jvm-version>1.5</jvm-version>
                             <jvm-version>1.6</jvm-version>
                             <source-repository>~/.m2/repository/</source-repository>
-                            <source-repository>http://download.boulder.ibm.com/ibmdl/pub/software/websphere/wasce/plugins-2.1.1.2/</source-repository>
-                            <source-repository>http://download.boulder.ibm.com/ibmdl/pub/software/websphere/wasce/repository/</source-repository>
-                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}//car">${groupId}/${artifactId}/${version}/car</artifact-alias>
-                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.4/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
-                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.3/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
-                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.2/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
-                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.1/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
-                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1/car">${groupId}/${artifactId}/${version}/car</artifact-alias>
+                            <source-repository>
+                                http://download.boulder.ibm.com/ibmdl/pub/software/websphere/wasce/plugins-2.1.1.2/
+                            </source-repository>
+                            <source-repository>
+                                http://download.boulder.ibm.com/ibmdl/pub/software/websphere/wasce/repository/
+                            </source-repository>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}//car">
+                                ${groupId}/${artifactId}/${version}/car
+                            </artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.4/car">
+                                ${groupId}/${artifactId}/${version}/car
+                            </artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.3/car">
+                                ${groupId}/${artifactId}/${version}/car
+                            </artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.2/car">
+                                ${groupId}/${artifactId}/${version}/car
+                            </artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1.1/car">
+                                ${groupId}/${artifactId}/${version}/car
+                            </artifact-alias>
+                            <artifact-alias key="${wasceTomcatGroupId}/${wasceTomcatArtifactId}/2.1/car">
+                                ${groupId}/${artifactId}/${version}/car
+                            </artifact-alias>
                         </plugin-artifact>
                     </commonInstance>
                     <instance>
@@ -512,10 +528,10 @@
                     </instance>
                 </configuration>
             </plugin>
-	    	<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-				<executions>
+                <executions>
                     <!-- Assemble all agent and 3rd party jars as a wasce repository artifacts
 					in .zip and .tar.gz formats -->
                     <execution>
@@ -535,5 +551,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

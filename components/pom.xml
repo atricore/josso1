@@ -98,6 +98,7 @@
         <module>josso-serialized-sessionstore</module>
 
         <module>josso-spring-security</module>
+        <module>josso-seraph-extension</module>
 
         <module>josso-ws</module>
         <module>josso-ws-v1_2</module>

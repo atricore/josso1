@@ -28,7 +28,7 @@
 
     <groupId>org.josso</groupId>
     <artifactId>josso-parent</artifactId>
-    <version>1.8.5</version>
+    <version>1.8.5.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>JOSSO</name>
     <description>
@@ -447,7 +447,7 @@
         <!-- Dependencies not on central repo -->
         <repository>
 
-            <id>josso-m2-deploy-repo</id>
+            <id>josso-m2-repo</id>
             <name>JOSSO Maven2 Repository</name>
             <url>http://repository.josso.org/m2-release-repository</url>
 
@@ -1324,7 +1324,7 @@
         </repository>
 
         <snapshotRepository>
-            <id>josso-m2-snapshot-repo</id>
+            <id>josso-m2-snapshot-deploy-repo</id>
             <name>JOSSO Development Snapshot Repository</name>
             <url>scp://repository.josso.org/var/www/repository.josso.org/m2-snapshot-repository</url>
         </snapshotRepository>

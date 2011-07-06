@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>components</artifactId>
-        <version>1.8.5</version>
+        <version>1.8.5.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>josso-seraph-extension</artifactId>

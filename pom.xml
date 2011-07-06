@@ -447,7 +447,7 @@
         <!-- Dependencies not on central repo -->
         <repository>
 
-            <id>josso-m2-repo</id>
+            <id>josso-m2-deploy-repo</id>
             <name>JOSSO Maven2 Repository</name>
             <url>http://repository.josso.org/m2-release-repository</url>
 
@@ -1318,7 +1318,7 @@
 
     <distributionManagement>
         <repository>
-            <id>josso-m2-repo</id>
+            <id>josso-m2-deploy-repo</id>
             <name>JOSSO Release Distribution Repository</name>
             <url>scp://repository.josso.org/var/www/repository.josso.org/m2-release-repository</url>
         </repository>

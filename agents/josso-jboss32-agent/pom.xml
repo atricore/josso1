@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>agents</artifactId>
-        <version>1.8.5-SNAPSHOT</version>
+        <version>1.8.5</version>
     </parent>
 
     <artifactId>josso-jboss32-agent</artifactId>

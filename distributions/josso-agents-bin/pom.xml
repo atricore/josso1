@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>distributions</artifactId>
-        <version>1.8.5-SNAPSHOT</version>
+        <version>1.8.5</version>
     </parent>
 
     <groupId>org.josso</groupId>
@@ -231,21 +231,21 @@
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic81-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>jar</type>
                 </dependency>
                 
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic92-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>jar</type>
                 </dependency>
 
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic10-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>jar</type>
                 </dependency>
 
@@ -259,14 +259,14 @@
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic81-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>zip</type>
                 </dependency>
 
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic81-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>jar</type>
                 </dependency>
             </dependencies>
@@ -281,14 +281,14 @@
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic92-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>zip</type>
                 </dependency>
 
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic92-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>jar</type>
                 </dependency>
             </dependencies>
@@ -303,14 +303,14 @@
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic10-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>zip</type>
                 </dependency>
 
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic10-agent</artifactId>
-                    <version>1.8.5-SNAPSHOT</version>
+                    <version>1.8.5</version>
                     <type>jar</type>
                 </dependency>
             </dependencies>

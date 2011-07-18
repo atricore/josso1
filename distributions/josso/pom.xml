@@ -212,6 +212,39 @@
 
         <dependency>
             <groupId>org.josso</groupId>
+            <artifactId>josso-seraph-extension</artifactId>
+            <!-- Exclude all atlassian artifacts -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.atlassian.seraph</groupId>
+                    <artifactId>atlassian-seraph</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.crowd</groupId>
+                    <artifactId>embedded-crowd-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.jira</groupId>
+                    <artifactId>jira-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.jira</groupId>
+                    <artifactId>atlassian-jira</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.user</groupId>
+                    <artifactId>atlassian-user</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.confluence</groupId>
+                    <artifactId>confluence</artifactId>
+                </exclusion>
+
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
             <artifactId>josso-protocol-client</artifactId>
         </dependency>
 

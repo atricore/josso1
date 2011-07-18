@@ -239,7 +239,6 @@
                     <groupId>com.atlassian.confluence</groupId>
                     <artifactId>confluence</artifactId>
                 </exclusion>
-
             </exclusions>
         </dependency>
 

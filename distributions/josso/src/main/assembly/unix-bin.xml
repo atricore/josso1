@@ -278,6 +278,8 @@
             </includes>
         </dependencySet>
 
+        <!-- JOSSO Extenssions -->
+
         <!-- JOSSO Gatway WEB app -->
         <dependencySet>
             <outputDirectory>/dist/gateway/apps/</outputDirectory>

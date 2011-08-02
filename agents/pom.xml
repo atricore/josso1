@@ -42,7 +42,7 @@
             <id>all</id>
             <modules>
                 <module>josso-agent-shared</module>
-                <module>josso-agentj14-shared</module>
+                <!--module>josso-agentj14-shared</module-->
                 <module>josso-servlet-agent</module>
                 <module>josso-liferay-agent</module>
                 <module>josso-alfresco-agent</module>

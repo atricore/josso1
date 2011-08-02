@@ -18,6 +18,12 @@ public:
 
 	bool isAutomaticLoginRequired(SSOAgentRequest *req, SSOAgentResponse *res);
 
+protected:
+
+	vector<string> ignoredReferers;
+
+	friend class IsapiSSOAgent;
+
 };
 
 #endif

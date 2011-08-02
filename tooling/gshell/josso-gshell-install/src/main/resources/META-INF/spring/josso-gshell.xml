@@ -147,6 +147,11 @@
 
     <!-- JBoss -->
 
+    <jboss-installer id="jb6-installer">
+        <s:constructor-arg ref="jb6"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </jboss-installer>
+
     <jboss-installer id="jb5-installer">
         <s:constructor-arg ref="jb5"/>
         <s:property name="printer" ref="messagePrinter"/>
@@ -166,6 +171,23 @@
         <s:constructor-arg ref="jb32"/>
         <s:property name="printer" ref="messagePrinter"/>
     </jboss-installer>
+
+    <platform id="jb6" family="jboss" platformName="JBoss AS" version="6.x">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/server/${instance}/lib</lib>
+        <conf>${target}/server/${instance}/conf</conf>
+        <deploy>${target}/server/${instance}/deploy</deploy>
+        <endorsed>${target}/lib/endorsed</endorsed>
+
+        <josso-conf>${target}/server/${instance}/conf</josso-conf>
+        <josso-lib>${target}/server/${instance}/lib</josso-lib>
+        <josso-shared>${target}/server/${instance}/lib</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
 
     <platform id="jb5" family="jboss" platformName="JBoss AS" version="5.x">
 

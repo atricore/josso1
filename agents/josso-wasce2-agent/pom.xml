@@ -29,12 +29,12 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>agents</artifactId>
-        <version>1.8.5-SNAPSHOT</version>
+        <version>1.8.6-SNAPSHOT</version>
     </parent>
 
     <groupId>org.josso</groupId>
     <artifactId>josso-wasce-agent</artifactId>
-    <version>1.8.5-SNAPSHOT</version>
+    <version>1.8.6-SNAPSHOT</version>
 
     <name>JOSSO :: Websphere AS CE Agent</name>
     <packaging>car</packaging>

@@ -6,11 +6,11 @@
 #
 # Be careful when modifying this script other than for setting env varibles.
 #
-# Run inside josso 1.8.5-SNAPSHOT distribution root folder !!!
+# Run inside josso 1.8.5.1 distribution root folder !!!
 #
 ###################################################################################
 
-export JOSSO_VERSION="1.8.5-SNAPSHOT"
+export JOSSO_VERSION="1.8.5.1"
 export JOSSO_HOME=`pwd`
 
 mkdir tmp

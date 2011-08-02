@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>distributions</artifactId>
-        <version>1.8.5-SNAPSHOT</version>
+        <version>1.8.6-SNAPSHOT</version>
     </parent>
 
     <groupId>org.josso</groupId>
@@ -208,6 +208,39 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-spring-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-seraph-extension</artifactId>
+            <!-- Exclude all atlassian artifacts -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.atlassian.seraph</groupId>
+                    <artifactId>atlassian-seraph</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.crowd</groupId>
+                    <artifactId>embedded-crowd-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.jira</groupId>
+                    <artifactId>jira-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.jira</groupId>
+                    <artifactId>atlassian-jira</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.user</groupId>
+                    <artifactId>atlassian-user</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.confluence</groupId>
+                    <artifactId>confluence</artifactId>
+                </exclusion>
+
+            </exclusions>
         </dependency>
 
         <dependency>

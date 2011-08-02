@@ -28,7 +28,7 @@
 
     <groupId>org.josso</groupId>
     <artifactId>josso-parent</artifactId>
-    <version>1.8.5-SNAPSHOT</version>
+    <version>1.8.6-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>JOSSO</name>
     <description>
@@ -1056,6 +1056,12 @@
                 <version>${pom.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-seraph-extension</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
 			<dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-wasce-agent</artifactId>
@@ -1318,13 +1324,13 @@
 
     <distributionManagement>
         <repository>
-            <id>josso-m2-repo</id>
+            <id>josso-m2-deploy-repo</id>
             <name>JOSSO Release Distribution Repository</name>
             <url>scp://repository.josso.org/var/www/repository.josso.org/m2-release-repository</url>
         </repository>
 
         <snapshotRepository>
-            <id>josso-m2-snapshot-repo</id>
+            <id>josso-m2-snapshot-deploy-repo</id>
             <name>JOSSO Development Snapshot Repository</name>
             <url>scp://repository.josso.org/var/www/repository.josso.org/m2-snapshot-repository</url>
         </snapshotRepository>

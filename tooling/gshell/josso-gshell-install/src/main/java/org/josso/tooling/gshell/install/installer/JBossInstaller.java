@@ -22,6 +22,7 @@
 
 package org.josso.tooling.gshell.install.installer;
 
+import org.apache.commons.vfs.Selectors;
 import org.josso.tooling.gshell.install.TargetPlatform;
 import org.josso.tooling.gshell.install.JOSSOArtifact;
 import org.josso.tooling.gshell.install.util.XUpdateUtil;
@@ -132,11 +133,13 @@ public class JBossInstaller extends VFSInstaller {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
             } else if (artifact.getBaseName().startsWith("josso-jboss5-agent") &&
-                    getTargetPlatform().getVersion().startsWith("5.")) {
+                    (getTargetPlatform().getVersion().startsWith("5.") ||
+                    getTargetPlatform().getVersion().startsWith("6."))) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
             } else if (artifact.getBaseName().startsWith("josso-jaspi-agent") &&
-                    getTargetPlatform().getVersion().startsWith("5.")) {
+                    (getTargetPlatform().getVersion().startsWith("5.") ||
+                    getTargetPlatform().getVersion().startsWith("6."))) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
             } else if (artifact.getBaseName().startsWith("josso-jboss42-agent") &&
@@ -171,13 +174,20 @@ public class JBossInstaller extends VFSInstaller {
     @Override
     public void install3rdPartyComponent(JOSSOArtifact artifact, boolean replace) throws InstallException {
 
-        // do not install WSDL4J in jboss 4.x and 5.x platforms !
-        if ((getTargetPlatform().getVersion().startsWith("4") ||
-        		getTargetPlatform().getVersion().startsWith("5")) &&
-                artifact.getBaseName().startsWith("axis-wsdl"))
+        // do not install commons logging in jboss 6.x since it conflicts with the slf4j implementation
+        if ((getTargetPlatform().getVersion().startsWith("6") &&
+                artifact.getBaseName().startsWith("commons-logging")))
             return;
 
-        if (artifact.getBaseName().startsWith("log4j") || 
+        // do not install WSDL4J in jboss 4.x and 5.x platforms !
+        if ((getTargetPlatform().getVersion().startsWith("4") ||
+             getTargetPlatform().getVersion().startsWith("5") ||
+             getTargetPlatform().getVersion().startsWith("6")) &&
+             artifact.getBaseName().startsWith("axis-wsdl"))
+            return;
+
+
+        if (artifact.getBaseName().startsWith("log4j") ||
         		artifact.getBaseName().startsWith("spring-2.0"))
             return;
 
@@ -200,17 +210,38 @@ public class JBossInstaller extends VFSInstaller {
                 // Do we have to explode the war ?
                 if (getTargetPlatform().isJOSSOWarExploded() && !isFolder) {
                     installJar(srcFile, this.targetDeployDir, newName, true, replace);
+
+                    // Remove commons logging JAR files which conflict with slf4j replacement
+                    FileObject webInfLibFolder = targetDeployDir.resolveFile(newName + "/WEB-INF/lib");
+
+                    boolean exists = webInfLibFolder.exists();
+
+                    if (exists) {
+                        FileObject[] sharedLibs = webInfLibFolder.getChildren();
+                        for (int i = 0 ; i < sharedLibs.length; i ++) {
+                            FileObject jarFile = sharedLibs[i];
+
+                            if (!jarFile.getType().getName().equals(FileType.FILE.getName())) {
+                                // ignore folders
+                                continue;
+                            }
+                            if (jarFile.getName().getBaseName().startsWith("commons-logging")
+                                    && jarFile.getName().getBaseName().endsWith(".jar")) {
+                                jarFile.delete();
+                            }
+                        }
+                    }
                 } else {
                     installFile(srcFile, this.targetDeployDir, replace);
                 }
                 return;
             }
 
-            if (getTargetPlatform().getVersion().startsWith("5") && 
+            if ((getTargetPlatform().getVersion().startsWith("5") || getTargetPlatform().getVersion().startsWith("6")) &&
             		artifact.getType().equals("ear") && artifact.getBaseName().startsWith("josso-partner-jboss5")) {
             	installFile(srcFile, this.targetDeployDir, replace);
                 return;
-            } else if (!getTargetPlatform().getVersion().startsWith("5") && 
+            } else if (!(getTargetPlatform().getVersion().startsWith("5") || getTargetPlatform().getVersion().startsWith("6")) &&
             		artifact.getType().equals("ear") && artifact.getBaseName().startsWith("josso-partner-jboss-app")) {
             	installFile(srcFile, this.targetDeployDir, replace);
                 return;
@@ -420,7 +451,7 @@ public class JBossInstaller extends VFSInstaller {
 
     protected boolean configureValve(Node serverXmlDom) throws Exception {
 
-    	if (getPlatformVersion().startsWith("5")) {
+    	if (getPlatformVersion().startsWith("5") || getPlatformVersion().startsWith("6") ) {
     		return false;
     	}
     	
@@ -507,7 +538,7 @@ public class JBossInstaller extends VFSInstaller {
         else if (getPlatformVersion().startsWith("3.2"))
             loginModuleClass = "org.josso.jb32.agent.JBossSSOGatewayLoginModule";
         
-        if (getPlatformVersion().startsWith("5")) {
+        if (getPlatformVersion().startsWith("5") || getPlatformVersion().startsWith("6")) {
         	// Append a new JAAS Configuration ...
 	        appendJossoAppPolicyQryMod =
 	                "\n<xupdate:append select=\"//policy\" >" +
@@ -565,7 +596,7 @@ public class JBossInstaller extends VFSInstaller {
         appendJossoValveQry.setQString(appendJossoAppPolicyQryStr);
         appendJossoValveQry.execute(loginConfigXmlDom);
 
-        if (!getPlatformVersion().startsWith("5")) {
+        if (!(getPlatformVersion().startsWith("5") || getPlatformVersion().startsWith("6")) ) {
         	getPrinter().printActionOkStatus("Configured","JOSSO JAAS Login Module ",  loginModuleClass);
         }
 

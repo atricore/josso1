@@ -265,6 +265,13 @@ bool IsapiSSOAgent::configureAgent(AgentConfig *config) {
 				if (!strcmp(strategy, JOSSO_DEFAULT_AUTH_LOGIN_STRATEGY)) {
 					DefaultAutomaticLoginStrategy *defaultStrategy = new DefaultAutomaticLoginStrategy(mode);
 					defaultStrategy->setSSOAgent(this);
+					const char *ignoredReferes = ini.GetValue(section, "ignored-referers", NULL );
+					if (ignoredReferes == NULL) {
+						syslog(JK_LOG_WARNING_LEVEL, "'ignored-referers' not found in '%s' section", section);
+					} else {
+						string referes (ignoredReferes);
+						StringUtil::tokenize(referes, defaultStrategy->ignoredReferers, ",");
+					}
 					this->automaticStrategies.push_back(defaultStrategy);
 				} else if (!strcmp(strategy, JOSSO_URLBASED_AUTH_LOGIN_STRATEGY)) {
 					const char *urlPatterns = ini.GetValue(section, "url-patterns", NULL );

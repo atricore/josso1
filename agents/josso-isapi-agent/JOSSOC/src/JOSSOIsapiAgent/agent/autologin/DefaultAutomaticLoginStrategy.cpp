@@ -30,11 +30,24 @@ bool DefaultAutomaticLoginStrategy::isAutomaticLoginRequired(SSOAgentRequest *re
 	if (myUri.compare(extensionUri) != 0 && (splashResource.empty() || splashResource.compare(myUri) != 0)) {
 
 		string referer = req->getServerVariable("HTTP_REFERER", MAX_HEADER_SIZE);
-
 		jk_log(ssoAgent->logger, JK_LOG_TRACE, "Processing referer %s", referer.c_str());
 
 		// We have a referer!
 		if (!referer.empty()) {
+
+			// If referer must be ignored, do not trigger auto login
+			jk_log(ssoAgent->logger, JK_LOG_TRACE, "Processing referer %s ", referer.c_str());
+
+			vector<string>::const_iterator ignoredReferer;
+			for(ignoredReferer = ignoredReferers.begin() ; ignoredReferer != ignoredReferers.end() ; ignoredReferer++) {
+				size_t pos = referer.find((*ignoredReferer));
+				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Processing referer %s (ignored referer:%s)", referer.c_str(), (*ignoredReferer).c_str());
+				if (pos >= 0) {
+					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Ignoring referer %s (matches:%s)", referer.c_str(), (*ignoredReferer).c_str());
+					return false;
+				}
+			}
+			
 			// If the referer does not begin with our protocol / host, trigger auto login
 			string myUrl;
 			string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);
@@ -54,7 +67,7 @@ bool DefaultAutomaticLoginStrategy::isAutomaticLoginRequired(SSOAgentRequest *re
 			jk_log(ssoAgent->logger, JK_LOG_TRACE, "received vs previous referer: [%s] [%s]", md5Referer.c_str(), md5OldReferer.c_str());
 
 			// The referer does not match the old referer and it is not a 'local' referer.
-			if (md5Referer.compare(md5OldReferer) !=0 && pos != 0) {
+			if (md5Referer.compare(md5OldReferer) !=0 && pos >= 0) {
 				// Store old referer
 				res->setCookie("JOSSO_AUTOLOGIN_REFERER", md5Referer, "/");
 				// Trigger auto login process

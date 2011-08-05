@@ -61,6 +61,6 @@
         <module>josso-core</module>
         <module>josso-agent</module>
         <module>josso-common</module>
-        <!--module>josso-agent-j14compat</module-->
+        <module>josso-agent-j14compat</module>
     </modules>
 </project>

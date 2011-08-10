@@ -200,6 +200,15 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 		syslog(JK_LOG_ERROR_LEVEL, "'gatewayLoginUrl' not found in configuration 'agent' section");
 	}
 
+	// Gateway logout URL
+	const char *gwyLogoutUrl = ini.GetValue("agent", "gatewayLogoutUrl", NULL );
+	if (gwyLogoutUrl != NULL) {
+		StringCbCopy(cfg->gatewayLogoutUrl, INTERNET_MAX_URL_LENGTH, gwyLogoutUrl);
+	} else {
+		ok = false;
+		syslog(JK_LOG_ERROR_LEVEL, "'gatewayLogoutUrl' not found in configuration 'agent' section");
+	}
+
 	// SSOSessionManager service path
 	const char *sessionManagerServicePath = ini.GetValue("agent", "sessionManagerServicePath", DEFAULT_SESSION_MANAGER_SERVICE_PATH );
 	if (sessionManagerServicePath != NULL) {

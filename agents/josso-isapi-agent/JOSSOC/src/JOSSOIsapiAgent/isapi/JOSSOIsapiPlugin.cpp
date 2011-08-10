@@ -301,7 +301,6 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_login' || 'josso_login_optional' Received, optional %d", !pJossoLoginOptional.empty());
 			
-			// TODO : Support the 'back_to' request parameter and store it as a COOKIE: JOSSO_RESOURCE, base64 encoded
 			string backTo = req->getParameter("back_to");
 			if (!backTo.empty()) {
 				string encodedPath = StringUtil::encode64(backTo);
@@ -317,6 +316,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				gwyLoginUrl.append("&josso_cmd=login_optional");
 			}
 
+			// Since the URL is for JOSSO Extension, we need the app. id as parameter
 			string pJossoAppId = req->getParameter("josso_partnerapp_id");
 			if (!pJossoAppId.empty()) {
 				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application ID %s", pJossoAppId.c_str());
@@ -332,10 +332,21 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 		// check for 'josso_logout'
 		string pJossoLogout = req->getParameter("josso_logout");
 		if (!pJossoLogout.empty()) {
-			// TODO
+			
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_logout' received");
 
-			jk_log(ssoAgent->logger, JK_LOG_WARNING, "'josso_logout' NOT Supported yet!");
+			string gwyLogoutUrl (ssoAgent->buildGwyLogoutUrl(req));
+
+			// Since the URL is for JOSSO Extension, we need the app. id as parameter
+			string pJossoAppId = req->getParameter("josso_partnerapp_id");
+			if (!pJossoAppId.empty()) {
+				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application ID %s", pJossoAppId.c_str());
+				gwyLogoutUrl.append("&josso_partnerapp_id=");
+				gwyLogoutUrl.append(pJossoAppId.c_str());
+			}
+
+			if (!res->sendRedirect(gwyLogoutUrl.c_str()))
+				rv = HSE_STATUS_ERROR;
 		}		
 
 		// check for 'josso_security_check'

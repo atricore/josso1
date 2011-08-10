@@ -69,6 +69,12 @@ public:
 	char *getGwyLoginUrl() { return this->agentConfig->getGatewayLoginUrl(); }
 
 	/**
+	 * JOSSO Gateway logout URL
+	 */
+	char *getGwyLogoutUrl() { return this->agentConfig->getGatewayLogoutUrl(); }
+
+
+	/**
 	 * Session access min interval
 	 */
 	long getSessionAccessMinInterval() { return this->agentConfig->getSessionAccessMinInterval(); }

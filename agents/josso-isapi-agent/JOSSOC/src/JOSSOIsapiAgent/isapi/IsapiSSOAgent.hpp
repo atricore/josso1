@@ -46,6 +46,8 @@ public:
 
 	string buildGwyLoginUrl(SSOAgentRequest *req);
 
+	string buildGwyLogoutUrl(SSOAgentRequest *req);
+
 	SSOAgentRequest *initIsapiFilterRequest(HTTP_FILTER_CONTEXT *pfc, 
 										   DWORD NotificationType, 
 										   VOID* pvNotification);

@@ -100,7 +100,32 @@ string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req) {
 		url.append("?");
 	else
 		url.append("&");
-	
+
+	url.append("&josso_back_to=");
+
+	string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);
+	string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
+
+	url.append(https == "on" || https == "ON" ? "https://" : "http://");
+	url.append(host);
+	url.append(getExtensionUri());
+	url.append("%3Fjosso_security_check&amp;");
+	url.append("josso_partnerapp_host=");
+	url.append(host.c_str());
+
+	return url;
+
+}
+
+string IsapiSSOAgent::buildGwyLogoutUrl(SSOAgentRequest *req) {
+
+	string url (getGwyLogoutUrl());
+
+	if (url.find("?") == string::npos)
+		url.append("?");
+	else
+		url.append("&");
+
 	url.append("josso_back_to=");
 
 	string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);

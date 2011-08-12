@@ -91,7 +91,7 @@ public class GenericServletSSOAgentFilter implements Filter {
                 // We need at least an abstract SSO Agent
                 _agent = (HttpSSOAgent) lookup.lookupSSOAgent();
                 if (log.isDebugEnabled())
-                    _agent.setDebug(1);
+                _agent.setDebug(1);
                 _agent.start();
 
                 // Publish agent in servlet context
@@ -107,12 +107,14 @@ public class GenericServletSSOAgentFilter implements Filter {
 
     }
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+
         HttpServletRequest hreq =
                 (HttpServletRequest) request;
-
         HttpServletResponse hres =
                 (HttpServletResponse) response;
+
 
         if (log.isDebugEnabled())
             log.debug("Processing : " + hreq.getContextPath());
@@ -229,7 +231,30 @@ public class GenericServletSSOAgentFilter implements Filter {
             }
             
             String jossoSessionId = (cookie == null) ? null : cookie.getValue();
-            GenericServletLocalSession localSession = new GenericServletLocalSession(session);
+            if (log.isDebugEnabled())
+                log.debug("Session is:" + session);
+
+
+            // Get session map for this servlet context.
+            Map sessionMap = (Map) hreq.getSession().getServletContext().getAttribute(KEY_SESSION_MAP);
+            if (sessionMap == null) {
+                synchronized (this) {
+                    sessionMap = (Map) hreq.getSession().getServletContext().getAttribute(KEY_SESSION_MAP);
+                    if (sessionMap == null) {
+                        sessionMap = new HashMap();
+                        hreq.getSession().getServletContext().setAttribute(KEY_SESSION_MAP, sessionMap);
+                    }
+                }
+            }
+            GenericServletLocalSession localSession = (GenericServletLocalSession) sessionMap.get(session.getId());
+            if (sessionMap.get(session.getId()) == null) {
+                localSession = new GenericServletLocalSession(session);
+                // the local session is new so, make the valve listen for its events so that it can
+                // map them to local session events.
+                // Not supported : session.addSessionListener(this);
+                sessionMap.put(session.getId(), localSession);
+            }
+
             
             // ------------------------------------------------------------------
             // Check if the partner application submitted custom login form
@@ -299,6 +324,17 @@ public class GenericServletSSOAgentFilter implements Filter {
                     	if (log.isDebugEnabled())
                     		log.debug("SSO cookie is not present, but login optional process is not required");
                     }
+
+                    // save requested resource
+                	if (!_agent.isResourceIgnored(cfg, hreq)) {
+    	            	StringBuffer sb = new StringBuffer(hreq.getRequestURI());
+    	                if (hreq.getQueryString() != null) {
+    	                    sb.append('?');
+    	                    sb.append(hreq.getQueryString());
+    	                }
+    	            	_agent.setAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
+                	}
+
                 }
                 
                 if (log.isDebugEnabled())
@@ -430,15 +466,6 @@ public class GenericServletSSOAgentFilter implements Filter {
 
             if (log.isDebugEnabled())
                 log.debug("Executed agent.");
-
-            // Get session map for this servlet context.
-            Map sessionMap = (Map) hreq.getSession().getServletContext().getAttribute(KEY_SESSION_MAP);
-            if (sessionMap.get(localSession.getWrapped()) == null) {
-                // the local session is new so, make the valve listen for its events so that it can
-                // map them to local session events.
-                // Not supported : session.addSessionListener(this);
-                sessionMap.put(session, localSession);
-            }
 
             // ------------------------------------------------------------------
             // Has a valid user already been authenticated?

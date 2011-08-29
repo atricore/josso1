@@ -43,15 +43,22 @@ import org.josso.agent.http.HttpSSOAgent;
 import org.josso.agent.http.WebAccessControlUtil;
 import org.josso.gateway.identity.SSORole;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * JOSSO server auth module.
  */
 public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 
+    public static final String KEY_SESSION_MAP = "org.josso.servlet.agent.sessionMap";
+
 	private static final Log log = LogFactory.getLog(JASPISSOAuthModule.class);
 	
 	private static HttpSSOAgent _agent;
-	
+
+
 	public JASPISSOAuthModule() {
         try {
         	if (_agent == null) {
@@ -151,6 +158,7 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	            _agent.prepareNonCacheResponse(hres);
 	            hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
 
+                // Request is authorized for this URI
 	            return AuthStatus.SEND_CONTINUE;
 	        }
 	        
@@ -184,6 +192,7 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	            _agent.prepareNonCacheResponse(hres);
 	            hres.sendRedirect(hres.encodeRedirectURL(logoutUrl));
 
+                // Request is authorized for this URI
 	            return AuthStatus.SEND_CONTINUE;
 	        }
 
@@ -209,8 +218,33 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	        if (log.isDebugEnabled()) {
 	            log.debug("Session is: " + session);
 	        }
-	        LocalSession localSession = new JASPILocalSession(session);
-	        
+
+
+            // Get session map for this servlet context.
+            Map sessionMap = (Map) hreq.getSession().getServletContext().getAttribute(KEY_SESSION_MAP);
+            if (sessionMap == null) {
+                synchronized (this) {
+                    sessionMap = (Map) hreq.getSession().getServletContext().getAttribute(KEY_SESSION_MAP);
+                    if (sessionMap == null) {
+                        sessionMap = Collections.synchronizedMap(new HashMap());
+                        hreq.getSession().getServletContext().setAttribute(KEY_SESSION_MAP, sessionMap);
+                    }
+                }
+            }
+
+	        LocalSession localSession = (LocalSession) sessionMap.get(session.getId());
+            if (localSession == null) {
+                localSession = new JASPILocalSession(session);
+                // the local session is new so, make the valve listen for its events so that it can
+                // map them to local session events.
+                // Not Supported : session.addSessionListener(this);
+                sessionMap.put(session.getId(), localSession);
+
+
+            }
+
+
+
 	        // ------------------------------------------------------------------
 	        // Check if the partner application submitted custom login form
 	        // ------------------------------------------------------------------
@@ -229,7 +263,8 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	            			localSession, null, hreq, hres);
                 
 	            _agent.processRequest(customAuthRequest);
-	            
+
+                // Request is authorized
 	            return AuthStatus.SEND_CONTINUE;
 	        }              
 
@@ -306,7 +341,8 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	        // Check if this URI is subject to SSO protection
 	        // ------------------------------------------------------------------
 	        if (_agent.isResourceIgnored(cfg, hreq)) {
-	        	return AuthStatus.SEND_CONTINUE;
+                // Ignored resources are authorized
+	        	return AuthStatus.SUCCESS;
 	        }
 
 	        // This URI should be protected by SSO, go on ...
@@ -497,6 +533,8 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	                //set non cache headers
 	                _agent.prepareNonCacheResponse(hres);
 	                hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
+
+                    // Request is authorized for this URI
 	                return AuthStatus.SEND_CONTINUE;
 	            } else {
 	                if (log.isDebugEnabled()) {

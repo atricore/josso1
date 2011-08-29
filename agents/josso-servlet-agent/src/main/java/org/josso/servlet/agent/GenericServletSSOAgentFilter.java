@@ -23,6 +23,7 @@
 package org.josso.servlet.agent;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +61,7 @@ import org.josso.agent.http.WebAccessControlUtil;
  */
 public class GenericServletSSOAgentFilter implements Filter {
 
-    private static final String KEY_SESSION_MAP = "org.josso.servlet.agent.sessionMap";
+    public static final String KEY_SESSION_MAP = "org.josso.servlet.agent.sessionMap";
 
     /**
      * One agent instance for all applications.
@@ -241,7 +242,7 @@ public class GenericServletSSOAgentFilter implements Filter {
                 synchronized (this) {
                     sessionMap = (Map) hreq.getSession().getServletContext().getAttribute(KEY_SESSION_MAP);
                     if (sessionMap == null) {
-                        sessionMap = new HashMap();
+                        sessionMap = Collections.synchronizedMap(new HashMap());
                         hreq.getSession().getServletContext().setAttribute(KEY_SESSION_MAP, sessionMap);
                     }
                 }

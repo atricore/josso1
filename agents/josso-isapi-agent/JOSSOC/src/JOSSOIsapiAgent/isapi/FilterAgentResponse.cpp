@@ -24,6 +24,11 @@ FilterAgentResponse::~FilterAgentResponse() {
 	
 }
 
+bool sendContent(string content) {
+	// TODO !!!!
+	return true;
+}
+
 bool FilterAgentResponse::flushHeaders() {
 
 	if (committed) {
@@ -112,8 +117,15 @@ bool FilterAgentResponse::startResponse(int status, string reason, list<pair<str
 	return true;
 }
 
+bool FilterAgentResponse::sendContent(string content) {
+	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	return false;
+}
+
 // TODO : Does not work
-bool FilterAgentResponse::writeContent(char * content, size_t length) {
+bool FilterAgentResponse::writeContent(const char * content, size_t length) {
+
+	jk_log(logger, JK_LOG_ERROR, "FilterAgentResponse::writeContent DOS NOT WORK ....");
 
 	jk_log(logger, JK_LOG_TRACE, "CONTENT [%d]\r\n%s\r\n", length, content);
 

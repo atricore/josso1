@@ -347,7 +347,96 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 
 			if (!res->sendRedirect(gwyLogoutUrl.c_str()))
 				rv = HSE_STATUS_ERROR;
-		}		
+		}
+
+		// check for 'josso_authentication
+		string pJossoAuthentication = req->getParameter("josso_authentication");
+		if (!pJossoAuthentication.empty()) {
+
+			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_authentication' received");
+
+			string splashResource = req->getParameter("josso_splash_resource");
+			if (!splashResource.empty()) {
+				string encodedSplashResource = StringUtil::encode64(splashResource);
+
+				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Splash resource %s (encoded %)", splashResource.c_str(), encodedSplashResource.c_str());
+				res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/");
+			}
+
+			// Since the URL is for JOSSO Extension, we need the app. id as parameter
+			string pJossoAppId = req->getParameter("josso_partnerapp_id");
+			string pJossoUsername = req->getParameter("josso_username");
+			string pJossoPassword = req->getParameter("josso_password");
+			string gwyLoginUrl (ssoAgent->buildGwyLoginUrl(req));
+
+			if (pJossoUsername.empty()) {
+				jk_log(ssoAgent->logger, JK_LOG_ERROR, "No username received as 'josso_username'");
+			}
+
+			if (pJossoPassword.empty()) {
+				jk_log(ssoAgent->logger, JK_LOG_ERROR, "No password received as 'josso_password'");
+			}
+
+			// TODO : Support back to URL (for JOSSO 1.x GWY)
+		    // Build output
+
+			// Form header and action
+			string authnForm = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" 
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n" 
+                "\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n" 
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n" 
+                "<body onload=\"document.forms[0].submit()\">\n" 
+                "<noscript>\n"
+				"<p>\n"
+				"<strong>Note:</strong> Since your browser does not support JavaScript,\n"
+                "you must press the Continue button once to proceed.\n"
+				"</p>\n"
+				"</noscript>\n"
+				"<form action=\"";
+			authnForm.append(gwyLoginUrl.c_str());
+			authnForm.append("\" method=\"post\" name=\"usernamePasswordLoginForm\" enctype=\"application/x-www-form-urlencoded\">\n"
+                "        <div>");
+
+			// Command
+			authnForm.append(
+				"              <input type=\"hidden\" value=\"login\" name=\"josso_command\" />\n");
+
+			// Partnerapp id
+			authnForm.append(
+				"              <input type=\"hidden\" value=\"");
+		    authnForm.append(pJossoAppId);
+			authnForm.append("\" name=\"josso_partnerapp_id\" />\n"
+				"\n");
+
+			// Username
+			authnForm.append(
+				"              <input type=\"hidden\" value=\"");
+		    authnForm.append(pJossoUsername);
+			authnForm.append("\" name=\"josso_username\" />\n"
+				"\n");
+			// Password
+			authnForm.append(
+				"              <input type=\"hidden\" value=\"");
+		    authnForm.append(pJossoPassword);
+			authnForm.append("\" name=\"josso_password\" />\n"
+				"\n");
+
+			// Submit and end of form
+			authnForm.append(
+				"              <noscript><input type=\"submit\" value=\"Continue\"/></noscript>\n"
+                "        </div>\n"
+                "</form>\n"
+                "</body>\n"
+                "</html>");
+
+			// Write output and return
+			if (res->sendContent(authnForm)) {
+				rv = HSE_STATUS_SUCCESS;
+			} else {
+				rv = HSE_STATUS_ERROR;
+			}
+
+		}
 
 		// check for 'josso_security_check'
 		string pJossoSecurityCheck = req->getParameter("josso_security_check");
@@ -415,8 +504,6 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				}
 			}
 		}
-
-		// check for 'josso_auto_login'
 
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Processed request for URI %s", path.c_str());
 

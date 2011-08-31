@@ -26,8 +26,23 @@ bool ExtensionAgentResponse::flushHeaders() {
 	return false;
 }
 
-bool ExtensionAgentResponse::writeContent(char * content, size_t length) {
-	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+bool ExtensionAgentResponse::sendContent(string content) {
+	return writeContent(content.c_str(), content.size());
+}
+
+bool ExtensionAgentResponse::writeContent(const char * content, size_t length) {
+	jk_log(logger, JK_LOG_ERROR, "FilterAgentResponse::writeContent DOS NOT WORK ....");
+
+	jk_log(logger, JK_LOG_TRACE, "CONTENT [%d]\r\n%s\r\n", length, content);
+
+	if (lpEcb->WriteClient(lpEcb, (LPVOID) content, (LPDWORD) length, 0)) {
+		jk_log(logger, JK_LOG_TRACE, "WriteClient ... OK");
+		return true;
+	}
+
+	DWORD dwError;
+	dwError = GetLastError();
+	jk_log(logger, JK_LOG_ERROR, "WriteClient function failed = %d (%x)", dwError, dwError);
 	return false;
 }
 

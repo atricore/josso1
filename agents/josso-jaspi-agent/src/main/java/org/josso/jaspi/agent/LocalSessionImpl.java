@@ -52,6 +52,7 @@ public class LocalSessionImpl implements LocalSession {
     private Object _wrapped;
 
     public LocalSessionImpl() {
+
     }
 
     public long getCreationTime() {

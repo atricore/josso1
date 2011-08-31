@@ -125,11 +125,10 @@ bool FilterAgentResponse::sendContent(string content) {
 // TODO : Does not work
 bool FilterAgentResponse::writeContent(const char * content, size_t length) {
 
-	jk_log(logger, JK_LOG_ERROR, "FilterAgentResponse::writeContent DOS NOT WORK ....");
-
 	jk_log(logger, JK_LOG_TRACE, "CONTENT [%d]\r\n%s\r\n", length, content);
 
-	if (pfc->WriteClient(pfc, (LPVOID) content, (LPDWORD) length, 0)) {
+	DWORD size = length;
+	if (pfc->WriteClient(pfc, (LPVOID) content, &size, 0)) {
 		jk_log(logger, JK_LOG_TRACE, "WriteClient ... OK");
 		return true;
 	}

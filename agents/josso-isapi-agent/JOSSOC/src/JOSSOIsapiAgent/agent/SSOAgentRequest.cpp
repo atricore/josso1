@@ -1,5 +1,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <crtdbg.h>
 
 
@@ -118,3 +120,40 @@ bool SSOAgentRequest::parseQueryString(string qryStr) {
 
 	return true;
 }
+
+std::string SSOAgentRequest::URLdecode(const std::string& l)
+{
+	std::ostringstream L;
+	for(std::string::size_type x=0;x<l.size();++x)
+		switch(l[x])
+	{
+		case('+'):
+			{
+				L<<' ';
+				break;
+			}
+		case('%'): // Convert all %xy hex codes into ASCII characters.
+			{
+				const std::string hexstr(l.substr(x+1,2)); // xy part of %xy.
+				x+=2; // Skip over hex.
+				if(hexstr=="26" || hexstr=="3D")
+					// Do not alter URL delimeters.
+					L<<'%'<<hexstr;
+				else
+				{
+					std::istringstream hexstream(hexstr);
+					int hexint;
+					hexstream>>std::hex>>hexint;
+					L<<static_cast<char>(hexint);
+				}
+				break;
+			}
+		default: // Copy anything else.
+			{
+				L<<l[x];
+				break;
+			}
+	}
+	return L.str();
+}
+

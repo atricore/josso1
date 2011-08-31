@@ -356,10 +356,12 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_authentication' received");
 
 			string splashResource = req->getParameter("josso_splash_resource");
+
+			splashResource = req->URLdecode(splashResource);
 			if (!splashResource.empty()) {
 				string encodedSplashResource = StringUtil::encode64(splashResource);
 
-				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Splash resource %s (encoded %)", splashResource.c_str(), encodedSplashResource.c_str());
+				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Splash resource %s (encoded %s)", splashResource.c_str(), encodedSplashResource.c_str());
 				res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/");
 			}
 
@@ -367,7 +369,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 			string pJossoAppId = req->getParameter("josso_partnerapp_id");
 			string pJossoUsername = req->getParameter("josso_username");
 			string pJossoPassword = req->getParameter("josso_password");
-			string gwyLoginUrl (ssoAgent->buildGwyLoginUrl(req));
+			string gwyLoginUrl (ssoAgent->getGwyLoginUrl());
 
 			if (pJossoUsername.empty()) {
 				jk_log(ssoAgent->logger, JK_LOG_ERROR, "No username received as 'josso_username'");
@@ -556,3 +558,4 @@ BOOL WINAPI DllMain(HINSTANCE hInst,    // Instance Handle of the DLL
 
     return fReturn;
 }
+

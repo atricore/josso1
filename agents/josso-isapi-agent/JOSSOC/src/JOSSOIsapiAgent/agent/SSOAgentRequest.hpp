@@ -42,6 +42,8 @@ public:
 	virtual bool exportSecurityContext(JOSSOSecurityContext & ctx) = 0;
 
 	static const string EMPTY_PARAM;
+
+	std::string URLdecode(const std::string& l);
 	
 
 protected:

@@ -145,6 +145,11 @@ public:
 
 	bool isAutomaticLoginRequired(SSOAgentRequest *req, SSOAgentResponse *res);
 
+	/** 
+	 * The URI where the agent listens for SSO requests
+	 */
+	virtual char * getExtensionUri() =0;
+
 protected:
 
 

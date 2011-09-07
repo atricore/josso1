@@ -3,7 +3,7 @@
 
 #include <JOSSOIsapiAgent/agent/SSOAgentRequest.hpp>
 #include <JOSSOIsapiAgent/agent/SSOAgentResponse.hpp>
-#include <JOSSOIsapiAgent/isapi/IsapiSSOAgent.hpp>
+#include <JOSSOIsapiAgent/agent/AbstractSSOAgent.hpp>
 
 #include <JOSSOIsapiAgent/util/jk/common/jk_logger.h>
 #include <JOSSOIsapiAgent/util/jk/common/jk_util.h>
@@ -28,9 +28,9 @@ public:
 
 	void setMode(const string &mode);
 
-	IsapiSSOAgent * getSSOAgent();
+	AbstractSSOAgent * getSSOAgent();
 
-	void setSSOAgent(IsapiSSOAgent *ssoAgent);
+	void setSSOAgent(AbstractSSOAgent *ssoAgent);
 
 	virtual bool isAutomaticLoginRequired(SSOAgentRequest *req, SSOAgentResponse *res) =0;
 
@@ -38,7 +38,7 @@ protected:
 
 	string mode;
 	
-	IsapiSSOAgent *ssoAgent;
+	AbstractSSOAgent *ssoAgent;
 };
 
 #endif

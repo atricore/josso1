@@ -159,12 +159,22 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 			
 		}
 
-		// Check for automatic Login
-		if (!req->isAuthenticated()) {
+		bool isAuthenticated = req->isAuthenticated();
+		bool isAuthorized = ssoAgent->isAuthorized(req);
 
-			if (ssoAgent->isAutomaticLoginRequired(req, res)) {
-				ssoAgent->requestLogin(req, res, appCfg, true);
-				rc = SF_STATUS_REQ_FINISHED;
+		// Check for automatic Login
+		if (!isAuthenticated) {
+
+			// Only trigger automatic login if resource is public, otherwise a full login will be triggered later.
+			if (isAuthorized) {
+
+				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Request is authorized, but not authenticated, check automatic login [%s]", path.c_str());
+
+				if (ssoAgent->isAutomaticLoginRequired(req, res)) {
+					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Automatic login started[%s]", path.c_str());
+					ssoAgent->requestLogin(req, res, appCfg, true);
+					rc = SF_STATUS_REQ_FINISHED;
+				}
 			}
 
 		} else {
@@ -183,7 +193,7 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 
 		// Check for security constraints
-		if (!ssoAgent->isAuthorized(req)) {
+		if (!isAuthorized) {
 
 			if (req->getRemoteUser().empty()) {
 				// User is not authorized to access this resource, but was not authenticated yet -> ask for login
@@ -349,7 +359,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				rv = HSE_STATUS_ERROR;
 		}
 
-		// check for 'josso_authentication
+		// check for 'josso_authentication'
 		string pJossoAuthentication = req->getParameter("josso_authentication");
 		if (!pJossoAuthentication.empty()) {
 

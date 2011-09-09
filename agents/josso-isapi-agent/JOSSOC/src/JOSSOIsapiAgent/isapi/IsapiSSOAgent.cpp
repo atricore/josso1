@@ -180,17 +180,37 @@ SSOAgentRequest *IsapiSSOAgent::initIsapiExtensionRequest(LPEXTENSION_CONTROL_BL
 }
 
 const char *IsapiSSOAgent::getRequester(SSOAgentRequest *req) {
+
 	string originalResource = req->getPath();
+
+	// Look for original resource as JOSSO_RESOURCE:
 	if (originalResource.empty() || !originalResource.find(this->getExtensionUri())) {
 		originalResource = req->getCookie("JOSSO_RESOURCE");
 		originalResource = StringUtil::decode64(originalResource);
 	}
+
+	// Look for original resource as JOSSO_SPLASH_RESOURCE:
+	if (originalResource.empty()) {
+		originalResource = req->getCookie("JOSSO_SPLASH_RESOURCE");
+		originalResource = StringUtil::decode64(originalResource);
+	}
+
+	jk_log(req->logger, JK_LOG_TRACE, "Looking application definition for [%s]", originalResource.c_str());
+
 	if (!originalResource.empty()) {
 		PartnerAppConfig *appCfg = getPartnerAppConfig(originalResource);
 		if (appCfg != NULL) {
+			jk_log(req->logger, JK_LOG_TRACE, "Found application definition %s for [%s]",
+				appCfg->getId(), originalResource.c_str());
+
 			return appCfg->getPartnerAppId();
+		} else {
+			jk_log(req->logger, JK_LOG_ERROR, "Cannot find application config for path [%s]", originalResource.c_str());
 		}
+	} else {
+		jk_log(req->logger, JK_LOG_ERROR, "Cannot find JOSSO_RESOURCE or JOSSO_SPLASH_RESOURCE, unable to determine Partner Application ID");
 	}
+	 
 	return NULL;
 }
 

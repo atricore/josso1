@@ -471,9 +471,12 @@ bool AbstractSSOAgent::createSecurityContext(SSOAgentRequest *req) {
 
 	string ssoSession = req->getCookie("JOSSO_SESSIONID");
 	string originalResource = req->getCookie("JOSSO_RESOURCE");
+	string plainTextOriginalResource;
 
-	string plainTextOriginalResource = StringUtil::decode64(originalResource);
-	
+	if (!originalResource.empty()) {
+		plainTextOriginalResource = StringUtil::decode64(originalResource);
+	}
+
 	bool ok = true;
 
 	if (!ssoSession.empty() && ssoSession.compare("-") != 0) {
@@ -675,6 +678,7 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
 		}
 	}
+
 	svc.userid = agentConfig->userId;
 	svc.password = agentConfig->password;
 	svc.passwd = agentConfig->password;
@@ -935,7 +939,6 @@ SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const st
 			size_t pos = p.find(b);
 
 			jk_log(logger, JK_LOG_DEBUG, "Matching path %s against security constraint URI %s", path.c_str(), b.c_str());
-
 
 			if ( match(p, b) == true ) {
 					cfg = &(*sec);

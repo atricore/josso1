@@ -12,9 +12,9 @@
 #define new DEBUG_NEW
 #endif
 
-
-
 const string SSOAgentRequest::EMPTY_PARAM = "__EMPTY_PARAM__";
+
+const string SSOAgentRequest::EMPTY_STR = "";
 
 string SSOAgentRequest::getPath() {
 
@@ -24,12 +24,14 @@ string SSOAgentRequest::getPath() {
 	return uri;
 }
 
-string SSOAgentRequest::getCookie(string name) {
+string SSOAgentRequest::getCookie(string cName) {
+
+	jk_log(logger, JK_LOG_TRACE, "Requesting COOKIE [%s]", cName.c_str());
 
 	if (cookies.empty()) {
 		string cookieHeader = getHeader("HTTP_COOKIE");
 		
-		jk_log(logger, JK_LOG_TRACE, "Loading cookies from ", cookieHeader.c_str());
+		jk_log(logger, JK_LOG_TRACE, "Loading cookies from HTTP_COOKIE:\n%s", cookieHeader.c_str());
 		vector <string> cs;
 		StringUtil::tokenize(cookieHeader, cs, ";");
 
@@ -42,15 +44,25 @@ string SSOAgentRequest::getCookie(string name) {
 				string value = cookie.substr(eqPos+1);
 				string name = cookie.substr(0, eqPos);
 				StringUtil::trim(name);
+
+				jk_log(logger, JK_LOG_TRACE, "Storing COOKIE [%s]=[%s]", name.c_str(), value.c_str());
 				
 				cookies[name] = value;
-
-				jk_log(logger, JK_LOG_TRACE, "[%s]=[%s]", name.c_str(), value.c_str());
+			
 			}
 		}
 	}
 
-	return cookies[name];
+	map<string, string>::const_iterator cookies_it;
+	cookies_it = cookies.find(cName);
+
+	if (cookies_it == cookies.end()) {
+		jk_log(logger, JK_LOG_TRACE, "Requested COOKIE %s=[<EMPTY>]", cName.c_str());
+		return SSOAgentRequest::EMPTY_STR;
+	} else {
+		jk_log(logger, JK_LOG_TRACE, "Requested COOKIE %s=[%s]", cName.c_str(), cookies_it->second.c_str());
+		return cookies_it->second;
+	}
 
 }
 
@@ -63,22 +75,49 @@ string SSOAgentRequest::getHeader(string name) {
  * Return paramter value for the given name.  If returned string is empty, it means that the parameter was not present.
  * If the returned string is SSOAgentRequest::EMPTY_PARAM, it means that the parameter is present, without a value.
  */
-string SSOAgentRequest::getParameter(string name) {
+string SSOAgentRequest::getParameter(string pName) {
 
-	string qryStr = this->getQueryString();
+	if (params.empty()) {
 
-	if (params.empty() && !qryStr.empty()) {
-		parseQueryString(qryStr);
-		
+		string qryStr = this->getQueryString();
+		if (!qryStr.empty()) {
+			// Read and parse query string into parameters.
+			parseQueryString(qryStr);
+			
+		} else if (!strcmp(getMethod().c_str(), "POST")) {
+			
+			// Read and parse request body into parametsers.
+			DWORD bodySz = this->getBodySize();
+			
+			if (bodySz > 0) {
+				LPBYTE body = this->getBody();
+				jk_log(logger, JK_LOG_DEBUG, "POST Request has a body, type=[%s] size=%d", getContentType().c_str(), bodySz);
+				parsePostData(body, bodySz, this->getContentType());
+			} else {
+				jk_log(logger, JK_LOG_DEBUG, "POST Request has no body");
+			}
+			
+		} else {
+			jk_log(logger, JK_LOG_TRACE, "GET Request has no parameters, method [%s]", getMethod().c_str());
+		}
+
+		// Just for debugging purposes
 		map<string, string>::iterator i;
 		for (i = params.begin() ; i != params.end() ; i++) {
 			pair <string, string> p = *i;
 			jk_log(logger, JK_LOG_DEBUG, "Populating request with param %s=[%s]", p.first.c_str(), p.second.c_str());
 		}
+	} 
 
+	map<string, string>::const_iterator params_it;
+	params_it = params.find(pName);
+
+	// Did we find the parameter ?!
+	if (params_it == params.end()) {
+		return SSOAgentRequest::EMPTY_STR;
+	} else {
+		return params_it->second;
 	}
-
-	return params[name];
 }
 
 bool SSOAgentRequest::isUserInRole(string roleName) {
@@ -119,6 +158,22 @@ bool SSOAgentRequest::parseQueryString(string qryStr) {
 	}
 
 	return true;
+}
+
+bool SSOAgentRequest::parsePostData(LPBYTE body, DWORD bodySize, string contentType) {
+	jk_log(logger, JK_LOG_TRACE, "Parsing [%d] bytes of type %s as parameters", bodySize, contentType.c_str());
+	char * b = (char*) body;
+
+	string sBody;
+	sBody.assign(b, bodySize);
+
+	if (!strcmp(contentType.c_str(), "application/x-www-form-urlencoded"))
+		jk_log(logger, JK_LOG_WARNING, "POST Data content type unknown : [%s]", contentType.c_str());
+
+	// TODO : This only works if post data is encoded as a query string
+	jk_log(logger, JK_LOG_TRACE, "Body type[%s]\n%s", contentType.c_str(), sBody.c_str());
+
+	return parseQueryString(sBody);
 }
 
 std::string SSOAgentRequest::URLdecode(const std::string& l)

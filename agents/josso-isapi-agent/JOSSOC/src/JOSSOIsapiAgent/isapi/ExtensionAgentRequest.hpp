@@ -23,6 +23,14 @@ public:
 
 	string getQueryString();
 
+	DWORD getBodySize();
+
+	string getContentType();
+
+	LPBYTE getBody();
+
+	string getMethod();
+
 	string getServerVariable(string name, DWORD cbSize);
 
 	bool exportSecurityContext(JOSSOSecurityContext & ctx);
@@ -33,6 +41,8 @@ private:
 	string uri;
 
 	string qryString;
+
+	string body;
 
 	LPEXTENSION_CONTROL_BLOCK lpEcb;
 

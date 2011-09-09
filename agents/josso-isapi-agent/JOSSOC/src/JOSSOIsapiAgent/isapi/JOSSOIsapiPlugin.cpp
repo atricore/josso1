@@ -359,7 +359,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				rv = HSE_STATUS_ERROR;
 		}
 
-		// check for 'josso_authentication'
+		// check for 'josso_authentication' (could be a POST !)
 		string pJossoAuthentication = req->getParameter("josso_authentication");
 		if (!pJossoAuthentication.empty()) {
 
@@ -454,37 +454,41 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 		string pJossoSecurityCheck = req->getParameter("josso_security_check");
 		if (!pJossoSecurityCheck.empty()) {
 
+			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_security_check' received ... ");			
+
 			string assertionId = req->getParameter("josso_assertion_id");
 			string ssoSessionId;
 
-			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_security_check' received, processing assertion %s", assertionId.c_str());
-
+			// Get requested original resource, if any
+			
+			string originalResource = req->getCookie("JOSSO_RESOURCE");
+			originalResource = StringUtil::decode64(originalResource);
+			
+			// Check if we have an assertion ID
+			
 			if (assertionId.empty()) {
-
+				jk_log(ssoAgent->logger, JK_LOG_TRACE, "'josso_security_check' without assertion (probably failed automatic login)");
 				// This is probably a failed automatic login, go back to orignal resource.
-				string originalResource = req->getCookie("JOSSO_RESOURCE");
-
-				originalResource = StringUtil::decode64(originalResource);
-
-				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Decoded PATH %s", originalResource.c_str());
 
 				if (!originalResource.empty()) {
 					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to %s", originalResource.c_str());
 					res->sendRedirect(originalResource);
 				} else {
-					jk_log(ssoAgent->logger, JK_LOG_ERROR, "No original resource received! : %s", originalResource.c_str());
+					jk_log(ssoAgent->logger, JK_LOG_ERROR, "No original resource received as COOKIE JOSSO_RESOURCE! ");
 					rv = HSE_STATUS_ERROR;
 				}
 
 			} else {
+				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_security_check' received, resolving assertion %s", assertionId.c_str());
 
 				if (!ssoAgent->resolveAssertion(assertionId, ssoSessionId, req)) {
 					jk_log(ssoAgent->logger, JK_LOG_ERROR, "Cannot resolve assertion %s", assertionId.c_str());
 					rv = HSE_STATUS_ERROR;
 				} else {
 
-					// Create JOSSO SESSION ID Cookie
+					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Resolved assertion [%s] as SSO Session [%s]", assertionId.c_str(), ssoSessionId.c_str());
 
+					// Create JOSSO SESSION ID Cookie
 					string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
 					bool secure = false;
 					if(https == "on" || https == "ON") secure = true;
@@ -492,25 +496,18 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/", secure);
 					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/"); // Clean stored referer
 
-					string originalResource = req->getCookie("JOSSO_RESOURCE");
+					// Retrieve and decode splash resource
 					string splashResource = req->getCookie("JOSSO_SPLASH_RESOURCE");
-
-					originalResource = StringUtil::decode64(originalResource);
 					splashResource = StringUtil::decode64(splashResource);
 
-					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Decoded PATH %s", originalResource.c_str());
-					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Decoded Splash Resource %s", splashResource.c_str());
-
-					if (!originalResource.empty()) {
-						if (!splashResource.empty()) {
-							jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to splash resource %s", splashResource.c_str());
-							res->sendRedirect(splashResource);
-						} else {
-							jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to %s", originalResource.c_str());
-							res->sendRedirect(originalResource);
-						}
+					if (!splashResource.empty()) {
+						jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to JOSSO_SPLASH_RESOURCE [%s]", splashResource.c_str());
+						res->sendRedirect(splashResource);
+					} else if (!originalResource.empty()) {
+						jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to JOSSO_RESOURCE [%s]", originalResource.c_str());
+						res->sendRedirect(originalResource);
 					} else {
-						jk_log(ssoAgent->logger, JK_LOG_ERROR, "No original resource received! : %s", originalResource.c_str());
+						jk_log(ssoAgent->logger, JK_LOG_ERROR, "No JOSSO_RESOURCE or JOSSO_SPLASH_RESOURCE received!");
 						rv = HSE_STATUS_ERROR;
 					}
 				}

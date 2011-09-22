@@ -371,10 +371,10 @@
 
 
     <!-- Liferay 6 "platform -->
-    <liferay-installer id="liferay6-installer">
+    <liferay6-installer id="liferay6-installer">
         <s:constructor-arg ref="liferay6"/>
         <s:property name="printer" ref="messagePrinter"/>
-    </liferay-installer>
+    </liferay6-installer>
 
     <platform id="liferay6" family="jee" platformName="Liferay6" version="6.0.6">
         <lib>${target}/WEB-INF/lib</lib>

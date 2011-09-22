@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+ 
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+ xmlns:gen-svlt="urn:org:josso:agent:generic-servlet"
+ xmlns:agent="urn:org:josso:agent:core"
+ xmlns:protocol="urn:org:josso:protocol:client"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+<gen-svlt:agent name="josso-liferay6-agent" sessionAccessMinInterval="1000">
+ 
+       <gatewayLoginUrl>http://localhost:8080/josso/signon/login.do</gatewayLoginUrl>
+       <gatewayLogoutUrl>http://localhost:8080/josso/signon/logout.do</gatewayLogoutUrl>
+ 
+       <gatewayServiceLocator>
+               <protocol:ws-service-locator endpoint="localhost:8080"/>
+       </gatewayServiceLocator>
+       <configuration>
+           <agent:agent-configuration>
+               <agent:partner-apps>
+					<agent:partner-app id="Liferay" context="/">
+					</agent:partner-app>
+               </agent:partner-apps>
+            </agent:agent-configuration>
+         </configuration>
+        <parametersBuilders>
+            <agent:vhost-parameters-builder/>
+            <agent:appctx-parameters-builder/>
+        </parametersBuilders>
+        
+        <automaticLoginStrategies>
+            <agent:default-automaticlogin-strategy mode="REQUIRED">
+                <property name="ignoredReferrers">
+                    <list>
+                       <value>http://localhost:8080/IDBUS</value>
+                    </list>
+                </property>
+            </agent:default-automaticlogin-strategy>
+        </automaticLoginStrategies>
+ </gen-svlt:agent>
+</s:beans>

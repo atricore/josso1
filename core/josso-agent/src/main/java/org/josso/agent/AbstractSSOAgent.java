@@ -32,6 +32,7 @@ import org.josso.gateway.session.service.SSOSessionManagerService;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,13 +63,15 @@ public abstract class AbstractSSOAgent implements SSOAgent {
      * The cache of SingleSignOnEntry instances for authenticated Principals,
      * keyed by the cookie value that is used to select them.
      */
-    protected final Map<String, SingleSignOnEntry> cache = new HashMap<String, SingleSignOnEntry>();
+    protected final Map<String, SingleSignOnEntry> cache =
+            Collections.synchronizedMap(new HashMap<String, SingleSignOnEntry>());
 
     /**
      * The cache of single sign on identifiers, keyed by the Session that is
      * associated with them.
      */
-    protected final Map<LocalSession, String> reverse = new HashMap<LocalSession, String>();
+    protected final Map<LocalSession, String> reverse =
+            Collections.synchronizedMap(new HashMap<LocalSession, String>());
 
     protected boolean started = false;
 

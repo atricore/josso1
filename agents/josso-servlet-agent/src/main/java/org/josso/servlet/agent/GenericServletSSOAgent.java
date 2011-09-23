@@ -25,6 +25,8 @@ package org.josso.servlet.agent;
 import java.security.Principal;
 
 import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +34,9 @@ import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.SingleSignOnEntry;
 import org.josso.agent.http.JOSSOSecurityContext;
 import org.josso.agent.http.JaasHttpSSOAgent;
+import org.josso.agent.http.SSOGatewayHandler;
 import org.josso.gateway.identity.SSORole;
+import org.josso.servlet.agent.jaas.SSOGatewayLoginModule;
 
 /**
  * This agent will authenticate users against JAAS Infrastructure directly.  It will look up for the "josso" login context.
@@ -56,6 +60,8 @@ import org.josso.gateway.identity.SSORole;
 public class GenericServletSSOAgent extends JaasHttpSSOAgent {
 
     private static final Log log = LogFactory.getLog(GenericServletSSOAgent.class);
+
+    private boolean _disableJaas = false;
 
     /**
      * This extension will delegate processing to super class and publish JOSSO Security Context
@@ -97,8 +103,30 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
     protected Principal authenticate(SSOAgentRequest request) {
 
     	String ssoSessionId = request.getSessionId();
-        
-        Principal ssoUser = super.authenticate(request);
+
+        Principal ssoUser = null;
+        if (_disableJaas) {
+            // DO NOT USE JAAS, just go locally
+            SSOGatewayLoginModule m = new SSOGatewayLoginModule ();
+            try {
+                Subject s = new Subject();
+                CallbackHandler ch  = new SSOGatewayHandler(request.getRequester(), ssoSessionId);
+                m.initialize(s, ch, null, null );
+                m.login();
+                m.commit();
+                JOSSOSecurityContext ctx = new JOSSOSecurityContext(s);
+                ssoUser = ctx.getCurrentPrincipal();
+
+            } catch (LoginException e) {
+                try { m.abort(); } catch (LoginException e1) { log.error(e1.getMessage(), e1); }
+                log.error(e.getMessage(), e);
+                return null;
+            }
+        } else {
+            // Delegate authentication to JAAS Agent
+            ssoUser = super.authenticate(request);
+        }
+
         if (ssoUser != null) {
         	Subject subject = new Subject();
         	subject.getPrincipals().add(ssoUser);
@@ -118,6 +146,14 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
     @Override
     protected boolean isAuthenticationAlwaysRequired() {
         return true;
+    }
+
+    public boolean isDisableJaas() {
+        return _disableJaas;
+    }
+
+    public void setDisableJaas(boolean disableJaas) {
+        _disableJaas = disableJaas;
     }
 
     protected void log(String message) {

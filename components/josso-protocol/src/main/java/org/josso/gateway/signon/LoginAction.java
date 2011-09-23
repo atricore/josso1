@@ -404,7 +404,8 @@ public abstract class LoginAction extends SignonBaseAction {
      */
     protected boolean canRelay(HttpServletRequest request) {
 
-        return SSOContext.getCurrent().getSession() != null;
+        SSOSession s = SSOContext.getCurrent().getSession();
+        return s!= null && s.isValid();
 
         /*
         boolean canRelay = false;

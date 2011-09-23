@@ -8,10 +8,6 @@
 #include "JOSSOIsapiAgent/util/simpleini/SimpleIni.h"
 #include "JOSSOIsapiAgent/util/StringUtil.hpp"
 
-#include "JOSSOIsapiAgent/agent/autologin/DefaultAutomaticLoginStrategy.hpp"
-#include "JOSSOIsapiAgent/agent/autologin/UrlBasedAutomaticLoginStrategy.hpp"
-#include "JOSSOIsapiAgent/agent/autologin/BotAutomaticLoginStrategy.hpp"
-
 #ifdef _DEBUG
 #define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #define new DEBUG_NEW
@@ -100,8 +96,8 @@ string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req) {
 		url.append("?");
 	else
 		url.append("&");
-	
-	url.append("josso_back_to=");
+
+	url.append("&josso_back_to=");
 
 	string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);
 	string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
@@ -112,6 +108,34 @@ string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req) {
 	url.append("%3Fjosso_security_check&amp;");
 	url.append("josso_partnerapp_host=");
 	url.append(host.c_str());
+
+	return url;
+
+}
+
+string IsapiSSOAgent::buildGwyLogoutUrl(SSOAgentRequest *req) {
+
+	string url (getGwyLogoutUrl());
+
+	if (url.find("?") == string::npos)
+		url.append("?");
+	else
+		url.append("&");
+
+	url.append("josso_back_to=");
+
+	string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);
+	string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
+
+	url.append(https == "on" || https == "ON" ? "https://" : "http://");
+	url.append(host);
+	
+	/*
+	url.append(getExtensionUri());
+	url.append("%3Fjosso_security_check&amp;");
+	url.append("josso_partnerapp_host=");
+	url.append(host.c_str());
+	*/
 
 	return url;
 
@@ -156,17 +180,37 @@ SSOAgentRequest *IsapiSSOAgent::initIsapiExtensionRequest(LPEXTENSION_CONTROL_BL
 }
 
 const char *IsapiSSOAgent::getRequester(SSOAgentRequest *req) {
+
 	string originalResource = req->getPath();
+
+	// Look for original resource as JOSSO_RESOURCE:
 	if (originalResource.empty() || !originalResource.find(this->getExtensionUri())) {
 		originalResource = req->getCookie("JOSSO_RESOURCE");
 		originalResource = StringUtil::decode64(originalResource);
 	}
+
+	// Look for original resource as JOSSO_SPLASH_RESOURCE:
+	if (originalResource.empty()) {
+		originalResource = req->getCookie("JOSSO_SPLASH_RESOURCE");
+		originalResource = StringUtil::decode64(originalResource);
+	}
+
+	jk_log(req->logger, JK_LOG_TRACE, "Looking application definition for [%s]", originalResource.c_str());
+
 	if (!originalResource.empty()) {
 		PartnerAppConfig *appCfg = getPartnerAppConfig(originalResource);
 		if (appCfg != NULL) {
+			jk_log(req->logger, JK_LOG_TRACE, "Found application definition %s for [%s]",
+				appCfg->getId(), originalResource.c_str());
+
 			return appCfg->getPartnerAppId();
+		} else {
+			jk_log(req->logger, JK_LOG_ERROR, "Cannot find application config for path [%s]", originalResource.c_str());
 		}
+	} else {
+		jk_log(req->logger, JK_LOG_ERROR, "Cannot find JOSSO_RESOURCE or JOSSO_SPLASH_RESOURCE, unable to determine Partner Application ID");
 	}
+	 
 	return NULL;
 }
 
@@ -222,91 +266,8 @@ bool IsapiSSOAgent::configureAgent(AgentConfig *config) {
     RegCloseKey(hkey);
 
 	// Now that we have done some initialization , call our parent class
-	AbstractSSOAgent::configureAgent(cfg);
+	ok = ok && AbstractSSOAgent::configureAgent(cfg);
     
-	// Load automatic login strategies
-	
-	bool a_bIsUtf8 = false;
-    bool a_bUseMultiKey = true;
-    bool a_bUseMultiLine = true;
-
-	// Agent config INI file
-	CSimpleIniA ini(a_bIsUtf8, a_bUseMultiKey, a_bUseMultiLine);
-	SI_Error rc2 = ini.LoadFile(cfg->agentConfigFile);
-	if (rc2 < 0) {
-		syslog(JK_LOG_ERROR_LEVEL, "Cannot read agent configuartion file %s", cfg->agentConfigFile);
-		return false;
-	}
-
-	CSimpleIniA::TNamesDepend sections;
-    ini.GetAllSections(sections);
-
-	CSimpleIniA::TNamesDepend::const_iterator i;
-    for (i = sections.begin(); i != sections.end(); ++i) {
-		
-		const char *section = i->pItem;
-
-		if (section != NULL &&
-			strlen(section) >= 24 &&
-			strncmp(section, "automatic-login-strategy", 24) == 0) {
-
-			const char *strategy = ini.GetValue(section, "strategy", NULL );
-			if (strategy == NULL) {
-				syslog(JK_LOG_DEBUG_LEVEL, "'strategy' not found in '%s' section", section);
-			}
-
-			const char *mode = ini.GetValue(section, "mode", NULL );
-			if (mode == NULL) {
-				syslog(JK_LOG_WARNING_LEVEL, "'mode' not found in '%s' section", section);
-			}
-
-			if (strategy != NULL && mode != NULL) {
-
-				if (!strcmp(strategy, JOSSO_DEFAULT_AUTH_LOGIN_STRATEGY)) {
-					DefaultAutomaticLoginStrategy *defaultStrategy = new DefaultAutomaticLoginStrategy(mode);
-					defaultStrategy->setSSOAgent(this);
-					const char *ignoredReferes = ini.GetValue(section, "ignored-referers", NULL );
-					if (ignoredReferes == NULL) {
-						syslog(JK_LOG_WARNING_LEVEL, "'ignored-referers' not found in '%s' section", section);
-					} else {
-						string referes (ignoredReferes);
-						StringUtil::tokenize(referes, defaultStrategy->ignoredReferers, ",");
-					}
-					this->automaticStrategies.push_back(defaultStrategy);
-				} else if (!strcmp(strategy, JOSSO_URLBASED_AUTH_LOGIN_STRATEGY)) {
-					const char *urlPatterns = ini.GetValue(section, "url-patterns", NULL );
-					if (urlPatterns == NULL) {
-						syslog(JK_LOG_WARNING_LEVEL, "'url-patterns' not found in '%s' section", section);
-					} else {
-						UrlBasedAutomaticLoginStrategy *urlBasedStrategy = new UrlBasedAutomaticLoginStrategy(mode);
-						urlBasedStrategy->setSSOAgent(this);
-						string patterns (urlPatterns);
-						StringUtil::tokenize(patterns, urlBasedStrategy->urlPatterns, ",");
-						this->automaticStrategies.push_back(urlBasedStrategy);
-					}
-				} else if (!strcmp(strategy, JOSSO_BOT_AUTH_LOGIN_STRATEGY)) {
-					const char *botsFile = ini.GetValue(section, "bots-file", NULL );
-					if (botsFile == NULL) {
-						syslog(JK_LOG_WARNING_LEVEL, "'bots-file' not found in '%s' section", section);
-					} else {
-						BotAutomaticLoginStrategy *botStrategy = new BotAutomaticLoginStrategy(mode);
-						botStrategy->setSSOAgent(this);
-						botStrategy->setBotsFile(botsFile);
-						this->automaticStrategies.push_back(botStrategy);
-					}
-				}
-
-			}
-
-		}
-    }
-
-	if (this->automaticStrategies.empty()) {
-		DefaultAutomaticLoginStrategy *defaultStrategy = new DefaultAutomaticLoginStrategy(JOSSO_AUTH_LOGIN_SUFFICIENT);
-		defaultStrategy->setSSOAgent(this);
-		this->automaticStrategies.push_back(defaultStrategy);
-	}
-
     return ok;
 }
 

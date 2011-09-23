@@ -358,7 +358,7 @@
 
     </platform>
 
-    <!-- Liferay "platform"  -->
+    <!-- Liferay 5 "platform"  -->
     <liferay-installer id="liferay-installer">
         <s:constructor-arg ref="liferay"/>
         <s:property name="printer" ref="messagePrinter"/>
@@ -369,6 +369,17 @@
         <conf>${target}/WEB-INF/classes</conf>
     </platform>
 
+
+    <!-- Liferay 6 "platform -->
+    <liferay6-installer id="liferay6-installer">
+        <s:constructor-arg ref="liferay6"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </liferay6-installer>
+
+    <platform id="liferay6" family="jee" platformName="Liferay6" version="6.0.6">
+        <lib>${target}/WEB-INF/lib</lib>
+        <conf>${target}/WEB-INF/classes</conf>
+    </platform>
 
     <!-- Alfresco "platform"  -->
     <alfresco-installer id="alfresco-installer">

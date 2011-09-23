@@ -27,6 +27,14 @@ public:
 
 	string getQueryString();
 
+	string getContentType();
+
+	DWORD getBodySize();
+
+	LPBYTE getBody();
+
+	string getMethod();
+
 	string getServerVariable(string name, DWORD cbSize);
 
 	bool exportSecurityContext(JOSSOSecurityContext & ctx);

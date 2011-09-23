@@ -9,6 +9,10 @@
 #include "JOSSOIsapiAgent/agent/wsclient/soapSSOIdentityManagerSOAPBindingProxy.h"
 #include "JOSSOIsapiAgent/agent/wsclient/soapSSOSessionManagerSOAPBindingProxy.h"
 
+#include "JOSSOIsapiAgent/agent/autologin/DefaultAutomaticLoginStrategy.hpp"
+#include "JOSSOIsapiAgent/agent/autologin/UrlBasedAutomaticLoginStrategy.hpp"
+#include "JOSSOIsapiAgent/agent/autologin/BotAutomaticLoginStrategy.hpp"
+
 #include "JOSSOIsapiAgent/util/simpleini/SimpleIni.h"
 #include "JOSSOIsapiAgent/util/StringUtil.hpp"
 
@@ -200,6 +204,15 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 		syslog(JK_LOG_ERROR_LEVEL, "'gatewayLoginUrl' not found in configuration 'agent' section");
 	}
 
+	// Gateway logout URL
+	const char *gwyLogoutUrl = ini.GetValue("agent", "gatewayLogoutUrl", NULL );
+	if (gwyLogoutUrl != NULL) {
+		StringCbCopy(cfg->gatewayLogoutUrl, INTERNET_MAX_URL_LENGTH, gwyLogoutUrl);
+	} else {
+		ok = false;
+		syslog(JK_LOG_ERROR_LEVEL, "'gatewayLogoutUrl' not found in configuration 'agent' section");
+	}
+
 	// SSOSessionManager service path
 	const char *sessionManagerServicePath = ini.GetValue("agent", "sessionManagerServicePath", DEFAULT_SESSION_MANAGER_SERVICE_PATH );
 	if (sessionManagerServicePath != NULL) {
@@ -333,10 +346,78 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 
 				cfg->secConstraints.push_back(*secCfg);
 			}
+		} else if (section != NULL &&
+			strlen(section) >= 24 &&
+			strncmp(section, "automatic-login-strategy", 24) == 0) {
 
+		    // Get strategy
+			const char *strategy = ini.GetValue(section, "strategy", NULL );
+			if (strategy == NULL) {
+				syslog(JK_LOG_WARNING_LEVEL, "'strategy' not found in '%s' section", section);
+			} else {
+				syslog(JK_LOG_DEBUG_LEVEL, "'strategy' %s found in '%s' section", strategy, section);
+			}
 
+			// Get Mode
+			const char *mode = ini.GetValue(section, "mode", NULL );
+			if (mode == NULL) {
+				syslog(JK_LOG_WARNING_LEVEL, "'mode' not found in '%s' section", section);
+			} else {
+				syslog(JK_LOG_DEBUG_LEVEL, "'mode' %s found in '%s' section", mode, section);
+			}
+
+			// Build specific strategy
+			if (strategy != NULL && mode != NULL) {
+
+				if (strcmp(strategy, JOSSO_DEFAULT_AUTH_LOGIN_STRATEGY) == 0) {
+
+					DefaultAutomaticLoginStrategy *defaultStrategy = new DefaultAutomaticLoginStrategy(mode);
+					defaultStrategy->setSSOAgent(this);
+					const char *ignoredReferes = ini.GetValue(section, "ignored-referers", NULL );
+					if (ignoredReferes == NULL) {
+						syslog(JK_LOG_WARNING_LEVEL, "'ignored-referers' not found in '%s' section", section);
+					} else {
+						string referes (ignoredReferes);
+						// Add strategy to list
+						StringUtil::tokenize(referes, defaultStrategy->ignoredReferers, ",");
+						syslog(JK_LOG_DEBUG_LEVEL, "'ignored-referers' %s", referes);
+					}
+					
+					this->automaticStrategies.push_back(defaultStrategy);
+				} else if (strcmp(strategy, JOSSO_URLBASED_AUTH_LOGIN_STRATEGY) == 0) {
+					const char *urlPatterns = ini.GetValue(section, "url-patterns", NULL );
+					if (urlPatterns == NULL) {
+						syslog(JK_LOG_WARNING_LEVEL, "'url-patterns' not found in '%s' section", section);
+					} else {
+						UrlBasedAutomaticLoginStrategy *urlBasedStrategy = new UrlBasedAutomaticLoginStrategy(mode);
+						urlBasedStrategy->setSSOAgent(this);
+						string patterns (urlPatterns);
+						StringUtil::tokenize(patterns, urlBasedStrategy->urlPatterns, ",");
+						// Add strategy to list
+						this->automaticStrategies.push_back(urlBasedStrategy);
+						syslog(JK_LOG_DEBUG_LEVEL, "'url-patterns' %s", urlPatterns);
+					}
+				} else if (strcmp(strategy, JOSSO_BOT_AUTH_LOGIN_STRATEGY) == 0) {
+					const char *botsFile = ini.GetValue(section, "bots-file", NULL );
+					if (botsFile == NULL) {
+						syslog(JK_LOG_WARNING_LEVEL, "'bots-file' not found in '%s' section", section);
+					} else {
+						BotAutomaticLoginStrategy *botStrategy = new BotAutomaticLoginStrategy(mode);
+						botStrategy->setSSOAgent(this);
+						botStrategy->setBotsFile(botsFile);
+						// Add strategy to list
+						this->automaticStrategies.push_back(botStrategy);
+						syslog(JK_LOG_DEBUG_LEVEL, "'bots-file' %s", botsFile);
+					}
+				}
+			}
 		}
     }
+
+	if (this->automaticStrategies.empty()) {
+		syslog(JK_LOG_ERROR_LEVEL, "No automatic login strategy defined, verify your agent configuration. JOSSO Isapi Agent not started");
+		return false;
+	}
 
 	return true;
 
@@ -390,9 +471,12 @@ bool AbstractSSOAgent::createSecurityContext(SSOAgentRequest *req) {
 
 	string ssoSession = req->getCookie("JOSSO_SESSIONID");
 	string originalResource = req->getCookie("JOSSO_RESOURCE");
+	string plainTextOriginalResource;
 
-	string plainTextOriginalResource = StringUtil::decode64(originalResource);
-	
+	if (!originalResource.empty()) {
+		plainTextOriginalResource = StringUtil::decode64(originalResource);
+	}
+
 	bool ok = true;
 
 	if (!ssoSession.empty() && ssoSession.compare("-") != 0) {
@@ -594,6 +678,7 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 			svc.ssl_flags = svc.ssl_flags | SOAP_SSL_ALLOW_EXPIRED_CERTIFICATE;
 		}
 	}
+
 	svc.userid = agentConfig->userId;
 	svc.password = agentConfig->password;
 	svc.passwd = agentConfig->password;
@@ -765,6 +850,7 @@ bool AbstractSSOAgent::isAutomaticLoginRequired(SSOAgentRequest *req, SSOAgentRe
 		if (!strcmp((*as)->getMode(), JOSSO_AUTH_LOGIN_SUFFICIENT)) {
 
             if ((*as)->isAutomaticLoginRequired(req, res)) {
+				// Sufficient module returned true, stop!
                 sufficientFlag = true;
 				sufficientFlagSet = true;
                 break; // Stop evaluation
@@ -774,8 +860,10 @@ bool AbstractSSOAgent::isAutomaticLoginRequired(SSOAgentRequest *req, SSOAgentRe
         if (!strcmp((*as)->getMode(), JOSSO_AUTH_LOGIN_REQUIRED)) {
 
             if (!(*as)->isAutomaticLoginRequired(req, res)) {
+				// Required module returned false, stop!
                 requiredFlag = false;
 				requiredFlagSet = true;
+				break; // Stop evaluation
             } else if (!requiredFlagSet) {
 			    requiredFlag = true;
 				requiredFlagSet = true;
@@ -851,7 +939,6 @@ SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const st
 			size_t pos = p.find(b);
 
 			jk_log(logger, JK_LOG_DEBUG, "Matching path %s against security constraint URI %s", path.c_str(), b.c_str());
-
 
 			if ( match(p, b) == true ) {
 					cfg = &(*sec);

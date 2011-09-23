@@ -9,7 +9,9 @@
 #include <string>
 
 using namespace std;
-
+/**
+ * Trigger automatic login unless the requested URI matches some of the configured url patterns
+ */
 class UrlBasedAutomaticLoginStrategy : public AbstractAutomaticLoginStrategy {
 public:
 
@@ -25,7 +27,7 @@ protected:
 
 	vector<string> urlPatterns;
 
-	friend class IsapiSSOAgent;
+	friend class AbstractSSOAgent;
 };
 
 #endif

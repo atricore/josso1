@@ -159,12 +159,22 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 			
 		}
 
-		// Check for automatic Login
-		if (!req->isAuthenticated()) {
+		bool isAuthenticated = req->isAuthenticated();
+		bool isAuthorized = ssoAgent->isAuthorized(req);
 
-			if (ssoAgent->isAutomaticLoginRequired(req, res)) {
-				ssoAgent->requestLogin(req, res, appCfg, true);
-				rc = SF_STATUS_REQ_FINISHED;
+		// Check for automatic Login
+		if (!isAuthenticated) {
+
+			// Only trigger automatic login if resource is public, otherwise a full login will be triggered later.
+			if (isAuthorized) {
+
+				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Request is authorized, but not authenticated, check automatic login [%s]", path.c_str());
+
+				if (ssoAgent->isAutomaticLoginRequired(req, res)) {
+					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Automatic login started[%s]", path.c_str());
+					ssoAgent->requestLogin(req, res, appCfg, true);
+					rc = SF_STATUS_REQ_FINISHED;
+				}
 			}
 
 		} else {
@@ -183,7 +193,7 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 
 		// Check for security constraints
-		if (!ssoAgent->isAuthorized(req)) {
+		if (!isAuthorized) {
 
 			if (req->getRemoteUser().empty()) {
 				// User is not authorized to access this resource, but was not authenticated yet -> ask for login
@@ -301,7 +311,6 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_login' || 'josso_login_optional' Received, optional %d", !pJossoLoginOptional.empty());
 			
-			// TODO : Support the 'back_to' request parameter and store it as a COOKIE: JOSSO_RESOURCE, base64 encoded
 			string backTo = req->getParameter("back_to");
 			if (!backTo.empty()) {
 				string encodedPath = StringUtil::encode64(backTo);
@@ -317,6 +326,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				gwyLoginUrl.append("&josso_cmd=login_optional");
 			}
 
+			// Since the URL is for JOSSO Extension, we need the app. id as parameter
 			string pJossoAppId = req->getParameter("josso_partnerapp_id");
 			if (!pJossoAppId.empty()) {
 				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application ID %s", pJossoAppId.c_str());
@@ -332,47 +342,153 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 		// check for 'josso_logout'
 		string pJossoLogout = req->getParameter("josso_logout");
 		if (!pJossoLogout.empty()) {
-			// TODO
+			
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_logout' received");
 
-			jk_log(ssoAgent->logger, JK_LOG_WARNING, "'josso_logout' NOT Supported yet!");
-		}		
+			string gwyLogoutUrl (ssoAgent->buildGwyLogoutUrl(req));
+
+			// Since the URL is for JOSSO Extension, we need the app. id as parameter
+			string pJossoAppId = req->getParameter("josso_partnerapp_id");
+			if (!pJossoAppId.empty()) {
+				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application ID %s", pJossoAppId.c_str());
+				gwyLogoutUrl.append("&josso_partnerapp_id=");
+				gwyLogoutUrl.append(pJossoAppId.c_str());
+			}
+
+			if (!res->sendRedirect(gwyLogoutUrl.c_str()))
+				rv = HSE_STATUS_ERROR;
+		}
+
+		// check for 'josso_authentication' (could be a POST !)
+		string pJossoAuthentication = req->getParameter("josso_authentication");
+		if (!pJossoAuthentication.empty()) {
+
+			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_authentication' received");
+
+			string splashResource = req->getParameter("josso_splash_resource");
+
+			splashResource = req->URLdecode(splashResource);
+			if (!splashResource.empty()) {
+				string encodedSplashResource = StringUtil::encode64(splashResource);
+
+				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Splash resource %s (encoded %s)", splashResource.c_str(), encodedSplashResource.c_str());
+				res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/");
+			}
+
+			// Since the URL is for JOSSO Extension, we need the app. id as parameter
+			string pJossoAppId = req->getParameter("josso_partnerapp_id");
+			string pJossoUsername = req->getParameter("josso_username");
+			string pJossoPassword = req->getParameter("josso_password");
+			string gwyLoginUrl (ssoAgent->getGwyLoginUrl());
+
+			if (pJossoUsername.empty()) {
+				jk_log(ssoAgent->logger, JK_LOG_ERROR, "No username received as 'josso_username'");
+			}
+
+			if (pJossoPassword.empty()) {
+				jk_log(ssoAgent->logger, JK_LOG_ERROR, "No password received as 'josso_password'");
+			}
+
+			// TODO : Support back to URL (for JOSSO 1.x GWY)
+		    // Build output
+
+			// Form header and action
+			string authnForm = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" 
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n" 
+                "\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n" 
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\">\n" 
+                "<body onload=\"document.forms[0].submit()\">\n" 
+                "<noscript>\n"
+				"<p>\n"
+				"<strong>Note:</strong> Since your browser does not support JavaScript,\n"
+                "you must press the Continue button once to proceed.\n"
+				"</p>\n"
+				"</noscript>\n"
+				"<form action=\"";
+			authnForm.append(gwyLoginUrl.c_str());
+			authnForm.append("\" method=\"post\" name=\"usernamePasswordLoginForm\" enctype=\"application/x-www-form-urlencoded\">\n"
+                "        <div>");
+
+			// Command
+			authnForm.append(
+				"              <input type=\"hidden\" value=\"login\" name=\"josso_command\" />\n");
+
+			// Partnerapp id
+			authnForm.append(
+				"              <input type=\"hidden\" value=\"");
+		    authnForm.append(pJossoAppId);
+			authnForm.append("\" name=\"josso_partnerapp_id\" />\n"
+				"\n");
+
+			// Username
+			authnForm.append(
+				"              <input type=\"hidden\" value=\"");
+		    authnForm.append(pJossoUsername);
+			authnForm.append("\" name=\"josso_username\" />\n"
+				"\n");
+			// Password
+			authnForm.append(
+				"              <input type=\"hidden\" value=\"");
+		    authnForm.append(pJossoPassword);
+			authnForm.append("\" name=\"josso_password\" />\n"
+				"\n");
+
+			// Submit and end of form
+			authnForm.append(
+				"              <noscript><input type=\"submit\" value=\"Continue\"/></noscript>\n"
+                "        </div>\n"
+                "</form>\n"
+                "</body>\n"
+                "</html>");
+
+			// Write output and return
+			if (res->sendContent(authnForm)) {
+				rv = HSE_STATUS_SUCCESS;
+			} else {
+				rv = HSE_STATUS_ERROR;
+			}
+
+		}
 
 		// check for 'josso_security_check'
 		string pJossoSecurityCheck = req->getParameter("josso_security_check");
 		if (!pJossoSecurityCheck.empty()) {
 
+			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_security_check' received ... ");			
+
 			string assertionId = req->getParameter("josso_assertion_id");
 			string ssoSessionId;
 
-			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_security_check' received, processing assertion %s", assertionId.c_str());
-
+			// Get requested original resource, if any
+			
+			string originalResource = req->getCookie("JOSSO_RESOURCE");
+			originalResource = StringUtil::decode64(originalResource);
+			
+			// Check if we have an assertion ID
+			
 			if (assertionId.empty()) {
-
+				jk_log(ssoAgent->logger, JK_LOG_TRACE, "'josso_security_check' without assertion (probably failed automatic login)");
 				// This is probably a failed automatic login, go back to orignal resource.
-				string originalResource = req->getCookie("JOSSO_RESOURCE");
-
-				originalResource = StringUtil::decode64(originalResource);
-
-				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Decoded PATH %s", originalResource.c_str());
 
 				if (!originalResource.empty()) {
 					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to %s", originalResource.c_str());
 					res->sendRedirect(originalResource);
 				} else {
-					jk_log(ssoAgent->logger, JK_LOG_ERROR, "No original resource received! : %s", originalResource.c_str());
+					jk_log(ssoAgent->logger, JK_LOG_ERROR, "No original resource received as COOKIE JOSSO_RESOURCE! ");
 					rv = HSE_STATUS_ERROR;
 				}
 
 			} else {
+				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_security_check' received, resolving assertion %s", assertionId.c_str());
 
 				if (!ssoAgent->resolveAssertion(assertionId, ssoSessionId, req)) {
 					jk_log(ssoAgent->logger, JK_LOG_ERROR, "Cannot resolve assertion %s", assertionId.c_str());
 					rv = HSE_STATUS_ERROR;
 				} else {
 
-					// Create JOSSO SESSION ID Cookie
+					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Resolved assertion [%s] as SSO Session [%s]", assertionId.c_str(), ssoSessionId.c_str());
 
+					// Create JOSSO SESSION ID Cookie
 					string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
 					bool secure = false;
 					if(https == "on" || https == "ON") secure = true;
@@ -380,32 +496,23 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/", secure);
 					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/"); // Clean stored referer
 
-					string originalResource = req->getCookie("JOSSO_RESOURCE");
+					// Retrieve and decode splash resource
 					string splashResource = req->getCookie("JOSSO_SPLASH_RESOURCE");
-
-					originalResource = StringUtil::decode64(originalResource);
 					splashResource = StringUtil::decode64(splashResource);
 
-					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Decoded PATH %s", originalResource.c_str());
-					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Decoded Splash Resource %s", splashResource.c_str());
-
-					if (!originalResource.empty()) {
-						if (!splashResource.empty()) {
-							jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to splash resource %s", splashResource.c_str());
-							res->sendRedirect(splashResource);
-						} else {
-							jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to %s", originalResource.c_str());
-							res->sendRedirect(originalResource);
-						}
+					if (!splashResource.empty()) {
+						jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to JOSSO_SPLASH_RESOURCE [%s]", splashResource.c_str());
+						res->sendRedirect(splashResource);
+					} else if (!originalResource.empty()) {
+						jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to JOSSO_RESOURCE [%s]", originalResource.c_str());
+						res->sendRedirect(originalResource);
 					} else {
-						jk_log(ssoAgent->logger, JK_LOG_ERROR, "No original resource received! : %s", originalResource.c_str());
+						jk_log(ssoAgent->logger, JK_LOG_ERROR, "No JOSSO_RESOURCE or JOSSO_SPLASH_RESOURCE received!");
 						rv = HSE_STATUS_ERROR;
 					}
 				}
 			}
 		}
-
-		// check for 'josso_auto_login'
 
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Processed request for URI %s", path.c_str());
 
@@ -458,3 +565,4 @@ BOOL WINAPI DllMain(HINSTANCE hInst,    // Instance Handle of the DLL
 
     return fReturn;
 }
+

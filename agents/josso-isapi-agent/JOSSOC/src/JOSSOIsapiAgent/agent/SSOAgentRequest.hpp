@@ -31,6 +31,14 @@ public:
 
 	virtual string getParameter(string name);
 
+	virtual string getMethod() =0;
+
+	virtual string getContentType() =0;
+
+	virtual DWORD getBodySize() =0;
+
+	virtual LPBYTE getBody() =0;
+
 	virtual bool isUserInRole(string roleName);
 
 	virtual bool isAuthenticated();
@@ -42,6 +50,12 @@ public:
 	virtual bool exportSecurityContext(JOSSOSecurityContext & ctx) = 0;
 
 	static const string EMPTY_PARAM;
+
+	static const string EMPTY_STR;
+
+	std::string URLdecode(const std::string& l);
+
+
 	
 
 protected:
@@ -54,11 +68,14 @@ protected:
 
 	map<string, string> cookies;
 
-	bool parseQueryString(string qryStr);
-
 	JOSSOSecurityContext secCtx;
 
-friend class AbstractSSOAgent;
+	bool parseQueryString(string qryStr);
+
+	bool parsePostData(LPBYTE body, DWORD bodySize, string contentType);
+
+	friend class AbstractSSOAgent;
+	friend class IsapiSSOAgent;
 
 };
 

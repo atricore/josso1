@@ -1032,6 +1032,12 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-liferay6-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-alfresco-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>

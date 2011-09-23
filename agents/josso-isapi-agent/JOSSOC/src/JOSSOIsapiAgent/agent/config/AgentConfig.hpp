@@ -19,6 +19,8 @@ public:
 
 	char* getGatewayLoginUrl() { return gatewayLoginUrl; }
 
+	char* getGatewayLogoutUrl() { return gatewayLogoutUrl; }
+
 	char* getGatewayEndpoint() { return gatewayEndpoint; }
 	
 	char* getSessionManagerServicePath() { return sessionManagerServicePath; }
@@ -52,6 +54,8 @@ protected:
 	char agentConfigFile[MAX_PATH + 2];
 
 	char gatewayLoginUrl[INTERNET_MAX_URL_LENGTH];
+
+	char gatewayLogoutUrl[INTERNET_MAX_URL_LENGTH];
 
 	char gatewayEndpoint[INTERNET_MAX_URL_LENGTH];
 

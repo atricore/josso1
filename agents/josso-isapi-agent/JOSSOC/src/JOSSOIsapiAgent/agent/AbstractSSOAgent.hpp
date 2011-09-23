@@ -69,6 +69,12 @@ public:
 	char *getGwyLoginUrl() { return this->agentConfig->getGatewayLoginUrl(); }
 
 	/**
+	 * JOSSO Gateway logout URL
+	 */
+	char *getGwyLogoutUrl() { return this->agentConfig->getGatewayLogoutUrl(); }
+
+
+	/**
 	 * Session access min interval
 	 */
 	long getSessionAccessMinInterval() { return this->agentConfig->getSessionAccessMinInterval(); }
@@ -138,6 +144,11 @@ public:
 	bool match(const string &source, const string &regex);
 
 	bool isAutomaticLoginRequired(SSOAgentRequest *req, SSOAgentResponse *res);
+
+	/** 
+	 * The URI where the agent listens for SSO requests
+	 */
+	virtual char * getExtensionUri() =0;
 
 protected:
 

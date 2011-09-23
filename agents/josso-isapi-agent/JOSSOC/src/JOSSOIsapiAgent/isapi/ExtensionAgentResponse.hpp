@@ -29,11 +29,13 @@ public:
 
 	string getServerVariable(string name, DWORD cbSize);
 
+	bool sendContent(string content);
+
 protected:
 
 	bool startResponse(int status, string reason, list<pair<string, string>> headers);
 
-	bool writeContent(char * content, size_t length);
+	bool writeContent(const char * content, size_t length);
 
 
 private:

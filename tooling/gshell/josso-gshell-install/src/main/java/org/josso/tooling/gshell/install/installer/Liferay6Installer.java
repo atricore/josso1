@@ -5,6 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
+import org.apache.geronimo.gshell.branding.VersionLoader;
+import org.apache.geronimo.gshell.command.annotation.Requirement;
 import org.josso.tooling.gshell.install.JOSSOArtifact;
 import org.josso.tooling.gshell.install.TargetPlatform;
 import org.josso.tooling.gshell.install.util.XUpdateUtil;
@@ -31,6 +33,7 @@ import java.io.*;
 public class Liferay6Installer extends VFSInstaller {
 
     private static final Log log = LogFactory.getLog(Liferay6Installer.class);
+
 
     public Liferay6Installer(TargetPlatform targetPlatform) {
         super(targetPlatform);
@@ -262,6 +265,53 @@ public class Liferay6Installer extends VFSInstaller {
     }
 
 
+    @Override
+    public boolean updateAgentConfiguration(String idpHostName, String idpPort, String idpType) {
+        boolean updated;
+
+        updated = super.updateAgentConfiguration(idpHostName, idpPort, idpType);    //To change body of overridden methods use File | Settings | File Templates.
+
+        try {
+            log.debug("targetJOSSOConfDir = " + targetJOSSOConfDir);
+            FileObject agentConfigFile = targetJOSSOConfDir.resolveFile("josso-agent-config.xml");
+            if (agentConfigFile.exists()) {
+                // Get a DOM document of the josso-agent-config.xml
+                Node configXmlDom = readContentAsDom(agentConfigFile);
+
+
+                String updateSchemaLocations =
+                    "<xupdate:update select=\"//@xsi:schemaLocation\">" +
+                            "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd " +
+                            "        urn:org:josso:agent:liferay6 jar:" + targetLibDir + "/josso-liferay6-agent-" + getProperty("version") + ".jar!/josso-liferay6-agent.xsd" +
+                            "        urn:org:josso:protocol:client jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + ".jar!/josso-protocol-client.xsd " +
+                            "        urn:org:josso:agent:core jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + ".jar!/josso-agent.xsd" +
+                            "" +
+                    "</xupdate:update>";
+
+                String updateSchemaLocationQryStr = XUpdateUtil.XUPDATE_START + updateSchemaLocations + XUpdateUtil.XUPDATE_END;
+                log.debug("XUPDATE QUERY: \n" +updateSchemaLocationQryStr);
+
+                XUpdateQuery updateSchemaLocationQry = new XUpdateQueryImpl();
+                updateSchemaLocationQry.setQString(updateSchemaLocationQryStr);
+                updateSchemaLocationQry.execute(configXmlDom);
+
+                getPrinter().printActionOkStatus("Configure","Schema Locations", "");
+
+                // Write modifications to file
+                writeContentFromDom(configXmlDom, agentConfigFile);
+                getPrinter().printActionOkStatus("Save", agentConfigFile.getName().getBaseName(), agentConfigFile.getName().getFriendlyURI());
+
+
+            }
+        } catch (Exception e) {
+            log.error("Error injecting schema locations to agent configuration", e);
+            getPrinter().printErrStatus("UpdateAgentConfiguration", e.getMessage());
+            updated = false;
+        }
+
+        return updated;
+    }
+
     protected boolean configureJaasModule() {
         String tcInstallDir = getProperty("tomcatInstallDir");
         String jbInstallDir = getProperty("jbossInstallDir");
@@ -381,4 +431,6 @@ public class Liferay6Installer extends VFSInstaller {
         }
 
     }
+
+
 }

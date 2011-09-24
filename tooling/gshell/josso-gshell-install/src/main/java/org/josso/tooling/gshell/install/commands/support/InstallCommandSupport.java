@@ -168,6 +168,9 @@ public abstract class InstallCommandSupport extends JOSSOCommandSupport {
                     if (target != null)
                         installer.setProperty("target", target);
 
+                    if (versionLoader != null)
+                        installer.setProperty("version", versionLoader.getVersion());
+
                     if (tomcatInstallDir != null) {
                         log.debug("Using 'tomcatInstallDir' " + tomcatInstallDir);
                         installer.setProperty("tomcatInstallDir", tomcatInstallDir);

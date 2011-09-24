@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
- 
-<s:beans xmlns:s="http://www.springframework.org/schema/beans"
- xmlns:gen-svlt="urn:org:josso:agent:generic-servlet"
- xmlns:agent="urn:org:josso:agent:core"
- xmlns:protocol="urn:org:josso:protocol:client"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-        urn:org:josso:agent:generic-servlet file:///tmp/josso-servlet-agent.xsd
-        urn:org:josso:protocol:client file:///tmp/josso-protocol-client.xsd
-        urn:org:josso:agent:core file:///tmp/josso-agent.xsd
 
-">
-<gen-svlt:agent sessionAccessMinInterval="1000"
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns:liferay6="urn:org:josso:agent:liferay6"
+         xmlns:agent="urn:org:josso:agent:core"
+         xmlns:protocol="urn:org:josso:protocol:client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        >
+<liferay6:agent sessionAccessMinInterval="1000"
         gatewayLoginUrl="http://localhost:8090/josso/signon/login.do"
         gatewayLogoutUrl="http://localhost:8090/josso/signon/logout.do">
  
-    <gen-svlt:automaticLoginStrategies>
+    <liferay6:automaticLoginStrategies>
         <agent:default-automaticlogin-strategy mode="REQUIRED">
             <!--
             <property name="ignoredReferrers">
@@ -25,24 +20,25 @@
             </property>
             -->
         </agent:default-automaticlogin-strategy>
-    </gen-svlt:automaticLoginStrategies>
+    </liferay6:automaticLoginStrategies>
 
-    <gen-svlt:configuration>
+
+    <liferay6:configuration>
         <agent:agent-configuration>
             <agent:partner-apps>
                  <agent:partner-app id="Liferay" context="/">
                  </agent:partner-app>
             </agent:partner-apps>
          </agent:agent-configuration>
-      </gen-svlt:configuration>
+      </liferay6:configuration>
 
-    <gen-svlt:gatewayServiceLocator>
+    <liferay6:gatewayServiceLocator>
             <protocol:ws-service-locator endpoint="localhost:8090"/>
-    </gen-svlt:gatewayServiceLocator>
+    </liferay6:gatewayServiceLocator>
 
-     <gen-svlt:parametersBuilders>
+     <liferay6:parametersBuilders>
          <agent:vhost-parameters-builder/>
          <agent:appctx-parameters-builder/>
-     </gen-svlt:parametersBuilders>
- </gen-svlt:agent>
+     </liferay6:parametersBuilders>
+ </liferay6:agent>
 </s:beans>

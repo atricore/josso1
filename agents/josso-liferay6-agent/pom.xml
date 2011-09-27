@@ -32,13 +32,13 @@
         <version>1.8.6-SNAPSHOT</version>
     </parent>
 
-    <artifactId>josso-liferay-agent</artifactId>
+    <artifactId>josso-liferay6-agent</artifactId>
     <packaging>jar</packaging>
-    <name>JOSSO :: Liferay Agent</name>
-    <description>Liferay Agent</description>
+    <name>JOSSO :: Liferay Portal 6 Agent</name>
+    <description>Liferay Portal 6 Agent</description>
 
     <properties>
-        <liferay-version>5.2</liferay-version>
+        <liferay-version>6.0.6</liferay-version>
     </properties>
 
     <dependencies>
@@ -83,13 +83,6 @@
 
         <dependency>
             <groupId>com.liferay</groupId>
-            <artifactId>portal-kernel</artifactId>
-            <version>${liferay-version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.liferay</groupId>
             <artifactId>util-java</artifactId>
             <version>${liferay-version}</version>
             <scope>provided</scope>
@@ -121,7 +114,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <namespace>urn:org:josso:agent:liferay</namespace>
+                            <namespace>urn:org:josso:agent:liferay6</namespace>
                         </configuration>
                         <goals>
                             <goal>mapping</goal>
@@ -129,8 +122,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-
 </project>

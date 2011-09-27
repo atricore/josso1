@@ -121,7 +121,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <namespace>urn:org:josso:agent:generic-servlet</namespace>
+                            <namespace>urn:org:josso:agent:liferay</namespace>
                         </configuration>
                         <goals>
                             <goal>mapping</goal>

@@ -1,6 +1,7 @@
 #ifndef PARTNER_APP_CONFIG
 #define PARTNER_APP_CONFIG
 
+#include <vector>
 #include <string>
 
 using namespace std;
@@ -24,6 +25,7 @@ public:
 protected:
 	string id;
 	string baseUri;
+	vector<string> ignoredUris;
 	string splashResource;
 	string partnerAppId;
 

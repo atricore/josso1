@@ -26,8 +26,30 @@ bool ExtensionAgentResponse::flushHeaders() {
 	return false;
 }
 
-bool ExtensionAgentResponse::writeContent(char * content, size_t length) {
-	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+bool ExtensionAgentResponse::sendContent(string content) {
+	if (!addHeader("Content-Type", "text/html")) return false;
+	if (!addHeader("Cache-Control", "no-cache")) return false;
+	if (!addHeader("Pragma", "no-cache")) return false;
+	if (!addHeader("Expires", "0")) return false;
+
+	if (!startResponse(HTTP_STATUS_OK, "success", headers))
+		return false;
+
+	return writeContent(content.c_str(), content.size());
+}
+
+bool ExtensionAgentResponse::writeContent(const char * content, size_t length) {
+	jk_log(logger, JK_LOG_TRACE, "CONTENT [%d]\r\n%s\r\n", length, content);
+
+	DWORD size = length;
+	if (lpEcb->WriteClient(lpEcb->ConnID, (LPVOID) content, &size, HSE_IO_SYNC)) {
+		jk_log(logger, JK_LOG_TRACE, "WriteClient ... OK");
+		return true;
+	}
+
+	DWORD dwError;
+	dwError = GetLastError();
+	jk_log(logger, JK_LOG_ERROR, "WriteClient function failed = %d (%x)", dwError, dwError);
 	return false;
 }
 

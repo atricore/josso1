@@ -3,7 +3,7 @@
 #include <iostream>
 #include <crtdbg.h>
 
-#include <JOSSOIsapiAgent/isapi/IsapiSSOAgent.hpp>
+#include <JOSSOIsapiAgent/agent/AbstractSSOAgent.hpp>
 
 #ifdef _DEBUG
 #define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
@@ -18,10 +18,10 @@ void AbstractAutomaticLoginStrategy::setMode(const string &mode) {
 	this->mode.assign(mode);
 }
 
-IsapiSSOAgent * AbstractAutomaticLoginStrategy::getSSOAgent() {
+AbstractSSOAgent * AbstractAutomaticLoginStrategy::getSSOAgent() {
 	return ssoAgent;
 }
 
-void AbstractAutomaticLoginStrategy::setSSOAgent(IsapiSSOAgent *ssoAgent) {
+void AbstractAutomaticLoginStrategy::setSSOAgent(AbstractSSOAgent *ssoAgent) {
 	this->ssoAgent = ssoAgent;
 }

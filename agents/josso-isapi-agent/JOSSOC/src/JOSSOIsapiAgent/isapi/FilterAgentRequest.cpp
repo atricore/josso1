@@ -72,10 +72,36 @@ bool FilterAgentRequest::exportSecurityContext(JOSSOSecurityContext & ctx) {
 
 }
 
+string FilterAgentRequest::getMethod() {
+	return getHeader("METHOD");
+}
+
+
 string FilterAgentRequest::getQueryString() {
 	// TODO : Implement me!
 	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
 	return "";
+}
+
+string FilterAgentRequest::getContentType() {
+	// TODO : Implement me!
+	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	return "";
+}
+
+
+
+DWORD FilterAgentRequest::getBodySize() {
+	// TODO : Implement me!
+	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	return 0;
+}
+
+
+LPBYTE FilterAgentRequest::getBody() {
+	// TODO : Implement me!
+	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	return NULL;
 }
 
 bool FilterAgentRequest::setHeader(string name, string value) {

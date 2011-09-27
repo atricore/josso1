@@ -112,6 +112,8 @@ bool:: SSOAgentResponse::sendStatus(int status, string reason) {
 	return  writeContent(body, c.size()); */
 }
 
+
+
 bool SSOAgentResponse::addHeader(string name, string value) {
 
 	if (isCommitted()) {

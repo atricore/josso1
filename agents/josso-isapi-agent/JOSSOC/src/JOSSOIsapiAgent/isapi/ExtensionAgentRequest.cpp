@@ -25,13 +25,15 @@ ExtensionAgentRequest::~ExtensionAgentRequest() {
 bool ExtensionAgentRequest::exportSecurityContext(JOSSOSecurityContext & ctx) {
 	bool ok = true;
 
-	// TODO !!! Is this reuired ?
+	// TODO !!! Is this reuired for our own app?
 	jk_log(logger, JK_LOG_DEBUG, "TODO : IMPLEMENT ME!");
 
 	return ok;
 }
 
-
+string ExtensionAgentRequest::getMethod() {
+	return lpEcb->lpszMethod;
+}
 
 string ExtensionAgentRequest::getQueryString() {
 	if (this->qryString.empty()) {
@@ -41,6 +43,43 @@ string ExtensionAgentRequest::getQueryString() {
 	return this->qryString;
 }
 
+string ExtensionAgentRequest::getContentType() {
+	 return lpEcb->lpszContentType;
+}
+
+DWORD ExtensionAgentRequest::getBodySize() {
+	if (lpEcb->cbAvailable < lpEcb->cbTotalBytes) {
+		jk_log(logger, JK_LOG_ERROR, "Body too long : [%d] bytes, not supported by JOSSO", lpEcb->cbTotalBytes);
+		return 0;
+	}
+	return lpEcb->cbAvailable;
+
+}
+
+LPBYTE ExtensionAgentRequest::getBody() {
+	// TODO : read body from lpEcb ...
+
+	// This means that ther's no body 
+	if (lpEcb->cbAvailable < 1) {
+		jk_log(logger, JK_LOG_TRACE, "No body received for request");
+		return NULL;
+	}
+
+	// IIS automatically reads up to 48Kb, that should be more than enough for JOSSO Agent ...
+	// if cbAvailable is less than total, it means that we get more than 48 Kb on the POST, ignore it!
+	if (lpEcb->cbAvailable < lpEcb->cbTotalBytes) {
+		// To support bodies larger that 48 Kb, we need to use lpEcb->ReadClient() function ...
+		jk_log(logger, JK_LOG_ERROR, "Body too long : [%d] bytes, not supported by JOSSO", lpEcb->cbTotalBytes );
+		return NULL;
+	} else {
+		// IIS automatically reads up to 48Kb, that should be more than enough for JOSSO Agent ...
+		// Build a string with this ?!
+
+		// Decode data based on content type ?!
+		jk_log(logger, JK_LOG_TRACE, "Received content-type: %s", lpEcb->lpszContentType);
+		return lpEcb->lpbData;
+	}
+}
 
 string ExtensionAgentRequest::getServerVariable(string name, DWORD cbSize) {
 	string value;

@@ -34,6 +34,8 @@ public:
 
 	// TODO : Add a client writing operation !
 
+	virtual bool sendContent(string content) =0;
+
 protected:
 
 	static const char * HTML_ERROR_HEAD; 
@@ -49,7 +51,7 @@ protected:
 
 	virtual bool startResponse(int status, string reason, list<pair<string, string>> headers) =0;
 
-	virtual bool writeContent(char * content, size_t length) =0;
+	virtual bool writeContent(const char * content, size_t length) =0;
 
 
 

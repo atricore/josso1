@@ -22,7 +22,7 @@ protected:
 
 	vector<string> ignoredReferers;
 
-	friend class IsapiSSOAgent;
+	friend class AbstractSSOAgent;
 
 };
 

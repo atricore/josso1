@@ -25,11 +25,15 @@ bool UrlBasedAutomaticLoginStrategy::isAutomaticLoginRequired(SSOAgentRequest *r
 	string requestUri = req->getPath();
 	vector<string>::const_iterator urlPattern;
 	for(urlPattern = urlPatterns.begin() ; urlPattern != urlPatterns.end() ; urlPattern++) {
-		if (ssoAgent->match(requestUri, *urlPattern)) {
-			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Autologin is not required! Ignored url pattern: %s", (*urlPattern).c_str());
+		bool matched = ssoAgent->match(requestUri, *urlPattern);
+		jk_log(ssoAgent->logger, JK_LOG_TRACE, "Check requested URI [%s] againt ignored pattern [%s] : %d" , requestUri.c_str(), (*urlPattern).c_str(), matched);
+
+		if (matched) {
+			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Autologin is not required! Ignored url pattern: %s", requestUri.c_str());
 			autoLoginRequired = false;
 			break;
 		}
 	}
+
 	return autoLoginRequired;
 }

@@ -131,13 +131,24 @@ bool AbstractSSOAgent::start() {
 
 			for (partnerApp = agentConfig->apps.begin(); partnerApp != agentConfig->apps.end() ; partnerApp++ ) { 
 				jk_log(logger, JK_LOG_DEBUG, "partnerApp:%s at base-uri:%s", partnerApp->id.c_str(), partnerApp->baseUri.c_str());
+
+				vector<string>::const_iterator ignoredUri;
+				for (ignoredUri = partnerApp->ignoredUris.begin() ; ignoredUri != partnerApp->ignoredUris.end() ; ignoredUri++) {
+					jk_log(logger, JK_LOG_DEBUG, "partnerApp:%s ignored-uri:%s", partnerApp->id.c_str(), ignoredUri->c_str());
+				}
 			}
 
 			// Dump security constraints
 			list<SecurityConstraintConfig>::const_iterator secConstraint;
+
+			
 			for ( secConstraint = agentConfig->secConstraints.begin() ; secConstraint != agentConfig->secConstraints.end() ; secConstraint++) {
 
-				jk_log(logger, JK_LOG_DEBUG, "securityConstraint:%s has %d roles", secConstraint->id.c_str(), secConstraint->roles.size());
+				jk_log(logger, JK_LOG_DEBUG, "securityConstraint:%s [priority:%s] has %d roles", 
+					secConstraint->id.c_str(), 
+					secConstraint->priority.c_str(),
+					secConstraint->roles.size());
+
 				vector<string>::const_iterator baseUri;
 				for(baseUri = secConstraint->baseUris.begin() ; baseUri != secConstraint->baseUris.end() ; baseUri ++) {
 					jk_log(logger, JK_LOG_DEBUG, "    (%s) baseUri:%s", secConstraint->id.c_str(), baseUri->c_str());
@@ -265,7 +276,7 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	if (password != NULL) {
 		StringCbCopy(cfg->password, INTERNET_MAX_PASSWORD_LENGTH, password);
 	} else {
-		syslog(JK_LOG_WARNING_LEVEL, "'HTTP Basic Auth password is null");
+		syslog(JK_LOG_DEBUG_LEVEL, "'HTTP Basic Auth password is null");
 	}
 
 
@@ -287,8 +298,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 
 			// Get base-uri
 			const char *baseUri = ini.GetValue(section, "base-uri", NULL );
+			const char *ignoredUris  = ini.GetValue(section, "ignored-uris", NULL );
 			const char *splashResource = ini.GetValue(section, "splash-resource", NULL);
 			const char *partnerAppId = ini.GetValue(section, "partnerAppId", NULL);
+
+			syslog(JK_LOG_WARNING_LEVEL, "'ignored-uris' %s", ignoredUris);
 
 			if (baseUri == NULL) {
 				syslog(JK_LOG_WARNING_LEVEL, "'base-uri' not found in '%s' section", section);
@@ -310,6 +324,12 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 					appCfg->setPartnerAppId(appId);
 				}
 
+				if (ignoredUris != NULL) {
+					// List of ignored uris
+					string iu (ignoredUris);
+					StringUtil::tokenize(iu, appCfg->ignoredUris, ",");
+				}
+
 				cfg->apps.push_back(*appCfg);
 			}			
 
@@ -324,9 +344,14 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 
 			const char *baseUris = ini.GetValue(section, "base-uris", NULL );
 			if (baseUris == NULL) {
-				syslog(JK_LOG_WARNING_LEVEL, "'base-uris' not found in '%s' section", section);
+				syslog(JK_LOG_WARNING_LEVEL, "'base-uris' not found in '%s' section, constraint ignored!", section);
+
 			}
 
+			const char *priority = ini.GetValue(section, "priority", NULL );
+			if (priority == NULL) {
+				syslog(JK_LOG_WARNING_LEVEL, "'priority' not found in '%s' section", section);
+			}
 			
 			if (baseUris != NULL) {
 
@@ -342,6 +367,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 				if (roles != NULL) {
 					string r (roles);
 					StringUtil::tokenize(r, secCfg->roles, ",");
+				}
+
+				if (priority != NULL) {
+					string p (priority);
+					secCfg->priority.assign(priority);
 				}
 
 				cfg->secConstraints.push_back(*secCfg);
@@ -414,6 +444,10 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 		}
     }
 
+	// Sort security constraints, if any
+	compareSecConstraintByPriority compare;
+	cfg->secConstraints.sort(compare);
+
 	if (this->automaticStrategies.empty()) {
 		syslog(JK_LOG_ERROR_LEVEL, "No automatic login strategy defined, verify your agent configuration. JOSSO Isapi Agent not started");
 		return false;
@@ -422,6 +456,7 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	return true;
 
 }
+
 
 bool AbstractSSOAgent::stop() {
 	syslog(JK_LOG_INFO_LEVEL, "Stopping JOSSO C Agent [%s]", (VERSION_STRING));
@@ -463,6 +498,26 @@ bool AbstractSSOAgent::isAuthorized(SSOAgentRequest *req) {
 	}
 
 	jk_log(logger, JK_LOG_DEBUG, "PATH : %s has %s security constraint, rejecting.", path.c_str(), sec->id.c_str());
+
+	return false;
+}
+
+bool AbstractSSOAgent::isIgnored(PartnerAppConfig * appCfg, SSOAgentRequest *req ) {
+
+	string p (req->getPath());
+	vector<string>::iterator ignoredUri;
+	for (ignoredUri = appCfg->ignoredUris.begin() ; ignoredUri != appCfg->ignoredUris.end() ; ignoredUri ++) {
+
+		string iu = *ignoredUri;
+		std::transform(iu.begin(), iu.end(), iu.begin(), tolower);
+		size_t pos = p.find(iu);
+
+		jk_log(logger, JK_LOG_DEBUG, "Matching path %s against ignored URI %s", p.c_str(), iu.c_str());
+
+		if ( match(p, iu) == true ) {
+			return true;
+		} 
+	}
 
 	return false;
 }
@@ -933,6 +988,8 @@ SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const st
 		SecurityConstraintConfig s = *sec;
 		vector<string>::iterator baseUri;
 
+		jk_log(logger, JK_LOG_DEBUG, "Matching path %s against security constraint [%s]", path.c_str(), sec->id.c_str());
+
 		for (baseUri = s.baseUris.begin() ; baseUri != s.baseUris.end() ; baseUri ++) {
 			string b = *baseUri;
 			std::transform(b.begin(), b.end(), b.begin(), tolower);
@@ -941,8 +998,9 @@ SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const st
 			jk_log(logger, JK_LOG_DEBUG, "Matching path %s against security constraint URI %s", path.c_str(), b.c_str());
 
 			if ( match(p, b) == true ) {
-					cfg = &(*sec);
-					jk_log(logger, JK_LOG_DEBUG, "Matched path %s against security constraint URI %s", path.c_str(), b.c_str());
+				cfg = &(*sec);
+				jk_log(logger, JK_LOG_DEBUG, "Matched path %s against security constraint URI %s", path.c_str(), b.c_str());
+				return cfg;
 			} 
 
 
@@ -957,6 +1015,7 @@ SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const st
 		}	
 
 	}
+	jk_log(logger, JK_LOG_DEBUG, "Request did not matched a security constraint : %s", path.c_str());
 	return cfg;
 }
 
@@ -1115,3 +1174,4 @@ bool AbstractSSOAgent::match(const string &source, const string &regex_string) {
 
 
 // ---------------------------------------------------------------------------------------------
+

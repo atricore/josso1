@@ -13,20 +13,31 @@
 #endif
 
 bool DefaultAutomaticLoginStrategy::isAutomaticLoginRequired(SSOAgentRequest *req, SSOAgentResponse *res) {
-	jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Processing unauthenticated request, check automatic login");
+
+	jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Processing request, check automatic login");
 
 	// Ignore Extension URI requests
 	string autoLoginExecuted = req->getCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED"); 
 
 	// If we are processing JOSSOIsapi extension, we cannot trigger the auto login process.
 	string myUri = req->getServerVariable("URL", MAX_HEADER_SIZE);
+
+	// Extension used by ISAPI Agent
 	string extensionUri = ssoAgent->getExtensionUri();
 	string &path = req->getPath();
+
+	// If this is the extension URI, appCfg can be NULL
 	PartnerAppConfig *appCfg = ssoAgent->getPartnerAppConfig(path);
-	string splashResource = appCfg->getSplashResource();
+
+	// Default splash resource, disable autologin:
+	string splashResource ;
+	if (appCfg != NULL) {
+		splashResource = appCfg->getSplashResource();
+	}
+
 	jk_log(ssoAgent->logger, JK_LOG_TRACE, "Processing uri %s (agent:%s)", myUri.c_str(), extensionUri.c_str());
 
-	// Ignore the splash resource and the extension URI
+	// Ignore agent extension
 	if (myUri.compare(extensionUri) != 0 && (splashResource.empty() || splashResource.compare(myUri) != 0)) {
 
 		string referer = req->getServerVariable("HTTP_REFERER", MAX_HEADER_SIZE);
@@ -91,8 +102,8 @@ bool DefaultAutomaticLoginStrategy::isAutomaticLoginRequired(SSOAgentRequest *re
 				//jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Starting Automatic Login for the first time");
 				return true;
 			} else {
-				// Clean previous flag
-				res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/");
+				// Do not clean previous flag, if user goes to another app and come back, a referer is needed!
+				// res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/");
 			}
 
 		}

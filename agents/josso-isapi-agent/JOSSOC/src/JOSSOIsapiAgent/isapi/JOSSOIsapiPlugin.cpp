@@ -142,77 +142,87 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 	if (appCfg == NULL) {
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "[%s] is not associated to a partner application, ignoring", path.c_str());
 
-	} else{
-
-		// Send P3P Header (TODO : Make it optional)
-		res->addHeader("P3P", "CP=\"CAO PSA OUR\"");
+	} else {
 
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "[%s] is associated to %s partner application", path.c_str(), appCfg->getId());
 
-		// Create security context
-		if (!ssoAgent->createSecurityContext(req)) {
-			// Clean up SSO Cookie
+		if (!ssoAgent->isIgnored(appCfg, req)) {
 
-			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Cleaning SSO Cookie");
+			jk_log(ssoAgent->logger, JK_LOG_TRACE, "[%s] is associated to %s partner application and will be processed", path.c_str(), appCfg->getId());
 
-			res->setCookie("JOSSO_SESSIONID", "-", "/");
-			
-		}
+			// We found the application config, check if the resource must be ignored
 
-		bool isAuthenticated = req->isAuthenticated();
-		bool isAuthorized = ssoAgent->isAuthorized(req);
+			// Send P3P Header (TODO : Make it optional)
+			res->addHeader("P3P", "CP=\"CAO PSA OUR\"");
 
-		// Check for automatic Login
-		if (!isAuthenticated) {
+			// Create security context
+			if (!ssoAgent->createSecurityContext(req)) {
+				// Clean up SSO Cookie
 
-			// Only trigger automatic login if resource is public, otherwise a full login will be triggered later.
-			if (isAuthorized) {
+				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Cleaning SSO Cookie");
 
-				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Request is authorized, but not authenticated, check automatic login [%s]", path.c_str());
+				res->setCookie("JOSSO_SESSIONID", "-", "/");
+				
+			}
 
-				if (ssoAgent->isAutomaticLoginRequired(req, res)) {
-					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Automatic login started[%s]", path.c_str());
-					ssoAgent->requestLogin(req, res, appCfg, true);
+			bool isAuthenticated = req->isAuthenticated();
+			bool isAuthorized = ssoAgent->isAuthorized(req);
+
+			// Check for automatic Login
+			if (!isAuthenticated) {
+
+				// Only trigger automatic login if resource is public, otherwise a full login will be triggered later.
+				if (isAuthorized) {
+
+					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Request is authorized, but not authenticated, check automatic login [%s]", path.c_str());
+
+					if (ssoAgent->isAutomaticLoginRequired(req, res)) {
+						jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Automatic login started[%s]", path.c_str());
+						ssoAgent->requestLogin(req, res, appCfg, true);
+						rc = SF_STATUS_REQ_FINISHED;
+					}
+				}
+
+			} else {
+				// This is an authenticated request, clean up any autologin state if present.
+				string autoLoginExecuted = req->getCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED");
+				if (!autoLoginExecuted.empty() && autoLoginExecuted.compare("-") != 0) {
+					res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/");
+				}
+
+				string autoLoginReferer = req->getCookie("JOSSO_AUTOLOGIN_REFERER");
+				if (!autoLoginReferer.empty() && autoLoginReferer.compare("-") != 0) {
+					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/"); 
+				}
+
+			}
+
+
+			// Check for security constraints
+			if (!isAuthorized) {
+
+				if (req->getRemoteUser().empty()) {
+					// User is not authorized to access this resource, but was not authenticated yet -> ask for login
+					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "annonymous accesss to [%s] requires authentication, redirecting to login page", path.c_str());
+
+					ssoAgent->requestLogin(req, res, appCfg, false);
+					rc = SF_STATUS_REQ_FINISHED;
+
+				} else {
+					// User is not authorized to access this, but was authenticated, -> return HTTP 403 status.
+					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "[%s] user cannot access [%s], returning HTTP 403 status", req->getRemoteUser().c_str(), path.c_str());
+
+					res->sendStatus(HTTP_STATUS_FORBIDDEN, "Forbidden");
+
+					// Send a HTTP STATUS 403, Forbidden!
 					rc = SF_STATUS_REQ_FINISHED;
 				}
 			}
 
 		} else {
-			// This is an authenticated request, clean up any autologin state if present.
-			string autoLoginExecuted = req->getCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED");
-			if (!autoLoginExecuted.empty() && autoLoginExecuted.compare("-") != 0) {
-				res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/");
-			}
-
-			string autoLoginReferer = req->getCookie("JOSSO_AUTOLOGIN_REFERER");
-			if (!autoLoginReferer.empty() && autoLoginReferer.compare("-") != 0) {
-				res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/"); 
-			}
-
+			// Configured as ignored!
+			jk_log(ssoAgent->logger, JK_LOG_TRACE, "[%s] is associated to %s partner application, but ignored", path.c_str(), appCfg->getId());
 		}
-
-
-		// Check for security constraints
-		if (!isAuthorized) {
-
-			if (req->getRemoteUser().empty()) {
-				// User is not authorized to access this resource, but was not authenticated yet -> ask for login
-				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "annonymous accesss to [%s] requires authentication, redirecting to login page", path.c_str());
-
-				ssoAgent->requestLogin(req, res, appCfg, false);
-				rc = SF_STATUS_REQ_FINISHED;
-
-			} else {
-				// User is not authorized to access this, but was authenticated, -> return HTTP 403 status.
-				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "[%s] user cannot access [%s], returning HTTP 403 status", req->getRemoteUser().c_str(), path.c_str());
-
-				res->sendStatus(HTTP_STATUS_FORBIDDEN, "Forbidden");
-
-				// Send a HTTP STATUS 403, Forbidden!
-				rc = SF_STATUS_REQ_FINISHED;
-			}
-		}
-
 	}
 
 	if (rc == SF_STATUS_REQ_NEXT_NOTIFICATION) {

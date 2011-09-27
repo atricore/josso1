@@ -787,7 +787,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             
             // Store value as session cookie
             Cookie cookie = new Cookie(name, cookieValue);
-            cookie.setPath(hreq.getContextPath());
+            cookie.setPath(hreq.getContextPath().equals("") ? "/" : hreq.getContextPath());
             cookie.setMaxAge(-1);
             cookie.setSecure(hreq.isSecure());
 

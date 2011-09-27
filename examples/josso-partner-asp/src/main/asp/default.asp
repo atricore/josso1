@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>JOSSO ASP Partner appliaction using ISAPI Agent
+    <title>JOSSO ASP Partner appliaction using ISAPI Agent</title>
 </head>
 <body>
 

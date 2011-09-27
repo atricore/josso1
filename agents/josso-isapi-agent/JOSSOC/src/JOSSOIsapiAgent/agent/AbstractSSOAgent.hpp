@@ -8,6 +8,13 @@
 
 #include <list>
 
+struct compareSecConstraintByPriority {
+  bool operator()( const SecurityConstraintConfig first, const SecurityConstraintConfig second ) { 
+	  return first.priority.compare(second.priority) <= 0 ;
+  }
+};
+
+
 class AbstractAutomaticLoginStrategy;
 
 // In the future, we can have a pure virtual base class : SSOAgent
@@ -139,6 +146,12 @@ public:
 	 */
 	virtual bool isAuthorized(SSOAgentRequest *req) ;
 
+	/** 
+	 * TRUE if the request must be ignored
+	 */
+	virtual bool isIgnored(PartnerAppConfig * appCfg, SSOAgentRequest *req) ;
+
+
 	virtual const char *getRequester(SSOAgentRequest *req) =0;
 
 	bool match(const string &source, const string &regex);
@@ -168,7 +181,6 @@ protected:
 	 * Access SSO Session associated with the given request
 	 */
 	virtual bool accessSession(string ssoSessionId, SSOAgentRequest *ssoAgentReq);
-
 
 	SecurityConstraintConfig *getSecurityConstraintConfig(const string & path);
 

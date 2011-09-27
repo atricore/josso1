@@ -14,6 +14,7 @@ public:
 	SecurityConstraintConfig(const string &i) {
 		id.assign(i);
 	}
+	string priority;
 
 protected:
 

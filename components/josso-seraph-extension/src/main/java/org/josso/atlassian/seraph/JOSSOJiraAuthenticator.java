@@ -78,7 +78,15 @@ public class JOSSOJiraAuthenticator extends DefaultAuthenticator {
             authoriseUserAndEstablishSession(httpServletRequest, httpServletResponse, user);
 
         } else {
-            user = super.getUser(httpServletRequest, httpServletResponse);
+            // If we don't have a valid SSO Session, return NULL!!!
+            String ssoSessionId = (String) httpServletRequest.getAttribute("org.josso.agent.ssoSessionid");
+
+            if (ssoSessionId == null || "".equals(ssoSessionId) ||  "-".equals(ssoSessionId)) {
+                super.removePrincipalFromSessionContext(httpServletRequest);
+                return null;
+            } else {
+                user = super.getUser(httpServletRequest, httpServletResponse);
+            }
         }
 
         return user;

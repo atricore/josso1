@@ -1,5 +1,6 @@
 package org.josso.atlassian.seraph;
 
+import com.atlassian.crowd.embedded.api.CrowdDirectoryService;
 import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.crowd.embedded.impl.ImmutableUser;
 import com.atlassian.jira.ComponentManager;
@@ -7,12 +8,16 @@ import com.atlassian.jira.user.util.OSUserConverter;
 import com.atlassian.seraph.auth.AuthenticatorException;
 import com.atlassian.seraph.auth.DefaultAuthenticator;
 import com.atlassian.seraph.config.SecurityConfig;
+import com.atlassian.crowd.embedded.api.Directory;
+import org.apache.log4j.Logger;
 import org.josso.gateway.SSONameValuePair;
 import org.josso.gateway.identity.SSOUser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.StringWriter;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,22 +25,23 @@ import java.util.Map;
  */
 public class JOSSOJiraAuthenticator extends DefaultAuthenticator {
 
-    private int directoryId = 10000;
+    private static final Logger logger = Logger.getLogger(JOSSOJiraAuthenticator.class);
 
-    public int getDirectoryId() {
-        return directoryId;
-    }
+    private CrowdDirectorySelectorStrategy dirSelector;
 
-    public void setDirectoryId(int directoryId) {
-        this.directoryId = directoryId;
-    }
+    private String lookupCrowdDirStrategyType;
+
+    private Map<String, String> params;
 
     @Override
     public void init(Map<String, String> params, SecurityConfig config) {
         super.init(params, config);
-        String strDirId = params.get("directory.id");
-        if (strDirId != null)
-            directoryId = Integer.parseInt(strDirId);
+        this.params = params;
+        lookupCrowdDirStrategyType = params.get("directory.lookup.strategy");
+        if (lookupCrowdDirStrategyType == null) {
+            lookupCrowdDirStrategyType = FixedCrowdDirectorySelectorFactory.class.getName();
+            logger.info("Using default Directory Selector:" + lookupCrowdDirStrategyType);
+        }
     }
 
     @Override
@@ -69,12 +75,11 @@ public class JOSSOJiraAuthenticator extends DefaultAuthenticator {
                     displayName = ssoProp.getValue();
             }
 
-            ///
+            // Lookup proper user directory
+            Directory dir = getDirSelector().lookupDirectory(ssoUser);
 
-            ImmutableUser crowdUser = new ImmutableUser(getDirectoryId(), ssoUser.getName(), displayName, email, true);
-
+            ImmutableUser crowdUser = new ImmutableUser(dir.getId(), ssoUser.getName(), displayName, email, true);
             user = OSUserConverter.convertToOSUser(crowdUser);
-
             authoriseUserAndEstablishSession(httpServletRequest, httpServletResponse, user);
 
         } else {
@@ -104,8 +109,23 @@ public class JOSSOJiraAuthenticator extends DefaultAuthenticator {
     }
 
     private CrowdService getCrowdService() {
-        return (CrowdService) ComponentManager.getComponent(CrowdService.class);
+        CrowdService svc = (CrowdService) ComponentManager.getComponent(CrowdService.class);
+        return svc;
     }
 
+    private CrowdDirectoryService getCrowdDirectoryService() {
+        CrowdDirectoryService svc = (CrowdDirectoryService) ComponentManager.getComponent(CrowdDirectoryService.class);
+        return svc;
+    }
 
+    public CrowdDirectorySelectorStrategy getDirSelector() {
+        if (dirSelector == null) {
+            synchronized (this) {
+                if (dirSelector == null) {
+                    dirSelector = CrowdDirectorySelectorFactory.getInstance(lookupCrowdDirStrategyType).getStrategy(params, getCrowdDirectoryService());
+                }
+            }
+        }
+        return dirSelector;
+    }
 }

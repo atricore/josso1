@@ -97,7 +97,8 @@ public class JossoSSOAutoLogin implements AutoLogin {
             try {
                 user = UserLocalServiceUtil.getUserByScreenName(companyId, screenName);
             } catch (NoSuchUserException nsue) {
-                if (email == null) {
+                if (email == null || (email != null && email.length() == 0)) {
+                    log.debug("Using user's screenName " + screenName + " as his email");
                     email = screenName;
                 }
 

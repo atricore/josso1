@@ -5,6 +5,7 @@
          xmlns:agent="urn:org:josso:agent:core"
          xmlns:protocol="urn:org:josso:protocol:client"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation=""
         >
 <liferay6:agent sessionAccessMinInterval="1000"
         gatewayLoginUrl="http://localhost:8090/josso/signon/login.do"
@@ -12,13 +13,9 @@
  
     <liferay6:automaticLoginStrategies>
         <agent:default-automaticlogin-strategy mode="REQUIRED">
-            <!--
-            <property name="ignoredReferrers">
-                <list>
-                   <value>http://localhost:8080/IDBUS</value>
-                </list>
-            </property>
-            -->
+            <agent:ignoredReferrers>
+               <s:value>http://localhost:8080/IDBUS</s:value>
+            </agent:ignoredReferrers>
         </agent:default-automaticlogin-strategy>
     </liferay6:automaticLoginStrategies>
 

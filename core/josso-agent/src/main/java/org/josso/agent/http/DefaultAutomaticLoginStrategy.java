@@ -52,6 +52,10 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
         super(mode);
     }
 
+    /**
+     * @org.apache.xbean.Property alias="ignoredReferrers" nestedType="java.lang.String"
+     * @return
+     */
     public List<String> getIgnoredReferrers() {
         return ignoredReferrers;
     }

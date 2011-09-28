@@ -122,7 +122,7 @@ public class JossoSSOAutoLogin implements AutoLogin {
 
 
                     log.debug("Adding user : (companyId=" + companyId + ",firstName=" + firstName + ",lastName=" + lastName +
-                    ",screeName=" + screenName + ",locale=" + locale + ")");
+                    ",email=" + email + ",screeName=" + screenName + ",locale=" + locale + ")");
 
                     user = addUser(companyId, firstName, lastName, email, screenName, locale);
                 }

@@ -69,46 +69,63 @@ public class JossoSSOAutoLogin implements AutoLogin {
             //String screenName = request.getUserPrincipal().getName();
             String screenName = ssoUser.getName();
 
+            String firstName = "";
+            String lastName = "";
+            String email = "";
+            for (SSONameValuePair nameValuePair : ssoUser.getProperties()) {
+
+                if (nameValuePair.getName().equals("user.name")) {
+                    firstName = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:firstName")) {
+                    firstName = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("user.lastName")) {
+                    lastName = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:lastName")) {
+                    lastName = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("email")) {
+                    email = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:email")) {
+                    email = nameValuePair.getValue();
+                }
+            }
+
             try {
                 user = UserLocalServiceUtil.getUserByScreenName(companyId, screenName);
             } catch (NoSuchUserException nsue) {
-                Locale locale = LocaleUtil.getDefault();
+                if (email != null) {
+                    try {
+                        user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
+                    } catch (Exception e) {
 
-                ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
-
-                if (themeDisplay != null) {
-
-                    // ThemeDisplay should never be null, but some users
-                    // complain of this error. Cause is unknown.
-
-                    locale = themeDisplay.getLocale();
-                }
-
-                String firstName = "";
-                String lastName = "";
-                String email = "";
-                for (SSONameValuePair nameValuePair : ssoUser.getProperties()) {
-
-                    if (nameValuePair.getName().equals("user.name")) {
-                        firstName = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:firstName")) {
-                        firstName = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("user.lastName")) {
-                        lastName = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:lastName")) {
-                        lastName = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("email")) {
-                        email = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:email")) {
-                        email = nameValuePair.getValue();
                     }
+
                 }
-                user = addUser(companyId, firstName, lastName, email, screenName, locale);
+
+                if (user == null) {
+
+                    Locale locale = LocaleUtil.getDefault();
+
+                    ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+
+                    if (themeDisplay != null) {
+
+                        // ThemeDisplay should never be null, but some users
+                        // complain of this error. Cause is unknown.
+
+                        locale = themeDisplay.getLocale();
+                    }
+
+
+                    log.debug("Adding user : (companyId=" + companyId + ",firstName=" + firstName + ",lastName=" + lastName +
+                    ",screeName=" + screenName + ",locale=" + locale + ")");
+
+                    user = addUser(companyId, firstName, lastName, email, screenName, locale);
+                }
             }
 
             credentials = new String[3];

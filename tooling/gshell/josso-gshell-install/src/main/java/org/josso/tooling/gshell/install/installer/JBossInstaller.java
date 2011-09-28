@@ -211,23 +211,25 @@ public class JBossInstaller extends VFSInstaller {
                 if (getTargetPlatform().isJOSSOWarExploded() && !isFolder) {
                     installJar(srcFile, this.targetDeployDir, newName, true, replace);
 
-                    // Remove commons logging JAR files which conflict with slf4j replacement
-                    FileObject webInfLibFolder = targetDeployDir.resolveFile(newName + "/WEB-INF/lib");
+                    if (getTargetPlatform().getVersion().startsWith("6")) {
+                        // Under JBoss 6 remove commons logging JAR files which conflict with slf4j replacement
+                        FileObject webInfLibFolder = targetDeployDir.resolveFile(newName + "/WEB-INF/lib");
 
-                    boolean exists = webInfLibFolder.exists();
+                        boolean exists = webInfLibFolder.exists();
 
-                    if (exists) {
-                        FileObject[] sharedLibs = webInfLibFolder.getChildren();
-                        for (int i = 0 ; i < sharedLibs.length; i ++) {
-                            FileObject jarFile = sharedLibs[i];
+                        if (exists) {
+                            FileObject[] sharedLibs = webInfLibFolder.getChildren();
+                            for (int i = 0 ; i < sharedLibs.length; i ++) {
+                                FileObject jarFile = sharedLibs[i];
 
-                            if (!jarFile.getType().getName().equals(FileType.FILE.getName())) {
-                                // ignore folders
-                                continue;
-                            }
-                            if (jarFile.getName().getBaseName().startsWith("commons-logging")
-                                    && jarFile.getName().getBaseName().endsWith(".jar")) {
-                                jarFile.delete();
+                                if (!jarFile.getType().getName().equals(FileType.FILE.getName())) {
+                                    // ignore folders
+                                    continue;
+                                }
+                                if (jarFile.getName().getBaseName().startsWith("commons-logging")
+                                        && jarFile.getName().getBaseName().endsWith(".jar")) {
+                                    jarFile.delete();
+                                }
                             }
                         }
                     }

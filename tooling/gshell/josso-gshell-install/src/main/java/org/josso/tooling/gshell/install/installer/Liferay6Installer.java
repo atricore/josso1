@@ -126,11 +126,17 @@ public class Liferay6Installer extends VFSInstaller {
 
             String name = srcFile.getName().getBaseName();
 
-            if (name.startsWith("portal")) {
-                installFile(srcFile, this.targetConfDir, replace);
+            if (name.equals("portal-log4j-ext.xml") || name.equals("log4j.dtd")) {
+                FileObject metaInfDir = targetConfDir.resolveFile("META-INF/");
+
+                if (!metaInfDir.exists())
+                    metaInfDir.createFolder();
+
+                installFile(srcFile, metaInfDir, replace);
             } else {
                 installFile(srcFile, this.targetConfDir, replace);
             }
+
         } catch (IOException e) {
             throw new InstallException(e.getMessage(), e);
         }

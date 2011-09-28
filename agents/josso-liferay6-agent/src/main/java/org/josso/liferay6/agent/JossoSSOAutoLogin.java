@@ -69,46 +69,76 @@ public class JossoSSOAutoLogin implements AutoLogin {
             //String screenName = request.getUserPrincipal().getName();
             String screenName = ssoUser.getName();
 
+            String firstName = "";
+            String lastName = "";
+            String email = "";
+            for (SSONameValuePair nameValuePair : ssoUser.getProperties()) {
+
+                if (nameValuePair.getName().equals("user.name")) {
+                    firstName = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:firstName")) {
+                    firstName = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("user.lastName")) {
+                    lastName = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:lastName")) {
+                    lastName = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("email")) {
+                    email = nameValuePair.getValue();
+
+                } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:email")) {
+                    email = nameValuePair.getValue();
+                }
+            }
+
             try {
                 user = UserLocalServiceUtil.getUserByScreenName(companyId, screenName);
             } catch (NoSuchUserException nsue) {
-                Locale locale = LocaleUtil.getDefault();
-
-                ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
-
-                if (themeDisplay != null) {
-
-                    // ThemeDisplay should never be null, but some users
-                    // complain of this error. Cause is unknown.
-
-                    locale = themeDisplay.getLocale();
+                if (email == null || (email != null && email.length() == 0)) {
+                    log.debug("Using user's screenName " + screenName + " as his email");
+                    email = screenName;
                 }
 
-                String firstName = "";
-                String lastName = "";
-                String email = "";
-                for (SSONameValuePair nameValuePair : ssoUser.getProperties()) {
+                if (firstName == null || (firstName != null && firstName.length() == 0)) {
+                    log.debug("Using user's screenName " + screenName + " as his first name");
+                    firstName = screenName;
+                }
 
-                    if (nameValuePair.getName().equals("user.name")) {
-                        firstName = nameValuePair.getValue();
+                if (lastName == null || (lastName != null && lastName.length() == 0)) {
+                    log.debug("Using user's screenName " + screenName + " as his last name");
+                    lastName = screenName;
+                }
 
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:firstName")) {
-                        firstName = nameValuePair.getValue();
+                try {
+                    user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
+                } catch (Exception e) {
 
-                    } else if (nameValuePair.getName().equals("user.lastName")) {
-                        lastName = nameValuePair.getValue();
+                }
 
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:lastName")) {
-                        lastName = nameValuePair.getValue();
 
-                    } else if (nameValuePair.getName().equals("email")) {
-                        email = nameValuePair.getValue();
+                if (user == null) {
 
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:email")) {
-                        email = nameValuePair.getValue();
+                    Locale locale = LocaleUtil.getDefault();
+
+                    ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+
+                    if (themeDisplay != null) {
+
+                        // ThemeDisplay should never be null, but some users
+                        // complain of this error. Cause is unknown.
+
+                        locale = themeDisplay.getLocale();
                     }
+
+
+                    log.debug("Adding user : (companyId=" + companyId + ",firstName=" + firstName + ",lastName=" + lastName +
+                    ",email=" + email + ",screeName=" + screenName + ",locale=" + locale + ")");
+
+                    user = addUser(companyId, firstName, lastName, email, screenName, locale);
                 }
-                user = addUser(companyId, firstName, lastName, email, screenName, locale);
             }
 
             credentials = new String[3];
@@ -131,7 +161,8 @@ public class JossoSSOAutoLogin implements AutoLogin {
         boolean autoPassword = false;
         String password1 = PwdGenerator.getPassword();
         String password2 = password1;
-        boolean autoScreenName = false;
+        //boolean autoScreenName = false; // force screen name autogeneration
+        boolean autoScreenName = true;
         long facebookId = 0;
         String openId = StringPool.BLANK;
         String middleName = StringPool.BLANK;

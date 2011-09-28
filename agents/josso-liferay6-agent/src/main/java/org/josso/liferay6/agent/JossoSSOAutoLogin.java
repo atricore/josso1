@@ -97,14 +97,16 @@ public class JossoSSOAutoLogin implements AutoLogin {
             try {
                 user = UserLocalServiceUtil.getUserByScreenName(companyId, screenName);
             } catch (NoSuchUserException nsue) {
-                if (email != null) {
-                    try {
-                        user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
-                    } catch (Exception e) {
+                if (email == null) {
+                    email = screenName;
+                }
 
-                    }
+                try {
+                    user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
+                } catch (Exception e) {
 
                 }
+
 
                 if (user == null) {
 
@@ -148,7 +150,8 @@ public class JossoSSOAutoLogin implements AutoLogin {
         boolean autoPassword = false;
         String password1 = PwdGenerator.getPassword();
         String password2 = password1;
-        boolean autoScreenName = false;
+        //boolean autoScreenName = false; // force screen name autogeneration
+        boolean autoScreenName = true;
         long facebookId = 0;
         String openId = StringPool.BLANK;
         String middleName = StringPool.BLANK;

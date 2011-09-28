@@ -15,11 +15,16 @@ public class DnBasedCrowdDirectorySelector extends AbstractCrowdDirectorySelecto
 
     private static final Logger logger = Logger.getLogger(DnBasedCrowdDirectorySelector.class);
 
+    private String dnUserProperty;
+
     private Map<String, String> dirsByDn = new HashMap<String, String>();
 
     public DnBasedCrowdDirectorySelector(Map<String, String> initParams, CrowdDirectoryService directoryService) {
         super(initParams, directoryService);
         String str = initParams.get("directory.dn.map");
+        dnUserProperty = initParams.get("user.dn.property");
+        if (dnUserProperty == null)
+            dnUserProperty = "josso_user_dn";
 
         StringTokenizer st = new StringTokenizer(str, ";", false);
 
@@ -58,19 +63,27 @@ public class DnBasedCrowdDirectorySelector extends AbstractCrowdDirectorySelecto
 
     protected String getDirectoryNameForUser(SSOUser user) {
         SSONameValuePair[] props = user.getProperties();
-        String dn = "";
+        String dn = null;
         for (SSONameValuePair prop : props) {
-            if (prop.getName().equals("josso.user.dn")) {
+            if (prop.getName().equalsIgnoreCase(dnUserProperty)) {
                 dn = prop.getValue();
                 break;
             }
         }
 
+        if (dn == null) {
+            logger.error("SSOUser does not have property " + dnUserProperty);
+            return null;
+        }
+
         // Match DN with dir name, i.e. dc=my-domain,dc=com:dirname;
         for (String baseDn : dirsByDn.keySet()) {
+
+            logger.error("[" + dn + "] ["+baseDn+"]");
             if (dn.endsWith(baseDn)) {
-                logger.debug("Found configured base DN ["+baseDn+"]for user ["+user.getName()+"]");
-                return dirsByDn.get(baseDn);
+                String dirName = dirsByDn.get(baseDn);
+                logger.error("Found configured base DN ["+baseDn+"]for user ["+user.getName()+"], using directory ["+dirName+"]");
+                return dirName;
             }
         }
 

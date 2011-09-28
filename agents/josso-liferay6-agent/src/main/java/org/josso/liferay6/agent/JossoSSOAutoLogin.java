@@ -102,6 +102,16 @@ public class JossoSSOAutoLogin implements AutoLogin {
                     email = screenName;
                 }
 
+                if (firstName == null || (firstName != null && firstName.length() == 0)) {
+                    log.debug("Using user's screenName " + screenName + " as his first name");
+                    firstName = screenName;
+                }
+
+                if (lastName == null || (lastName != null && lastName.length() == 0)) {
+                    log.debug("Using user's screenName " + screenName + " as his last name");
+                    lastName = screenName;
+                }
+
                 try {
                     user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
                 } catch (Exception e) {

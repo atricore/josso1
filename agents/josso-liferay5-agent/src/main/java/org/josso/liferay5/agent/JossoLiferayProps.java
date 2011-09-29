@@ -1,4 +1,4 @@
-package org.josso.liferay.agent;
+package org.josso.liferay5.agent;
 
 import com.liferay.portal.SystemException;
 import com.liferay.portal.kernel.util.GetterUtil;

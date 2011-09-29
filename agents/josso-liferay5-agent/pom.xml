@@ -32,10 +32,10 @@
         <version>1.8.6-SNAPSHOT</version>
     </parent>
 
-    <artifactId>josso-liferay-agent</artifactId>
+    <artifactId>josso-liferay5-agent</artifactId>
     <packaging>jar</packaging>
-    <name>JOSSO :: Liferay Agent</name>
-    <description>Liferay Agent</description>
+    <name>JOSSO :: Liferay 5 Agent</name>
+    <description>Liferay 5 Agent</description>
 
     <properties>
         <liferay-version>5.2</liferay-version>
@@ -121,7 +121,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <namespace>urn:org:josso:agent:liferay</namespace>
+                            <namespace>urn:org:josso:agent:liferay5</namespace>
                         </configuration>
                         <goals>
                             <goal>mapping</goal>

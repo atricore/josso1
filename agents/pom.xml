@@ -44,7 +44,8 @@
                 <module>josso-agent-shared</module>
                 <module>josso-agentj14-shared</module>
                 <module>josso-servlet-agent</module>
-                <module>josso-liferay-agent</module>
+                <module>josso-liferay5-agent</module>
+                <module>josso-liferay6-agent</module>
                 <module>josso-alfresco-agent</module>
                 <module>josso-tomcat50-agent</module>
                 <module>josso-tomcat55-agent</module>
@@ -77,7 +78,8 @@
                 <module>josso-agent-shared</module>
                 <module>josso-agentj14-shared</module>
                 <module>josso-servlet-agent</module>
-                <module>josso-liferay-agent</module>
+                <module>josso-liferay5-agent</module>
+                <module>josso-liferay6-agent</module>
                 <module>josso-alfresco-agent</module>
                 <module>josso-tomcat50-agent</module>
                 <module>josso-tomcat55-agent</module>
@@ -136,7 +138,7 @@
                 <module>josso-agent-shared</module>
                 <module>josso-agentj14-shared</module>
                 <module>josso-servlet-agent</module>
-                <module>josso-liferay-agent</module>
+                <module>josso-liferay5-agent</module>
                 <module>josso-liferay6-agent</module>
                 <module>josso-alfresco-agent</module>
                 <module>josso-tomcat50-agent</module>

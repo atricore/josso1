@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.liferay.agent;
+package org.josso.liferay5.agent;
 
 import javax.servlet.http.HttpSession;
 import org.josso.agent.http.JOSSOSecurityContext;

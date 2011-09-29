@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.liferay.agent;
+package org.josso.liferay5.agent;
 
 import org.josso.agent.SSOAgentRequestImpl;
 import org.josso.agent.LocalSession;

@@ -1,4 +1,4 @@
-package org.josso.liferay.agent;
+package org.josso.liferay5.agent;
 
 import com.liferay.portal.NoSuchUserException;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -31,7 +31,6 @@ import java.util.Locale;
  * Date: 14.05.2010.
  * Time: 19.25.41
  */
-
 public class JossoSSOAutoLogin implements AutoLogin {
 
     private static final Log log = LogFactory.getLog(JossoSSOAutoLogin.class);
@@ -52,7 +51,7 @@ public class JossoSSOAutoLogin implements AutoLogin {
 
             Lookup lookup = Lookup.getInstance();
             lookup.init("josso-agent-config.xml");
-            HttpSSOAgent agent = (HttpSSOAgent) lookup.lookupSSOAgent();
+            LiferaySSOAgent agent = (LiferaySSOAgent) lookup.lookupSSOAgent();
             Cookie jCookie = getJossoCookie(request);
             if (jCookie == null || jCookie.getValue().equals("-")) {
                 return credentials;
@@ -66,50 +65,43 @@ public class JossoSSOAutoLogin implements AutoLogin {
                 return credentials;
             }
 
-            //String screenName = request.getUserPrincipal().getName();
-            String screenName = ssoUser.getName();
+            String screenName;
+            String firstName;
+            String lastName;
+            String email;
+
+            screenName = getUserProperty(ssoUser, agent.getScreenNameProperty(), ssoUser.getName());
+            firstName = getUserProperty(ssoUser, agent.getFistNameProperty(), ssoUser.getName());
+            lastName = getUserProperty(ssoUser, agent.getLastNameProperty(), ssoUser.getName());
+            email = getUserProperty(ssoUser, agent.getEmailAddressProperty(), ssoUser.getName());
 
             try {
                 user = UserLocalServiceUtil.getUserByScreenName(companyId, screenName);
-            }
-            catch (NoSuchUserException nsue) {
-                Locale locale = LocaleUtil.getDefault();
+            } catch (NoSuchUserException nsue) {
 
-                ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+                try {
+                    user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
+                } catch (Exception e) {  }
 
-                if (themeDisplay != null) {
+                if (user == null) {
 
-                    // ThemeDisplay should never be null, but some users
-                    // complain of this error. Cause is unknown.
+                    Locale locale = LocaleUtil.getDefault();
 
-                    locale = themeDisplay.getLocale();
-                }
+                    ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
 
-                String firstName = "";
-                String lastName = "";
-                String email = "";
-                for (SSONameValuePair nameValuePair : ssoUser.getProperties()) {
+                    if (themeDisplay != null) {
 
-                    if (nameValuePair.getName().equals("user.name")) {
-                        firstName = nameValuePair.getValue();
+                        // ThemeDisplay should never be null, but some users
+                        // complain of this error. Cause is unknown.
 
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:firstName")) {
-                        firstName = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("user.lastName")) {
-                        lastName = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:lastName")) {
-                        lastName = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("email")) {
-                        email = nameValuePair.getValue();
-
-                    } else if (nameValuePair.getName().equals("urn:org:atricore:idbus:user:property:email")) {
-                        email = nameValuePair.getValue();
+                        locale = themeDisplay.getLocale();
                     }
+
+                    log.debug("Adding user : (companyId=" + companyId + ",firstName=" + firstName + ",lastName=" + lastName +
+                    ",email=" + email + ",screeName=" + screenName + ",locale=" + locale + ")");
+
+                    user = addUser(companyId, firstName, lastName, email, screenName, locale, agent.isAutoScreenName());
                 }
-                user = addUser(companyId, firstName, lastName, email, screenName, locale);
             }
 
             credentials = new String[3];
@@ -117,8 +109,7 @@ public class JossoSSOAutoLogin implements AutoLogin {
             credentials[0] = String.valueOf(user.getUserId());
             credentials[1] = user.getPassword();
             credentials[2] = Boolean.TRUE.toString();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error(e, e);
         }
         return credentials;
@@ -126,14 +117,13 @@ public class JossoSSOAutoLogin implements AutoLogin {
 
     private User addUser(
             long companyId, String firstName, String lastName,
-            String emailAddress, String screenName, Locale locale)
+            String emailAddress, String screenName, Locale locale, boolean autoScreenName)
             throws Exception {
 
         long creatorUserId = 0;
         boolean autoPassword = false;
         String password1 = PwdGenerator.getPassword();
         String password2 = password1;
-        boolean autoScreenName = false;
         String openId = StringPool.BLANK;
         String middleName = StringPool.BLANK;
         int prefixId = 0;
@@ -172,4 +162,23 @@ public class JossoSSOAutoLogin implements AutoLogin {
 
         return cookie;
     }
+
+    private String getUserProperty(SSOUser ssoUser, String propertyName, String defaultValue) {
+
+        if (propertyName == null)
+            return defaultValue;
+
+        String propertyValue = defaultValue;
+        for (SSONameValuePair nameValuePair : ssoUser.getProperties()) {
+
+            if (nameValuePair.getName().equals(propertyName)) {
+                propertyValue = nameValuePair.getValue();
+                break;
+            }
+        }
+
+        return propertyValue;
+    }
 }
+
+

@@ -26,17 +26,18 @@ import java.io.*;
 
 /**
  * @version $Id$
- * @org.apache.xbean.XBean element="liferay-installer"
+ * @org.apache.xbean.XBean element="liferay5-installer"
  */
-public class LiferayInstaller extends VFSInstaller {
+public class Liferay5Installer extends VFSInstaller {
 
-    private static final Log log = LogFactory.getLog(LiferayInstaller.class);
+    private static final Log log = LogFactory.getLog(Liferay5Installer.class);
 
-    public LiferayInstaller(TargetPlatform targetPlatform) {
+
+    public Liferay5Installer(TargetPlatform targetPlatform) {
         super(targetPlatform);
     }
 
-    public LiferayInstaller() {
+    public Liferay5Installer() {
         super();
     }
 
@@ -50,18 +51,18 @@ public class LiferayInstaller extends VFSInstaller {
             if (targetConfDir.exists() && !targetConfDir.getType().getName().equals(FileType.FOLDER.getName())
                     && targetLibDir.exists() && !targetLibDir.getType().getName().equals(FileType.FOLDER.getName())) {
                 valid = false;
-                getPrinter().printErrStatus("LiferayHome", "Cannot find Liferay webapp root.");
+                getPrinter().printErrStatus("LiferayHome", "Cannot find Liferay 5 webapp root.");
             }
 
             if (!valid)
                 throw new InstallException("Target does not seem a " + getTargetPlatform().getDescription() + " install.");
 
         } catch (IOException e) {
-            getPrinter().printErrStatus("Liferay root", e.getMessage());
+            getPrinter().printErrStatus("Liferay 5 root", e.getMessage());
             throw new InstallException(e.getMessage(), e);
         }
 
-        getPrinter().printOkStatus("Liferay root");
+        getPrinter().printOkStatus("Liferay 5 root");
     }
 
     @Override
@@ -71,7 +72,7 @@ public class LiferayInstaller extends VFSInstaller {
             FileObject srcFile = getFileSystemManager().resolveFile(artifact.getLocation());
 
             // Install only the proper artifact for the target platform ...
-            if (artifact.getBaseName().startsWith("josso-liferay-agent")) {
+            if (artifact.getBaseName().startsWith("josso-liferay5-agent")) {
                 installFile(srcFile, this.targetLibDir, replace);
 
             } else if (artifact.getBaseName().startsWith("josso-agent-shared")) {
@@ -123,11 +124,17 @@ public class LiferayInstaller extends VFSInstaller {
 
             String name = srcFile.getName().getBaseName();
 
-            if (name.startsWith("portal")) {
-                installFile(srcFile, this.targetConfDir, replace);
+            if (name.equals("portal-log4j-ext.xml") || name.equals("log4j.dtd")) {
+                FileObject metaInfDir = targetConfDir.resolveFile("META-INF/");
+
+                if (!metaInfDir.exists())
+                    metaInfDir.createFolder();
+
+                installFile(srcFile, metaInfDir, replace);
             } else {
                 installFile(srcFile, this.targetConfDir, replace);
             }
+
         } catch (IOException e) {
             throw new InstallException(e.getMessage(), e);
         }
@@ -199,7 +206,7 @@ public class LiferayInstaller extends VFSInstaller {
         NodeList filtersNodes = (NodeList) xpath.evaluate("/web-app/filter", xmlDom, XPathConstants.NODESET);
 
         // Check if josso is already installed
-        XPathExpression jossoFilterClassExp = xpath.compile("/web-app/filter[filter-class='org.josso.liferay.agent.LiferaySSOAgentFilter']");
+        XPathExpression jossoFilterClassExp = xpath.compile("/web-app/filter[filter-class='org.josso.liferay5.agent.LiferaySSOAgentFilter']");
         Node jossoFilterNode = (Node) jossoFilterClassExp.evaluate(xmlDom, XPathConstants.NODE);
 
         // Append josso filter after auto-login filter in web.xml
@@ -216,7 +223,7 @@ public class LiferayInstaller extends VFSInstaller {
                     "\n\t<xupdate:insert-after select=\"/web-app/filter[filter-class='com.liferay.portal.servlet.filters.autologin.AutoLoginFilter']\" >\n" +
                             "\t\t<xupdate:element name=\"filter\"> \n" +
                             "\t\t\t<xupdate:element name=\"filter-name\">SSO Josso Filter</xupdate:element>\n" +
-                            "\t\t\t<xupdate:element name=\"filter-class\">org.josso.liferay.agent.LiferaySSOAgentFilter</xupdate:element>\n" +
+                            "\t\t\t<xupdate:element name=\"filter-class\">org.josso.liferay5.agent.LiferaySSOAgentFilter</xupdate:element>\n" +
                             "\t\t</xupdate:element>\n" +
                             "\t</xupdate:insert-after>\n\n" +
                             "\t<xupdate:insert-before select=\"/web-app/filter-mapping[1]\" >\n" +
@@ -253,7 +260,7 @@ public class LiferayInstaller extends VFSInstaller {
             xq.setQString(qry);
             xq.execute(xmlDom);
 
-            getPrinter().printActionOkStatus("Added josso filter into web.xml", "JOSSO Liferay Agent ", "WEB-INF/web.xml");
+            getPrinter().printActionOkStatus("Added josso filter into web.xml", "JOSSO Liferay 5 Agent ", "WEB-INF/web.xml");
 
 
             return true;
@@ -262,11 +269,58 @@ public class LiferayInstaller extends VFSInstaller {
     }
 
 
+    @Override
+    public boolean updateAgentConfiguration(String idpHostName, String idpPort, String idpType) {
+        boolean updated;
+
+        updated = super.updateAgentConfiguration(idpHostName, idpPort, idpType);    //To change body of overridden methods use File | Settings | File Templates.
+
+        try {
+            log.debug("targetJOSSOConfDir = " + targetJOSSOConfDir);
+            FileObject agentConfigFile = targetJOSSOConfDir.resolveFile("josso-agent-config.xml");
+            if (agentConfigFile.exists()) {
+                // Get a DOM document of the josso-agent-config.xml
+                Node configXmlDom = readContentAsDom(agentConfigFile);
+
+
+                String updateSchemaLocations =
+                    "<xupdate:update select=\"//@xsi:schemaLocation\">" +
+                            "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd " +
+                            "        urn:org:josso:agent:liferay5 jar:" + targetLibDir + "/josso-liferay5-agent-" + getProperty("version") + ".jar!/josso-liferay5-agent.xsd" +
+                            "        urn:org:josso:protocol:client jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + ".jar!/josso-protocol-client.xsd " +
+                            "        urn:org:josso:agent:core jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + ".jar!/josso-agent.xsd" +
+                            "" +
+                    "</xupdate:update>";
+
+                String updateSchemaLocationQryStr = XUpdateUtil.XUPDATE_START + updateSchemaLocations + XUpdateUtil.XUPDATE_END;
+                log.debug("XUPDATE QUERY: \n" +updateSchemaLocationQryStr);
+
+                XUpdateQuery updateSchemaLocationQry = new XUpdateQueryImpl();
+                updateSchemaLocationQry.setQString(updateSchemaLocationQryStr);
+                updateSchemaLocationQry.execute(configXmlDom);
+
+                getPrinter().printActionOkStatus("Configure","Schema Locations", "");
+
+                // Write modifications to file
+                writeContentFromDom(configXmlDom, agentConfigFile);
+                getPrinter().printActionOkStatus("Save", agentConfigFile.getName().getBaseName(), agentConfigFile.getName().getFriendlyURI());
+
+
+            }
+        } catch (Exception e) {
+            log.error("Error injecting schema locations to agent configuration", e);
+            getPrinter().printErrStatus("UpdateAgentConfiguration", e.getMessage());
+            updated = false;
+        }
+
+        return updated;
+    }
+
     protected boolean configureJaasModule() {
         String tcInstallDir = getProperty("tomcatInstallDir");
         String jbInstallDir = getProperty("jbossInstallDir");
         final String JOSSO_TOMCAT_MODULE_DEFINITION = "\n\njosso {\n" +
-                "org.josso.liferay.agent.jaas.SSOGatewayLoginModule required debug=true;\n" +
+                "org.josso.liferay5.agent.jaas.SSOGatewayLoginModule required debug=true;\n" +
                 "};";
 
         if (tcInstallDir != null) {
@@ -310,7 +364,7 @@ public class LiferayInstaller extends VFSInstaller {
                                 "\t\t<xupdate:element name=\"application-policy\">\n" +
                                 "\t\t\t<xupdate:attribute name=\"name\">josso</xupdate:attribute>\n" +
                                 "\t\t\t<authentication>\n" +
-                                "\t\t\t\t<login-module code=\"org.josso.liferay.agent.jaas.SSOGatewayLoginModule\" flag=\"required\">\n" +
+                                "\t\t\t\t<login-module code=\"org.josso.liferay5.agent.jaas.SSOGatewayLoginModule\" flag=\"required\">\n" +
                                 "\t\t\t\t\t<module-option name=\"debug\">true</module-option>\n" +
                                 "\t\t\t\t</login-module>\n" +
                                 "\t\t\t</authentication>\n" + 
@@ -326,7 +380,7 @@ public class LiferayInstaller extends VFSInstaller {
 
                 writeContentFromDom(xDom, loginConfig);
 
-                getPrinter().printActionOkStatus("Changed login-config.xml", "JOSSO Liferay Agent ", "server/default/conf/login-config.xml");
+                getPrinter().printActionOkStatus("Changed login-config.xml", "JOSSO Liferay 5 Agent ", "server/default/conf/login-config.xml");
                 return true;
 
             } catch (FileSystemException e) {
@@ -381,4 +435,6 @@ public class LiferayInstaller extends VFSInstaller {
         }
 
     }
+
+
 }

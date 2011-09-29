@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns:liferay6="urn:org:josso:agent:liferay6"
+         xmlns:agent="urn:org:josso:agent:core"
+         xmlns:protocol="urn:org:josso:protocol:client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation=""
+        >
+    <liferay6:agent
+            sessionAccessMinInterval="1000"
+            gatewayLoginUrl="http://localhost:8090/josso/signon/login.do"
+            gatewayLogoutUrl="http://localhost:8090/josso/signon/logout.do"
+            emailAddressProperty="email"
+            fistNameProperty="user.name"
+            lastNameProperty="user.lastName"
+            autoScreenName="true"
+            >
+
+        <liferay6:automaticLoginStrategies>
+            <agent:default-automaticlogin-strategy mode="REQUIRED">
+                <agent:ignoredReferrers>
+                    <s:value>http://localhost:8080/IDBUS</s:value>
+                </agent:ignoredReferrers>
+            </agent:default-automaticlogin-strategy>
+        </liferay6:automaticLoginStrategies>
+
+
+        <liferay6:configuration>
+            <agent:agent-configuration>
+                <agent:partner-apps>
+                    <agent:partner-app id="Liferay" context="/">
+                    </agent:partner-app>
+                </agent:partner-apps>
+            </agent:agent-configuration>
+        </liferay6:configuration>
+
+        <liferay6:gatewayServiceLocator>
+            <protocol:ws-service-locator endpoint="localhost:8090"/>
+        </liferay6:gatewayServiceLocator>
+
+        <liferay6:parametersBuilders>
+            <agent:vhost-parameters-builder/>
+            <agent:appctx-parameters-builder/>
+        </liferay6:parametersBuilders>
+    </liferay6:agent>
+</s:beans>

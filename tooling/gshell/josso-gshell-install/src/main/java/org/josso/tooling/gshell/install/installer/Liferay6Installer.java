@@ -5,8 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
-import org.apache.geronimo.gshell.branding.VersionLoader;
-import org.apache.geronimo.gshell.command.annotation.Requirement;
 import org.josso.tooling.gshell.install.JOSSOArtifact;
 import org.josso.tooling.gshell.install.TargetPlatform;
 import org.josso.tooling.gshell.install.util.XUpdateUtil;
@@ -32,7 +30,7 @@ import java.io.*;
  */
 public class Liferay6Installer extends VFSInstaller {
 
-    private static final Log log = LogFactory.getLog(Liferay6Installer.class);
+    private static final Log log = LogFactory.getLog(Liferay5Installer.class);
 
 
     public Liferay6Installer(TargetPlatform targetPlatform) {

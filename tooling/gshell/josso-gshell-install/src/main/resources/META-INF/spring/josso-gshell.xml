@@ -359,16 +359,15 @@
     </platform>
 
     <!-- Liferay 5 "platform"  -->
-    <liferay-installer id="liferay-installer">
-        <s:constructor-arg ref="liferay"/>
+    <liferay5-installer id="liferay5-installer">
+        <s:constructor-arg ref="liferay5"/>
         <s:property name="printer" ref="messagePrinter"/>
-    </liferay-installer>
+    </liferay5-installer>
 
-    <platform id="liferay" family="jee" platformName="Liferay" version="5.2.x">
+    <platform id="liferay5" family="jee" platformName="Liferay5" version="5.2.x">
         <lib>${target}/WEB-INF/lib</lib>
         <conf>${target}/WEB-INF/classes</conf>
     </platform>
-
 
     <!-- Liferay 6 "platform -->
     <liferay6-installer id="liferay6-installer">

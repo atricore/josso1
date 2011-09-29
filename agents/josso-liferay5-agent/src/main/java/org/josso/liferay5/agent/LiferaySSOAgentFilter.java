@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.liferay.agent;
+package org.josso.liferay5.agent;
 
 import com.liferay.portal.servlet.filters.BasePortalFilter;
 import com.liferay.portal.util.PortalUtil;

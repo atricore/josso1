@@ -1026,7 +1026,7 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
-                <artifactId>josso-liferay-agent</artifactId>
+                <artifactId>josso-liferay5-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
 

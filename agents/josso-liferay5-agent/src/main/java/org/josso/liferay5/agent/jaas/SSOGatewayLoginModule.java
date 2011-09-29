@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.liferay.agent.jaas;
+package org.josso.liferay5.agent.jaas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

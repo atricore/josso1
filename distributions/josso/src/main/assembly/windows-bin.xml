@@ -184,7 +184,7 @@
                 <include>${pom.groupId}:josso-jboss40-agent</include>
                 <include>${pom.groupId}:josso-jboss32-agent</include>
                 <include>${pom.groupId}:josso-geronimo-agent</include>
-                <include>${pom.groupId}:josso-liferay-agent</include>
+                <include>${pom.groupId}:josso-liferay5-agent</include>
                 <include>${pom.groupId}:josso-alfresco-agent</include>
                 <include>${pom.groupId}:josso-servlet-agent</include>
                 <include>${pom.groupId}:josso-weblogic92-agent:jar</include>

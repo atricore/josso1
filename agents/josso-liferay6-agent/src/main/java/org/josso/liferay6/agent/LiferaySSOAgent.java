@@ -121,6 +121,19 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
         return ssoUser;
     }
 
+    @Override
+    protected boolean isAuthenticationAlwaysRequired() {
+        return true;
+    }
+
+    protected void log(String message) {
+        log.debug(message);
+    }
+
+    protected void log(String message, Throwable throwable) {
+        log.debug(message, throwable);
+    }
+
     public String getScreenNameProperty() {
         return screenNameProperty;
     }
@@ -160,21 +173,6 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
     public void setAutoScreenName(boolean autoScreenName) {
         this.autoScreenName = autoScreenName;
     }
-
-    @Override
-    protected boolean isAuthenticationAlwaysRequired() {
-        return true;
-    }
-
-    protected void log(String message) {
-        log.debug(message);
-    }
-
-    protected void log(String message, Throwable throwable) {
-        log.debug(message, throwable);
-    }
-
-
 
 
 }

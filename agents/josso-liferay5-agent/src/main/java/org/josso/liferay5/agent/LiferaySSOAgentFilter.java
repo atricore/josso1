@@ -44,12 +44,10 @@ import java.util.Map;
 
 /**
  * JOSSO Servlet Filter for Generic SSO Agent, this replaces the Valve in tomcat or other container specific components.
- * The fillter will handle web logic to authenticate, login and logout users.
+ * The filter will handle web logic to authenticate, login and logout users.
  * <p/>
- * Date: Nov 27, 2007
- * Time: 9:28:53 AM
  *
- * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
+ * @author <a href="mailto:dfisic@josso.org">Dusan Fisic</a>
  */
 public class LiferaySSOAgentFilter extends BasePortalFilter {
 
@@ -494,7 +492,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
             _agent.stop();
             _agent = null;
         }
-   }
+    }
 
     /**
      * Return the splash resource from session so that we can redirect the user to it

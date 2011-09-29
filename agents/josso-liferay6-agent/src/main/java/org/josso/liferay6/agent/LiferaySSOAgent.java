@@ -22,10 +22,6 @@
 
 package org.josso.liferay6.agent;
 
-import java.security.Principal;
-
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.agent.SSOAgentRequest;
@@ -33,6 +29,9 @@ import org.josso.agent.SingleSignOnEntry;
 import org.josso.agent.http.JOSSOSecurityContext;
 import org.josso.agent.http.JaasHttpSSOAgent;
 import org.josso.gateway.identity.SSORole;
+
+import javax.security.auth.Subject;
+import java.security.Principal;
 
 /**
  * This agent will authenticate users against JAAS Infrastructure directly.  It will look up for the "josso" login context.
@@ -43,22 +42,17 @@ import org.josso.gateway.identity.SSORole;
  * josso {
  *     org.josso.liferay.agent.jaas.SSOGatewayLoginModule required debug=true;
  * };
-* </pre>
+ * </pre>
  *
- * Date: Nov 27, 2007
- * Time: 11:47:26 AM
- *
+ * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
  * @org.apache.xbean.XBean element="agent"
- *
- * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
- *
  */
 public class LiferaySSOAgent extends JaasHttpSSOAgent {
 
     private static final Log log = LogFactory.getLog(LiferaySSOAgent.class);
 
     private String screenNameProperty;
-	private String emailAddressProperty;
+    private String emailAddressProperty;
     private String fistNameProperty;
     private String lastNameProperty;
     private boolean autoScreenName;
@@ -71,13 +65,13 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
         LiferaySSOAgentRequest r = (LiferaySSOAgentRequest) request;
         LiferayLocalSession localSession = (LiferayLocalSession) r.getLocalSession();
 
-        SingleSignOnEntry  entry = super.execute(request);
+        SingleSignOnEntry entry = super.execute(request);
 
         if (entry != null) {
             if (r.getSecurityContext() != null) {
 
                 if (log.isDebugEnabled())
-                    log.debug("Publishing JOSSO Security Context instance in session ["+(entry != null ? entry.ssoId : "<NO-SSO-ID>") +"]");
+                    log.debug("Publishing JOSSO Security Context instance in session [" + (entry != null ? entry.ssoId : "<NO-SSO-ID>") + "]");
 
                 localSession.setSecurityContext(r.getSecurityContext());
             }
@@ -85,7 +79,7 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
         } else {
             if (localSession != null) {
                 if (log.isDebugEnabled())
-                    log.debug("Clearing JOSSO Security Context for session ["+ localSession.getId() +  "]");
+                    log.debug("Clearing JOSSO Security Context for session [" + localSession.getId() + "]");
 
                 localSession.setSecurityContext(null);
                 r.setSecurityContext(null);
@@ -97,27 +91,28 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
 
     /**
      * Resolves an authentication request using JAAS infrastructure.
+     *
      * @param request containing the SSO Session id.
      * @return null if no principal can be authenticated using the received SSO Session Id
      */
     protected Principal authenticate(SSOAgentRequest request) {
 
-    	String ssoSessionId = request.getSessionId();
-        
+        String ssoSessionId = request.getSessionId();
+
         Principal ssoUser = super.authenticate(request);
         if (ssoUser != null) {
-        	Subject subject = new Subject();
-        	subject.getPrincipals().add(ssoUser);
+            Subject subject = new Subject();
+            subject.getPrincipals().add(ssoUser);
             SSORole[] ssoRolePrincipals = getRoleSets(request.getRequester(), ssoSessionId);
-            for (int i=0; i < ssoRolePrincipals.length; i++) {
+            for (int i = 0; i < ssoRolePrincipals.length; i++) {
                 subject.getPrincipals().add(ssoRolePrincipals[i]);
                 log.debug("Added SSORole Principal to the Subject : " + ssoRolePrincipals[i]);
             }
-        	LiferaySSOAgentRequest r = (LiferaySSOAgentRequest) request;
+            LiferaySSOAgentRequest r = (LiferaySSOAgentRequest) request;
             JOSSOSecurityContext ctx = new JOSSOSecurityContext(subject);
             r.setSecurityContext(ctx);
         }
-        
+
         return ssoUser;
     }
 

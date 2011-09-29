@@ -71,7 +71,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
     private static final Log log = LogFactory.getLog(LiferaySSOAgentFilter.class);
 
 
-    public void init(FilterConfig filterConfig)  {
+    public void init(FilterConfig filterConfig) {
         super.init(filterConfig);
         // Validate and update our current component state
         ServletContext ctx = filterConfig.getServletContext();
@@ -495,7 +495,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
             _agent.stop();
             _agent = null;
         }
-   }
+    }
 
     /**
      * Return the splash resource from session so that we can redirect the user to it

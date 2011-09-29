@@ -22,24 +22,16 @@
 
 package org.josso.liferay6.agent;
 
-import org.josso.agent.SSOAgentRequestImpl;
 import org.josso.agent.LocalSession;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.josso.agent.http.HttpSSOAgentRequest;
 import org.josso.agent.http.JOSSOSecurityContext;
 
 /**
- * This SSO Agent Request wrapps original servlet request and response objects.
- *
+ * This SSO Agent Request wraps original servlet request and response objects.
+ * <p/>
  * It also provides a placeholder for the JOSSO Security context created by the Servlet SSO Agent during authentication.
  *
- * Date: Nov 27, 2007
- * Time: 11:53:50 AM
- *
- * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
+ * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
  */
 public class LiferaySSOAgentRequest extends HttpSSOAgentRequest {
 
@@ -60,7 +52,7 @@ public class LiferaySSOAgentRequest extends HttpSSOAgentRequest {
         this.ctx = ctx;
     }
 
-    public JOSSOSecurityContext  getSecurityContext() {
+    public JOSSOSecurityContext getSecurityContext() {
         return this.ctx;
     }
 

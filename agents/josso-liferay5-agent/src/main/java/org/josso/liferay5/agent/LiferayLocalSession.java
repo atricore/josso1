@@ -22,25 +22,23 @@
 
 package org.josso.liferay5.agent;
 
-import javax.servlet.http.HttpSession;
 import org.josso.agent.http.JOSSOSecurityContext;
 import org.josso.agent.http.WebAccessControlUtil;
 
+import javax.servlet.http.HttpSession;
+
 /**
- * This LocalSession implemnetation provides a placeholder for the JOSSO Security Context used by this plugin.
+ * This LocalSession implementation provides a placeholder for the JOSSO Security Context used by this agent.
  *
- * Date: Nov 27, 2007
- * Time: 11:34:26 AM
- *
- * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
+ * @author <a href="mailto:dfisic@josso.org">Dusan Fisic</a>
  */
 public class LiferayLocalSession extends LocalSessionImpl {
 
-    public LiferayLocalSession( HttpSession httpSession) {
+    public LiferayLocalSession(HttpSession httpSession) {
         super();
 
-       setWrapped(httpSession);
-       setMaxInactiveInterval(httpSession.getMaxInactiveInterval());
+        setWrapped(httpSession);
+        setMaxInactiveInterval(httpSession.getMaxInactiveInterval());
 
     }
 

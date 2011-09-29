@@ -22,10 +22,6 @@
 
 package org.josso.liferay5.agent;
 
-import java.security.Principal;
-
-import javax.security.auth.Subject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.agent.SSOAgentRequest;
@@ -34,9 +30,13 @@ import org.josso.agent.http.JOSSOSecurityContext;
 import org.josso.agent.http.NativeHttpSSOAgent;
 import org.josso.gateway.identity.SSORole;
 
+import javax.security.auth.Subject;
+import java.security.Principal;
+
 /**
- * This agent will authenticate users directly against the gateway.
- * 
+ * Native JOSSO Agent implementation for Liferay 5.
+ *
+ * @author <a href="mailto:dfisic@josso.org">Dusan Fisic</a>
  * @org.apache.xbean.XBean element="agent-native"
  */
 public class LiferayNativeSSOAgent extends NativeHttpSSOAgent {
@@ -51,13 +51,13 @@ public class LiferayNativeSSOAgent extends NativeHttpSSOAgent {
         LiferaySSOAgentRequest r = (LiferaySSOAgentRequest) request;
         LiferayLocalSession localSession = (LiferayLocalSession) r.getLocalSession();
 
-        SingleSignOnEntry  entry = super.execute(request);
+        SingleSignOnEntry entry = super.execute(request);
 
         if (entry != null) {
             if (r.getSecurityContext() != null) {
 
                 if (log.isDebugEnabled())
-                    log.debug("Publishing JOSSO Security Context instance in session ["+(entry != null ? entry.ssoId : "<NO-SSO-ID>") +"]");
+                    log.debug("Publishing JOSSO Security Context instance in session [" + (entry != null ? entry.ssoId : "<NO-SSO-ID>") + "]");
 
                 localSession.setSecurityContext(r.getSecurityContext());
             }
@@ -65,7 +65,7 @@ public class LiferayNativeSSOAgent extends NativeHttpSSOAgent {
         } else {
             if (localSession != null) {
                 if (log.isDebugEnabled())
-                    log.debug("Clearing JOSSO Security Context for session ["+ localSession.getId() +  "]");
+                    log.debug("Clearing JOSSO Security Context for session [" + localSession.getId() + "]");
 
                 localSession.setSecurityContext(null);
                 r.setSecurityContext(null);
@@ -77,28 +77,28 @@ public class LiferayNativeSSOAgent extends NativeHttpSSOAgent {
 
     /**
      * Resolves an authentication request directly against the gateway.
-     * 
+     *
      * @param request containing the SSO Session id.
      * @return null if no principal can be authenticated using the received SSO Session Id
      */
     protected Principal authenticate(SSOAgentRequest request) {
 
         String ssoSessionId = request.getSessionId();
-        
+
         Principal ssoUser = super.authenticate(request);
         if (ssoUser != null) {
-        	Subject subject = new Subject();
-        	subject.getPrincipals().add(ssoUser);
+            Subject subject = new Subject();
+            subject.getPrincipals().add(ssoUser);
             SSORole[] ssoRolePrincipals = getRoleSets(request.getRequester(), ssoSessionId);
-            for (int i=0; i < ssoRolePrincipals.length; i++) {
+            for (int i = 0; i < ssoRolePrincipals.length; i++) {
                 subject.getPrincipals().add(ssoRolePrincipals[i]);
-                log.debug("Added SSORole Principal to the Subject : " + ssoRolePrincipals [i]);
+                log.debug("Added SSORole Principal to the Subject : " + ssoRolePrincipals[i]);
             }
-        	LiferaySSOAgentRequest r = (LiferaySSOAgentRequest) request;
+            LiferaySSOAgentRequest r = (LiferaySSOAgentRequest) request;
             JOSSOSecurityContext ctx = new JOSSOSecurityContext(subject);
             r.setSecurityContext(ctx);
         }
-        
+
         return ssoUser;
     }
 

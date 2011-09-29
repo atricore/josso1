@@ -31,10 +31,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Date: Nov 27, 2007
- * Time: 11:35:39 AM
+ * Session abstraction used by the JOSSO Agent.
  *
- * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
+ * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
  */
 public class LocalSessionImpl implements LocalSession {
 
@@ -50,7 +49,7 @@ public class LocalSessionImpl implements LocalSession {
     private long _lastAccessedTime;
 
     private int _maxInactiveInterval;
-    
+
     private Object _wrapped;
 
     public LocalSessionImpl() {
@@ -95,7 +94,7 @@ public class LocalSessionImpl implements LocalSession {
     }
 
     public void exipre() {
-        ((HttpSession)_wrapped).invalidate();
+        ((HttpSession) _wrapped).invalidate();
     }
 
     public void setWrapped(Object wrapped) {

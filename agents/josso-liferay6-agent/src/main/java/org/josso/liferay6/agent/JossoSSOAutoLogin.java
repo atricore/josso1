@@ -15,11 +15,9 @@ import com.liferay.util.PwdGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.agent.Lookup;
-import org.josso.agent.http.HttpSSOAgent;
 import org.josso.gateway.SSONameValuePair;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
-import org.omg.CORBA.NameValuePair;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,11 +26,10 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * Implementation of Liferay AutoLogin function and it's login method
- * Date: 14.05.2010.
- * Time: 19.25.41
+ * Liferay Autologin implementation for JOSSO.
+ *
+ * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
  */
-
 public class JossoSSOAutoLogin implements AutoLogin {
 
     private static final Log log = LogFactory.getLog(JossoSSOAutoLogin.class);
@@ -83,7 +80,8 @@ public class JossoSSOAutoLogin implements AutoLogin {
 
                 try {
                     user = UserLocalServiceUtil.getUserByEmailAddress(companyId, email);
-                } catch (Exception e) {  }
+                } catch (Exception e) {
+                }
 
                 if (user == null) {
 
@@ -100,7 +98,7 @@ public class JossoSSOAutoLogin implements AutoLogin {
                     }
 
                     log.debug("Adding user : (companyId=" + companyId + ",firstName=" + firstName + ",lastName=" + lastName +
-                    ",email=" + email + ",screeName=" + screenName + ",locale=" + locale + ")");
+                            ",email=" + email + ",screeName=" + screenName + ",locale=" + locale + ")");
 
                     user = addUser(companyId, firstName, lastName, email, screenName, locale, agent.isAutoScreenName());
                 }

@@ -57,6 +57,12 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
 
     private static final Log log = LogFactory.getLog(LiferaySSOAgent.class);
 
+    private String screenNameProperty;
+	private String emailAddressProperty;
+    private String fistNameProperty;
+    private String lastNameProperty;
+    private boolean autoScreenName;
+
     /**
      * This extension will delegate processing to super class and publish JOSSO Security Context
      * instance in the LocalSession associated to the request.
@@ -115,6 +121,46 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
         return ssoUser;
     }
 
+    public String getScreenNameProperty() {
+        return screenNameProperty;
+    }
+
+    public void setScreenNameProperty(String screenNameProperty) {
+        this.screenNameProperty = screenNameProperty;
+    }
+
+    public String getEmailAddressProperty() {
+        return emailAddressProperty;
+    }
+
+    public void setEmailAddressProperty(String emailAddressProperty) {
+        this.emailAddressProperty = emailAddressProperty;
+    }
+
+    public String getFistNameProperty() {
+        return fistNameProperty;
+    }
+
+    public void setFistNameProperty(String fistNameProperty) {
+        this.fistNameProperty = fistNameProperty;
+    }
+
+    public String getLastNameProperty() {
+        return lastNameProperty;
+    }
+
+    public void setLastNameProperty(String lastNameProperty) {
+        this.lastNameProperty = lastNameProperty;
+    }
+
+    public boolean isAutoScreenName() {
+        return autoScreenName;
+    }
+
+    public void setAutoScreenName(boolean autoScreenName) {
+        this.autoScreenName = autoScreenName;
+    }
+
     @Override
     protected boolean isAuthenticationAlwaysRequired() {
         return true;
@@ -127,4 +173,8 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
     protected void log(String message, Throwable throwable) {
         log.debug(message, throwable);
     }
+
+
+
+
 }

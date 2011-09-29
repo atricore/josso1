@@ -19,4 +19,5 @@ public class JossoLiferayProps {
     }
 	
 	public static final String JOSSSO_SSO_AUTH_ENABLED = "josso.sso.auth.enabled";
+
 }

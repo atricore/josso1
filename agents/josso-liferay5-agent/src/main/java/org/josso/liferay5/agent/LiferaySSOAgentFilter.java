@@ -52,10 +52,12 @@ import java.util.Map;
 public class LiferaySSOAgentFilter extends BasePortalFilter {
 
     private static final String KEY_SESSION_MAP = "org.josso.servlet.agent.sessionMap";
-
-
-    private static final String LIFERAY_PORTAL_LOGIN = "/c/portal/login";
-    private static final String LIFERAY_PORTAL_LOGOUT = "/c/portal/logout";
+    private static final String LIFERAY_PORTAL_LOGIN_URI = "/c/portal/login";
+    private static final String LIFERAY_PORTAL_LOGOUT_URI = "/c/portal/logout";
+    private static final String LIFERAY_GROUP_URI = "/group";
+    private static final String LIFERAY_USER_URI = "/user";
+    private static final String LIFERAY_WEB_URI = "/web";
+    private static final String JOSSO_SECURITY_CHECK_URI = "/josso_security_check";
 
     /**
      * One agent instance for all applications.
@@ -106,6 +108,19 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
         HttpServletResponse hres =
                 (HttpServletResponse) response;
 
+        // URI pattern matching is implemented programmatically in case this filter is bound to the root web context
+        // (i.e. '/*' url pattern) required for intercepting locale-prefixed URLs.
+        if (!hreq.getRequestURI().contains(LIFERAY_PORTAL_LOGIN_URI) &&
+            !hreq.getRequestURI().contains(LIFERAY_PORTAL_LOGOUT_URI) &&
+            !hreq.getRequestURI().contains(LIFERAY_GROUP_URI) &&
+            !hreq.getRequestURI().contains(LIFERAY_USER_URI) &&
+            !hreq.getRequestURI().contains(LIFERAY_WEB_URI) &&
+            !hreq.getRequestURI().contains(JOSSO_SECURITY_CHECK_URI)
+        )  {
+            filterChain.doFilter(hreq, hres);
+            return;
+        }
+
         if (log.isDebugEnabled())
             log.debug("Processing : " + hreq.getContextPath());
 
@@ -145,7 +160,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
             // Check if the Liferay application required its login form [/c/portal/login]
             // ------------------------------------------------------------------
             if (JossoLiferayProps.isEnabled(companyId) &&
-                    hreq.getRequestURI().endsWith(LIFERAY_PORTAL_LOGIN)) {
+                    hreq.getRequestURI().endsWith(LIFERAY_PORTAL_LOGIN_URI)) {
                 if (log.isDebugEnabled())
                     log.debug("Requested liferay login: '" + hreq.getRequestURI() + "'");
                 //save referer url in case the user clicked on Login from some public resource (page)
@@ -172,7 +187,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
             // Check if the Liferay application required its logout form [/c/portal/logout]
             // ------------------------------------------------------------------
             if (JossoLiferayProps.isEnabled(companyId) &&
-                    hreq.getRequestURI().endsWith(LIFERAY_PORTAL_LOGOUT)) {
+                    hreq.getRequestURI().endsWith(LIFERAY_PORTAL_LOGOUT_URI)) {
                 if (log.isDebugEnabled())
                     log.debug("Requested liferay logout: '" + hreq.getRequestURI() + "'");
 

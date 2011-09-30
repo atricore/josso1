@@ -229,29 +229,9 @@ public class Liferay6Installer extends VFSInstaller {
                             "\t<xupdate:insert-before select=\"/web-app/filter-mapping[1]\" >\n" +
                             "\t\t<xupdate:element name=\"filter-mapping\">\n" +
                             "\t\t\t<filter-name>SSO Josso Filter</filter-name>\n" +
-                            "\t\t\t<url-pattern>/c/portal/login</url-pattern>\n" +
+                            "\t\t\t<url-pattern>/*</url-pattern>\n" +
                             "\t\t</xupdate:element>\n" +
-                            "\t\t<xupdate:element name=\"filter-mapping\">\n" +
-                            "\t\t\t<filter-name>SSO Josso Filter</filter-name>\n" +
-                            "\t\t\t<url-pattern>/c/portal/logout</url-pattern>\n" +
-                            "\t\t</xupdate:element>\n" +
-                            "\t\t<xupdate:element name=\"filter-mapping\">\n" +
-                            "\t\t\t<filter-name>SSO Josso Filter</filter-name>\n" +
-                            "\t\t\t<url-pattern>/group/*</url-pattern>\n" +
-                            "\t\t</xupdate:element>\n" +
-                            "\t\t<xupdate:element name=\"filter-mapping\">\n" +
-                            "\t\t\t<filter-name>SSO Josso Filter</filter-name>\n" +
-                            "\t\t\t<url-pattern>/user/*</url-pattern>\n" +
-                            "\t\t</xupdate:element>\n" +
-                            "\t\t<xupdate:element name=\"filter-mapping\">\n" +
-                            "\t\t\t<filter-name>SSO Josso Filter</filter-name>\n" +
-                            "\t\t\t<url-pattern>/web/*</url-pattern>\n" +
-                            "\t\t</xupdate:element>\n" +
-                            "\t\t<xupdate:element name=\"filter-mapping\">\n" +
-                            "\t\t\t<filter-name>SSO Josso Filter</filter-name>\n" +
-                            "\t\t\t<url-pattern>/josso_security_check</url-pattern>\n" +
-                            "\t\t</xupdate:element>\n" +
-                            "\t</xupdate:insert-before>";
+                        "\t</xupdate:insert-before>";
 
 
             String qry = XUpdateUtil.XUPDATE_START + xupdJossoFilter + XUpdateUtil.XUPDATE_END;

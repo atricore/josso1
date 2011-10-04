@@ -6,6 +6,8 @@
 
 
 #include <JOSSOIsapiAgent/agent/SSOAgentRequest.hpp>
+#include <JOSSOIsapiAgent/util/mime/FormDataParser.hpp>
+#include <JOSSOIsapiAgent/util/mime/FormField.hpp>
 
 #ifdef _DEBUG
 #define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
@@ -13,6 +15,8 @@
 #endif
 
 const string SSOAgentRequest::EMPTY_PARAM = "__EMPTY_PARAM__";
+
+const string SSOAgentRequest::MULTIPART_FORM_DATA = "multipart/form-data";
 
 const string SSOAgentRequest::EMPTY_STR = "";
 
@@ -132,6 +136,45 @@ string SSOAgentRequest::getRemoteUser() {
 	return this->secCtx.getPrincipal();
 }
 
+bool SSOAgentRequest::parseMimeString(string contentType, string mimeStr) {
+
+	try {
+
+		// Create parser object
+		mime::FormDataParser parser;
+
+		// Set directory for temp files of something is uploaded
+		parser.SetTempDirForFileUpload("C:\\TEMP");
+		parser.SetContentType(contentType);
+
+		parser.AcceptSomeData(mimeStr.c_str(), mimeStr.size());
+
+		typedef std::map <std::string, mime::FormField *> FormFieldsMap; 
+		
+		FormFieldsMap fields = parser.GetFormFieldsMap();
+
+		FormFieldsMap::iterator pos;
+		for (pos = fields.begin() ; pos != fields.end() ; ++pos) {
+			string name, value;
+
+			name.assign(pos->first);
+
+			mime::FormField *field = pos->second;
+			value.assign(field->GetTextTypeContent());
+			params[name] = value;
+
+
+		}
+
+		return true;
+	} catch (mime::Exception e) {
+		jk_log(logger, JK_LOG_ERROR, "Cannot parse content %s : %s", mimeStr.c_str(), e.GetError().c_str() );
+		return false;
+	}
+
+
+}
+
 bool SSOAgentRequest::parseQueryString(string qryStr) {
 	vector<string> vParams;
 	StringUtil::tokenize(qryStr, vParams, "&");
@@ -165,15 +208,20 @@ bool SSOAgentRequest::parsePostData(LPBYTE body, DWORD bodySize, string contentT
 	char * b = (char*) body;
 
 	string sBody;
+	
 	sBody.assign(b, bodySize);
-
-	if (!strcmp(contentType.c_str(), "application/x-www-form-urlencoded"))
-		jk_log(logger, JK_LOG_WARNING, "POST Data content type unknown : [%s]", contentType.c_str());
-
-	// TODO : This only works if post data is encoded as a query string
 	jk_log(logger, JK_LOG_TRACE, "Body type[%s]\n%s", contentType.c_str(), sBody.c_str());
+	if (strcmp(contentType.c_str(), "application/x-www-form-urlencoded") == 0) {
+		return parseQueryString(sBody);
 
-	return parseQueryString(sBody);
+	} else if (contentType.find("multipart/form-data;") == 0) {
+		return parseMimeString(contentType, sBody);
+
+	} else {
+		jk_log(logger, JK_LOG_ERROR, "POST Data content type unknown : [%s]", contentType.c_str());
+		return false;
+	}
+
 }
 
 std::string SSOAgentRequest::URLdecode(const std::string& l)

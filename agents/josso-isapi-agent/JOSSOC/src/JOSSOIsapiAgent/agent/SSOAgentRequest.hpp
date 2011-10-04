@@ -53,6 +53,8 @@ public:
 
 	static const string EMPTY_STR;
 
+	static const string MULTIPART_FORM_DATA;
+
 	std::string URLdecode(const std::string& l);
 
 
@@ -71,6 +73,8 @@ protected:
 	JOSSOSecurityContext secCtx;
 
 	bool parseQueryString(string qryStr);
+
+	bool parseMimeString(string contentType, string mimeStr);
 
 	bool parsePostData(LPBYTE body, DWORD bodySize, string contentType);
 

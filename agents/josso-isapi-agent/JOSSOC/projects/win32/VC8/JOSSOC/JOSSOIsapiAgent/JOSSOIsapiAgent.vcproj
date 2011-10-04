@@ -844,6 +844,34 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="mime"
+				>
+				<File
+					RelativePath="..\..\..\..\..\src\JOSSOIsapiAgent\util\mime\Exception.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\..\src\JOSSOIsapiAgent\util\mime\Exception.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\..\src\JOSSOIsapiAgent\util\mime\FormDataParser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\..\src\JOSSOIsapiAgent\util\mime\FormDataParser.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\..\src\JOSSOIsapiAgent\util\mime\FormField.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\..\src\JOSSOIsapiAgent\util\mime\FormField.hpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="include"

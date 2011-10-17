@@ -93,7 +93,7 @@ public class LocalSessionImpl implements LocalSession {
         _listeners.remove(sessionListener);
     }
 
-    public void exipre() {
+    public void invalidate() {
         ((Session)_wrapped).expire();
     }
 

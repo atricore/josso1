@@ -52,5 +52,5 @@ public interface LocalSession {
 
     void removeSessionListener(LocalSessionListener sessionListener);
 
-    void exipre();
+    void invalidate();
 }

@@ -83,6 +83,10 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
 
                 localSession.setSecurityContext(null);
                 r.setSecurityContext(null);
+
+                // invalidate session (unbind josso security context)
+                localSession.invalidate();
+
             }
         }
 

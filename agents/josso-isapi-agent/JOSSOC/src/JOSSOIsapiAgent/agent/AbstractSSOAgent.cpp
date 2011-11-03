@@ -302,10 +302,10 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 			const char *splashResource = ini.GetValue(section, "splash-resource", NULL);
 			const char *partnerAppId = ini.GetValue(section, "partnerAppId", NULL);
 
-			syslog(JK_LOG_WARNING_LEVEL, "'ignored-uris' %s", ignoredUris);
+			// To verbose, just do nothing syslog(JK_LOG_WARNING_LEVEL, "'ignored-uris' %s", ignoredUris);
 
 			if (baseUri == NULL) {
-				syslog(JK_LOG_WARNING_LEVEL, "'base-uri' not found in '%s' section", section);
+				// To verbose, just do nothing .... syslog(JK_LOG_WARNING_LEVEL, "'base-uri' not found in '%s' section", section);
 			} else {
 
 				string s (section);
@@ -694,7 +694,7 @@ bool AbstractSSOAgent::accessSession(string ssoSessionId, SSOAgentRequest *ssoAg
 			cache.erase(ssoSessionId);
 			LeaveCriticalSection(&cacheMapLock);
 
-			jk_log(logger, JK_LOG_ERROR, "SOAP Error %d '%s' %s \n\tAt [%s]", rc, 
+			jk_log(logger, JK_LOG_DEBUG, "SOAP Error %d '%s' %s \n\tAt [%s]", rc, 
 				svc.soap_fault_string(), 
 				svc.soap_fault_detail(),
 				svc.soap_endpoint);
@@ -947,6 +947,19 @@ bool AbstractSSOAgent::isAutomaticLoginRequired(SSOAgentRequest *req, SSOAgentRe
 
 AgentConfig *AbstractSSOAgent::getAgentConfig() {
 	return this->agentConfig;
+}
+
+PartnerAppConfig *AbstractSSOAgent::getDefaultPartnerAppConfig() {
+    PartnerAppConfig *cfg = NULL;
+	list<PartnerAppConfig>::iterator app;
+
+	size_t maxLength = 0;
+	for (app = this->agentConfig->apps.begin() ; app != this->agentConfig->apps.end() ; app ++ ) {
+		// TODO : Make this configurable, for now we just return any app!
+		cfg = &(*app);
+	}
+	return cfg;
+
 }
 
 PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfig(const string & path) {

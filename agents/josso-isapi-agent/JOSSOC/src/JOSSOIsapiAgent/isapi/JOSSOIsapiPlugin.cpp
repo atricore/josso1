@@ -187,12 +187,12 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 				// This is an authenticated request, clean up any autologin state if present.
 				string autoLoginExecuted = req->getCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED");
 				if (!autoLoginExecuted.empty() && autoLoginExecuted.compare("-") != 0) {
-					res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/");
+					res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/", false);
 				}
 
 				string autoLoginReferer = req->getCookie("JOSSO_AUTOLOGIN_REFERER");
 				if (!autoLoginReferer.empty() && autoLoginReferer.compare("-") != 0) {
-					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/"); 
+					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false); 
 				}
 
 			}
@@ -326,7 +326,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				string encodedPath = StringUtil::encode64(backTo);
 
 				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Back To PATH (encoded) %s", encodedPath.c_str());
-				res->setCookie("JOSSO_RESOURCE", encodedPath, "/");
+				res->setCookie("JOSSO_RESOURCE", encodedPath, "/", false);
 			}
 
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_login' received, redirecting to %s", ssoAgent->getGwyLoginUrl());
@@ -382,7 +382,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				string encodedSplashResource = StringUtil::encode64(splashResource);
 
 				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Splash resource %s (encoded %s)", splashResource.c_str(), encodedSplashResource.c_str());
-				res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/");
+				res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/", false);
 			}
 
 			// Since the URL is for JOSSO Extension, we need the app. id as parameter
@@ -504,7 +504,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 					if(https == "on" || https == "ON") secure = true;
 
 					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/", secure);
-					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/"); // Clean stored referer
+					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false); // Clean stored referer
 
 					// Retrieve and decode splash resource
 					string splashResource = req->getCookie("JOSSO_SPLASH_RESOURCE");

@@ -73,8 +73,8 @@ bool IsapiSSOAgent::requestLogin(SSOAgentRequest * req, SSOAgentResponse * res, 
 	jk_log(this->logger, JK_LOG_TRACE, "Encoded PATH %s", encodedPath.c_str());
 	jk_log(this->logger, JK_LOG_TRACE, "Encoded SPLASH RESOURCE %s", encodedSplashResource.c_str());
 					
-	res->setCookie("JOSSO_RESOURCE", encodedPath, "/");
-	res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/");
+	res->setCookie("JOSSO_RESOURCE", encodedPath, "/", false);
+	res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/", false);
 	
 	res->sendRedirect(agentLoginUrl);
 
@@ -208,10 +208,15 @@ const char *IsapiSSOAgent::getRequester(SSOAgentRequest *req) {
 			jk_log(req->logger, JK_LOG_ERROR, "Cannot find application config for path [%s]", originalResource.c_str());
 		}
 	} else {
-		jk_log(req->logger, JK_LOG_ERROR, "Cannot find JOSSO_RESOURCE or JOSSO_SPLASH_RESOURCE, unable to determine Partner Application ID");
+		// TODO : This is just a work-around ... !
+		jk_log(req->logger, JK_LOG_WARNING, "Cannot find PATH, JOSSO_RESOURCE or JOSSO_SPLASH_RESOURCE, unable to determine Partner Application ID");
+		PartnerAppConfig *appCfg = getDefaultPartnerAppConfig();
+		return appCfg->getPartnerAppId();
 	}
 	 
-	return NULL;
+	// This makes IIS crash, and the app pool is disabled after a few crashes!
+	// return NULL
+	
 }
 
 // ---------------------------------------------------------------------------------------------

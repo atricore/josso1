@@ -321,10 +321,15 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      * required by the front-channel part of the SSO protocol.
      */
     public String buildLoginUrl(HttpServletRequest hreq) {
+
+        // Support specifying an external form for each application.
+        SSOPartnerAppConfig appCfg = getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
+        if (appCfg != null && appCfg.getAppLoginUrl() != null) {
+            return appCfg.getAppLoginUrl();
+        }
+
         String loginUrl = getGatewayLoginUrl();
-
         String backto = buildBackToURL(hreq, getJOSSOSecurityCheckUri());
-
         loginUrl = loginUrl + "?josso_back_to=" + backto;
 
         // Add login URL parameters

@@ -44,12 +44,21 @@ public class HttpSSOAgentRequest extends SSOAgentRequestImpl {
 
     private HttpServletResponse response;
 
-    public HttpSSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId) {
-        super(requester, action, sessionId, session, assertionId);
+    public HttpSSOAgentRequest(String requester,
+                               int action,
+                               String sessionId,
+                               LocalSession session,
+                               String assertionId,
+                               String nodeId) {
+        super(requester, action, sessionId, session, assertionId, nodeId);
     }
 
-    public HttpSSOAgentRequest(String requester, int action, String sessionId, LocalSession session) {
-        super(requester, action, sessionId, session);
+    public HttpSSOAgentRequest(String requester,
+                               int action,
+                               String sessionId,
+                               LocalSession session,
+                               String nodeId) {
+        super(requester, action, sessionId, session, nodeId);
     }
 
     public void setRequest(HttpServletRequest request) {

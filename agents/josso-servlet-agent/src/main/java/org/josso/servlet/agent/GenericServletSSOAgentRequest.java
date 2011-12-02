@@ -48,12 +48,12 @@ public class GenericServletSSOAgentRequest extends HttpSSOAgentRequest {
      */
     private JOSSOSecurityContext ctx;
 
-    public GenericServletSSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId) {
-        super(requester, action, sessionId, session, assertionId);
+    public GenericServletSSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId, String nodeId) {
+        super(requester, action, sessionId, session, assertionId, nodeId);
     }
 
-    public GenericServletSSOAgentRequest(String requester, int action, String sessionId, LocalSession session) {
-        super(requester, action, sessionId, session);
+    public GenericServletSSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String nodeId) {
+        super(requester, action, sessionId, session, nodeId);
     }
 
     public void setSecurityContext(JOSSOSecurityContext ctx) {

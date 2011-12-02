@@ -41,6 +41,7 @@ public class SSOPartnerAppConfig implements Serializable {
     private String _vhost;
     private String[] _ignoredWebResources;
     private String[] _ignoredUrlPatterns;
+    private String _appLoginUrl;
 
     private boolean _rememberMeEnabled;
 
@@ -192,6 +193,14 @@ public class SSOPartnerAppConfig implements Serializable {
      */
     public String[] getIgnoredUrlPatterns() {
         return _ignoredUrlPatterns;
+    }
+
+    public String getAppLoginUrl() {
+        return _appLoginUrl;
+    }
+
+    public void setAppLoginUrl(String appLoginUrl) {
+        _appLoginUrl = appLoginUrl;
     }
     
     public boolean isSendP3PHeader() {

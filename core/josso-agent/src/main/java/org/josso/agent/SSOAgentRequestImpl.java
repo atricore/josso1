@@ -34,17 +34,19 @@ public class SSOAgentRequestImpl implements SSOAgentRequest {
     private LocalSession _session;
     private String _assertionId;
     private String _requester;
+    private String _nodeId;
 
-    public SSOAgentRequestImpl(String requester, int action, String sessionId, LocalSession session, String assertionId) {
+    public SSOAgentRequestImpl(String requester, int action, String sessionId, LocalSession session, String assertionId, String nodeId) {
         _action = action;
         _sessionId = sessionId;
         _session = session;
         _assertionId = assertionId;
         _requester = requester;
+        _nodeId = nodeId;
     }
 
-    public SSOAgentRequestImpl(String requester, int action, String sessionId, LocalSession session) {
-        this(requester, action, sessionId, session, null);
+    public SSOAgentRequestImpl(String requester, int action, String sessionId, LocalSession session, String nodeId) {
+        this(requester, action, sessionId, session, null, nodeId);
     }
 
     /**
@@ -90,5 +92,13 @@ public class SSOAgentRequestImpl implements SSOAgentRequest {
 
     public void setAssertionId(String assertionId) {
         _assertionId = assertionId;
+    }
+
+    public String getNodeId() {
+        return _nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        _nodeId = nodeId;
     }
 }

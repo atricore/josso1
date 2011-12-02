@@ -77,10 +77,18 @@ public abstract class AbstractSSOAgent implements SSOAgent {
 
     protected int debug = 0;
 
+    // ---------------<Default GWY Service Locator>
     protected GatewayServiceLocator gsl;
+
     protected SSOSessionManagerService sm;
     protected SSOIdentityManagerService im;
     protected SSOIdentityProviderService ip;
+
+    // ---------------<Specific service locators (by node id)>
+
+    protected Map<String, GatewayServiceLocator> gslsByNode = new HashMap<String, GatewayServiceLocator>();
+    protected Map<String, NodeServices> servicesByNode = new HashMap<String, NodeServices>();
+
 
     // ---------------<Configuration properties >
     protected SSOAgentConfiguration _cfg;
@@ -126,8 +134,32 @@ public abstract class AbstractSSOAgent implements SSOAgent {
         return sm;
     }
 
+    public SSOSessionManagerService getSSOSessionManager(String nodeId) {
+        NodeServices svcs = servicesByNode.get(nodeId);
+        if (svcs != null)
+            return svcs.getSm();
+
+        return sm;
+    }
+
     public SSOIdentityManagerService getSSOIdentityManager() {
         return im;
+    }
+
+    public SSOIdentityManagerService getSSOIdentityManager(String nodeId) {
+        NodeServices svcs = servicesByNode.get(nodeId);
+        if (svcs != null)
+            return svcs.getIm();
+
+        return im;
+    }
+
+    public Map<String, GatewayServiceLocator> getGatewayServiceLocators() {
+        return this.gslsByNode;
+    }
+
+    public void setGatewayServiceLocators(Map<String, GatewayServiceLocator> gslsByNode) {
+        this.gslsByNode = gslsByNode;
     }
 
     /**
@@ -264,6 +296,13 @@ public abstract class AbstractSSOAgent implements SSOAgent {
             im = gsl.getSSOIdentityManager();
             ip = gsl.getSSOIdentityProvider();
 
+            for (String nodeId : gslsByNode.keySet()) {
+                GatewayServiceLocator gsl = gslsByNode.get(nodeId);
+                NodeServices svcs = new NodeServices(nodeId, gsl);
+                svcs.start();
+                this.servicesByNode.put(nodeId, svcs);
+            }
+
             for (SSOPartnerAppConfig cfg : _cfg.getSsoPartnerApps()) {
                 if (cfg.getId() == null) {
                     log("ERROR! You should define an ID for partner application " + cfg.getContext());
@@ -273,7 +312,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
             if (debug > 0)
                 log("Agent Started");
         } catch (Exception e) {
-            log("Can't create session/identity managers : \n" + e.getMessage(), e);
+            log("Can't create session/identity/provider managers : \n" + e.getMessage(), e);
         }
 
     }
@@ -313,7 +352,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
             if (action == SSOAgentRequest.ACTION_ASSERT_SESSION) {
 
                 try {
-                    accessSession(request.getRequester(), jossoSessionId);
+                    accessSession(request.getRequester(), jossoSessionId, request.getNodeId());
                 } catch (SSOSessionException e) {
                     throw new FatalSSOSessionException("Assertion error for session : " + jossoSessionId, e);
                 }
@@ -349,7 +388,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
                 // Count the cache hit.
                 _l1CacheHits++;
 
-                entry = accessSession(request.getRequester(), entry, jossoSessionId);
+                entry = accessSession(request.getRequester(), entry, jossoSessionId, request.getNodeId());
 
                 if (entry != null) {
 
@@ -386,7 +425,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
 
                 register(jossoSessionId, ssoUserPrincipal, "JOSSO");
                 entry = lookup(jossoSessionId);
-                entry = accessSession(request.getRequester(), entry, jossoSessionId);
+                entry = accessSession(request.getRequester(), entry, jossoSessionId, request.getNodeId());
 
                 if (entry != null)
                     propagateSecurityContext(request, entry.principal);
@@ -455,7 +494,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
      * @param entry
      * @return null if the sso session is no longer valid.
      */
-    protected SingleSignOnEntry accessSession(String requester, SingleSignOnEntry entry, String jossoSessionId) {
+    protected SingleSignOnEntry accessSession(String requester, SingleSignOnEntry entry, String jossoSessionId, String nodeId) {
 
         // Just in case
         if (entry == null)
@@ -474,7 +513,25 @@ public abstract class AbstractSSOAgent implements SSOAgent {
             if (debug > 0)
                 log("Notifying keep-alive event for session '" + jossoSessionId + "'");
 
-            sm.accessSession(requester, jossoSessionId);
+            if (nodeId != null && !"".equals(nodeId)) {
+
+                NodeServices svcs = servicesByNode.get(nodeId);
+
+                if (svcs != null) {
+                    if (debug > 0)
+                        log("Using services for node : " + nodeId);
+                    svcs.getSm().accessSession(requester, jossoSessionId);
+                } else {
+                    if (debug > 0)
+                        log("Using default services for node : " + nodeId);
+                    sm.accessSession(requester, jossoSessionId);
+                }
+            } else {
+                if (debug > 0)
+                    log("Using default services, no node found");
+                sm.accessSession(requester, jossoSessionId);
+            }
+
             entry.lastAccessTime = now;
             return entry;
 
@@ -498,7 +555,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
      * Access sso session related with given the given SSO session identifier.
      * In case the session is invalid or cannot be asserted an SSOException is thrown.
      */
-    protected void accessSession(String requester, String jossoSessionId) throws SSOSessionException {
+    protected void accessSession(String requester, String jossoSessionId, String nodeId) throws SSOSessionException {
 
 
         try {
@@ -506,7 +563,24 @@ public abstract class AbstractSSOAgent implements SSOAgent {
             if (debug > 0)
                 log("Notifying keep-alive event for session '" + jossoSessionId + "'");
 
-            sm.accessSession(requester, jossoSessionId);
+            if (nodeId != null && !"".equals(nodeId)) {
+
+                NodeServices svcs = servicesByNode.get(nodeId);
+
+                if (svcs != null) {
+                    if (debug > 0)
+                        log("Using services for node : " + nodeId);
+                    svcs.getSm().accessSession(requester, jossoSessionId);
+                } else {
+                    if (debug > 0)
+                        log("Using default services for node : " + nodeId);
+                    sm.accessSession(requester, jossoSessionId);
+                }
+            } else {
+                if (debug > 0)
+                    log("Using default services, no node found");
+                sm.accessSession(requester, jossoSessionId);
+            }
 
         } catch (NoSuchSessionException e) {
             if (debug > 0)
@@ -709,5 +783,46 @@ public abstract class AbstractSSOAgent implements SSOAgent {
 	public void setStateOnClient(boolean isStateOnClient) {
 		_isStateOnClient = isStateOnClient;
 	}
+
+    public class NodeServices {
+
+        private String nodeId;
+        protected GatewayServiceLocator gsl;
+
+        protected SSOSessionManagerService sm;
+        protected SSOIdentityManagerService im;
+        protected SSOIdentityProviderService ip;
+
+        public NodeServices(String nodeId, GatewayServiceLocator gsl) {
+            this.nodeId = nodeId;
+            this.gsl = gsl;
+        }
+
+        public void start() {
+            try {
+                sm = gsl.getSSOSessionManager();
+                im = gsl.getSSOIdentityManager();
+                ip = gsl.getSSOIdentityProvider();
+
+                if (debug > 0)
+                    log("Agent Services clients started for " + nodeId);
+            } catch (Exception e) {
+                log("Can't create session/identity/provider managers : \n" + e.getMessage(), e);
+            }
+
+        }
+
+        public SSOSessionManagerService getSm() {
+            return sm;
+        }
+
+        public SSOIdentityManagerService getIm() {
+            return im;
+        }
+
+        public SSOIdentityProviderService getIp() {
+            return ip;
+        }
+    }
 }
 

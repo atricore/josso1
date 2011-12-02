@@ -77,10 +77,14 @@ public interface SSOAgent extends LocalSessionListener {
      */
     SSOSessionManagerService getSSOSessionManager();
 
+    SSOSessionManagerService getSSOSessionManager(String nodeId);
+
     /**
      * Gets the SSO Identity Manager used by this agent.
      */
     SSOIdentityManagerService getSSOIdentityManager();
+
+    SSOIdentityManagerService getSSOIdentityManager(String nodeId);
 
     /**
      * Configures this agent.

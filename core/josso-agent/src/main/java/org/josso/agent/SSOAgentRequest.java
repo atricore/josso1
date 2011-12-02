@@ -48,6 +48,10 @@ public interface SSOAgentRequest {
 
     void setRequester(String id);
 
+    String getNodeId();
+
+    void setNodeId(String nodeId);
+
     /**
      * The SSO Session identifire associated to this request.
      */

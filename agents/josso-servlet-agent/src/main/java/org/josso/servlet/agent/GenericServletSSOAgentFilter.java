@@ -127,6 +127,18 @@ public class GenericServletSSOAgentFilter implements Filter {
             String contextPath = hreq.getContextPath();
             String vhost = hreq.getServerName();
 
+            // Take the node from the request first and store it if found.
+            String nodeId = hreq.getParameter("josso_node");
+            if (nodeId != null) {
+                if (log.isDebugEnabled())
+                    log.debug("Storing JOSSO Node id : " + nodeId);
+                _agent.setAttribute(hreq, hres, "JOSSO_NODE",  nodeId);
+            } else {
+                nodeId = _agent.getAttribute(hreq, "JOSSO_NODE");
+                if (log.isDebugEnabled())
+                    log.debug("Found JOSSO Node id : " + nodeId);
+            }
+
             // In catalina, the empty context is considered the root context
             if ("".equals(contextPath))
                 contextPath = "/";
@@ -270,7 +282,7 @@ public class GenericServletSSOAgentFilter implements Filter {
                     log.debug("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
             	}
             	
-            	GenericServletSSOAgentRequest customAuthRequest = (GenericServletSSOAgentRequest) doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_CUSTOM_AUTHENTICATION, jossoSessionId, localSession, null, hreq, hres);
+            	GenericServletSSOAgentRequest customAuthRequest = (GenericServletSSOAgentRequest) doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_CUSTOM_AUTHENTICATION, jossoSessionId, nodeId, localSession, null, hreq, hres);
                 
                 _agent.processRequest(customAuthRequest);
                 
@@ -389,7 +401,7 @@ public class GenericServletSSOAgentFilter implements Filter {
                 if (log.isDebugEnabled())
                     log.debug("Outbound relaying requested for assertion id [" + assertionId + "]");
 
-                relayRequest = (GenericServletSSOAgentRequest) doMakeSSOAgentRequest( cfg.getId(), SSOAgentRequest.ACTION_RELAY, null, localSession, assertionId, hreq, hres);
+                relayRequest = (GenericServletSSOAgentRequest) doMakeSSOAgentRequest( cfg.getId(), SSOAgentRequest.ACTION_RELAY, null, nodeId, localSession, assertionId, hreq, hres);
 
                 SingleSignOnEntry entry = _agent.processRequest(relayRequest);
                 if (entry == null) {
@@ -462,7 +474,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             }
 
 
-            SSOAgentRequest r = doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_ESTABLISH_SECURITY_CONTEXT, jossoSessionId, localSession, null, hreq, hres);
+            SSOAgentRequest r = doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_ESTABLISH_SECURITY_CONTEXT, jossoSessionId, nodeId, localSession, null, hreq, hres);
             SingleSignOnEntry entry = _agent.processRequest(r);
 
             if (log.isDebugEnabled())
@@ -563,9 +575,9 @@ public class GenericServletSSOAgentFilter implements Filter {
     /**
      * Creates a new request
      */
-    protected SSOAgentRequest doMakeSSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId,
+    protected SSOAgentRequest doMakeSSOAgentRequest(String requester, int action, String sessionId, String nodeId, LocalSession session, String assertionId,
                                                     HttpServletRequest hreq, HttpServletResponse hres) {
-        GenericServletSSOAgentRequest r = new GenericServletSSOAgentRequest(requester, action, sessionId, session, assertionId);
+        GenericServletSSOAgentRequest r = new GenericServletSSOAgentRequest(requester, action, sessionId, session, assertionId, nodeId);
         r.setRequest(hreq);
         r.setResponse(hres);
 

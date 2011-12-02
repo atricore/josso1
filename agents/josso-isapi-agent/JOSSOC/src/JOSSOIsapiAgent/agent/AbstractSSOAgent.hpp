@@ -106,6 +106,8 @@ public:
 	 */
 	virtual PartnerAppConfig * getPartnerAppConfig(const string & path) ;
 
+	virtual PartnerAppConfig * getDefaultPartnerAppConfig() ;
+
 	virtual string buildGwyLoginUrl(SSOAgentRequest *req) =0;
 
 

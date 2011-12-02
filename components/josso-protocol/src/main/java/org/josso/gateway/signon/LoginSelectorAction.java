@@ -107,8 +107,13 @@ public class LoginSelectorAction extends SignonBaseAction {
 	            if (logger.isDebugEnabled())
 	                logger.debug("RemembermeCookie found!");
 	
-	            logger.debug("Triggering 'rememberme-authentication'");
-	            return mapping.findForward("rememberme-authentication");
+                String cmd = getSSOCmd(request);
+                if ((cmd == null) || (cmd != null && !cmd.equals("login_optional"))) {
+                    logger.debug("Triggering 'rememberme-authentication'");
+                    return mapping.findForward("rememberme-authentication");
+                } else {
+                    logger.debug("Not triggering remember me authentication since login is optional");
+                }
 	        }
 	
 	        if (logger.isDebugEnabled())

@@ -79,7 +79,7 @@
 
 //----------------------------------------------------------------------------------
 
-#define MAX_HEADER_SIZE	4096
+#define MAX_HEADER_SIZE	8192
 
 #ifndef JOSSO_ISAPI_DEF
 #define JOSSO_ISAPI_DEF

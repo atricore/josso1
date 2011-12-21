@@ -32,10 +32,12 @@ public class SSOGatewayHandler implements CallbackHandler {
 
     private String requester;
     private String ssoSessionId ;
+    private String nodeId;
 
-    public SSOGatewayHandler(String requester, String ssoSessionId) {
+    public SSOGatewayHandler(String requester, String ssoSessionId, String nodeId) {
         this.ssoSessionId = ssoSessionId;
         this.requester = requester;
+        this.nodeId = nodeId;
     }
 
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
@@ -49,6 +51,8 @@ public class SSOGatewayHandler implements CallbackHandler {
 
                 if (nc.getPrompt().equals("appID"))
                     nc.setName(requester);
+                if (nc.getPrompt().equals("nodeID"))
+                    nc.setName(nodeId);
                 else
                     nc.setName(ssoSessionId);
 

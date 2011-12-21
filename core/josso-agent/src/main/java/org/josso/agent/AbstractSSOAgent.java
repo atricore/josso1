@@ -368,7 +368,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
             if (action == SSOAgentRequest.ACTION_RELAY) {
 
                 String assertionId = request.getAssertionId();
-                jossoSessionId = resolveAssertion(request.getRequester(), assertionId);
+                jossoSessionId = resolveAssertion(request.getRequester(), assertionId, request.getNodeId());
                 request.setSessionId(jossoSessionId);
             }
 
@@ -461,14 +461,24 @@ public abstract class AbstractSSOAgent implements SSOAgent {
      * @param assertionId
      * @return null if the authentication assertion is invalid
      */
-    protected String resolveAssertion(String requester, String assertionId) {
+    protected String resolveAssertion(String requester, String assertionId, String nodeId) {
 
         try {
 
             if (debug > 0)
                 log("Dereferencing assertion for id '" + assertionId + "'");
 
-            String ssoSessionId = ip.resolveAuthenticationAssertion(requester, assertionId);
+            String ssoSessionId = null;
+            if (nodeId != null && !"".equals(nodeId)) {
+                NodeServices svcs = servicesByNode.get(nodeId);
+                if (svcs != null) {
+                    ssoSessionId = svcs.getIp().resolveAuthenticationAssertion(requester, assertionId);
+                } else {
+                    ssoSessionId = ip.resolveAuthenticationAssertion(requester, assertionId);
+                }
+            } else {
+                ssoSessionId = ip.resolveAuthenticationAssertion(requester, assertionId);
+            }
 
             if (debug > 0)
                 log("Dereferencing assertion for id '" + assertionId + "' as SSO Session '"+ssoSessionId+"'");

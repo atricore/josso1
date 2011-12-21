@@ -24,7 +24,9 @@ package org.josso.servlet.agent.jaas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.josso.agent.AbstractSSOAgent;
 import org.josso.agent.Lookup;
+import org.josso.agent.SSOAgent;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
@@ -60,6 +62,7 @@ public class SSOGatewayLoginModule  implements LoginModule {
 
     // the logged user and his roles.
     protected String _requester;
+    protected String _nodeId;
     protected String _currentSSOSessionId;
     protected SSOUser _ssoUserPrincipal;
     protected SSORole[] _ssoRolePrincipals;
@@ -107,12 +110,13 @@ public class SSOGatewayLoginModule  implements LoginModule {
             throw new LoginException("Error: no CallbackHandler available " +
                     "to garner authentication information from the user");
 
-        Callback[] callbacks = new Callback[3];
+        Callback[] callbacks = new Callback[4];
 
         // Just ask for the session identifier
         callbacks[0] = new NameCallback("ssoSessionId");
         callbacks[1] = new PasswordCallback("password", false);
         callbacks[2] = new NameCallback("appID");
+        callbacks[3] = new NameCallback("nodeID");
 
         String ssoSessionId;
         String ssoSessionId2 = null;
@@ -123,6 +127,7 @@ public class SSOGatewayLoginModule  implements LoginModule {
                 ssoSessionId2 = String.valueOf(((PasswordCallback) callbacks[1]).getPassword());
 
             _requester = ((NameCallback) callbacks[2]).getName();
+            _nodeId = ((NameCallback) callbacks[3]).getName();
 
         } catch (java.io.IOException ioe) {
             throw new LoginException(ioe.toString());
@@ -148,8 +153,16 @@ public class SSOGatewayLoginModule  implements LoginModule {
 
             _currentSSOSessionId = ssoSessionId;
 
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
-            SSOUser ssoUser = im.findUserInSession(_requester, ssoSessionId);
+            SSOUser ssoUser = null;
+            SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+            SSOIdentityManagerService im = agent.getSSOIdentityManager();
+
+            if (_nodeId != null && !"".equals(_nodeId)) {
+                im = agent.getSSOIdentityManager(_nodeId);
+
+            }
+
+            ssoUser = im.findUserInSession(_requester, ssoSessionId);
 
             logger.debug("Session authentication succeeded : " + ssoSessionId);
             _ssoUserPrincipal = ssoUser;
@@ -198,7 +211,6 @@ public class SSOGatewayLoginModule  implements LoginModule {
                 }
 
                 logger.debug("Added SSOUser Principal to the Subject : " + _ssoUserPrincipal);
-
 
                 _ssoRolePrincipals = getRoleSets();
 
@@ -289,7 +301,12 @@ public class SSOGatewayLoginModule  implements LoginModule {
     protected SSORole[] getRoleSets() throws LoginException {
         try {
             // obtain user roles principals and add it to the subject
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+            SSOIdentityManagerService im = agent.getSSOIdentityManager();
+
+            if (_nodeId != null && !"".equals(_nodeId)) {
+                im = agent.getSSOIdentityManager(_nodeId);
+            }
 
             return im.findRolesBySSOSessionId(_requester, _currentSSOSessionId);
         } catch(Exception e) {

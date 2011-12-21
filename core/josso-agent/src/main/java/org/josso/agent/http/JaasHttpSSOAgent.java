@@ -61,7 +61,7 @@ public class JaasHttpSSOAgent extends HttpSSOAgent {
             if (log.isDebugEnabled())
                 log.debug("Creating callback handler for " + request.getRequester() + "/" + ssoSessionId);
 
-            CallbackHandler ch  = new SSOGatewayHandler(request.getRequester(), ssoSessionId);
+            CallbackHandler ch  = new SSOGatewayHandler(request.getRequester(), ssoSessionId, request.getNodeId());
             LoginContext lc = new LoginContext("josso", ch);
 
             // Perform login

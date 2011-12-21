@@ -110,7 +110,7 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
             SSOGatewayLoginModule m = new SSOGatewayLoginModule ();
             try {
                 Subject s = new Subject();
-                CallbackHandler ch  = new SSOGatewayHandler(request.getRequester(), ssoSessionId);
+                CallbackHandler ch  = new SSOGatewayHandler(request.getRequester(), ssoSessionId, request.getNodeId());
                 m.initialize(s, ch, null, null );
                 m.login();
                 m.commit();
@@ -130,7 +130,7 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
         if (ssoUser != null) {
         	Subject subject = new Subject();
         	subject.getPrincipals().add(ssoUser);
-            SSORole[] ssoRolePrincipals = getRoleSets(request.getRequester(), ssoSessionId);
+            SSORole[] ssoRolePrincipals = getRoleSets(request.getRequester(), ssoSessionId, request.getNodeId());
             for (int i=0; i < ssoRolePrincipals.length; i++) {
                 subject.getPrincipals().add(ssoRolePrincipals[i]);
                 log.debug("Added SSORole Principal to the Subject : " + ssoRolePrincipals[i]);

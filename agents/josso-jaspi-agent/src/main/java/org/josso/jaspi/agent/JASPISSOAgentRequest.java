@@ -39,11 +39,11 @@ public class JASPISSOAgentRequest extends HttpSSOAgentRequest {
     private JOSSOSecurityContext ctx;
 
     public JASPISSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId) {
-        super(requester, action, sessionId, session, assertionId);
+        super(requester, action, sessionId, session, assertionId, null);
     }
 
     public JASPISSOAgentRequest(String requester, int action, String sessionId, LocalSession session) {
-        super(requester, action, sessionId, session);
+        super(requester, action, sessionId, session, null);
     }
 
     public void setSecurityContext(JOSSOSecurityContext ctx) {

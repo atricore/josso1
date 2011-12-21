@@ -41,11 +41,11 @@ public class LiferaySSOAgentRequest extends HttpSSOAgentRequest {
     private JOSSOSecurityContext ctx;
 
     public LiferaySSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId) {
-        super(requester, action, sessionId, session, assertionId);
+        super(requester, action, sessionId, session, assertionId, null);
     }
 
     public LiferaySSOAgentRequest(String requester, int action, String sessionId, LocalSession session) {
-        super(requester, action, sessionId, session);
+        super(requester, action, sessionId, session, null);
     }
 
     public void setSecurityContext(JOSSOSecurityContext ctx) {

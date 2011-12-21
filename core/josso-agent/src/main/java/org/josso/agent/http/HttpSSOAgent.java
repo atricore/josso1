@@ -116,12 +116,22 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         String rolesPlaceHolder = partnerAppConfig.getSecurityContextPropagationConfig().getRolesPlaceHolder();
         String propertiesPlaceholder = partnerAppConfig.getSecurityContextPropagationConfig().getPropertiesPlaceHolder();
         String user = principal.getName();
+        String nodeId = request.getNodeId();
 
         if (binding != null && userPlaceHolder != null && rolesPlaceHolder != null) {
             SSORole[] roleSets;
 
             try {
-                roleSets = im.findRolesBySSOSessionId(request.getRequester(), servletSSOAgentRequest.getSessionId());
+                if (nodeId != null && !"".equals(nodeId)) {
+                    NodeServices svcs = servicesByNode.get(nodeId);
+                    if (svcs != null) {
+                        roleSets = svcs.getIm().findRolesBySSOSessionId(request.getRequester(), servletSSOAgentRequest.getSessionId());
+                    } else  {
+                        roleSets = im.findRolesBySSOSessionId(request.getRequester(), servletSSOAgentRequest.getSessionId());
+                    }
+                } else {
+                    roleSets = im.findRolesBySSOSessionId(request.getRequester(), servletSSOAgentRequest.getSessionId());
+                }
             } catch (SSOIdentityException e) {
                 if (debug > 0)
                     log("Error fetching roles for SSO Session [" + servletSSOAgentRequest.getSessionId() + "]" +
@@ -711,10 +721,23 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      * @return array of user roles
      * @throws LoginException
      */
-    public SSORole[] getRoleSets(String requester, String ssoSessionId) {
+    public SSORole[] getRoleSets(String requester, String ssoSessionId, String nodeId) {
         try {
             SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
-            return im.findRolesBySSOSessionId(requester, ssoSessionId);
+            SSORole[] roleSets = null;
+
+            if (nodeId != null && !"".equals(nodeId)) {
+                NodeServices svcs = servicesByNode.get(nodeId);
+                if (svcs != null) {
+                    roleSets = svcs.getIm().findRolesBySSOSessionId(requester, ssoSessionId);
+                } else  {
+                    roleSets = im.findRolesBySSOSessionId(requester, ssoSessionId);
+                }
+            } else {
+                roleSets = im.findRolesBySSOSessionId(requester, ssoSessionId);
+            }
+
+            return roleSets;
         } catch(Exception e) {
         	log("Error finding roles for : " + ssoSessionId, e);
             throw new RuntimeException("Error finding roles for : " + ssoSessionId);

@@ -38,7 +38,7 @@ public class CatalinaSSOAgentRequest extends HttpSSOAgentRequest {
 
 
     public CatalinaSSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId) {
-        super(requester, action, sessionId, session, assertionId);
+        super(requester, action, sessionId, session, assertionId, null);
     }
 
     public CatalinaSSOAgentRequest(String requester, int action, String sessionId, LocalSession session) {

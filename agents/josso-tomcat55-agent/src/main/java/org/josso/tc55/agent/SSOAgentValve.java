@@ -296,6 +296,18 @@ public class SSOAgentValve extends ValveBase
                 return;
             }
 
+            String nodeId = hreq.getParameter("josso_node");
+            if (nodeId != null) {
+                if (debug >= 1)
+                    log("Storing JOSSO Node id : " + nodeId);
+                _agent.setAttribute(hreq, hres, "JOSSO_NODE",  nodeId);
+            } else {
+                nodeId = _agent.getAttribute(hreq, "JOSSO_NODE");
+                if (debug >= 1)
+                    log("Found JOSSO Node id : " + nodeId);
+            }
+
+
             // ------------------------------------------------------------------
             // Check some basic HTTP handling
             // ------------------------------------------------------------------

@@ -107,7 +107,7 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
         if (ssoUser != null) {
             Subject subject = new Subject();
             subject.getPrincipals().add(ssoUser);
-            SSORole[] ssoRolePrincipals = getRoleSets(request.getRequester(), ssoSessionId);
+            SSORole[] ssoRolePrincipals = getRoleSets(request.getRequester(), ssoSessionId, request.getNodeId());
             for (int i = 0; i < ssoRolePrincipals.length; i++) {
                 subject.getPrincipals().add(ssoRolePrincipals[i]);
                 log.debug("Added SSORole Principal to the Subject : " + ssoRolePrincipals[i]);

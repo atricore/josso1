@@ -396,7 +396,7 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	                if (!clientSubject.getPrincipals().contains(entry.principal)) {
 	                	clientSubject.getPrincipals().add(entry.principal);
 	                }
-	                SSORole[] ssoRolePrincipals = _agent.getRoleSets(cfg.getId(), entry.ssoId);
+                    SSORole[] ssoRolePrincipals = _agent.getRoleSets(cfg.getId(), entry.ssoId, relayRequest.getNodeId());
 	                for (int i=0; i < ssoRolePrincipals.length; i++) {
 	                    if (clientSubject.getPrincipals().contains(ssoRolePrincipals[i])) {
 	                        continue;
@@ -498,7 +498,7 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
                 if (!clientSubject.getPrincipals().contains(entry.principal)) {
                 	clientSubject.getPrincipals().add(entry.principal);
                 }
-                SSORole[] ssoRolePrincipals = _agent.getRoleSets(cfg.getId(), entry.ssoId);
+                SSORole[] ssoRolePrincipals = _agent.getRoleSets(cfg.getId(), entry.ssoId, r.getNodeId());
                 for (int i=0; i < ssoRolePrincipals.length; i++) {
                     if (clientSubject.getPrincipals().contains(ssoRolePrincipals[i])) {
                         continue;

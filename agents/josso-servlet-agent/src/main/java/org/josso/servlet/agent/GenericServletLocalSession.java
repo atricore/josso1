@@ -48,4 +48,9 @@ public class GenericServletLocalSession extends LocalSessionImpl {
         HttpSession session = (HttpSession) getWrapped();
         session.setAttribute(WebAccessControlUtil.KEY_JOSSO_SECURITY_CONTEXT, ctx);
     }
+
+    public void updateSession(HttpSession httpSession) {
+        setWrapped(httpSession);
+        setMaxInactiveInterval(httpSession.getMaxInactiveInterval());
+    }
 }

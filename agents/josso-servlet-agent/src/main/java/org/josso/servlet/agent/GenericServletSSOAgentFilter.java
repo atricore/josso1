@@ -266,6 +266,9 @@ public class GenericServletSSOAgentFilter implements Filter {
                 // map them to local session events.
                 // Not supported : session.addSessionListener(this);
                 sessionMap.put(session.getId(), localSession);
+            } else {
+                // Update the session, just in case we have an older copy wrapped on our local session.
+                localSession.updateSession(session);
             }
 
             

@@ -62,6 +62,11 @@ import org.josso.agent.http.WebAccessControlUtil;
 public class GenericServletSSOAgentFilter implements Filter {
 
     public static final String KEY_SESSION_MAP = "org.josso.servlet.agent.sessionMap";
+    public static final String LAZY_STARTUP ="lazy";
+    /**
+     * The servlet context
+     */
+    private ServletContext _context;
 
     /**
      * One agent instance for all applications.
@@ -77,32 +82,40 @@ public class GenericServletSSOAgentFilter implements Filter {
 
     }
 
+    private void startup() throws ServletException {
+
+        try {
+
+            Lookup lookup = Lookup.getInstance();
+            lookup.init("josso-agent-config.xml"); // For spring compatibility ...
+
+            // We need at least an abstract SSO Agent
+            _agent = (HttpSSOAgent) lookup.lookupSSOAgent();
+            if (log.isDebugEnabled())
+            _agent.setDebug(1);
+            _agent.start();
+
+
+            // Publish agent in servlet context
+            _context.setAttribute("org.josso.agent", _agent);
+
+        } catch (Exception e) {
+            throw new ServletException("Error starting SSO Agent : " + e.getMessage(), e);
+        }
+
+    }
+
     public void init(FilterConfig filterConfig) throws ServletException {
         // Validate and update our current component state
-        ServletContext ctx = filterConfig.getServletContext();
-        ctx.setAttribute(KEY_SESSION_MAP, new HashMap());
+        _context = filterConfig.getServletContext();
+        _context.setAttribute(KEY_SESSION_MAP, new HashMap());
 
-        if (_agent == null) {
-
-            try {
-
-                Lookup lookup = Lookup.getInstance();
-                lookup.init("josso-agent-config.xml"); // For spring compatibility ...
-
-                // We need at least an abstract SSO Agent
-                _agent = (HttpSSOAgent) lookup.lookupSSOAgent();
-                if (log.isDebugEnabled())
-                _agent.setDebug(1);
-                _agent.start();
-
-                // Publish agent in servlet context
-                filterConfig.getServletContext().setAttribute("org.josso.agent", _agent);
-
-            } catch (Exception e) {
-                throw new ServletException("Error starting SSO Agent : " + e.getMessage(), e);
-            }
-
-
+        // Lazy startup shifts filter initialization upon the first request is received
+        // This allows the container to setup web application's classloader
+        // In some containers - such as JRun - a filter will not be able to access web application's resources
+        // (e.g. WEB-INF/classes) during initialization due to that this is not fully initialized yet.
+        if (_agent == null && !filterConfig.getInitParameter("init").equals(LAZY_STARTUP)) {
+            startup();
         }
 
 
@@ -110,6 +123,10 @@ public class GenericServletSSOAgentFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
+
+        if (_agent == null) {
+            startup();
+        }
 
         HttpServletRequest hreq =
                 (HttpServletRequest) request;

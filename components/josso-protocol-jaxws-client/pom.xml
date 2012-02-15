@@ -67,7 +67,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <namespace>urn:org:josso:protocol:client</namespace>
+                            <namespace>urn:org:josso:protocol:client:jaxws</namespace>
                         </configuration>
                         <goals>
                             <goal>mapping</goal>

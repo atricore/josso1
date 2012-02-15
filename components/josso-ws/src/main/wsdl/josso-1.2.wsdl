@@ -475,19 +475,19 @@
     <!--The concrete service bound to the SOAP bidning follows-->
     <service name="SSOIdentityProviderWS">
         <port name="SSOIdentityProviderSoap" binding="josso:SSOIdentityProviderSOAPBinding">
-            <soap:address location="file:///foo"/>
+            <soap:address location="http://localhost:8081"/>
         </port>
     </service>
 
     <service name="SSOIdentityManagerWS">
         <port name="SSOIdentityManagerSoap" binding="josso:SSOIdentityManagerSOAPBinding">
-            <soap:address location="file:///foo1"/>
+            <soap:address location="http://localhost:8081"/>
         </port>
     </service>
 
     <service name="SSOSessionManagerWS">
         <port name="SSOSessionManagerSoap" binding="josso:SSOSessionManagerSOAPBinding">
-            <soap:address location="file:///foo2"/>
+            <soap:address location="http://localhost:8081"/>
         </port>
     </service>
 

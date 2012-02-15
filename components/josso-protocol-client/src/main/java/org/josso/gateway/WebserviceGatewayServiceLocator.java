@@ -48,17 +48,6 @@ public class WebserviceGatewayServiceLocator extends GatewayServiceLocator {
 
     private static final Log logger = LogFactory.getLog(WebserviceGatewayServiceLocator.class);
 
-    private static final String TRANSPORT_SECURITY_NONE = "none";
-    private static final String TRANSPORT_SECURITY_CONFIDENTIAL = "confidential";
-
-    private String _endpoint;
-    private String _username;
-    private String _transportSecurity = TRANSPORT_SECURITY_NONE;
-    private String _servicesWebContext;
-    private String _sessionManagerServicePath;
-    private String _identityManagerServicePath;
-    private String _identityProviderServicePath;
-
     /**
      * Package private Constructor so that it can only be instantiated
      * by the GatewayServiceLocator Class.
@@ -124,88 +113,6 @@ public class WebserviceGatewayServiceLocator extends GatewayServiceLocator {
         return wip;
     }
 
-    /**
-     * Builds the endpoint base string.
-     *
-     * @return the endpoint base
-     */
-    public String getEndpointBase() {
-        return (_transportSecurity.equalsIgnoreCase(TRANSPORT_SECURITY_CONFIDENTIAL) ? "https" : "http") +
-                "://" + _endpoint + "/";
-
-    }
-    
-    /**
-     * Builds the SSOSessionManager endpoint string.
-     *
-     * @return the SSOSessionManager endpoint
-     */
-    public String getSSOSessionManagerEndpoint() {
-    	if (_sessionManagerServicePath != null) {
-    		return getEndpointBase() + _sessionManagerServicePath;
-    	} else {
-    		return getEndpointBase() + (_servicesWebContext != null ? _servicesWebContext : "josso") + 
-    				"/services/SSOSessionManagerSoap";
-    	}
-    }
-    
-    /**
-     * Builds the SSOIdentityManager endpoint string.
-     *
-     * @return the SSOIdentityManager endpoint
-     */
-    public String getSSOIdentityManagerEndpoint() {
-    	if (_identityManagerServicePath != null) {
-    		return getEndpointBase() + _identityManagerServicePath;
-    	} else {
-    		return getEndpointBase() + (_servicesWebContext != null ? _servicesWebContext : "josso") + 
-    				"/services/SSOIdentityManagerSoap";
-    	}
-    }
-    
-    /**
-     * Builds the SSOIdentityProvider endpoint string.
-     *
-     * @return the SSOIdentityProvider endpoint
-     */
-    public String getSSOIdentityProviderEndpoint() {
-    	if (_identityProviderServicePath != null) {
-    		return getEndpointBase() + _identityProviderServicePath;
-    	} else {
-    		return getEndpointBase() + (_servicesWebContext != null ? _servicesWebContext : "josso") + 
-    				"/services/SSOIdentityProviderSoap";
-    	}
-    }
-
-    //----------------------------------------------------------------- Configuration Properties
-
-    /**
-     * SOAP end point, e.g. localhost:8080
-     */
-    public void setEndpoint(String endpoint) {
-        _endpoint = endpoint;
-    }
-
-    /**
-     * SOAP end point, e.g. localhost:8080
-     */
-    public String getEndpoint() {
-        return _endpoint;
-    }
-
-    /**
-     * SOAP end point services web context, e.g. myjosso
-     */
-    public void setServicesWebContext(String servicesWebContext) {
-        _servicesWebContext = servicesWebContext;
-    }
-
-    /**
-     * SOAP end point services web context, e.g. myjosso
-     */
-    public String getServicesWebContext() {
-        return _servicesWebContext;
-    }
 
     /**
      * Set the username used to authenticate SOAP messages.
@@ -213,15 +120,8 @@ public class WebserviceGatewayServiceLocator extends GatewayServiceLocator {
      * @param username the username used to authenticate the SOAP message.
      */
     public void setUsername(String username) {
+        super.setUsername(username);
         WebserviceClientAuthentication.setUsername(username);
-        _username = username;
-    }
-
-    /**
-     * Getter for username used to authenticate SOAP messages.
-     */
-    public String getUsername() {
-        return _username;
     }
 
     /**
@@ -230,76 +130,7 @@ public class WebserviceGatewayServiceLocator extends GatewayServiceLocator {
      * @param password the password used to authenticate the SOAP message.
      */
     public void setPassword(String password) {
+        super.setPassword(password);
         WebserviceClientAuthentication.setPassword(password);
     }
-
-    public String getPassword() {
-        return "*";
-    }
-
-    /**
-     * Transport security used in SOAP messages, valid values are : none, confidential
-     *
-     * @param transportSecurity valid values are none, confidential
-     */
-    public void setTransportSecurity(String transportSecurity) {
-        _transportSecurity = transportSecurity;
-    }
-
-    /**
-     * Transport security used in SOAP messages, valid values are : none|confidential
-     */
-    public String getTransportSecurity() {
-        return _transportSecurity;
-    }
-
-	/**
-	 * @return the sessionManagerServicePath
-	 */
-	public String getSessionManagerServicePath() {
-		return _sessionManagerServicePath;
-	}
-
-	/**
-	 * Set the SSOSessionManager service full path (everything that goes after the endpoint).
-	 * 
-	 * @param sessionManagerServicePath the sessionManagerServicePath to set
-	 */
-	public void setSessionManagerServicePath(String sessionManagerServicePath) {
-		_sessionManagerServicePath = sessionManagerServicePath;
-	}
-
-	/**
-	 * @return the identityManagerServicePath
-	 */
-	public String getIdentityManagerServicePath() {
-		return _identityManagerServicePath;
-	}
-
-	/**
-	 * Set the SSOIdentityManager service full path (everything that goes after the endpoint).
-	 * 
-	 * @param identityManagerServicePath the identityManagerServicePath to set
-	 */
-	public void setIdentityManagerServicePath(String identityManagerServicePath) {
-		_identityManagerServicePath = identityManagerServicePath;
-	}
-
-	/**
-	 * @return the identityProviderServicePath
-	 */
-	public String getIdentityProviderServicePath() {
-		return _identityProviderServicePath;
-	}
-
-	/**
-	 * Set the SSOIdentityProvider service full path (everything that goes after the endpoint).
-	 * 
-	 * @param identityProviderServicePath the identityProviderServicePath to set
-	 */
-	public void setIdentityProviderServicePath(
-			String identityProviderServicePath) {
-		_identityProviderServicePath = identityProviderServicePath;
-	}
-
 }

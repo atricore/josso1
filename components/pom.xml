@@ -104,6 +104,7 @@
         <module>josso-ws-v1_2</module>
         <module>josso-protocol</module>
         <module>josso-protocol-client</module>
+        <module>josso-protocol-jaxws-client</module>
 
         <module>josso-default-passwordgenerator</module>
         <module>josso-default-passwordmanager</module>

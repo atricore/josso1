@@ -26,17 +26,17 @@ import org.apache.commons.logging.LogFactory;
 import org.josso.gateway.GatewayServiceLocator;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
 import org.josso.gateway.identity.service.SSOIdentityProviderService;
+import org.josso.gateway.jaxws.identity.service.WebserviceSSOIdentityManager;
 import org.josso.gateway.jaxws.identity.service.WebserviceSSOIdentityProvider;
+import org.josso.gateway.jaxws.session.service.WebserviceSSOSessionManager;
 import org.josso.gateway.session.service.SSOSessionManagerService;
-import org.josso.gateway.ws._1_2.wsdl.SSOIdentityProvider;
-import org.josso.gateway.ws._1_2.wsdl.SSOIdentityProviderWS;
+import org.josso.gateway.ws._1_2.wsdl.*;
 
 import javax.xml.ws.BindingProvider;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
- * @version CVS $Id: JAXWSWebserviceGatewayServiceLocator.java 568 2008-07-31 18:39:20Z sgonzalez $
  * @org.apache.xbean.XBean element="jaxws-service-locator"
  * Service Locator for Gateway Services available as Webservices.
  */
@@ -59,8 +59,15 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
      * @throws Exception
      */
     public SSOSessionManagerService getSSOSessionManager() throws Exception {
+        SSOSessionManager port = new SSOSessionManagerWS().getSSOSessionManagerSoap();
 
-        return null;
+        String smEndpoint = getSSOSessionManagerEndpoint();
+        logger.debug("Using SSOSessionManager endpoint '" + smEndpoint + "'");
+        setEndpointAddress(port, smEndpoint);
+
+        WebserviceSSOSessionManager wsm = new WebserviceSSOSessionManager(port);
+
+        return wsm;
     }
 
     /**
@@ -70,7 +77,15 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
      * @throws Exception
      */
     public SSOIdentityManagerService getSSOIdentityManager() throws Exception {
-        return null;
+        SSOIdentityManager port = new SSOIdentityManagerWS().getSSOIdentityManagerSoap();
+
+        String imEndpoint = getSSOIdentityManagerEndpoint();
+        logger.debug("Using SSOIdentityManager endpoint '" + imEndpoint + "'");
+        setEndpointAddress(port, imEndpoint);
+
+        WebserviceSSOIdentityManager wim = new WebserviceSSOIdentityManager(port);
+
+        return wim;
     }
 
     /**
@@ -95,7 +110,6 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
 
         assert port instanceof BindingProvider : "Doesn't appear to be a valid port";
         assert newAddress != null : "Doesn't appear to be a valid address";
-
 
         BindingProvider bp = (BindingProvider) port;
 

@@ -22,21 +22,15 @@
 
 package org.josso.gateway.jaxws.identity.service;
 
-import java.rmi.RemoteException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.gateway.assertion.exceptions.AssertionNotValidException;
 import org.josso.gateway.identity.exceptions.IdentityProvisioningException;
 import org.josso.gateway.identity.service.SSOIdentityProviderService;
-import org.josso.gateway.ws._1_2.protocol.AssertIdentityWithSimpleAuthenticationRequestType;
-import org.josso.gateway.ws._1_2.protocol.AssertIdentityWithSimpleAuthenticationResponseType;
-import org.josso.gateway.ws._1_2.protocol.AssertionNotValidErrorType;
 import org.josso.gateway.ws._1_2.protocol.GlobalSignoffRequestType;
 import org.josso.gateway.ws._1_2.protocol.GlobalSignoffResponseType;
 import org.josso.gateway.ws._1_2.protocol.ResolveAuthenticationAssertionRequestType;
 import org.josso.gateway.ws._1_2.protocol.ResolveAuthenticationAssertionResponseType;
-import org.josso.gateway.ws._1_2.protocol.SSOIdentityProviderErrorType;
 import org.josso.gateway.ws._1_2.wsdl.AssertionNotValidErrorMessage;
 import org.josso.gateway.ws._1_2.wsdl.SSOIdentityProvider;
 import org.josso.gateway.ws._1_2.wsdl.SSOIdentityProviderErrorMessage;
@@ -45,7 +39,6 @@ import org.josso.gateway.ws._1_2.wsdl.SSOIdentityProviderErrorMessage;
  * JAX-WS SSO Identity Provider that is a proxy of an Identity Provider using Webservices.
  *
  * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
- * @version CVS $Id: WebserviceSSOIdentityProvider.java 568 2008-07-31 18:39:20Z sgonzalez $
  */
 public class WebserviceSSOIdentityProvider implements SSOIdentityProviderService {
 
@@ -108,7 +101,22 @@ public class WebserviceSSOIdentityProvider implements SSOIdentityProviderService
     }
 
     public void globalSignoff(String requester, String sessionId) throws IdentityProvisioningException {
-        throw new UnsupportedOperationException("No JAX-WS implementation yet");
+        try {
+            if (logger.isDebugEnabled())
+                logger.debug("[globalSignoff()] : " + sessionId);
+            GlobalSignoffRequestType request = new GlobalSignoffRequestType();
+            request.setRequester(requester);
+            request.setSsoSessionId(sessionId);
+            GlobalSignoffResponseType repsonse = _wsSSOIdentityProvider.globalSignoff(request);
+
+        } catch (SSOIdentityProviderErrorMessage e) {
+            throw new IdentityProvisioningException(e.getMessage(), e);
+        } catch (Exception e) {
+            _errorCount++;
+            throw new IdentityProvisioningException(e.getMessage(), e);
+        } finally {
+            _processedCount++;
+        }
     }
 
 }

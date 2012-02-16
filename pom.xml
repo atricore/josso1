@@ -859,6 +859,12 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-protocol-jaxws-client</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-ws-v1_2</artifactId>
                 <version>${pom.version}</version>
             </dependency>

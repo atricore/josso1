@@ -27,7 +27,7 @@ This assembles the entire set of 3rd party dependencies used by agents.
 -->
 <assembly>
 
-    <id></id>
+    <id>jaxws</id>
     <formats>
         <format>jar</format>
     </formats>
@@ -44,8 +44,8 @@ This assembles the entire set of 3rd party dependencies used by agents.
                 <include>${pom.groupId}:josso-common</include>
                 <include>${pom.groupId}:josso-core</include>
                 <include>${pom.groupId}:josso-agent</include>
-                <include>${pom.groupId}:josso-protocol-client</include>
-                <include>${pom.groupId}:josso-ws</include>
+                <include>${pom.groupId}:josso-protocol-jaxws-client</include>
+                <include>${pom.groupId}:josso-ws-v1_2</include>
             </includes>
 
         </dependencySet>

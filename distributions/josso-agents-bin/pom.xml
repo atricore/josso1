@@ -128,6 +128,17 @@
             <artifactId>josso-applet-agent</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-protocol-jaxws-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-ws-v1_2</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -150,6 +161,21 @@
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/3rdparty-all.xml</descriptor>
+                            </descriptors>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+
+                    <!-- Create JAXWS distribution -->
+                    <execution>
+                        <id>agent-jaxws</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/agent-bin.xml</descriptor>
                             </descriptors>
                             <tarLongFileMode>gnu</tarLongFileMode>
                         </configuration>

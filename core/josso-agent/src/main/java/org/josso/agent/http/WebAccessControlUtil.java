@@ -69,7 +69,7 @@ public class WebAccessControlUtil {
 
         agent.setAttribute(request, response, KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
         
-        response.sendRedirect(request.getContextPath() + agent.getJOSSOLoginUri());
+        response.sendRedirect(request.getContextPath() + agent.getJossoLoginUri());
         
     }
 

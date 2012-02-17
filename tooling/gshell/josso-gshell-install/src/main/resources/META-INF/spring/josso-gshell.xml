@@ -415,11 +415,25 @@
         <s:property name="printer" ref="messagePrinter"/>
     </iis-installer>
 
+
     <platform id="iis64" family="non-java" platformName="IIS agent 64bit version" version="5.x-7.x">
         <bin>${target}/bin</bin>
         <conf>${target}/config</conf>
         <josso-shared>${target}/log</josso-shared>
     </platform>
+
+    <!-- Coldfusion platform -->
+    <coldfusion-installer id="coldfusion-installer">
+        <s:constructor-arg ref="coldfusion"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </coldfusion-installer>
+
+    <platform id="coldfusion" family="jee" platformName="Coldfusion" version="9">
+        <lib>${target}/WEB-INF/lib</lib>
+        <conf>${target}/WEB-INF/classes</conf>
+        <josso-conf>${target}/WEB-INF/classes</josso-conf>
+    </platform>
+
 
     <!-- Non-Java Platforms -->
 

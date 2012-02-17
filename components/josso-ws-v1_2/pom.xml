@@ -109,6 +109,8 @@
                                        <extraarg>-client</extraarg>
                                        <extraarg>-b</extraarg>
                                        <extraarg>${basedir}/src/main/wsdl/josso-1.2-binding.xml</extraarg>
+                                       <extraarg>-wsdlLocation</extraarg>
+                                       <extraarg>http://www.josso.org/wsdl/josso-1.2/josso-1.2.wsdl</extraarg>
                                     </extraargs>
                                 </wsdlOption>
                             </wsdlOptions>

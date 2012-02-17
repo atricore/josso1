@@ -155,12 +155,12 @@ public class AlfrescoSSOAgentFilter implements Filter {
             _agent.setAttribute(hReq, hRes, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, alfRedirect);
             //set non cache headers
             _agent.prepareNonCacheResponse(hRes);
-            hRes.sendRedirect(alfrescoContext + _agent.getJOSSOLoginUri());
+            hRes.sendRedirect(alfrescoContext + _agent.getJossoLoginUri());
         }
 
         if (isLogoutRequest) {
             hSession.invalidate();
-            hRes.sendRedirect(alfrescoContext + _agent.getJOSSOLogoutUri());
+            hRes.sendRedirect(alfrescoContext + _agent.getJossoLogoutUri());
         }
 
         if (isGuestRequest) {

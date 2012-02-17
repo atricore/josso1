@@ -170,7 +170,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                     log.debug("Requested liferay login: '" + hreq.getRequestURI() + "'");
                 //save referer url in case the user clicked on Login from some public resource (page)
                 //so agent can redirect the user back to that page after successful login
-                if (hreq.getRequestURI().endsWith(_agent.getJOSSOUserLoginUri())) {
+                if (hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
                     saveLoginBackToURL(hreq, hres, session, true);
                 } else {
                     saveLoginBackToURL(hreq, hres, session, false);
@@ -241,7 +241,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
             if (log.isDebugEnabled()) {
                 log.debug("Checking if its a josso_authentication for '" + hreq.getRequestURI() + "'");
             }
-            if (hreq.getRequestURI().endsWith(_agent.getJOSSOAuthenticationUri())) {
+            if (hreq.getRequestURI().endsWith(_agent.getJossoAuthenticationUri())) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
@@ -265,11 +265,11 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
 
                 // We have no cookie, remember me is enabled and a security check without assertion was received ...
                 // This means that the user could not be identified ... go back to the original resource
-                if (hreq.getRequestURI().endsWith(_agent.getJOSSOSecurityCheckUri()) &&
+                if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                         hreq.getParameter("josso_assertion_id") == null) {
 
                     if (log.isDebugEnabled())
-                        log.debug(_agent.getJOSSOSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
+                        log.debug(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
 
                     String requestURI = getSavedRequestURL(hreq);
                     _agent.prepareNonCacheResponse(hres);
@@ -279,7 +279,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                 }
 
                 // This is a standard anonymous request!
-                if (!hreq.getRequestURI().endsWith(_agent.getJOSSOSecurityCheckUri())) {
+                if (!hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri())) {
 
                     if (!_agent.isResourceIgnored(cfg, hreq) &&
                             _agent.isAutomaticLoginRequired(hreq, hres)) {
@@ -307,7 +307,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                 if (log.isDebugEnabled())
                     log.debug("SSO cookie is not present, checking for outbound relaying");
 
-                if (!(hreq.getRequestURI().endsWith(_agent.getJOSSOSecurityCheckUri()) &&
+                if (!(hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                         hreq.getParameter("josso_assertion_id") != null)) {
                     log.debug("SSO cookie not present and relaying was not requested, skipping");
                     filterChain.doFilter(hreq, hres);
@@ -340,7 +340,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
             if (log.isDebugEnabled())
                 log.debug("Checking if its a josso_security_check for '" + hreq.getRequestURI() + "'");
 
-            if (hreq.getRequestURI().endsWith(_agent.getJOSSOSecurityCheckUri()) &&
+            if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                     hreq.getParameter("josso_assertion_id") != null) {
 
                 if (log.isDebugEnabled())
@@ -388,7 +388,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                         } else {
                             // If no saved request is found, redirect to the partner app root :
                             requestURI = hreq.getRequestURI().substring(
-                                    0, (hreq.getRequestURI().length() - _agent.getJOSSOSecurityCheckUri().length()));
+                                    0, (hreq.getRequestURI().length() - _agent.getJossoSecurityCheckUri().length()));
                         }
 
                         // If we're behind a reverse proxy, we have to alter the URL ... this was not necessary on tomcat 5.0 ?!

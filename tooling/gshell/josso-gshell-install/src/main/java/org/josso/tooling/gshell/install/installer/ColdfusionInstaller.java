@@ -78,7 +78,7 @@ public class ColdfusionInstaller extends VFSInstaller {
             } else if (artifact.getBaseName().startsWith("josso-agent-shared")) {
                 installFile(srcFile, this.targetLibDir, replace);
 
-            } else if (artifact.getBaseName().matches("josso-agents-bin-.*-jaxws")) {
+            } else if (artifact.getBaseName().endsWith("-jaxws.jar")) {
                 installFile(srcFile, this.targetLibDir, replace);
             } else {
                 log.debug("Artifact is not valid for selected platform : " + artifact);
@@ -90,17 +90,17 @@ public class ColdfusionInstaller extends VFSInstaller {
 
     @Override
     public void install3rdPartyComponent(JOSSOArtifact artifact, boolean replace) throws InstallException {
-        if (artifact.getBaseName().startsWith("commons-logging"))
-            return;
-
-        if (artifact.getBaseName().startsWith("axis"))
-            return;
 
 
-        if (artifact.getBaseName().startsWith("log4j"))
-            return;
+        if (artifact.getBaseName().startsWith("slf4j") ||
+            artifact.getBaseName().startsWith("jcl-over-slf4j") ||
+            artifact.getBaseName().startsWith("logback") ||
+            artifact.getBaseName().startsWith("spring") ||
+            artifact.getBaseName().startsWith("xbean") ) {
 
-        super.install3rdPartyComponent(artifact, replace);
+            super.install3rdPartyComponent(artifact, replace);
+
+        }
 
     }
 
@@ -159,7 +159,6 @@ public class ColdfusionInstaller extends VFSInstaller {
 
         // For now, only web.xml to configure:
         configureWebXml();
-        configureJaasModule();
     }
 
     protected void configureWebXml() throws InstallException {
@@ -228,13 +227,13 @@ public class ColdfusionInstaller extends VFSInstaller {
 
         if (filtersNodes != null && filtersNodes.getLength() > 0) {
             String xupdJossoFilter =
-                    "\n\t<xupdate:insert-before select=\"/web-app/filter[filter-class='coldfusion.bootstrap.BootstrapFilter']\" >\n" +
+                    "\n\t<xupdate:insert-before select=\"/web-app/filter[filter-name='CFMonitoringFilter']\" >\n" +
                             "\t\t<xupdate:element name=\"filter\"> \n" +
                             "\t\t\t<xupdate:element name=\"filter-name\">JOSSOGenericServletFilter</xupdate:element>\n" +
                             "\t\t\t<xupdate:element name=\"filter-class\">org.josso.servlet.agent.GenericServletSSOAgentFilter</xupdate:element>\n" +
                             "\t\t\t<xupdate:element name=\"init-param\"> \n" +
-                            "\t\t\t\t<xupdate:element name=\"param-name\">init<param-name>\n" +
-                            "\t\t\t\t<xupdate:element name=\"param-value\">lazy<param-value>\n" +
+                            "\t\t\t\t<xupdate:element name=\"param-name\">init</xupdate:element>\n" +
+                            "\t\t\t\t<xupdate:element name=\"param-value\">lazy</xupdate:element>\n" +
                             "\t\t\t</xupdate:element>\n" +
                             "\t\t</xupdate:element>\n" +
                             "\t</xupdate:insert-before>\n\n" +
@@ -260,130 +259,6 @@ public class ColdfusionInstaller extends VFSInstaller {
         return false;
     }
 
-
-    @Override
-    public boolean updateAgentConfiguration(String idpHostName, String idpPort, String idpType) {
-        boolean updated;
-
-        updated = super.updateAgentConfiguration(idpHostName, idpPort, idpType);    //To change body of overridden methods use File | Settings | File Templates.
-
-        try {
-            log.debug("targetJOSSOConfDir = " + targetJOSSOConfDir);
-            FileObject agentConfigFile = targetJOSSOConfDir.resolveFile("josso-agent-config.xml");
-            if (agentConfigFile.exists()) {
-                // Get a DOM document of the josso-agent-config.xml
-                Node configXmlDom = readContentAsDom(agentConfigFile);
-
-
-                String updateSchemaLocations =
-                    "<xupdate:update select=\"//@xsi:schemaLocation\">" +
-                            "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd " +
-                            "        urn:org:josso:agent:liferay6 jar:" + targetLibDir + "/josso-liferay6-agent-" + getProperty("version") + ".jar!/josso-liferay6-agent.xsd" +
-                            "        urn:org:josso:protocol:client jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + ".jar!/josso-protocol-client.xsd " +
-                            "        urn:org:josso:agent:core jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + ".jar!/josso-agent.xsd" +
-                            "" +
-                    "</xupdate:update>";
-
-                String updateSchemaLocationQryStr = XUpdateUtil.XUPDATE_START + updateSchemaLocations + XUpdateUtil.XUPDATE_END;
-                log.debug("XUPDATE QUERY: \n" +updateSchemaLocationQryStr);
-
-                XUpdateQuery updateSchemaLocationQry = new XUpdateQueryImpl();
-                updateSchemaLocationQry.setQString(updateSchemaLocationQryStr);
-                updateSchemaLocationQry.execute(configXmlDom);
-
-                getPrinter().printActionOkStatus("Configure","Schema Locations", "");
-
-                // Write modifications to file
-                writeContentFromDom(configXmlDom, agentConfigFile);
-                getPrinter().printActionOkStatus("Save", agentConfigFile.getName().getBaseName(), agentConfigFile.getName().getFriendlyURI());
-
-
-            }
-        } catch (Exception e) {
-            log.error("Error injecting schema locations to agent configuration", e);
-            getPrinter().printErrStatus("UpdateAgentConfiguration", e.getMessage());
-            updated = false;
-        }
-
-        return updated;
-    }
-
-    protected boolean configureJaasModule() {
-        String tcInstallDir = getProperty("tomcatInstallDir");
-        String jbInstallDir = getProperty("jbossInstallDir");
-        final String JOSSO_TOMCAT_MODULE_DEFINITION = "\n\njosso {\n" +
-                "org.josso.liferay6.agent.jaas.SSOGatewayLoginModule required debug=true;\n" +
-                "};";
-
-        if (tcInstallDir != null) {
-            log.debug("[configureJaasModule]: Tomcat install dir: " + tcInstallDir);
-            try {
-                FileObject tomcatInstallDir = getFileSystemManager().resolveFile(tcInstallDir);
-                FileObject jaasConfigFile = tomcatInstallDir.resolveFile("conf/jaas.config");
-                if (jaasConfigFile != null) {
-                    BufferedWriter writerJaas =
-                            new BufferedWriter(
-                                    new OutputStreamWriter(new FileOutputStream(jaasConfigFile.getURL().getFile(), true)));
-                    writerJaas.write(JOSSO_TOMCAT_MODULE_DEFINITION);
-                    writerJaas.flush();
-                    writerJaas.close();
-                    return true;
-                } else {
-                    getPrinter().printActionErrStatus("Configure", "JOSSO SSO Filter", "jaas.conf doesn't exist on given path");
-                    return false;
-                }
-            } catch (FileSystemException e) {
-                getPrinter().printActionErrStatus("Configure", "JOSSO SSO Filter", "Tomcat install directory is wrong.");
-            } catch (IOException e) {
-                getPrinter().printActionErrStatus("Configure", "JOSSO SSO Filter", "Can not write to jaas.conf.");
-            }
-        }
-
-        if (jbInstallDir != null) {
-            log.debug("[configureJaasModule]: JBoss install dir: " + jbInstallDir);
-            FileObject jbossInstallDir = null;
-            try {
-                jbossInstallDir = getFileSystemManager().resolveFile(jbInstallDir);
-                FileObject loginConfig = jbossInstallDir.resolveFile("server/default/conf/login-config.xml");
-                Node xDom = readContentAsDom(loginConfig);
-
-                if ( xDom == null ) {
-                    log.debug("[configureJaasModule]: XML is not loaded.  " + loginConfig.getName().getFriendlyURI());
-                    return false;
-                }
-                String xupdJossoModule =
-                                "\n\t<xupdate:append select=\"/policy\" >\n" +
-                                "\t\t<xupdate:element name=\"application-policy\">\n" +
-                                "\t\t\t<xupdate:attribute name=\"name\">josso</xupdate:attribute>\n" +
-                                "\t\t\t<authentication>\n" +
-                                "\t\t\t\t<login-module code=\"org.josso.liferay6.agent.jaas.SSOGatewayLoginModule\" flag=\"required\">\n" +
-                                "\t\t\t\t\t<module-option name=\"debug\">true</module-option>\n" +
-                                "\t\t\t\t</login-module>\n" +
-                                "\t\t\t</authentication>\n" + 
-                                "\t\t</xupdate:element>\n" +
-                                "\t</xupdate:append>";
-
-
-                String qry = XUpdateUtil.XUPDATE_START + xupdJossoModule + XUpdateUtil.XUPDATE_END;
-                log.debug("XUPDATE QUERY: \n" + qry);
-                XUpdateQuery xq = new XUpdateQueryImpl();
-                xq.setQString(qry);
-                xq.execute(xDom);
-
-                writeContentFromDom(xDom, loginConfig);
-
-                getPrinter().printActionOkStatus("Changed login-config.xml", "JOSSO Coldfusion 6 Agent ", "server/default/conf/login-config.xml");
-                return true;
-
-            } catch (FileSystemException e) {
-                getPrinter().printActionErrStatus("Configure", "JOSSO SSO Filter", "JBoss install directory is wrong.");
-            } catch (Exception e) {
-                e.printStackTrace(); 
-            }
-        }
-
-        return false;
-    }
 
     private Document loadAsDom(FileObject inFile) throws Exception {
         InputStream is = null;

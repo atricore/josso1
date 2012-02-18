@@ -956,6 +956,14 @@
                 <type>jar</type>
             </dependency>
 
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-agents-bin</artifactId>
+                <classifier>jaxws</classifier>
+                <version>${pom.version}</version>
+                <type>jar</type>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.josso</groupId>

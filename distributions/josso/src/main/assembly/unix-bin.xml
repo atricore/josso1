@@ -109,7 +109,9 @@
                 <exclude>org.slf4j:jcl-over-slf4j:jar:1.6.1</exclude>
                 <exclude>ch.qos.logback:logback-classic:jar:1.0.0</exclude>
                 <exclude>ch.qos.logback:logback-core:jar:1.0.0</exclude>
+                <exclude>${pom.groupId}:*</exclude>
             </excludes>
+
             
         </dependencySet>
 
@@ -199,6 +201,7 @@
                 <include>${pom.groupId}:josso-weblogic10-agent:jar</include>
                 <include>${pom.groupId}:josso-applet-agent</include>
                 <include>${pom.groupId}:josso-agents-bin:jar</include>
+                <include>${pom.groupId}:josso-agents-bin:jar:jaxws</include>
             </includes>
 
         </dependencySet>

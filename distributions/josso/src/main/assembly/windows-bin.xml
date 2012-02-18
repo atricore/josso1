@@ -104,6 +104,10 @@
                 <exclude>org.springframework:spring-remoting:jar:1.2.9</exclude>
                 <exclude>org.springframework:spring-jdbc:jar:1.2.9</exclude>
                 <exclude>org.springframework:spring-dao:jar:1.2.9</exclude>
+                <exclude>org.slf4j:slf4j-api:jar:1.6.1</exclude>
+                <exclude>org.slf4j:jcl-over-slf4j:jar:1.6.1</exclude>
+                <exclude>ch.qos.logback:logback-classic:jar:1.0.0</exclude>
+                <exclude>ch.qos.logback:logback-core:jar:1.0.0</exclude>
                 <exclude>${pom.groupId}:*</exclude>
             </excludes>
         </dependencySet>
@@ -185,12 +189,14 @@
                 <include>${pom.groupId}:josso-jboss32-agent</include>
                 <include>${pom.groupId}:josso-geronimo-agent</include>
                 <include>${pom.groupId}:josso-liferay5-agent</include>
+                <include>${pom.groupId}:josso-liferay6-agent</include>
                 <include>${pom.groupId}:josso-alfresco-agent</include>
                 <include>${pom.groupId}:josso-servlet-agent</include>
                 <include>${pom.groupId}:josso-weblogic92-agent:jar</include>
                 <include>${pom.groupId}:josso-weblogic10-agent:jar</include>
                 <include>${pom.groupId}:josso-applet-agent</include>
                 <include>${pom.groupId}:josso-agents-bin:jar</include>
+                <include>${pom.groupId}:josso-agents-bin:jar:jaxws</include>
             </includes>
         </dependencySet>
         <dependencySet>

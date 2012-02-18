@@ -126,6 +126,13 @@
 
         <dependency>
             <groupId>org.josso</groupId>
+            <artifactId>josso-agents-bin</artifactId>
+            <classifier>jaxws</classifier>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
             <artifactId>josso-agent-shared</artifactId>
         </dependency>
 

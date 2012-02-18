@@ -104,7 +104,11 @@
                 <exclude>org.springframework:spring-remoting:jar:1.2.9</exclude>
                 <exclude>org.springframework:spring-jdbc:jar:1.2.9</exclude>
                 <exclude>org.springframework:spring-dao:jar:1.2.9</exclude>
-				<exclude>${pom.groupId}:*</exclude>
+                <exclude>org.springframework:spring-dao:jar:1.2.9</exclude>
+                <exclude>org.slf4j:slf4j-api:jar:1.6.1</exclude>
+                <exclude>org.slf4j:jcl-over-slf4j:jar:1.6.1</exclude>
+                <exclude>ch.qos.logback:logback-classic:jar:1.0.0</exclude>
+                <exclude>ch.qos.logback:logback-core:jar:1.0.0</exclude>
             </excludes>
             
         </dependencySet>

@@ -26,7 +26,7 @@ import java.io.*;
 
 /**
  * @version $Id$
- * @org.apache.xbean.XBean element="liferay6-installer"
+ * @org.apache.xbean.XBean element="coldfusion-installer"
  */
 public class ColdfusionInstaller extends VFSInstaller {
 
@@ -93,7 +93,7 @@ public class ColdfusionInstaller extends VFSInstaller {
         if (artifact.getBaseName().startsWith("commons-logging"))
             return;
 
-        if (artifact.getBaseName().startsWith("axis-*"))
+        if (artifact.getBaseName().startsWith("axis"))
             return;
 
 

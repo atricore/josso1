@@ -96,7 +96,8 @@ public class ColdfusionInstaller extends VFSInstaller {
             artifact.getBaseName().startsWith("jcl-over-slf4j") ||
             artifact.getBaseName().startsWith("logback") ||
             artifact.getBaseName().startsWith("spring") ||
-            artifact.getBaseName().startsWith("xbean") ) {
+            artifact.getBaseName().startsWith("xbean") ||
+            artifact.getBaseName().startsWith("commons-codec")) {
 
             super.install3rdPartyComponent(artifact, replace);
 

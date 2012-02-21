@@ -429,9 +429,9 @@
     </coldfusion-installer>
 
     <platform id="coldfusion" family="jee" platformName="Coldfusion" version="9">
-        <lib>${target}/WEB-INF/lib</lib>
-        <conf>${target}/WEB-INF/classes</conf>
-        <josso-conf>${target}/WEB-INF/classes</josso-conf>
+        <lib>${target}/wwwroot/WEB-INF/lib</lib>
+        <conf>${target}/wwwroot/WEB-INF/classes</conf>
+        <josso-conf>${target}/wwwroot/WEB-INF/classes</josso-conf>
     </platform>
 
 

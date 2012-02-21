@@ -233,7 +233,7 @@ public class ColdfusionInstaller extends VFSInstaller {
             xq.setQString(qry);
             xq.execute(xmlDom);
 
-            getPrinter().printActionOkStatus("Added josso filter into web.xml", "JOSSO Coldfusion Agent ", "wwwroot/WEB-INF/web.xml");
+            getPrinter().printActionOkStatus("Added josso filter into web.xml", "JOSSO Coldfusion Agent ", "WEB-INF/web.xml");
 
 
             return true;

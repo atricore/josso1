@@ -104,24 +104,6 @@ public class ColdfusionInstaller extends VFSInstaller {
 
     }
 
-    @Override
-    public boolean backupAgentConfigurations(boolean remove) {
-        try {
-            // backup portal-ext.properties
-            FileObject portalConfFile = targetConfDir.resolveFile("portal-ext.properties");
-            if (portalConfFile.exists()) {
-                // backup file in the same folder it is installed
-                backupFile(portalConfFile, portalConfFile.getParent());
-                if (remove) {
-                    portalConfFile.delete();
-                }
-            }
-        } catch (Exception e) {
-            getPrinter().printErrStatus("BackupAgentConfigurations", e.getMessage());
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public boolean removeOldComponents(boolean backup) {
@@ -136,7 +118,7 @@ public class ColdfusionInstaller extends VFSInstaller {
             String name = srcFile.getName().getBaseName();
 
             if (name.equals("logback.xml") ) {
-                FileObject classesDir = targetConfDir.resolveFile("WEB-INF/classes");
+                FileObject classesDir = targetConfDir.resolveFile(".");
 
                 if (!classesDir.exists())
                     classesDir.createFolder();
@@ -170,7 +152,7 @@ public class ColdfusionInstaller extends VFSInstaller {
         FileObject webXml = null;
 
         try {
-            webXml = targetDir.resolveFile("WEB-INF/web.xml");
+            webXml = targetDir.resolveFile("wwwroot/WEB-INF/web.xml");
 
             // Get a DOM document of the web.xml :
             Node webXmlNode = loadAsDom(webXml);
@@ -185,7 +167,7 @@ public class ColdfusionInstaller extends VFSInstaller {
 
                 // Backup Container configuration.  If we cannot perform a backup, do nothing
                 if (!backupFile(webXml, targetDir)) {
-                    getPrinter().printActionWarnStatus("Configure", targetDir.getName().getFriendlyURI() + "/WEB-INF/web.xml", "Must be done manually (Follow setup guide)");
+                    getPrinter().printActionWarnStatus("Configure", targetDir.getName().getFriendlyURI() + "/wwwroot/WEB-INF/web.xml", "Must be done manually (Follow setup guide)");
                     return;
                 }
 
@@ -204,7 +186,7 @@ public class ColdfusionInstaller extends VFSInstaller {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             getPrinter().printErrStatus("Cannot configure container : ", e.getMessage());
-            getPrinter().printActionWarnStatus("Configure", targetDir.getName().getFriendlyURI() + "/WEB-INF/web.xml", "Must be done manually (Follow setup guide)");
+            getPrinter().printActionWarnStatus("Configure", targetDir.getName().getFriendlyURI() + "/wwwroot/WEB-INF/web.xml", "Must be done manually (Follow setup guide)");
         }
 
 
@@ -251,7 +233,7 @@ public class ColdfusionInstaller extends VFSInstaller {
             xq.setQString(qry);
             xq.execute(xmlDom);
 
-            getPrinter().printActionOkStatus("Added josso filter into web.xml", "JOSSO Coldfusion Agent ", "WEB-INF/web.xml");
+            getPrinter().printActionOkStatus("Added josso filter into web.xml", "JOSSO Coldfusion Agent ", "wwwroot/WEB-INF/web.xml");
 
 
             return true;

@@ -185,7 +185,7 @@ public class  WLSAgentServletFilter implements Filter {
             if (log.isDebugEnabled())
                 log.debug("Checking if its a josso_logout request for '" + hreq.getRequestURI() + "'");
 
-            if (hreq.getRequestURI().endsWith(_agent.getJOSSOLogoutUri())) {
+            if (hreq.getRequestURI().endsWith(_agent.getJossoLogoutUri())) {
 
                 if (log.isDebugEnabled())
                     log.debug("josso_logout request received for uri '" + hreq.getRequestURI() + "'");

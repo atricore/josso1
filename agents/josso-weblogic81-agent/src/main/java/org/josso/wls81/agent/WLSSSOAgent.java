@@ -146,23 +146,23 @@ public class WLSSSOAgent extends HttpSSOAgent {
     }
 
 
-    public String getJOSSOLoginUri() {
+    public String getJossoLoginUri() {
         return JOSSO_LOGIN_URI;
     }
 
-    public String getJOSSOUserLoginUri() {
+    public String getJossoUserLoginUri() {
         return JOSSO_USER_LOGIN_URI;
     }
     
-    public String getJOSSOSecurityCheckUri() {
+    public String getJossoSecurityCheckUri() {
         return JOSSO_SECURITY_CHECK_URI;
     }
 
-    public String getJOSSOLogoutUri() {
+    public String getJossoLogoutUri() {
         return JOSSO_LOGOUT_URI;
     }
 
-    public String getJOSSOAuthenticationUri() {
+    public String getJossoAuthenticationUri() {
         return JOSSO_AUTHENTICATION_URI;
     }
 }

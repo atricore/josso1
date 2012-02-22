@@ -153,15 +153,15 @@ public class  WLSAgentServletFilter implements Filter {
             if (log.isDebugEnabled())
                 log.debug("Checking if its a josso_login_request for '" + hreq.getRequestURI() + "'");
 
-            if (hreq.getRequestURI().endsWith(_agent.getJOSSOLoginUri()) || 
-            		hreq.getRequestURI().endsWith(_agent.getJOSSOUserLoginUri())) {
+            if (hreq.getRequestURI().endsWith(_agent.getJossoLoginUri()) ||
+            		hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
 
                 if (log.isDebugEnabled())
                     log.debug("josso_login_request received for uri '" + hreq.getRequestURI() + "'");
 
                 //save referer url in case the user clicked on Login from some public resource (page)
                 //so agent can redirect the user back to that page after successful login
-                if (hreq.getRequestURI().endsWith(_agent.getJOSSOUserLoginUri())) {
+                if (hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
                 	saveLoginBackToURL(hreq, hres, session, true);
                 } else {
                 	saveLoginBackToURL(hreq, hres, session, false);

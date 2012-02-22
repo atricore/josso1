@@ -316,7 +316,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
     public String buildLoginUrl(HttpServletRequest hreq) {
         String loginUrl = getGatewayLoginUrl();
 
-        String backto = buildBackToURL(hreq, getJOSSOSecurityCheckUri());
+        String backto = buildBackToURL(hreq, getJossoSecurityCheckUri());
 
         loginUrl = loginUrl + "?josso_back_to=" + backto;
 
@@ -333,7 +333,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
     public String buildLoginOptionalUrl(HttpServletRequest hreq) {
         String loginUrl = getGatewayLoginUrl();
 
-        String backto = buildBackToURL(hreq, getJOSSOSecurityCheckUri());
+        String backto = buildBackToURL(hreq, getJossoSecurityCheckUri());
 
         loginUrl = loginUrl + "?josso_cmd=login_optional&josso_back_to=" + backto;
 
@@ -501,7 +501,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
          * 
          * If this is not authentication request, splash resource will be request URI
          */
-        if (hreq.getRequestURI().endsWith(this.getJOSSOAuthenticationUri())) {
+        if (hreq.getRequestURI().endsWith(this.getJossoAuthenticationUri())) {
 
             if (debug > 0)
                 log("sendCustomAuthentication executed, URL does match AUTHENTICATION URI");

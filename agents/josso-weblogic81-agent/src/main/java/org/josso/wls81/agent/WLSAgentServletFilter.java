@@ -265,11 +265,11 @@ public class  WLSAgentServletFilter implements Filter {
                 // We have no cookie and a security check without assertion was received ...
                 // This means that the user could not be identified during a login optional process ...
                 // go back to the original resource
-                if (hreq.getRequestURI().endsWith(_agent.getJOSSOSecurityCheckUri()) &&
+                if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                     hreq.getParameter("josso_assertion_id") == null) {
 
                 	 if (log.isDebugEnabled())
-                		 log.debug(_agent.getJOSSOSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
+                		 log.debug(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
 
                 	String requestURI = getSavedRequestURL(hreq);
                     _agent.prepareNonCacheResponse(hres);
@@ -279,7 +279,7 @@ public class  WLSAgentServletFilter implements Filter {
                 }
                 
             	// This is a standard anonymous request!
-                if (!hreq.getRequestURI().endsWith(_agent.getJOSSOSecurityCheckUri())) {
+                if (!hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri())) {
 
                     // If saved request is NOT null, we're in the middle of another process ...
                     if (!_agent.isResourceIgnored(cfg, hreq) && 
@@ -308,7 +308,7 @@ public class  WLSAgentServletFilter implements Filter {
                 if (log.isDebugEnabled())
                     log.debug("SSO cookie is not present, checking for outbound relaying");
 
-                if (!(hreq.getRequestURI().endsWith(_agent.getJOSSOSecurityCheckUri()) &&
+                if (!(hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                     hreq.getParameter("josso_assertion_id") != null)) {
                     log.debug("SSO cookie not present and relaying was not requested, skipping");
                     filterChain.doFilter(hreq, hres);
@@ -339,7 +339,7 @@ public class  WLSAgentServletFilter implements Filter {
             if (log.isDebugEnabled())
                 log.debug("Checking if its a josso_security_check for '" + hreq.getRequestURI() + "'");
 
-            if (hreq.getRequestURI().endsWith(_agent.getJOSSOSecurityCheckUri()) &&
+            if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                 hreq.getParameter("josso_assertion_id") != null) {
 
                 if (log.isDebugEnabled())
@@ -388,7 +388,7 @@ public class  WLSAgentServletFilter implements Filter {
                         } else {
                             // If no saved request is found, redirect to the partner app root :
                             requestURI = hreq.getRequestURI().substring(
-                                0, (hreq.getRequestURI().length() - _agent.getJOSSOSecurityCheckUri().length()));
+                                0, (hreq.getRequestURI().length() - _agent.getJossoSecurityCheckUri().length()));
                         }
 
                         // If we're behind a reverse proxy, we have to alter the URL ... this was not necessary on tomcat 5.0 ?!

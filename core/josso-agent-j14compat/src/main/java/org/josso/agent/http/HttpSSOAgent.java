@@ -566,7 +566,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             }
         }
 
-//        sb.append("\n            <input type=\"hidden\" name=\"josso_back_to\"value=\"").append(buildBackToURL(hreq, getJOSSOSecurityCheckUri())).append("\"/>\n").
+//        sb.append("\n            <input type=\"hidden\" name=\"josso_back_to\"value=\"").append(buildBackToURL(hreq, getJossoSecurityCheckUri())).append("\"/>\n").
                 sb.append("\n            <noscript><input type=\"submit\" value=\"Continue\"/></noscript>\n" +
                         "        </div>\n" +
                         "</form>\n" +

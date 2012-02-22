@@ -238,7 +238,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             if (log.isDebugEnabled()){
                 log.debug("Checking if its a josso_authentication for '" + hreq.getRequestURI() + "'");
             }
-            if (hreq.getRequestURI().endsWith(_agent.getJOSSOAuthenticationUri())) {
+            if (hreq.getRequestURI().endsWith(_agent.getJossoAuthenticationUri())) {
 
             	if (log.isDebugEnabled()){
                     log.debug("josso_authentication received for uri '" + hreq.getRequestURI() + "'");

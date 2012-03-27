@@ -129,9 +129,10 @@ public class JBossInstaller extends VFSInstaller {
             if (artifact.getBaseName().startsWith("josso-agent-shared")) {
                 installFile(srcFile, this.targetJOSSOSharedLibDir, replace);
                 
-            } else if (artifact.getBaseName().startsWith("josso-agents-bin")) {
-                installFile(srcFile, this.targetJOSSOLibDir, replace);
-
+            } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
+                                   artifact.getClassifier() !=  null && 
+                                   artifact.getClassifier().equals("axis")) {
+                            installFile(srcFile, this.targetJOSSOLibDir, replace);
             } else if (artifact.getBaseName().startsWith("josso-jboss5-agent") &&
                     (getTargetPlatform().getVersion().startsWith("5.") ||
                     getTargetPlatform().getVersion().startsWith("6."))) {
@@ -189,6 +190,15 @@ public class JBossInstaller extends VFSInstaller {
 
         if (artifact.getBaseName().startsWith("log4j") ||
         		artifact.getBaseName().startsWith("spring-2.0"))
+            return;
+        
+        if (artifact.getBaseName().startsWith("slf4j"))
+            return;
+        
+        if (artifact.getBaseName().startsWith("jcl-over-slf4j"))
+            return;
+        
+        if (artifact.getBaseName().startsWith("logback"))
             return;
 
         super.install3rdPartyComponent(artifact, replace);

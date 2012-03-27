@@ -80,9 +80,11 @@ public class AlfrescoInstaller extends VFSInstaller {
                 installFile(srcFile, this.targetLibDir, replace);
             } else if (artifact.getBaseName().startsWith("josso-agent-shared")) {
                 installFile(srcFile, this.targetLibDir, replace);
-            } else if (artifact.getBaseName().startsWith("josso-agents-bin")) {
-                installFile(srcFile, this.targetLibDir, replace);
-            } else {
+            } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
+                       artifact.getClassifier() !=  null &&
+                       artifact.getClassifier().equals("axis")) {
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+            }  else {
                 log.debug("Artifact is not valid for selected platform : " + artifact);
             }
         } catch (IOException e) {
@@ -100,6 +102,7 @@ public class AlfrescoInstaller extends VFSInstaller {
                 removeOldJar(srcFile.getName().getBaseName(), this.targetLibDir, true);
                 installFile(srcFile, this.targetLibDir, replace);
             }
+
         } catch (IOException e) {
             throw new InstallException(e.getMessage(), e);
         }

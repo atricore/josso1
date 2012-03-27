@@ -103,7 +103,8 @@ public class TomcatInstaller extends VFSInstaller {
             if (artifact.getBaseName().startsWith("josso-agent-shared")) {
                 installFile(srcFile, this.targetJOSSOSharedLibDir, replace);
 
-            } else if (artifact.getBaseName().startsWith("josso-agents-bin")) {
+            } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
+                    (artifact.getClassifier() == null || artifact.getClassifier().equals("axis"))) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
             } else  if (artifact.getBaseName().startsWith("josso-tomcat50-agent") &&
@@ -135,7 +136,16 @@ public class TomcatInstaller extends VFSInstaller {
     public void install3rdPartyComponent(JOSSOArtifact artifact, boolean replace) throws InstallException {
 
         if (artifact.getBaseName().startsWith("log4j") || 
-        		artifact.getBaseName().startsWith("spring-2.0"))
+            artifact.getBaseName().startsWith("spring-2.0"))
+            return;
+
+        if (artifact.getBaseName().startsWith("slf4j"))
+            return;
+
+        if (artifact.getBaseName().startsWith("jcl-over-slf4j"))
+            return;
+
+        if (artifact.getBaseName().startsWith("logback"))
             return;
 
         try {
@@ -341,7 +351,6 @@ public class TomcatInstaller extends VFSInstaller {
             }
             return false;
         }
-
 
         XPathExpression findRealmsExpr = xpath.compile("/Server/Service/Engine/Realm");
         NodeList realms = (NodeList) findRealmsExpr.evaluate(serverXmlDom, XPathConstants.NODESET);

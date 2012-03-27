@@ -31,17 +31,18 @@ package org.josso.tooling.gshell.install;
  */
 public class JOSSOArtifact {
 
-    public JOSSOArtifact(String id, String version, String type, JOSSOScope jossoScope, String baseUrl) {
+    public JOSSOArtifact(String id, String version, String classifier, String type, JOSSOScope jossoScope, String baseUrl) {
         this.id = id;
         this.version = version;
         this.type = type;
         this.jossoScope = jossoScope;
+        this.classifier = classifier;
         this.location = baseUrl + (baseUrl.endsWith("/") ? "" : "/")  + id + "-" + version + "." + type;
     }
 
     public JOSSOArtifact(JOSSOScope jossoScope, String location) {
 
-        // Base name : artifact-version.type
+        // Base name : artifact-version<-classifier>.type
 
         int baseNameFrom = location.lastIndexOf("/");
         if (baseNameFrom < 0) baseNameFrom = 0;
@@ -52,15 +53,28 @@ public class JOSSOArtifact {
             this.type = baseName.substring(typeFrom + 1);
             baseName = baseName.substring(0, typeFrom);
         }
-
+        
+        
         int versionFrom = baseName.lastIndexOf("-");
         if (versionFrom >= 0) {
             this.version = baseName.substring(versionFrom + 1);
-            baseName = baseName.substring(0, versionFrom);
+            // check if this is a version ...
+            if (!version.matches("([0-9])*")) {
+                this.classifier = this.version;
+                baseName = baseName.substring(0, versionFrom);
+
+                versionFrom = baseName.lastIndexOf("-");
+                if (versionFrom >= 0) {
+                    this.version = baseName.substring(versionFrom + 1);
+                    baseName = baseName.substring(0, versionFrom);
+                }
+
+            }
+
+
         }
-
+        
         this.id = baseName;
-
         this.location = location;
         this.jossoScope = jossoScope;
 
@@ -68,6 +82,8 @@ public class JOSSOArtifact {
 
     // Name
     private String id;
+    
+    private String classifier;
 
     private String version;
 
@@ -94,6 +110,14 @@ public class JOSSOArtifact {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getClassifier() {
+        return classifier;
+    }
+
+    public void setClassifier(String classifier) {
+        this.classifier = classifier;
     }
 
     public String getType() {
@@ -126,6 +150,6 @@ public class JOSSOArtifact {
 
     @Override
     public String toString() {
-        return id + (version != null ? "-" + version : "") + (type != null ? "." + type : "") + " ["+location+"]"; 
+         return id + (version != null ? "-" + version : "") + (classifier != null ? "-" + classifier : "") + (type != null ? "." + type : "") + " ["+location+"]";
     }
 }

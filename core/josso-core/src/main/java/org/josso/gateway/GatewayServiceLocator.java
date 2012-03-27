@@ -39,9 +39,9 @@ public abstract class GatewayServiceLocator {
     protected static final String property = "org.josso.gateway.GatewayServiceLocator";
 
     /**
-     * La factory por defecto a ser utilizada
+     * Default GWY Locator component
      */
-    protected static final String factory = "org.josso.gateway.WebserviceGatewayServiceLocator";
+    protected static final String gwyLocator = "org.josso.gateway.WebserviceGatewayServiceLocator";
     protected static final String TRANSPORT_SECURITY_NONE = "none";
     protected static final String TRANSPORT_SECURITY_CONFIDENTIAL = "confidential";
     private String endpoint;
@@ -68,32 +68,28 @@ public abstract class GatewayServiceLocator {
      */
     public static GatewayServiceLocator newInstance() {
 
-        String n = factory;
+        String n = gwyLocator;
         try {
-            n = System.getProperty(property, factory);
+            n = System.getProperty(property, gwyLocator);
         } catch (SecurityException e) {
-            n = factory;
+            n = gwyLocator;
         }
 
         try {
-            // Loads and instantiates the factory.
+            // Loads and instantiates the gwyLocator.
             return (GatewayServiceLocator) Class.forName(n).newInstance();
 
         } catch (ClassNotFoundException e) {
-            // La factory no fue encontrada
             throw new ServiceLocatorConfigurationError("Cannot load class " +
                     "GatewayServiceLocator class \"" + n + "\"");
         } catch (InstantiationException e) {
-            // La factory no pudo ser instanciada
             throw new ServiceLocatorConfigurationError("Cannot instantiate the " +
                     "specified GatewayServiceLocator class \"" + n + "\"");
         } catch (IllegalAccessException e) {
-            // La factory no pudo ser accedida
             throw new ServiceLocatorConfigurationError("Cannot access the specified " +
                     "GatewayServiceLocator class \"" + n + "\"");
 
         } catch (ClassCastException e) {
-            // La factory no era una RpsClientFactory
             throw new ServiceLocatorConfigurationError("The specified class \"" + n +
                     "\" is not instance of \"org.josso.gateway.GatewayServiceLocator\"");
         }

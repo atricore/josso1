@@ -159,9 +159,10 @@ public class WeblogicInstaller extends VFSInstaller {
             if (artifact.getBaseName().startsWith("josso-agent-shared")) {
                 installFile(srcFile, this.targetJOSSOSharedLibDir, replace);
 
-            } else if (artifact.getBaseName().startsWith("josso-agents-bin")) {
+            } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
+                                   artifact.getClassifier() !=  null &&
+                                   artifact.getClassifier().equals("axis")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
-
             } else if (artifact.getBaseName().startsWith("josso-weblogic92-agent") &&
                     getTargetPlatform().getVersion().startsWith("9.2")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
@@ -191,6 +192,14 @@ public class WeblogicInstaller extends VFSInstaller {
         		artifact.getBaseName().startsWith("spring-2.0"))
             return;
 
+        if (artifact.getBaseName().startsWith("slf4j"))
+            return;
+
+        if (artifact.getBaseName().startsWith("jcl-over-slf4j"))
+            return;
+
+        if (artifact.getBaseName().startsWith("logback"))
+            return;
 
         try {
             FileObject srcFile = getFileSystemManager().resolveFile(artifact.getLocation());

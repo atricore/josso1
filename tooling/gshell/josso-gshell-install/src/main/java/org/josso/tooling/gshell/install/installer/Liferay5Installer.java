@@ -78,8 +78,10 @@ public class Liferay5Installer extends VFSInstaller {
             } else if (artifact.getBaseName().startsWith("josso-agent-shared")) {
                 installFile(srcFile, this.targetLibDir, replace);
 
-            } else if (artifact.getBaseName().startsWith("josso-agents-bin")) {
-                installFile(srcFile, this.targetLibDir, replace);
+            } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
+                                   artifact.getClassifier() !=  null &&
+                                   artifact.getClassifier().equals("axis")) {
+                            installFile(srcFile, this.targetJOSSOLibDir, replace);
             } else {
                 log.debug("Artifact is not valid for selected platform : " + artifact);
             }

@@ -256,23 +256,23 @@ public abstract class InstallCommandSupport extends JOSSOCommandSupport {
      * @param type
      * @return
      */
-    protected JOSSOArtifact createAgentArtifact(String baseUrl, String artifactId, String type) {
-        return createArtifact(baseUrl, JOSSOScope.AGENT, artifactId, getJOSSOVersion(), type);
+    protected JOSSOArtifact createAgentArtifact(String baseUrl, String artifactId, String classifier, String type) {
+        return createArtifact(baseUrl, JOSSOScope.AGENT, artifactId, getJOSSOVersion(), classifier, type);
     }
 
-    protected JOSSOArtifact createGatewayArtifact(String baseUrl, String artifactId, String type) {
-        return createArtifact(baseUrl, JOSSOScope.GATEWAY, artifactId, getJOSSOVersion(), type);
+    protected JOSSOArtifact createGatewayArtifact(String baseUrl, String artifactId, String classifier, String type) {
+        return createArtifact(baseUrl, JOSSOScope.GATEWAY, artifactId, getJOSSOVersion(), classifier, type);
     }
 
-    protected JOSSOArtifact createCustomGatewayArtifact(String baseUrl, String artifactId, String type) {
+    protected JOSSOArtifact createCustomGatewayArtifact(String baseUrl, String artifactId, String classifier, String type) {
         //version is empty, maven provider will extract that from baseUrl
-        JOSSOArtifact customArtifact = createArtifact(baseUrl, JOSSOScope.GATEWAY, artifactId, "", type);
+        JOSSOArtifact customArtifact = createArtifact(baseUrl, JOSSOScope.GATEWAY, artifactId, "", classifier, type);
         customArtifact.setLocation(baseUrl);
         return customArtifact;
     }
 
-    protected JOSSOArtifact createSampleArtifact(String baseUrl, String artifactId, String type) {
-        return createArtifact(baseUrl, JOSSOScope.SAMPLE, artifactId, getJOSSOVersion(), type);
+    protected JOSSOArtifact createSampleArtifact(String baseUrl, String artifactId, String classifier, String type) {
+        return createArtifact(baseUrl, JOSSOScope.SAMPLE, artifactId, getJOSSOVersion(), classifier,  type);
     }
 
 
@@ -283,8 +283,8 @@ public abstract class InstallCommandSupport extends JOSSOCommandSupport {
         return artifact;
     }
 
-    protected JOSSOArtifact createArtifact(String baseUrl, JOSSOScope scope, String artifactId, String version, String type) {
-        JOSSOArtifact artifact = new JOSSOArtifact(artifactId, version, type, scope, baseUrl);
+    protected JOSSOArtifact createArtifact(String baseUrl, JOSSOScope scope, String artifactId, String version, String classifier, String type) {
+        JOSSOArtifact artifact = new JOSSOArtifact(artifactId, version, classifier, type, scope, baseUrl);
         if (log.isDebugEnabled())
             log.debug("Created artifact representation : " + artifact.toString());
         return artifact;

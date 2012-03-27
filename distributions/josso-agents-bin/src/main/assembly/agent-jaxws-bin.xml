@@ -34,23 +34,20 @@ This assembles the entire set of 3rd party dependencies used by agents.
 
     <includeBaseDirectory>false</includeBaseDirectory>
 
-    <dependencySets>
-
-        <dependencySet>
+    <fileSets>
+        <fileSet>
+            <directory>target/dependency/agent-bin/jars</directory>
             <outputDirectory>/</outputDirectory>
-            <unpack>true</unpack>
+            <excludes>
+                <exclude>org/josso/gateway/SSONameValuePair.class</exclude>
+                <exclude>org/josso/gateway/identity/SSOUser.class</exclude>
+            </excludes>
+        </fileSet>
 
-            <includes>
-                <include>${pom.groupId}:josso-common</include>
-                <include>${pom.groupId}:josso-core</include>
-                <include>${pom.groupId}:josso-agent</include>
-                <include>${pom.groupId}:josso-protocol-jaxws-client</include>
-                <include>${pom.groupId}:josso-ws-v1_2</include>
-            </includes>
-
-        </dependencySet>
-
-    </dependencySets>
-
+        <fileSet>
+            <directory>target/dependency/agent-jaxws-bin/jars</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+    </fileSets>
 
 </assembly>

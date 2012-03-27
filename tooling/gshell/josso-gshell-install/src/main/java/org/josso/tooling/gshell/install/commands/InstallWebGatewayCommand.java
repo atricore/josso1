@@ -152,9 +152,9 @@ public class InstallWebGatewayCommand extends InstallCommandSupport {
 
     protected void deployWar() throws Exception {
     	if(StringUtils.isEmpty(artifactLocation)){
-    		getInstaller().installApplication(createGatewayArtifact(appDir.getURL().toString(), "josso-gateway-web", "war"), true);
+    		getInstaller().installApplication(createGatewayArtifact(appDir.getURL().toString(), "josso-gateway-web", null, "war"), true);
     	} else {
-    		JOSSOArtifact customArtifact = createCustomGatewayArtifact(artifactLocation, "josso-gateway-web", "war");
+    		JOSSOArtifact customArtifact = createCustomGatewayArtifact(artifactLocation, "josso-gateway-web", null, "war");
     		getInstaller().installApplication(customArtifact, true);
     	}
     }

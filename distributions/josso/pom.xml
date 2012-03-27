@@ -121,6 +121,7 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agents-bin</artifactId>
+            <classifier>axis</classifier>
             <type>jar</type>
         </dependency>
 

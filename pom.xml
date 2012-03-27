@@ -953,6 +953,7 @@
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-bin</artifactId>
                 <version>${pom.version}</version>
+                <classifier>axis</classifier>
                 <type>jar</type>
             </dependency>
 

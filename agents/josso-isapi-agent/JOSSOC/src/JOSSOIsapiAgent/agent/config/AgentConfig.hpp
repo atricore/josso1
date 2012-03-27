@@ -4,6 +4,7 @@
 #include "JOSSOIsapiAgent/isapi/josso_isapi.h"
 
 #include "JOSSOIsapiAgent/agent/config/PartnerAppConfig.hpp"
+#include "JOSSOIsapiAgent/agent/config/EndpointConfig.hpp"
 #include "JOSSOIsapiAgent/agent/config/SecurityConstraintConfig.hpp"
 
 #include <wininet.h>
@@ -11,7 +12,7 @@
 
 using namespace std;
 
-class AgentConfig {
+class AgentConfig : public EndpointConfig {
 
 public:
 
@@ -21,8 +22,6 @@ public:
 
 	char* getGatewayLogoutUrl() { return gatewayLogoutUrl; }
 
-	char* getGatewayEndpoint() { return gatewayEndpoint; }
-	
 	char* getSessionManagerServicePath() { return sessionManagerServicePath; }
 
 	char* getIdentityManagerServicePath() { return identityManagerServicePath; }
@@ -33,17 +32,8 @@ public:
 	
 	long  getCacheCleanupMinInterval() { return cacheCleanupMinInterval; }
 
-	bool isSecureTransport() { return secureTransport; }
-
 	bool getSoapTransportTimeout() { return soapTransportTimeout; }
 
-	bool isSslSkipHostCheck() { return sslSkipHostCheck; }
-
-	bool isSslAllowExpiredCerts() { return sslAllowExpiredCerts; }
-
-	char *getUserId() { return userId; }
-
-	char *getPassword() { return password; }
 
 protected:
 
@@ -57,8 +47,6 @@ protected:
 
 	char gatewayLogoutUrl[INTERNET_MAX_URL_LENGTH];
 
-	char gatewayEndpoint[INTERNET_MAX_URL_LENGTH];
-
 	char sessionManagerServicePath[INTERNET_MAX_URL_LENGTH];
 
 	char identityManagerServicePath[INTERNET_MAX_URL_LENGTH];
@@ -69,23 +57,15 @@ protected:
 	
 	long cacheCleanupMinInterval;
 
-	bool secureTransport;
-
 	long soapTransportTimeout;
 
 	list<SecurityConstraintConfig> secConstraints;
 
 	list<PartnerAppConfig> apps;
 
+	list<EndpointConfig> endpoints;
+
 	char caFile[MAX_PATH + 2];
-
-	bool sslSkipHostCheck;
-
-	bool sslAllowExpiredCerts;
-
-	char userId[INTERNET_MAX_USER_NAME_LENGTH];
-
-	char password[INTERNET_MAX_PASSWORD_LENGTH];
 
 	friend class AbstractSSOAgent;
 };

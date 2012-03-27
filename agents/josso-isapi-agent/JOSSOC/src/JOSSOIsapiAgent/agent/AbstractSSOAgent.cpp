@@ -275,10 +275,7 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	const char *password = ini.GetValue("agent", "basicAuthPassword", NULL );
 	if (password != NULL) {
 		StringCbCopy(cfg->password, INTERNET_MAX_PASSWORD_LENGTH, password);
-	} else {
-		syslog(JK_LOG_DEBUG_LEVEL, "'HTTP Basic Auth password is null");
-	}
-
+	} 
 
     CSimpleIniA::TNamesDepend sections;
     ini.GetAllSections(sections);
@@ -288,6 +285,52 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 		// syslog(JK_LOG_DEBUG_LEVEL, "section [%s]", i->pItem);
 
 		const char *section = i->pItem;
+
+		// Check endpoint sections
+		if (section != NULL &&
+			strlen(section) >= 8 &&
+			strncmp(section, "endpoint", 8) == 0) {
+
+			// Create an endpoint configuration
+	        EndpointConfig *endpoint = new EndpointConfig();
+
+			const char *id = ini.GetValue(section, "nodeId", NULL);
+			if (id != NULL) {
+				string idStr (id);
+				endpoint->id.assign(idStr);
+			} else {
+				syslog(JK_LOG_ERROR_LEVEL, "'nodeId' not found in configuration '%s' section", section);
+				ok = false;
+			}
+
+			const char *gwyEndpoint = ini.GetValue(section, "gatewayEndpoint", NULL );
+			if (gwyEndpoint != NULL) {
+				StringCbCopy(endpoint->gatewayEndpoint, INTERNET_MAX_URL_LENGTH, gwyEndpoint);
+				syslog(JK_LOG_DEBUG_LEVEL, "'gatewayEndpoint' found in configuration '%s' section %s", section, gwyEndpoint);
+			} else {
+				ok = false;
+				syslog(JK_LOG_ERROR_LEVEL, "'gatewayEndpoint' not found in configuration '%s' section", section);
+			}
+
+
+			endpoint->sslSkipHostCheck = ini.GetBoolValue(section, "sslSkipHostCheck", false);
+			endpoint->sslAllowExpiredCerts = ini.GetBoolValue(section, "sslAllowExpiredCerts", false);
+
+
+			const char *userId = ini.GetValue(section, "basicAuthUserId", NULL );
+			if (userId != NULL) {
+				StringCbCopy(endpoint->userId, INTERNET_MAX_USER_NAME_LENGTH, userId);
+			}
+
+		    const char *password = ini.GetValue(section, "basicAuthPassword", NULL );
+			if (password != NULL) {
+				StringCbCopy(endpoint->password, INTERNET_MAX_PASSWORD_LENGTH, password);
+			}
+
+			cfg->endpoints.push_back(*endpoint);
+
+		}
+
 
 		// Check partner apps sections
 		if (section != NULL &&
@@ -301,6 +344,7 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 			const char *ignoredUris  = ini.GetValue(section, "ignored-uris", NULL );
 			const char *splashResource = ini.GetValue(section, "splash-resource", NULL);
 			const char *partnerAppId = ini.GetValue(section, "partnerAppId", NULL);
+			const char *appLoginUrl = ini.GetValue(section, "appLoginUrl", NULL);
 
 			// To verbose, just do nothing syslog(JK_LOG_WARNING_LEVEL, "'ignored-uris' %s", ignoredUris);
 
@@ -328,6 +372,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 					// List of ignored uris
 					string iu (ignoredUris);
 					StringUtil::tokenize(iu, appCfg->ignoredUris, ",");
+				}
+
+				if (appLoginUrl != NULL) {
+					string al = (appLoginUrl);
+					appCfg->setAppLoginUrl(al);
 				}
 
 				cfg->apps.push_back(*appCfg);
@@ -653,9 +702,14 @@ bool AbstractSSOAgent::accessSession(string ssoSessionId, SSOAgentRequest *ssoAg
 	if (lastAccessTime.dwHighDateTime == 0 || intervalPassed(lastAccessTime, this->getSessionAccessMinInterval())) {
 		access = true;
 	}
+
+	string nodeId(ssoAgentReq->getParameter("josso_node"));
+	if (nodeId.empty()) {
+		nodeId.assign(ssoAgentReq->getCookie("JOSSO_NODE"));
+	} 
 	
 	if (access) {
-		string endpoint = getGatewaySessionManagerServiceEndpoint();
+		string endpoint = getGatewaySessionManagerServiceEndpoint(nodeId.c_str());
 	
 		SSOSessionManagerSOAPBindingProxy svc;
 		svc.soap_endpoint = endpoint.c_str();
@@ -716,7 +770,21 @@ bool AbstractSSOAgent::accessSession(string ssoSessionId, SSOAgentRequest *ssoAg
 bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSessionId, SSOAgentRequest *ssoAgentReq) {
 
 	bool ok = true;
-	string endpoint = getGatewayIdentityProviderServiceEndpoint();
+	string nodeId(ssoAgentReq->getParameter("josso_node"));
+	if (nodeId.empty()) {
+		nodeId.assign(ssoAgentReq->getCookie("JOSSO_NODE"));
+	} 
+
+	if (!nodeId.empty()) {
+		jk_log(logger, JK_LOG_DEBUG, "Resolving assertion with node [%s]", nodeId.c_str());
+	}
+
+	string endpoint = getGatewayIdentityProviderServiceEndpoint(nodeId);
+	if (!endpoint.empty()) {
+		jk_log(logger, JK_LOG_DEBUG, "Resolving assertion with endpoint [%s]", endpoint.c_str());
+	} else {
+		jk_log(logger, JK_LOG_ERROR, "No endpoint resolved for [%s]", nodeId.c_str());
+	}
 
 	SSOIdentityProviderSOAPBindingProxy svc;
 	svc.soap_endpoint = endpoint.c_str();
@@ -734,6 +802,7 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 		}
 	}
 
+	// TODO : Take this from EndpointConfig !!!
 	svc.userid = agentConfig->userId;
 	svc.password = agentConfig->password;
 	svc.passwd = agentConfig->password;
@@ -764,7 +833,12 @@ bool AbstractSSOAgent::resolveAssertion(const string assertionId, string & ssoSe
 bool AbstractSSOAgent::findUserInSession(const string ssoSessionId, string & principal, map<string, string> & properties, SSOAgentRequest *ssoAgentReq) {
 
 	bool ok = true;
-	string endpoint = getGatewayIdentityManagerServiceEndpoint();
+	string nodeId(ssoAgentReq->getParameter("josso_node"));
+	if (nodeId.empty()) {
+		nodeId.assign(ssoAgentReq->getCookie("JOSSO_NODE"));
+	} 
+
+	string endpoint = getGatewayIdentityManagerServiceEndpoint(nodeId);
 
 	SSOIdentityManagerSOAPBindingProxy svc;
 	svc.soap_endpoint = endpoint.c_str();
@@ -819,7 +893,12 @@ bool AbstractSSOAgent::findUserInSession(const string ssoSessionId, string & pri
 bool AbstractSSOAgent::findRolesInSession(const string ssoSessionId, vector<string> &r, SSOAgentRequest *ssoAgentReq) {
 
 	bool ok = true;
-	string endpoint = getGatewayIdentityManagerServiceEndpoint();
+	string nodeId(ssoAgentReq->getParameter("josso_node"));
+	if (nodeId.empty()) {
+		nodeId.assign(ssoAgentReq->getCookie("JOSSO_NODE"));
+	} 
+
+	string endpoint = getGatewayIdentityManagerServiceEndpoint(nodeId);
 
 	SSOIdentityManagerSOAPBindingProxy svc;
 	svc.soap_endpoint = endpoint.c_str();
@@ -962,6 +1041,56 @@ PartnerAppConfig *AbstractSSOAgent::getDefaultPartnerAppConfig() {
 
 }
 
+PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfigById(string id) {
+	PartnerAppConfig *cfg = NULL;
+	list<PartnerAppConfig>::iterator app;
+
+	size_t maxLength = 0;
+	for (app = this->agentConfig->apps.begin() ; app != this->agentConfig->apps.end() ; app ++ ) {
+
+		jk_log(logger, JK_LOG_TRACE, "Looking for Partner Application ID [%s], checking [%s]", id.c_str(), app->partnerAppId.c_str());
+
+		if (app->partnerAppId.compare(id) == 0) {
+			cfg = &(*app);
+			break;
+		}
+	}
+
+	return cfg;
+}
+
+EndpointConfig *AbstractSSOAgent::getEndpointConfig(string id) {
+	EndpointConfig *cfg = NULL;
+
+	if (id.empty()) {
+		return this->agentConfig;
+	}
+
+	list<EndpointConfig>::iterator ed;
+
+	size_t maxLength = 0;
+
+	jk_log(logger, JK_LOG_TRACE, "Looking for endpoint matching node %s", id.c_str());
+
+	for (ed = this->agentConfig->endpoints.begin() ; ed != this->agentConfig->endpoints.end() ; ed ++ ) {
+		
+		jk_log(logger, JK_LOG_TRACE, "Checking %s", ed->id.c_str());
+
+		if (ed->id.compare(id) == 0) {
+			cfg = &(*ed);
+			jk_log(logger, JK_LOG_DEBUG, "Endpoint found %s [%s]", ed->id.c_str(), ed->getGatewayEndpoint());
+			break;
+		}
+	}
+
+	if (cfg == NULL) {
+		jk_log(logger, JK_LOG_DEBUG, "Endpoint NOT found for %s, using default", id.c_str());
+		cfg = this->agentConfig;
+	}
+
+	return cfg;
+}
+
 PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfig(const string & path) {
 
 	PartnerAppConfig *cfg = NULL;
@@ -1032,30 +1161,38 @@ SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const st
 	return cfg;
 }
 
-string AbstractSSOAgent::getGatewayIdentityManagerServiceEndpoint() {
+string AbstractSSOAgent::getGatewayIdentityManagerServiceEndpoint(const string & nodeId) {
+
+	EndpointConfig * ed = this->getEndpointConfig(nodeId);
+
 	//string endpoint ("https://");
 	string endpoint ("");
-	if(agentConfig->secureTransport){
+	if(ed->secureTransport){
 		endpoint.append("https://");
 	} else {
 		endpoint.append("http://");
 	}
-	endpoint.append(agentConfig->getGatewayEndpoint());
+	endpoint.append(ed->getGatewayEndpoint());
 	endpoint.append("/");
+
+	// Service path cannot be modified for each endpoint
 	endpoint.append(agentConfig->getIdentityManagerServicePath());
 
 	return endpoint;
 }
 
-string AbstractSSOAgent::getGatewayIdentityProviderServiceEndpoint() {
+string AbstractSSOAgent::getGatewayIdentityProviderServiceEndpoint(const string & nodeId) {
+
+	EndpointConfig * ed = this->getEndpointConfig(nodeId);
+
 	string endpoint ("");
-	if(agentConfig->secureTransport){
+	if(ed->secureTransport){
 		endpoint.append("https://");
 	} else {
 		endpoint.append("http://");
 	}
 	//string endpoint ("https://");
-	endpoint.append(agentConfig->getGatewayEndpoint());
+	endpoint.append(ed->getGatewayEndpoint());
 	endpoint.append("/");
 	endpoint.append(agentConfig->getIdentityProviderServicePath());
 
@@ -1063,15 +1200,18 @@ string AbstractSSOAgent::getGatewayIdentityProviderServiceEndpoint() {
 }
 
 
-string AbstractSSOAgent::getGatewaySessionManagerServiceEndpoint() {
+string AbstractSSOAgent::getGatewaySessionManagerServiceEndpoint(const string & nodeId) {
+
+	EndpointConfig * ed = this->getEndpointConfig(nodeId);
+
 	//string endpoint ("https://");
 	string endpoint ("");
-	if(agentConfig->secureTransport){
+	if(ed->secureTransport){
 		endpoint.append("https://");
 	} else {
 		endpoint.append("http://");
 	}
-	endpoint.append(agentConfig->getGatewayEndpoint());
+	endpoint.append(ed->getGatewayEndpoint());
 	endpoint.append("/");
 	endpoint.append(agentConfig->getSessionManagerServicePath());
 

@@ -561,6 +561,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\..\..\src\JOSSOIsapiAgent\agent\config\EndpointConfig.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\..\..\src\JOSSOIsapiAgent\agent\config\PartnerAppConfig.cpp"
 					>
 				</File>

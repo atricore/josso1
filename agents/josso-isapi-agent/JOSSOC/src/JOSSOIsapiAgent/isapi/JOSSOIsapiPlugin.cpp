@@ -134,6 +134,11 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 	jk_log(ssoAgent->logger, JK_LOG_TRACE, "Request / Response initialized ...");
 
+	string pJossoNode = req->getParameter("josso_node");
+	if (!pJossoNode.empty()) {
+		res->setCookie("JOSSO_NODE", pJossoNode, "/", false);
+	}
+
 	string &path = req->getPath();
 	jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Processing request for URI %s", path.c_str());
 
@@ -194,7 +199,6 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 				if (!autoLoginReferer.empty() && autoLoginReferer.compare("-") != 0) {
 					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false); 
 				}
-
 			}
 
 
@@ -315,8 +319,14 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 
 		// check for 'josso_login' && 'josso_login_optional'
 
+		string pJossoNode = req->getParameter("josso_node");
 		string pJossoLogin = req->getParameter("josso_login");
 		string pJossoLoginOptional = req->getParameter("josso_login_optional");
+
+		if (!pJossoNode.empty()) {
+			res->setCookie("JOSSO_NODE", pJossoNode, "/", false);
+		}
+
 		if (!pJossoLogin.empty() || !pJossoLoginOptional.empty()) { // Parameter is present without value, see : SSOAgentRequest::EMPTY_PARAM
 
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_login' || 'josso_login_optional' Received, optional %d", !pJossoLoginOptional.empty());
@@ -329,20 +339,41 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				res->setCookie("JOSSO_RESOURCE", encodedPath, "/", false);
 			}
 
-			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_login' received, redirecting to %s", ssoAgent->getGwyLoginUrl());
 			string gwyLoginUrl (ssoAgent->buildGwyLoginUrl(req));
-
-			if (!pJossoLoginOptional.empty()) {
-				gwyLoginUrl.append("&josso_cmd=login_optional");
-			}
 
 			// Since the URL is for JOSSO Extension, we need the app. id as parameter
 			string pJossoAppId = req->getParameter("josso_partnerapp_id");
 			if (!pJossoAppId.empty()) {
+
+				if (!pJossoLogin.empty()) {
+
+					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Looking for Partner Application login URL [%s]", pJossoAppId.c_str());
+
+					// If this is not a login optional, we must trigger the login.  Check if the app. has a specific URL
+					PartnerAppConfig *appCfg = ssoAgent->getPartnerAppConfigById(pJossoAppId);
+
+					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Looking for Partner Application login URL, found config [%s]", appCfg->getId());
+
+					string appLoginUrl = appCfg->getAppLoginUrl();
+
+					if (!appLoginUrl.empty()) {
+						jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application Login URL %s", appLoginUrl.c_str());
+						gwyLoginUrl.assign(ssoAgent->buildGwyLoginUrl(req, appLoginUrl));
+					}
+				}
+
+
+				if (!pJossoLoginOptional.empty()) {
+					gwyLoginUrl.append("&josso_cmd=login_optional");
+				}
+
 				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application ID %s", pJossoAppId.c_str());
 				gwyLoginUrl.append("&josso_partnerapp_id=");
 				gwyLoginUrl.append(pJossoAppId.c_str());
 			}
+
+			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_login/josso_login_optional' received, redirecting to %s", gwyLoginUrl.c_str());
+
 
 			if (!res->sendRedirect(gwyLoginUrl.c_str()))
 				rv = HSE_STATUS_ERROR;

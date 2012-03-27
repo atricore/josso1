@@ -92,6 +92,12 @@ string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req) {
 
 	string url (getGwyLoginUrl());
 
+	return this->buildGwyLoginUrl(req, url);
+
+}
+
+string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req, string url) {
+	
 	if (url.find("?") == string::npos)
 		url.append("?");
 	else

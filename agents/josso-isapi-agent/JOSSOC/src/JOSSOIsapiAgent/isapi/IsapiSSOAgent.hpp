@@ -46,6 +46,8 @@ public:
 
 	string buildGwyLoginUrl(SSOAgentRequest *req);
 
+	string buildGwyLoginUrl(SSOAgentRequest *req, string url);
+
 	string buildGwyLogoutUrl(SSOAgentRequest *req);
 
 	SSOAgentRequest *initIsapiFilterRequest(HTTP_FILTER_CONTEXT *pfc, 

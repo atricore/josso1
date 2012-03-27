@@ -5,6 +5,7 @@
 #include <JOSSOIsapiAgent/agent/SSOAgentRequest.hpp>
 #include <JOSSOIsapiAgent/agent/SSOAgentResponse.hpp>
 #include <JOSSOIsapiAgent/agent/config/AgentConfig.hpp>
+#include <JOSSOIsapiAgent/agent/config/EndpointConfig.hpp>
 
 #include <list>
 
@@ -106,7 +107,15 @@ public:
 	 */
 	virtual PartnerAppConfig * getPartnerAppConfig(const string & path) ;
 
+	virtual PartnerAppConfig * getPartnerAppConfigById(string id) ;
+
 	virtual PartnerAppConfig * getDefaultPartnerAppConfig() ;
+
+	/**
+	 * Endpoint configuration 
+	 */
+	virtual EndpointConfig * getEndpointConfig(string id);
+
 
 	virtual string buildGwyLoginUrl(SSOAgentRequest *req) =0;
 
@@ -192,11 +201,11 @@ protected:
 
 	void logSoapFault(struct soap *soap);
 
-	string getGatewayIdentityManagerServiceEndpoint();
+	string getGatewayIdentityManagerServiceEndpoint(const string & nodeId);
 
-	string getGatewayIdentityProviderServiceEndpoint();
+	string getGatewayIdentityProviderServiceEndpoint(const string & nodeId);
 
-	string getGatewaySessionManagerServiceEndpoint();
+	string getGatewaySessionManagerServiceEndpoint(const string & nodeId);
 
 	AgentConfig *agentConfig;
 	

@@ -18,9 +18,11 @@ public:
 	const char * getBaseUri() ;
 	const char * getSplashResource();
 	const char * getPartnerAppId();
+	const char * getAppLoginUrl();
 
 	void setSplashResource(const string &splashResource);
 	void setPartnerAppId(const string &partnerAppId);
+	void setAppLoginUrl(const string &appLoginUrl);
 
 protected:
 	string id;
@@ -28,6 +30,7 @@ protected:
 	vector<string> ignoredUris;
 	string splashResource;
 	string partnerAppId;
+	string appLoginUrl;
 
 	friend class AbstractSSOAgent;
 };

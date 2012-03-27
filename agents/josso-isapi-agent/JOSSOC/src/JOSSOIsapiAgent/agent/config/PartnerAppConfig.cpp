@@ -16,10 +16,18 @@ const char * PartnerAppConfig::getPartnerAppId() {
 	return partnerAppId.c_str();
 }
 
+const char * PartnerAppConfig::getAppLoginUrl() {
+	return appLoginUrl.c_str();
+}
+
 void PartnerAppConfig::setSplashResource(const string &splashResource) {
 	this->splashResource.assign(splashResource);
 }
 
 void PartnerAppConfig::setPartnerAppId(const string &partnerAppId) {
 	this->partnerAppId.assign(partnerAppId);
+}
+
+void PartnerAppConfig::setAppLoginUrl(const string &appLoginUrl) {
+	this->appLoginUrl.assign(appLoginUrl);
 }

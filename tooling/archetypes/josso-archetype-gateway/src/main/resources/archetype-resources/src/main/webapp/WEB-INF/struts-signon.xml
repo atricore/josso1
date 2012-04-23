@@ -89,7 +89,7 @@
             <forward name="success" path="/signon/login.do"/>
         </action>
 
-        <action path="/signon/info"
+        <action path=""
             type="org.josso.gateway.signon.InfoAction">
             <!-- use a tile name defined in tiles-signon.xml instead of a .jsp file name -->
             <forward name="success" path="josso.signon.info"/>

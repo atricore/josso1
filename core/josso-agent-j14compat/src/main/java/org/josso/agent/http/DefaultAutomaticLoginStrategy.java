@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
     
     private static final Log log = LogFactory.getLog(DefaultAutomaticLoginStrategy.class);
+    private static final String NO_REFERER = "NO_REFERER";
 
     public DefaultAutomaticLoginStrategy() {
         super();
@@ -64,7 +65,7 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
         	boolean autoLoginExecuted = Boolean.parseBoolean(getAgent().getAttribute(hreq, "JOSSO_AUTOMATIC_LOGIN_EXECUTED"));
             String referer = hreq.getHeader("referer");
             if (referer == null || "".equals(referer))
-                referer = "NO_REFERER";
+                referer = NO_REFERER;
 
             // If no referer host is found but we did not executed auto login yet, give it a try.
             if (!autoLoginExecuted) {
@@ -77,7 +78,7 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
             }
 
             // If we have a referer host that differs from our we require an autologinSSs
-            if (referer != null && !"".equals(referer)) {
+            if (referer != null && !NO_REFERER.equals(referer)) {
 
             	String oldReferer = getAgent().getAttribute(hreq, "JOSSO_AUTOMATIC_LOGIN_REFERER");
                 if (oldReferer != null && oldReferer.equals(referer)) {
@@ -109,13 +110,15 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
                 }
             } else {
             	String oldReferer = getAgent().getAttribute(hreq, "JOSSO_AUTOMATIC_LOGIN_REFERER");
-                if (oldReferer != null && oldReferer.equals("NO_REFERER")) {
+                if (oldReferer != null && oldReferer.equals(NO_REFERER)) {
                     if (log.isDebugEnabled())
                         log.debug("Referer already processed " + referer);
-                    getAgent().removeAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER");
-                    return false;
+                    // Note : we are no longer removing the "referer already processed" flag since the next request
+                    // it's likely that there will be no referer (browsers are no longer pushing this) and it will
+                    // attempt an automatic login again .
+                    //getAgent().removeAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER");
                 } else {
-                	getAgent().setAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER", "NO_REFERER");
+                	getAgent().setAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER", NO_REFERER);
                 	return true;
                 }
             }

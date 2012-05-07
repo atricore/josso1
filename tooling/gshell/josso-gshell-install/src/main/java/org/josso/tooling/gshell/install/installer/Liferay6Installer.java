@@ -81,7 +81,7 @@ public class Liferay6Installer extends VFSInstaller {
             } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
                                    artifact.getClassifier() !=  null &&
                                    artifact.getClassifier().equals("axis")) {
-                            installFile(srcFile, this.targetJOSSOLibDir, replace);
+                            installFile(srcFile, this.targetLibDir, replace);
             } else {
                 log.debug("Artifact is not valid for selected platform : " + artifact);
             }
@@ -269,8 +269,8 @@ public class Liferay6Installer extends VFSInstaller {
                     "<xupdate:update select=\"//@xsi:schemaLocation\">" +
                             "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd " +
                             "        urn:org:josso:agent:liferay6 jar:" + targetLibDir + "/josso-liferay6-agent-" + getProperty("version") + ".jar!/josso-liferay6-agent.xsd" +
-                            "        urn:org:josso:protocol:client jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + ".jar!/josso-protocol-client.xsd " +
-                            "        urn:org:josso:agent:core jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + ".jar!/josso-agent.xsd" +
+                            "        urn:org:josso:protocol:client jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + "-axis.jar!/josso-protocol-client.xsd " +
+                            "        urn:org:josso:agent:core jar:" + targetLibDir + "/josso-agents-bin-" + getProperty("version") + "-axis.jar!/josso-agent.xsd" +
                             "" +
                     "</xupdate:update>";
 
@@ -325,7 +325,7 @@ public class Liferay6Installer extends VFSInstaller {
             } catch (FileSystemException e) {
                 getPrinter().printActionErrStatus("Configure", "JOSSO SSO Filter", "Tomcat install directory is wrong.");
             } catch (IOException e) {
-                getPrinter().printActionErrStatus("Configure", "JOSSO SSO Filter", "Can not write to jaas.conf.");
+                getPrinter().printActionErrStatus("Configure", "JOSSO SSO Filter", "Cannot write to jaas.conf : " + e.getMessage());
             }
         }
 

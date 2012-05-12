@@ -15,7 +15,7 @@ public class FixedCrowdDirectorySelector extends AbstractCrowdDirectorySelectorS
 
     private static final Logger logger = Logger.getLogger(FixedCrowdDirectorySelector.class);
 
-    private int directoryId = 1;
+    private long directoryId = 1;
 
     public FixedCrowdDirectorySelector(Map<String, String> initParams, CrowdDirectoryService directoryService) {
         super(initParams, directoryService);
@@ -25,14 +25,14 @@ public class FixedCrowdDirectorySelector extends AbstractCrowdDirectorySelectorS
             logger.warn("No configured directory id, using default" + directoryId);
 
         try {
-            Long id = Long.parseLong(idStr);
+            directoryId = Long.parseLong(idStr);
         } catch (NumberFormatException e) {
             logger.error("Invalid configured directory id format for ["+idStr+"], using default " + directoryId);
         }
     }
 
 
-    public int getDirectoryId() {
+    public long getDirectoryId() {
         return directoryId;
     }
 
@@ -42,11 +42,11 @@ public class FixedCrowdDirectorySelector extends AbstractCrowdDirectorySelectorS
 
 
     public Directory lookupDirectory(SSOUser user) {
-        List<Directory> dirs = getDirectoryService().findAllDirectories();
+        /*List<Directory> dirs = getDirectoryService().findAllDirectories();
         for (int i = 0; i < dirs.size(); i++) {
             Directory directory = dirs.get(i);
             logger.info(directory.getName());
-        }
+        }*/
 
         return getDirectoryService().findDirectoryById(directoryId);
     }

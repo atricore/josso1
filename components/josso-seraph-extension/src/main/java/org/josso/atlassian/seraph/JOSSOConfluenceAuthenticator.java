@@ -4,19 +4,16 @@ import com.atlassian.confluence.event.events.security.LoginEvent;
 import com.atlassian.crowd.embedded.api.CrowdDirectoryService;
 import com.atlassian.crowd.embedded.api.Directory;
 import com.atlassian.crowd.embedded.impl.ImmutableUser;
-import com.atlassian.jira.ComponentManager;
+import com.atlassian.event.EventManager;
 import com.atlassian.seraph.auth.AuthenticatorException;
 import com.atlassian.seraph.auth.DefaultAuthenticator;
 import com.atlassian.seraph.config.SecurityConfig;
+import com.atlassian.spring.container.ContainerManager;
+import com.atlassian.user.EntityException;
+import com.atlassian.user.UserManager;
 import org.apache.log4j.Logger;
 import org.josso.gateway.SSONameValuePair;
 import org.josso.gateway.identity.SSOUser;
-import com.atlassian.event.EventManager;
-import com.atlassian.user.EntityException;
-import com.atlassian.user.UserManager;
-import com.atlassian.spring.container.ContainerManager;
-
-import com.atlassian.user.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +38,7 @@ public class JOSSOConfluenceAuthenticator extends DefaultAuthenticator {
     @Override
     public void init(Map<String, String> params, SecurityConfig config) {
         super.init(params, config);
+        this.params = params;
         lookupCrowdDirStrategyType = params.get("directory.lookup.strategy");
         if (lookupCrowdDirStrategyType == null) {
             lookupCrowdDirStrategyType = FixedCrowdDirectorySelectorFactory.class.getName();
@@ -109,7 +107,7 @@ public class JOSSOConfluenceAuthenticator extends DefaultAuthenticator {
     }
 
     private CrowdDirectoryService getCrowdDirectoryService() {
-        CrowdDirectoryService svc = (CrowdDirectoryService) ComponentManager.getComponent(CrowdDirectoryService.class);
+        CrowdDirectoryService svc = (CrowdDirectoryService) ContainerManager.getComponent("crowdDirectoryService");
         return svc;
     }
 

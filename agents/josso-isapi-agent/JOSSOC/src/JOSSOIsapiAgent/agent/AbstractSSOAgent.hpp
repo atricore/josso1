@@ -145,7 +145,7 @@ public:
 	/**
 	 * creates the secuirity context associated with this request.
 	 */
-	virtual bool createSecurityContext(SSOAgentRequest *req);
+	virtual bool createSecurityContext(SSOAgentRequest *req, PartnerAppConfig * appCfg);
 
 	/**
 	 * Authenticats a user 

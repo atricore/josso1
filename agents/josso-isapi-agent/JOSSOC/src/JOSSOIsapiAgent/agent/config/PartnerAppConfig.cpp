@@ -4,6 +4,10 @@ const char * PartnerAppConfig::getId() {
 	return id.c_str();
 }
 
+const char * PartnerAppConfig::getKey() {
+	return key.c_str();
+}
+
 const char * PartnerAppConfig::getBaseUri() {
 	return baseUri.c_str();
 }
@@ -19,6 +23,11 @@ const char * PartnerAppConfig::getPartnerAppId() {
 const char * PartnerAppConfig::getAppLoginUrl() {
 	return appLoginUrl.c_str();
 }
+
+void PartnerAppConfig::setKey(const string &key) {
+	this->key.assign(key);
+}
+
 
 void PartnerAppConfig::setSplashResource(const string &splashResource) {
 	this->splashResource.assign(splashResource);

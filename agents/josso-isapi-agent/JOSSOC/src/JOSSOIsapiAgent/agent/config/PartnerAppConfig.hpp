@@ -15,17 +15,20 @@ public:
 	}
 
 	const char * getId() ;
+	const char * getKey() ;
 	const char * getBaseUri() ;
 	const char * getSplashResource();
 	const char * getPartnerAppId();
 	const char * getAppLoginUrl();
 
+	void setKey(const string &key);
 	void setSplashResource(const string &splashResource);
 	void setPartnerAppId(const string &partnerAppId);
 	void setAppLoginUrl(const string &appLoginUrl);
 
 protected:
 	string id;
+	string key;
 	string baseUri;
 	vector<string> ignoredUris;
 	string splashResource;

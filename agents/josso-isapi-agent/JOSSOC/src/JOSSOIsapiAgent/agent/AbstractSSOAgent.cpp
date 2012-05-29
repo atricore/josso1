@@ -2,6 +2,7 @@
 #include <JOSSOIsapiAgent/agent/AbstractSSOAgent.hpp>
 #define _CRTDBG_MAP_ALLOC
 #include <iostream>
+#include <sstream>
 #include <crtdbg.h>
 
 #include "JOSSOIsapiAgent/agent/wsclient/SSOIdentityManagerSOAPBinding.nsmap"
@@ -281,8 +282,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
     ini.GetAllSections(sections);
 	
     CSimpleIniA::TNamesDepend::const_iterator i;
+	int keyNumber = 0;
     for (i = sections.begin(); i != sections.end(); ++i) {
 		// syslog(JK_LOG_DEBUG_LEVEL, "section [%s]", i->pItem);
+
+		keyNumber ++;
 
 		const char *section = i->pItem;
 
@@ -378,6 +382,18 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 					string al = (appLoginUrl);
 					appCfg->setAppLoginUrl(al);
 				}
+
+				std::string partnerAppKey;
+				std::stringstream out;
+
+				if (keyNumber < 10)
+					out << "00" << keyNumber;
+				else if (keyNumber < 100)
+					out << "0" << keyNumber;
+				else
+					out << keyNumber;
+				partnerAppKey = out.str();
+				appCfg->setKey(partnerAppKey);
 
 				cfg->apps.push_back(*appCfg);
 			}			
@@ -571,9 +587,11 @@ bool AbstractSSOAgent::isIgnored(PartnerAppConfig * appCfg, SSOAgentRequest *req
 	return false;
 }
 
-bool AbstractSSOAgent::createSecurityContext(SSOAgentRequest *req) {
+bool AbstractSSOAgent::createSecurityContext(SSOAgentRequest *req, PartnerAppConfig * appCfg) {
 
-	string ssoSession = req->getCookie("JOSSO_SESSIONID");
+	
+	string appKey(appCfg->getKey());
+	string ssoSession = req->getCookie(appKey + "_JOSSO_SESSIONID");
 	string originalResource = req->getCookie("JOSSO_RESOURCE");
 	string plainTextOriginalResource;
 

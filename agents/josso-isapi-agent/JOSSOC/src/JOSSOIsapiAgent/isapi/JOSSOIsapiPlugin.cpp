@@ -151,6 +151,8 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "[%s] is associated to %s partner application", path.c_str(), appCfg->getId());
 
+		string appKey (appCfg->getKey());
+
 		if (!ssoAgent->isIgnored(appCfg, req)) {
 
 			jk_log(ssoAgent->logger, JK_LOG_TRACE, "[%s] is associated to %s partner application and will be processed", path.c_str(), appCfg->getId());
@@ -161,12 +163,12 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 			res->addHeader("P3P", "CP=\"CAO PSA OUR\"");
 
 			// Create security context
-			if (!ssoAgent->createSecurityContext(req)) {
+			if (!ssoAgent->createSecurityContext(req, appCfg)) {
 				// Clean up SSO Cookie
 
 				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Cleaning SSO Cookie");
 
-				res->setCookie("JOSSO_SESSIONID", "-", "/");
+				res->setCookie(appKey + "_JOSSO_SESSIONID", "-", "/");
 				
 			}
 
@@ -498,6 +500,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_security_check' received ... ");			
 
 			string assertionId = req->getParameter("josso_assertion_id");
+			string partnerAppId = req->getParameter("josso_partnerapp_id");;
 			string ssoSessionId;
 
 			// Get requested original resource, if any
@@ -530,11 +533,15 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Resolved assertion [%s] as SSO Session [%s]", assertionId.c_str(), ssoSessionId.c_str());
 
 					// Create JOSSO SESSION ID Cookie
+
+					PartnerAppConfig * appCfg = ssoAgent->getPartnerAppConfigById(partnerAppId);
+					string appKey(appCfg->getKey());
+
 					string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
 					bool secure = false;
 					if(https == "on" || https == "ON") secure = true;
 
-					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/", secure);
+					res->setCookie(appKey + "_JOSSO_SESSIONID", ssoSessionId, "/", secure);
 					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false); // Clean stored referer
 
 					// Retrieve and decode splash resource

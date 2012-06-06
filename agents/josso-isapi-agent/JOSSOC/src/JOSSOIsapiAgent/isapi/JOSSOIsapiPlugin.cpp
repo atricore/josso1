@@ -151,7 +151,7 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "[%s] is associated to %s partner application", path.c_str(), appCfg->getId());
 
-		string appKey (appCfg->getKey());
+		//string appKey (appCfg->getKey());
 
 		if (!ssoAgent->isIgnored(appCfg, req)) {
 
@@ -168,7 +168,7 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Cleaning SSO Cookie");
 
-				res->setCookie(appKey + "_JOSSO_SESSIONID", "-", "/");
+				res->setCookie("JOSSO_SESSIONID", "-", "/");
 				
 			}
 
@@ -534,14 +534,14 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 
 					// Create JOSSO SESSION ID Cookie
 
-					PartnerAppConfig * appCfg = ssoAgent->getPartnerAppConfigById(partnerAppId);
-					string appKey(appCfg->getKey());
+					//PartnerAppConfig * appCfg = ssoAgent->getPartnerAppConfigById(partnerAppId);
+					//string appKey(appCfg->getKey());
 
 					string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
 					bool secure = false;
 					if(https == "on" || https == "ON") secure = true;
 
-					res->setCookie(appKey + "_JOSSO_SESSIONID", ssoSessionId, "/", secure);
+					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/", secure);
 					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false); // Clean stored referer
 
 					// Retrieve and decode splash resource

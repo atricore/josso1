@@ -9,14 +9,12 @@ using namespace std;
 class PartnerAppConfig {
 
 public:
-	PartnerAppConfig(const string &id, const string &baseUri) {
+	PartnerAppConfig(const string &id) {
 		this->id.assign(id);
-		this->baseUri.assign(baseUri);
 	}
 
 	const char * getId() ;
 	const char * getKey() ;
-	const char * getBaseUri() ;
 	const char * getSplashResource();
 	const char * getPartnerAppId();
 	const char * getAppLoginUrl();
@@ -29,7 +27,7 @@ public:
 protected:
 	string id;
 	string key;
-	string baseUri;
+	vector<string> baseUris;
 	vector<string> ignoredUris;
 	string splashResource;
 	string partnerAppId;

@@ -8,10 +8,6 @@ const char * PartnerAppConfig::getKey() {
 	return key.c_str();
 }
 
-const char * PartnerAppConfig::getBaseUri() {
-	return baseUri.c_str();
-}
-
 const char * PartnerAppConfig::getSplashResource() {
 	return splashResource.c_str();
 }

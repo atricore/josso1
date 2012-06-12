@@ -338,7 +338,6 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 
 		}
 
-
 		// Check partner apps sections
 		if (section != NULL &&
 			strlen(section) >= 10 &&
@@ -346,8 +345,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 
 			// This is a partner appc
 
-			// Get base-uri
+			// Get base-uris, for back-ward compatibility try both: 'base-uris' and 'base-uri'
 			const char *baseUris = ini.GetValue(section, "base-uris", NULL );
+			if (baseUris == NULL)
+				baseUris = ini.GetValue(section, "base-uri", NULL );
+
 			const char *ignoredUris  = ini.GetValue(section, "ignored-uris", NULL );
 			const char *splashResource = ini.GetValue(section, "splash-resource", NULL);
 			const char *partnerAppId = ini.GetValue(section, "partnerAppId", NULL);

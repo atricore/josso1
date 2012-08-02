@@ -66,6 +66,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib advapi32.lib pcred.lib pcrecppd.lib ssleay32.lib libeay32.lib wsock32.lib"
 				ShowProgress="0"
+				OutputFile="$(OutDir)\$(ProjectName)32_d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib\debug;..\..\..\..\..\lib"
 				IgnoreAllDefaultLibraries="false"
@@ -150,6 +151,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib advapi32.lib pcred.lib pcrecppd.lib ssleay32.lib libeay32.lib wsock32.lib"
 				ShowProgress="0"
+				OutputFile="$(OutDir)\$(ProjectName)64_d.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib64\debug;..\..\..\..\..\lib64"
 				IgnoreDefaultLibraryNames="MSVCRTD;LIBCMT"
@@ -230,6 +232,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib advapi32.lib pcre.lib pcrecpp.lib ssleay32.lib libeay32.lib wsock32.lib"
+				OutputFile="$(OutDir)\$(ProjectName)32.dll"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib"
 				GenerateManifest="true"
 				IgnoreAllDefaultLibraries="false"
@@ -312,6 +315,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib advapi32.lib pcre.lib pcrecpp.lib ssleay32.lib libeay32.lib wsock32.lib"
+				OutputFile="$(OutDir)\$(ProjectName)64.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\..\lib64"
 				GenerateManifest="true"

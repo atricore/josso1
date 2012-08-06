@@ -34,6 +34,8 @@ public:
 
 	bool getSoapTransportTimeout() { return soapTransportTimeout; }
 
+	char* getBackToBaseUrl() { return backToBaseUrl; }
+
 
 protected:
 
@@ -52,6 +54,9 @@ protected:
 	char identityManagerServicePath[INTERNET_MAX_URL_LENGTH];
 
 	char identityProviderServicePath[INTERNET_MAX_URL_LENGTH];
+
+	// Only usefull with JOSSO 1 gateways
+	char backToBaseUrl[INTERNET_MAX_URL_LENGTH];
 
 	long sessionAccessMinInterval;
 	

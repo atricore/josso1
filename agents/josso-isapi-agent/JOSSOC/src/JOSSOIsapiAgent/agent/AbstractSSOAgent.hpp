@@ -81,6 +81,10 @@ public:
 	 */
 	char *getGwyLogoutUrl() { return this->agentConfig->getGatewayLogoutUrl(); }
 
+	/**
+	 * Agent base 'back_to' URL
+	 */
+	char *getBackToBaseUrl() { return this->agentConfig->getBackToBaseUrl(); }
 
 	/**
 	 * Session access min interval

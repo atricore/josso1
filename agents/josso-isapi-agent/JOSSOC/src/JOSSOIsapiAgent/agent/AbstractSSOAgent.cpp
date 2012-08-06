@@ -249,6 +249,13 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 		syslog(JK_LOG_DEBUG_LEVEL, "'SSOIdentityProvider service path: %s", identityProviderServicePath);
 	}
 
+	// Back To base URL
+	const char *backToBaseUrl = ini.GetValue("agent", "backToBaseUrl", NULL);
+	if (backToBaseUrl != NULL) {
+		StringCbCopy(cfg->backToBaseUrl, INTERNET_MAX_URL_LENGTH, backToBaseUrl);
+		syslog(JK_LOG_DEBUG_LEVEL, "'BackTo Base URL : %s", backToBaseUrl);
+	}
+
 	// Session access min interval
 	cfg->sessionAccessMinInterval = ini.GetLongValue("agent", "sessionAccessMinInterval", DEFAULT_SESSION_ACCESS_MIN_INTERVAL);
 	

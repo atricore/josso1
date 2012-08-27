@@ -62,13 +62,7 @@ public class IISInstaller extends VFSInstaller {
                 this.targetBinDir.createFolder();
 
             // Install only the proper artifact for the target platform ...
-            if (artifact.getBaseName().startsWith("JOSSOIsapiAgent") &&
-                    locationStr.contains("Win32") &&  locationStr.contains("Release") &&
-                    this.getTargetPlatform().getId().equals("iis")) {
-                installFile(srcFile, this.targetBinDir, replace);
-            } else if (artifact.getBaseName().startsWith("JOSSOIsapiAgent") &&
-                    locationStr.contains("Win64") &&  locationStr.contains("Release") &&
-                    this.getTargetPlatform().getId().equals("iis64")) {
+            if (artifact.getBaseName().startsWith("JOSSOIsapiAgent")) {
                 installFile(srcFile, this.targetBinDir, replace);
             } else {
                 log.debug("Artifact is not valid for selected platform : " + artifact);
@@ -111,7 +105,10 @@ public class IISInstaller extends VFSInstaller {
     public void installConfiguration(JOSSOArtifact artifact, boolean replace) throws InstallException {
         try {
             FileObject srcFile = getFileSystemManager().resolveFile(artifact.getLocation());
+
             String name = srcFile.getName().getBaseName();
+
+
 
             if (!this.targetConfDir.exists())
                 this.targetConfDir.createFolder();
@@ -119,23 +116,29 @@ public class IISInstaller extends VFSInstaller {
             if (!this.targetJOSSOSharedLibDir.exists())
                 this.targetJOSSOSharedLibDir.createFolder();
 
-            if (name.startsWith("josso-agent-config")) {
+            if (name.startsWith("josso-agent")) {
                 installFile(srcFile, this.targetConfDir, replace);
+            } else {
+                // This could be a custom resource or someting
             }
 
+            // Try to get .reg files from same folder, otherwise generate defaults
+
             this.targetJOSSOSharedLibDir.createFolder();
+            /*
             FileObject logFile = getFileSystemManager().resolveFile(this.targetJOSSOSharedLibDir.getName() + "/josso_isapi.log");
             logFile.createFile();
-            FileObject regConfig = getFileSystemManager().resolveFile(this.targetConfDir.getName() + "/JOSSO-ISAPI-Config.reg");
-            FileObject regEventLog = getFileSystemManager().resolveFile(this.targetConfDir.getName() + "/JOSSO-ISAPI-EventLog.reg");
 
+            FileObject regConfig = getFileSystemManager().resolveFile(this.targetConfDir.getName() + "/JOSSO-ISAPI-Config.reg");
             regConfig.createFile();
             fillRegConfigFile(regConfig);
             printInstallOkStatus(regConfig.getName().getBaseName(), "Created " + regConfig.getName().getFriendlyURI());
 
+            FileObject regEventLog = getFileSystemManager().resolveFile(this.targetConfDir.getName() + "/JOSSO-ISAPI-EventLog.reg");
             regEventLog.createFile();
             fillRegEventLogFile(regEventLog);
             printInstallOkStatus(regEventLog.getName().getBaseName(), "Created " + regEventLog.getName().getFriendlyURI());
+            */
 
         } catch (IOException e) {
             throw new InstallException(e.getMessage(), e);
@@ -165,8 +168,8 @@ public class IISInstaller extends VFSInstaller {
                 "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Atricore\\JOSSO Isapi Agent]\n" +
                 "\n" +
                 "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Atricore\\JOSSO Isapi Agent\\1.8]\n" +
-                "\"LogLevel\"=\"trace\"\n" +
-                "\"ExtensionUri\"=\"/josso/JOSSOIsapiAgent.dll\"\n" +
+                "\"LogLevel\"=\"info\"\n" +
+                "\"ExtensionUri\"=\"/josso/agent.sso\"\n" +
                 "\"LogFile\"=\""+ toWindowsPath(this.targetJOSSOSharedLibDir) +"\\\\josso_isapi.log\"\n" +
                 "\"AgentConfigFile\"=\""+ toWindowsPath(this.targetConfDir) +"\\\\josso-agent-config.ini\"";
 

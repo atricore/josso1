@@ -131,7 +131,7 @@ public class SSOPartnerAppConfig implements Serializable {
     /**
      * @org.apache.xbean.Property alias="ignore-web-resource-collections"
      * @return
-     */
+     */                                          i
     public void setIgnoredWebResources(String[] _ignoredWebResources) {
         this._ignoredWebResources = _ignoredWebResources;
     }

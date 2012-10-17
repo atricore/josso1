@@ -90,6 +90,7 @@ typedef struct {
     //char *sslClientKeyFile;
     //char *sslClientKeyFilePass;
     //char *sslRandFile;
+    int ForceUnsecureSSOCookie;
 } auth_josso_config_rec;
 
 typedef struct {
@@ -391,6 +392,15 @@ static const char *set_php5_security_context_slot(cmd_parms *cmd, void *offset,
     return ap_set_flag_slot(cmd, offset, u);
 }
 
+
+static const char *set_force_unsecure_sso_cookie_slot(cmd_parms *cmd, void *offset,
+                                       int u)
+{
+    auth_josso_config_rec *conf = (auth_josso_config_rec*)offset;
+
+    return ap_set_flag_slot(cmd, offset, u);
+}
+
 static const char *set_ssl_enable_slot(cmd_parms *cmd, void *offset,
                                        int u)
 {
@@ -539,7 +549,7 @@ static const command_rec auth_josso_cmds[] =
                    OR_AUTHCFG, "Partner application ID"),
    AP_INIT_TAKE1("Context", set_context_slot,
 				  (void *)APR_OFFSETOF(auth_josso_config_rec, context),
-				  OR_AUTHCFG, "Partner application context"),
+				  OR_AUTHCFG, "Partner       application context"),
    AP_INIT_TAKE1("DefaultResource", set_default_resource_slot,
 				  (void *)APR_OFFSETOF(auth_josso_config_rec, defaultResource),
 				  OR_AUTHCFG, "Default resource to send the user after logout"),
@@ -557,6 +567,11 @@ static const command_rec auth_josso_cmds[] =
 				 OR_AUTHCFG,
 				 "Set to 'On' to create PHP5-specific security context using "
 				 "PHP_AUTH_USER, PHP_AUTH_PW and PHP_AUTH_TYPE server variables"
+				 "(default is Off)."),
+   AP_INIT_FLAG("ForceUnsecureSSOCookie", set_force_unsecure_sso_cookie_slot,
+				 (void *)APR_OFFSETOF(auth_josso_config_rec, ForceUnsecureSSOCookie),
+				 OR_AUTHCFG,
+				 "Set to 'On' to force unsecure SSO Cookies on HTTPS connections"
 				 "(default is Off)."),
    AP_INIT_FLAG("AutoLoginDisabled", set_auto_login_disabled_slot,
 				 (void *)APR_OFFSETOF(auth_josso_config_rec, AutoLoginDisabled),
@@ -1179,8 +1194,11 @@ static char *set_session_cookie (request_rec * r, char *name, char *value, char 
 
     ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "name: [%s],cookie_type: [%s],ct_result: [%d], https?: [%s]",name,cookie_type,strcmp(cookie_type , JOSSO_SINGLE_SIGN_ON_COOKIE),transport);
 
-    if (!strcmp(transport,"https") & !strcmp(cookie_type , JOSSO_SINGLE_SIGN_ON_COOKIE))
-	    new_session_cookie = apr_psprintf (p, "%s ; Secure", new_session_cookie);
+    auth_josso_config_rec *cfg = ap_get_module_config(r->per_dir_config, &auth_josso_module);
+
+    if (cfg->ForceUnsecureSSOCookie != 1)
+        if (!strcmp(transport,"https") & !strcmp(cookie_type , JOSSO_SINGLE_SIGN_ON_COOKIE))
+	        new_session_cookie = apr_psprintf (p, "%s ; Secure", new_session_cookie);
 
     apr_table_add (r->err_headers_out, "Set-Cookie", new_session_cookie);
     apr_table_add (r->headers_out, "Set-Cookie", new_session_cookie);

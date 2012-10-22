@@ -549,7 +549,7 @@ static const command_rec auth_josso_cmds[] =
                    OR_AUTHCFG, "Partner application ID"),
    AP_INIT_TAKE1("Context", set_context_slot,
 				  (void *)APR_OFFSETOF(auth_josso_config_rec, context),
-				  OR_AUTHCFG, "Partner       application context"),
+				  OR_AUTHCFG, "Partner application context"),
    AP_INIT_TAKE1("DefaultResource", set_default_resource_slot,
 				  (void *)APR_OFFSETOF(auth_josso_config_rec, defaultResource),
 				  OR_AUTHCFG, "Default resource to send the user after logout"),
@@ -600,22 +600,10 @@ static const command_rec auth_josso_cmds[] =
    AP_INIT_TAKE1("SSLServerCertDir", set_ssl_server_cert_dir_slot,
 			     (void *)APR_OFFSETOF(auth_josso_config_rec, sslServerCertDir),
 			     OR_AUTHCFG, "Path to the directory with trusted certificates"),
-   /* AP_INIT_TAKE1("SSLClientKeyFile", set_ssl_client_key_file_slot,
-	*			 (void *)APR_OFFSETOF(auth_josso_config_rec, sslClientKeyFile),
-	*			 OR_AUTHCFG, "Path to client key file. "
-	*			 "required only when client must authenticate to server "
-	*			 "(see SSL docs on how to obtain this file)"),
-    * AP_INIT_TAKE1("SSLClientKeyFilePass", set_ssl_client_key_file_pass_slot,
-	*			 (void *)APR_OFFSETOF(auth_josso_config_rec, sslClientKeyFilePass),
-	*			 OR_AUTHCFG, "Password to read the client key file"),
-    * AP_INIT_TAKE1("SSLRandFile", set_ssl_rand_file_slot,
-	*		     (void *)APR_OFFSETOF(auth_josso_config_rec, sslRandFile),
-	*		     OR_AUTHCFG, "File with random data to seed randomness"),
-    */
-    AP_INIT_TAKE1("ShmSSOFile", set_shm_sso_file, NULL, RSRC_CONF,
+   AP_INIT_TAKE1("ShmSSOFile", set_shm_sso_file, NULL, RSRC_CONF,
                   "Filename of shared segment, or NULL for anonymous shared "
                   "memory"),
-    AP_INIT_TAKE1("ShmSSOLockfile", set_shm_sso_lockfile, NULL, RSRC_CONF,
+   AP_INIT_TAKE1("ShmSSOLockfile", set_shm_sso_lockfile, NULL, RSRC_CONF,
                   "Filename of global mutex"),
   {NULL}
 

@@ -553,11 +553,10 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 						res->sendRedirect(originalResource);
 					} else if (!partnerAppId.empty()) {
 					    PartnerAppConfig * appCfg = ssoAgent->getPartnerAppConfigById(partnerAppId);
-					    // TODO : Implement this :
-                        //string defaultResource = appCfg->getDefaultResource();
+                        string defaultResource = appCfg->getDefaultResource();
                         if (!defaultResource.empty()) {
-                            //jk_log(ssoAgent->logger, JK_LOG_ERROR, "Redirecting to default resource [%s] for application [%s]", defaultResource.c_str(), partnerAppId.c_str());
-                            //res->sendRedirect(defaultResource);
+                            jk_log(ssoAgent->logger, JK_LOG_ERROR, "Redirecting to default resource [%s] for application [%s]", defaultResource.c_str(), partnerAppId.c_str());
+                            res->sendRedirect(defaultResource);
                         } else {
     					    jk_log(ssoAgent->logger, JK_LOG_ERROR, "No default resource found for application [%s]", partnerAppId.c_str());
         				    rv = HSE_STATUS_ERROR;

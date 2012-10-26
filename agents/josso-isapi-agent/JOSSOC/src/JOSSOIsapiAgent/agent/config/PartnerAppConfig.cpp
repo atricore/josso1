@@ -20,6 +20,11 @@ const char * PartnerAppConfig::getAppLoginUrl() {
 	return appLoginUrl.c_str();
 }
 
+const char * PartnerAppConfig::getDefaultResource() {
+	return defaultResource.c_str();
+}
+
+
 void PartnerAppConfig::setKey(const string &key) {
 	this->key.assign(key);
 }
@@ -35,4 +40,8 @@ void PartnerAppConfig::setPartnerAppId(const string &partnerAppId) {
 
 void PartnerAppConfig::setAppLoginUrl(const string &appLoginUrl) {
 	this->appLoginUrl.assign(appLoginUrl);
+}
+
+void PartnerAppConfig::setDefaultResource(const string &defaultResource) {
+	this->defaultResource.assign(defaultResource);
 }

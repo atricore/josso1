@@ -81,6 +81,10 @@ public:
 	 */
 	char *getGwyLogoutUrl() { return this->agentConfig->getGatewayLogoutUrl(); }
 
+	/**
+	 * Agent base 'back_to' URL
+	 */
+	char *getBackToBaseUrl() { return this->agentConfig->getBackToBaseUrl(); }
 
 	/**
 	 * Session access min interval
@@ -145,7 +149,7 @@ public:
 	/**
 	 * creates the secuirity context associated with this request.
 	 */
-	virtual bool createSecurityContext(SSOAgentRequest *req);
+	virtual bool createSecurityContext(SSOAgentRequest *req, PartnerAppConfig * appCfg);
 
 	/**
 	 * Authenticats a user 

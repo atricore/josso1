@@ -97,23 +97,31 @@ string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req) {
 }
 
 string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req, string url) {
-	
+
+	string backToBaseUrl (getBackToBaseUrl());
+    string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);
+	string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
+
+	// Add parameter to URL
 	if (url.find("?") == string::npos)
 		url.append("?");
 	else
 		url.append("&");
-
 	url.append("&josso_back_to=");
 
-	string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);
-	string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
+	// Add parameter value to URL
+	if (!backToBaseUrl.empty()) {
+		url.append(backToBaseUrl);
+	} else {
+		url.append(https == "on" || https == "ON" ? "https://" : "http://");
+		url.append(host);
+	}
 
-	url.append(https == "on" || https == "ON" ? "https://" : "http://");
-	url.append(host);
+	// Add extension ACS endpont
 	url.append(getExtensionUri());
 	url.append("%3Fjosso_security_check&amp;");
 	url.append("josso_partnerapp_host=");
-	url.append(host.c_str());
+	url.append(host.c_str()); // TODO : Take host from baseBackTo URL if any ?
 
 	return url;
 
@@ -121,27 +129,26 @@ string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req, string url) {
 
 string IsapiSSOAgent::buildGwyLogoutUrl(SSOAgentRequest *req) {
 
+	string backToBaseUrl (getBackToBaseUrl());
 	string url (getGwyLogoutUrl());
+	string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);
+	string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
 
 	if (url.find("?") == string::npos)
 		url.append("?");
 	else
 		url.append("&");
 
+	// Add parameter to URL
 	url.append("josso_back_to=");
 
-	string host = req->getServerVariable("HTTP_HOST", MAX_HEADER_SIZE);
-	string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
-
-	url.append(https == "on" || https == "ON" ? "https://" : "http://");
-	url.append(host);
-	
-	/*
-	url.append(getExtensionUri());
-	url.append("%3Fjosso_security_check&amp;");
-	url.append("josso_partnerapp_host=");
-	url.append(host.c_str());
-	*/
+	// Add parameter value to URL
+	if (!backToBaseUrl.empty()) {
+		url.append(backToBaseUrl);
+	} else {
+		url.append(https == "on" || https == "ON" ? "https://" : "http://");
+		url.append(host);
+	}
 
 	return url;
 

@@ -30,5 +30,5 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 */
 $currentUrl = $_REQUEST['josso_current_url'];
 
-jossoRequestLoginForUrl($currentUrl);
+jossoRequestLoginForUrl($currentUrl, FALSE);
 ?>

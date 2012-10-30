@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>josso-partner-jboss5</artifactId>
-        <version>1.8.7-SNAPSHOT</version>
+        <version>1.8.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>josso-partner-jboss5-web</artifactId>

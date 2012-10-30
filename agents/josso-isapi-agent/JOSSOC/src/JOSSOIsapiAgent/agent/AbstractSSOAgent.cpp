@@ -2,6 +2,7 @@
 #include <JOSSOIsapiAgent/agent/AbstractSSOAgent.hpp>
 #define _CRTDBG_MAP_ALLOC
 #include <iostream>
+#include <sstream>
 #include <crtdbg.h>
 
 #include "JOSSOIsapiAgent/agent/wsclient/SSOIdentityManagerSOAPBinding.nsmap"
@@ -129,8 +130,11 @@ bool AbstractSSOAgent::start() {
 			
 			list<PartnerAppConfig>::const_iterator partnerApp;
 
-			for (partnerApp = agentConfig->apps.begin(); partnerApp != agentConfig->apps.end() ; partnerApp++ ) { 
-				jk_log(logger, JK_LOG_DEBUG, "partnerApp:%s at base-uri:%s", partnerApp->id.c_str(), partnerApp->baseUri.c_str());
+			for (partnerApp = agentConfig->apps.begin(); partnerApp != agentConfig->apps.end() ; partnerApp++ ) {
+				vector<string>::const_iterator baseUri;
+				for (baseUri = partnerApp->baseUris.begin() ; baseUri != partnerApp->baseUris.end() ; baseUri++) {
+					jk_log(logger, JK_LOG_DEBUG, "partnerApp:%s base-uri:%s", partnerApp->id.c_str(), baseUri->c_str());
+				}
 
 				vector<string>::const_iterator ignoredUri;
 				for (ignoredUri = partnerApp->ignoredUris.begin() ; ignoredUri != partnerApp->ignoredUris.end() ; ignoredUri++) {
@@ -245,6 +249,13 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 		syslog(JK_LOG_DEBUG_LEVEL, "'SSOIdentityProvider service path: %s", identityProviderServicePath);
 	}
 
+	// Back To base URL
+	const char *backToBaseUrl = ini.GetValue("agent", "backToBaseUrl", NULL);
+	if (backToBaseUrl != NULL) {
+		StringCbCopy(cfg->backToBaseUrl, INTERNET_MAX_URL_LENGTH, backToBaseUrl);
+		syslog(JK_LOG_DEBUG_LEVEL, "'BackTo Base URL : %s", backToBaseUrl);
+	}
+
 	// Session access min interval
 	cfg->sessionAccessMinInterval = ini.GetLongValue("agent", "sessionAccessMinInterval", DEFAULT_SESSION_ACCESS_MIN_INTERVAL);
 	
@@ -281,8 +292,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
     ini.GetAllSections(sections);
 	
     CSimpleIniA::TNamesDepend::const_iterator i;
+	int keyNumber = 0;
     for (i = sections.begin(); i != sections.end(); ++i) {
 		// syslog(JK_LOG_DEBUG_LEVEL, "section [%s]", i->pItem);
+
+		keyNumber ++;
 
 		const char *section = i->pItem;
 
@@ -331,7 +345,6 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 
 		}
 
-
 		// Check partner apps sections
 		if (section != NULL &&
 			strlen(section) >= 10 &&
@@ -339,24 +352,30 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 
 			// This is a partner appc
 
-			// Get base-uri
-			const char *baseUri = ini.GetValue(section, "base-uri", NULL );
+			// Get base-uris, for back-ward compatibility try both: 'base-uris' and 'base-uri'
+			const char *baseUris = ini.GetValue(section, "base-uris", NULL );
+			if (baseUris == NULL)
+				baseUris = ini.GetValue(section, "base-uri", NULL );
+
 			const char *ignoredUris  = ini.GetValue(section, "ignored-uris", NULL );
 			const char *splashResource = ini.GetValue(section, "splash-resource", NULL);
 			const char *partnerAppId = ini.GetValue(section, "partnerAppId", NULL);
 			const char *appLoginUrl = ini.GetValue(section, "appLoginUrl", NULL);
+			const char *defaultResource = ini.GetValue(section, "default-resource", NULL);
 
 			// To verbose, just do nothing syslog(JK_LOG_WARNING_LEVEL, "'ignored-uris' %s", ignoredUris);
 
-			if (baseUri == NULL) {
+			if (baseUris == NULL) {
 				// To verbose, just do nothing .... syslog(JK_LOG_WARNING_LEVEL, "'base-uri' not found in '%s' section", section);
 			} else {
 
 				string s (section);
-				string u (baseUri);
+				string u (baseUris);
 				
 				// Create partner app configuration
-				PartnerAppConfig *appCfg = new PartnerAppConfig(s, u);
+				PartnerAppConfig *appCfg = new PartnerAppConfig(s);
+
+				StringUtil::tokenize(u, appCfg->baseUris, ",");
 
 				if (splashResource != NULL) {
 					string sr (splashResource);
@@ -378,6 +397,24 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 					string al = (appLoginUrl);
 					appCfg->setAppLoginUrl(al);
 				}
+
+				if (defaultResource != NULL) {
+					string dr = (defaultResource);
+					appCfg->setDefaultResource(dr);
+				}
+
+
+				std::string partnerAppKey;
+				std::stringstream out;
+
+				if (keyNumber < 10)
+					out << "00" << keyNumber;
+				else if (keyNumber < 100)
+					out << "0" << keyNumber;
+				else
+					out << keyNumber;
+				partnerAppKey = out.str();
+				appCfg->setKey(partnerAppKey);
 
 				cfg->apps.push_back(*appCfg);
 			}			
@@ -571,8 +608,10 @@ bool AbstractSSOAgent::isIgnored(PartnerAppConfig * appCfg, SSOAgentRequest *req
 	return false;
 }
 
-bool AbstractSSOAgent::createSecurityContext(SSOAgentRequest *req) {
+bool AbstractSSOAgent::createSecurityContext(SSOAgentRequest *req, PartnerAppConfig * appCfg) {
 
+	
+	//string appKey(appCfg->getKey());
 	string ssoSession = req->getCookie("JOSSO_SESSIONID");
 	string originalResource = req->getCookie("JOSSO_RESOURCE");
 	string plainTextOriginalResource;
@@ -1101,15 +1140,18 @@ PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfig(const string & path) {
 
 	size_t maxLength = 0;
 	for (app = this->agentConfig->apps.begin() ; app != this->agentConfig->apps.end() ; app ++ ) {
-		string baseUri = app->baseUri;
-		std::transform(baseUri.begin(), baseUri.end(), baseUri.begin(), tolower);
-		
-		size_t pos = p.find(baseUri);
-		if (pos != string::npos && pos==0) {
-			// Now, we match the longest baseUri
-			if (app->baseUri.length() > maxLength) {
-				maxLength = app->baseUri.length();
-				cfg = &(*app);
+		vector<string>::iterator baseUriIter;
+		for (baseUriIter = app->baseUris.begin() ; baseUriIter != app->baseUris.end() ; baseUriIter ++) {
+			string baseUri = *baseUriIter;
+			std::transform(baseUri.begin(), baseUri.end(), baseUri.begin(), tolower);
+			
+			size_t pos = p.find(baseUri);
+			if (pos != string::npos && pos==0) {
+				// Now, we match the longest baseUri
+				if (baseUri.length() > maxLength) {
+					maxLength = baseUri.length();
+					cfg = &(*app);
+				}
 			}
 		}
 	}

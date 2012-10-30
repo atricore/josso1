@@ -63,7 +63,9 @@ class default_automatic_login_strategy extends abstract_automatic_login_strategy
 	    // If we have a referer host that differs from our we require an autologinSSs
 	    if (isset($referer)) {
 
-			$oldReferer = $_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"];
+            if (isset($_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"]))
+			    $oldReferer = $_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"];
+
 			if (isset($oldReferer)) {
 			    unset($_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"]);
 			    return FALSE;

@@ -51,6 +51,7 @@ public class SSOGatewayHandler implements CallbackHandler {
 
                 if (nc.getPrompt().equals("appID"))
                     nc.setName(requester);
+                else
                 if (nc.getPrompt().equals("nodeID"))
                     nc.setName(nodeId);
                 else

@@ -69,6 +69,9 @@ $josso_proxyport = '';
 $josso_proxyusername = '';
 $josso_proxypassoword = '';
 
+// Use unsecure cookies on HTTPS connections
+$forceUnsecureSSOCookie=False;
+
 // Min. session access interval for each user, in seconds.
 $josso_sessionAccessMinInterval=1;
 

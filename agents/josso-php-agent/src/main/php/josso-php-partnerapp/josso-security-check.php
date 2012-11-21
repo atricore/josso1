@@ -36,7 +36,7 @@ if (isset($_REQUEST['josso_assertion_id'])) {
 
     $ssoSessionId = $josso_agent->resolveAuthenticationAssertion($assertionId);
 
-    if (!empty($_SERVER['HTTPS'])){
+    if (!empty($_SERVER['HTTPS']) && !$forceUnsecureSSOCookie){
         setcookie("JOSSO_SESSIONID", $ssoSessionId, 0, "/","",1); // secure session cookie ...
     }else{
         setcookie("JOSSO_SESSIONID", $ssoSessionId, 0, "/"); // session cookie ...                 1

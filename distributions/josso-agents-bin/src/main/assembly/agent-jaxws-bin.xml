@@ -39,6 +39,7 @@ This assembles the entire set of 3rd party dependencies used by agents.
             <directory>target/dependency/agent-bin/jars</directory>
             <outputDirectory>/</outputDirectory>
             <excludes>
+                <exclude>org/josso/gateway/ws/**</exclude>
                 <exclude>org/josso/gateway/SSONameValuePair.class</exclude>
                 <exclude>org/josso/gateway/identity/SSOUser.class</exclude>
             </excludes>
@@ -47,6 +48,10 @@ This assembles the entire set of 3rd party dependencies used by agents.
         <fileSet>
             <directory>target/dependency/agent-jaxws-bin/jars</directory>
             <outputDirectory>/</outputDirectory>
+            <excludes>
+                <exclude>org/josso/gateway/SSONameValuePair.class</exclude>
+                <exclude>org/josso/gateway/identity/SSOUser.class</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
 

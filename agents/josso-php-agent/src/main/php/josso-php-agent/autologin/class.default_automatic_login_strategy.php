@@ -50,7 +50,9 @@ class default_automatic_login_strategy extends abstract_automatic_login_strategy
 	    // should not be attached to the SSO Session
 
 	    // The first time we access a partner application, we should attempt an automatic login.
-	    $autoLoginExecuted = $_SESSION["JOSSO_AUTOMATIC_LOGIN_EXECUTED"];
+        if (isset($_SESSION["JOSSO_AUTOMATIC_LOGIN_EXECUTED"]))
+	        $autoLoginExecuted = $_SESSION["JOSSO_AUTOMATIC_LOGIN_EXECUTED"];
+
 	    // If no referer host is found but we did not executed auto login yet, give it a try.
 	    if (!isset($autoLoginExecuted)) {
 			$_SESSION["JOSSO_AUTOMATIC_LOGIN_EXECUTED"] = TRUE;

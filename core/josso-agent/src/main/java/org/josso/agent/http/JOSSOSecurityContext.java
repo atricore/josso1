@@ -29,6 +29,7 @@ import org.josso.gateway.identity.SSOUser;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ import java.util.Set;
  *
  * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
  */
-public class JOSSOSecurityContext {
+public class JOSSOSecurityContext implements Serializable {
 
     private static final Log logger = LogFactory.getLog(JOSSOSecurityContext.class);
 

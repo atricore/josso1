@@ -104,6 +104,8 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
 
     	String ssoSessionId = request.getSessionId();
 
+        log.debug("authenticate requester = " + request.getRequester());
+
         Principal ssoUser = null;
         if (_disableJaas) {
             // DO NOT USE JAAS, just go locally

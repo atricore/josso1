@@ -67,6 +67,7 @@
                 <module>josso-jaspi-agent</module>
                 <module>josso-jboss5-agent</module>
                 <module>josso-applet-agent</module>
+                <module>josso-gatein-agent</module>
             </modules>
         </profile>
         <profile>
@@ -97,6 +98,7 @@
                 <module>josso-jaspi-agent</module>
                 <module>josso-jboss5-agent</module>
                 <module>josso-applet-agent</module>
+                <module>josso-gatein-agent</module>
             </modules>
         </profile>
         <profile>
@@ -158,6 +160,7 @@
                 <module>josso-jaspi-agent</module>
                 <module>josso-jboss5-agent</module>
                 <module>josso-applet-agent</module>
+                <module>josso-gatein-agent</module>
             </modules>
         </profile>
 

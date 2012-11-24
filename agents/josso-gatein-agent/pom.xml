@@ -33,64 +33,12 @@
     </parent>
 
     <artifactId>josso-gatein-agent</artifactId>
-    <packaging>jar</packaging>
     <name>JOSSO :: GateIn Agent</name>
     <description>GateIn Agent</description>
-
-    <properties>
-        <!-- exo -->
-        <org.gatein.wci.version>2.1.0-GA</org.gatein.wci.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.josso</groupId>
-            <artifactId>josso-servlet-agent</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.josso</groupId>
-            <artifactId>josso-agent</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.gatein.wci</groupId>
-            <artifactId>wci-wci</artifactId>
-            <version>${org.gatein.wci.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.4</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.xbean</groupId>
-                <artifactId>maven-xbean-plugin</artifactId>
-                <version>${xbean-version}</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <namespace>urn:org:josso:agent:gatein</namespace>
-                        </configuration>
-                        <goals>
-                            <goal>mapping</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-    </build>
-
+    <packaging>pom</packaging>
+    
+    <modules>
+       <module>josso-gatein-agent-main</module>
+       <module>josso-gatein-agent-authenticator</module> 
+    </modules>
 </project>

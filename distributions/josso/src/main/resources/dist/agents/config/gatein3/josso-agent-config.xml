@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns:gatein="urn:org:josso:agent:gatein"
+         xmlns:agent="urn:org:josso:agent:core"
+         xmlns:protocol="urn:org:josso:protocol:client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+         urn:org:josso:agent:generic-servlet http://www.josso.org/schema/josso-servlet-agent.xsd
+         urn:org:josso:agent:core http://www.josso.org/schema/josso-agent.xsd
+         urn:org:josso:protocol:client http://www.josso.org/schema/josso-protocol-client.xsd">
+
+    <gatein:agent name="josso-gatein-agent" sessionAccessMinInterval="1000" disableJaas="true">
+        <!-- Gateway LOGIN and LOGOUT URLs -->
+        <gatewayLoginUrl>http://localhost:8080/josso/signon/login.do</gatewayLoginUrl>
+        <gatewayLogoutUrl>http://localhost:8080/josso/signon/logout.do</gatewayLogoutUrl>
+        <!-- Gateway service locator -->
+        <gatewayServiceLocator>
+            <protocol:jaxws-service-locator endpoint="localhost:8080"/>
+        </gatewayServiceLocator>
+
+        <configuration>
+            <agent:agent-configuration>
+                <agent:partner-apps>
+                    <agent:partner-app id="GateInPortal" context="/portal"/>
+                </agent:partner-apps>
+            </agent:agent-configuration>
+        </configuration>
+
+        <parametersBuilders>
+            <agent:appid-parameters-builder/>
+        </parametersBuilders>
+
+        <automaticLoginStrategies>
+            <agent:default-automaticlogin-strategy mode="REQUIRED">
+                <property name="ignoredReferrers">
+                    <list>
+                        <value>http://localhost:8080/IDBUS</value>
+                    </list>
+                </property>
+            </agent:default-automaticlogin-strategy>
+        </automaticLoginStrategies>
+    </gatein:agent>
+</s:beans>

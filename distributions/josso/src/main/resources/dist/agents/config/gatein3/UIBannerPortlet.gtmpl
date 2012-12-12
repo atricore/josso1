@@ -1,0 +1,56 @@
+<%
+	import org.exoplatform.portal.application.PortalRequestContext;
+	import org.exoplatform.portal.webui.util.Util;
+	import org.exoplatform.web.url.PortalURL;
+	import org.exoplatform.web.url.navigation.NavigationResource;
+	import org.exoplatform.portal.mop.SiteType;
+
+	def prContext = _ctx.getRequestContext().getParentAppRequestContext();	
+	String signInAction = "if(document.getElementById('UIMaskWorkspace')) ajaxGet(eXo.env.server.createPortalURL('UIPortal', 'ShowLoginForm', true));" ;
+	String changeLanguageAction = "if(document.getElementById('UIMaskWorkspace')) ajaxGet(eXo.env.server.createPortalURL('UIPortal', 'ChangeLanguage', true));" ;
+	String portletId = uicomponent.getId() ;	
+	String accountSetting = "javascript:if(document.getElementById('UIMaskWorkspace')) ajaxGet(eXo.env.server.createPortalURL('UIPortal', 'AccountSettings', true));"
+%>	
+<div id="$portletId" class="UIBannerPortlet UIApplication">
+	<div class="ApplicationMinWidth">
+		<div class="InlineContainer">
+			<div class="LeftBanner">
+				<div class="RightBanner">				
+					<%if(prContext.getRemoteUser() != null) {%>
+					<div class="MiddleBanner">
+						<div class="BannerTitle"><span></span></div>
+					<%} else {
+					    PortalRequestContext pcontext = Util.getPortalRequestContext(); 
+						PortalURL nodeURL = nodeurl();
+						NavigationResource resource = new NavigationResource(SiteType.PORTAL, pcontext.getPortalOwner(), "register");
+						String registerURI = nodeURL.setResource(resource).toString();
+					%>
+					<div class="MiddleBanner MiddleBannerSignin">
+						<div class="BannerTitle"><span></span></div>
+						<div class="LeftLoginContainer">
+							<div class="RightLoginContainer">
+								<div class="MiddleLoginContainer Signin">
+                                                                        <!--
+									<a class="Login" onclick="$signInAction"><%=_ctx.appRes("UILoginForm.label.Signin")%></a>
+                                                                        -->
+                                                                        <a class="Login" href="/portal/josso_login/"><%=_ctx.appRes("UILoginForm.label.Signin")%></a>
+									<a class="Register" href="$registerURI">
+										<%=_ctx.appRes("UIBannerPortlet.action.register")%>
+									</a>						
+									<a class="Language" onclick="$changeLanguageAction">
+										<%=_ctx.appRes("UIBannerPortlet.action.changeLanguage")%>
+									</a>		
+									<div class="ClearBoth"><span></span></div>
+								</div>
+							</div>
+							<div class="ClearBoth"><span></span></div>
+						</div>
+					<%}%>	 
+						<div class="ClearBoth"><span></span></div>
+					</div>									
+				</div>	 
+			</div>
+		</div>
+	</div>
+</div>
+

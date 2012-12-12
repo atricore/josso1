@@ -194,6 +194,11 @@
 
         <dependency>
             <groupId>org.josso</groupId>
+            <artifactId>josso-gatein-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
             <artifactId>josso-alfresco-agent</artifactId>
         </dependency>
 

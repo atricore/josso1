@@ -194,7 +194,12 @@
 
         <dependency>
             <groupId>org.josso</groupId>
-            <artifactId>josso-gatein-agent</artifactId>
+            <artifactId>josso-gatein-agent-main</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-gatein-agent-authenticator</artifactId>
         </dependency>
 
         <dependency>

@@ -1069,7 +1069,13 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
-                <artifactId>josso-gatein-agent</artifactId>
+                <artifactId>josso-gatein-agent-main</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-gatein-agent-authenticator</artifactId>
                 <version>${pom.version}</version>
             </dependency>
 

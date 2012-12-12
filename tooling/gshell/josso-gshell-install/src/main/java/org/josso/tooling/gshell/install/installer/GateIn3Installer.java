@@ -42,6 +42,22 @@ public class GateIn3Installer extends VFSInstaller {
     }
 
     @Override
+    public void init() throws InstallException {
+        log.debug("Init GateIn installer");
+
+        String instance = getProperty("jbossInstance");
+
+        if (instance == null)
+            throw new InstallException("GateIn instance name not specified");
+
+        log.debug("Using GateIn instance : " + instance);
+
+        registerVarResolution("instance", instance);
+
+        super.init();
+    }
+
+    @Override
     public void validatePlatform() throws InstallException {
 
         try {
@@ -98,8 +114,10 @@ public class GateIn3Installer extends VFSInstaller {
 
     @Override
     public void install3rdPartyComponent(JOSSOArtifact artifact, boolean replace) throws InstallException {
-        if ( artifact.getBaseName().startsWith("axis") ||
-             artifact.getBaseName().startsWith("spring") ||
+        if ( artifact.getBaseName().startsWith("axis-1.4") ||
+             artifact.getBaseName().startsWith("spring-core") ||
+             artifact.getBaseName().startsWith("spring-context") ||
+             artifact.getBaseName().startsWith("spring-beans") ||
              artifact.getBaseName().startsWith("xbean") ||
              artifact.getBaseName().startsWith("commons-discovery")) {
 
@@ -115,24 +133,26 @@ public class GateIn3Installer extends VFSInstaller {
     @Override
     public void installConfiguration(JOSSOArtifact artifact, boolean replace) throws InstallException {
         try {
+            String instance = getProperty("jbossInstance");
+
             FileObject srcFile = getFileSystemManager().resolveFile(artifact.getLocation());
 
             String name = srcFile.getName().getBaseName();
 
             if (name.equals("gatein-jboss-beans.xml")) {
-                FileObject metaInfDir = targetDir.resolveFile("jboss-as/server/default/deploy/gatein.ear/META-INF/");
+                FileObject metaInfDir = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/META-INF/");
                 installFile(srcFile, metaInfDir, replace);
             } else
             if (name.equals("login.jsp")) {
-                FileObject jspDir = targetDir.resolveFile("jboss-as/server/default/deploy/gatein.ear/02portal.war/login/jsp");
+                FileObject jspDir = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/02portal.war/login/jsp");
                 installFile(srcFile, jspDir, replace);
             } else
             if (name.equals("UIBannerPortlet.gtmpl")) {
-                FileObject webuiDir = targetDir.resolveFile("jboss-as/server/default/deploy/gatein.ear/web.war/groovy/groovy/webui/component");
+                FileObject webuiDir = targetDir.resolveFile("jboss-as/server/" + instance + "/gatein.ear/web.war/groovy/groovy/webui/component");
                 installFile(srcFile, webuiDir, replace);
             } else
             if (name.equals("UILogoPortlet.gtmpl")) {
-                FileObject webuiDir = targetDir.resolveFile("jboss-as/server/default/deploy/gatein.ear/web.war/groovy/groovy/webui/component");
+                FileObject webuiDir = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/web.war/groovy/groovy/webui/component");
                 installFile(srcFile, webuiDir, replace);
             } else {
                 installFile(srcFile, this.targetConfDir, replace);
@@ -158,11 +178,11 @@ public class GateIn3Installer extends VFSInstaller {
         // Configure web.xml
         // --------------------------------------------------------------------
 
-
+        String instance = getProperty("jbossInstance");
         FileObject webXml = null;
 
         try {
-            webXml = targetDir.resolveFile("WEB-INF/web.xml");
+            webXml = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/02portal.war/WEB-INF/web.xml");
 
             // Get a DOM document of the web.xml :
             Node webXmlNode = loadAsDom(webXml);
@@ -222,7 +242,7 @@ public class GateIn3Installer extends VFSInstaller {
 
         if (filtersNodes != null && filtersNodes.getLength() > 0) {
             String xupdJossoFilter =
-                    "\n\t<xupdate:insert-after select=\"/web-app/filter[filter-class='org.josso.gatein.agent.GateInSSOAgentFilter']\" >\n" +
+                    "\n\t<xupdate:insert-after select=\"/web-app/filter[filter-name='GenericFilter']\" >\n" +
                             "\t\t<xupdate:element name=\"filter\"> \n" +
                             "\t\t\t<xupdate:element name=\"filter-name\">GateInSSOAgentFilter</xupdate:element>\n" +
                             "\t\t\t<xupdate:element name=\"filter-class\">org.josso.gatein.agent.GateInSSOAgentFilter</xupdate:element>\n" +

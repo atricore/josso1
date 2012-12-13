@@ -15,7 +15,7 @@
         <gatewayLogoutUrl>http://localhost:8080/josso/signon/logout.do</gatewayLogoutUrl>
         <!-- Gateway service locator -->
         <gatewayServiceLocator>
-            <protocol:jaxws-service-locator endpoint="localhost:8080"/>
+            <protocol:ws-service-locator endpoint="localhost:8080"/>
         </gatewayServiceLocator>
 
         <configuration>

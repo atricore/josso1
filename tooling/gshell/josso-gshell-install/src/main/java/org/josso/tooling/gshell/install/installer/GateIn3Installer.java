@@ -148,7 +148,7 @@ public class GateIn3Installer extends VFSInstaller {
                 installFile(srcFile, jspDir, replace);
             } else
             if (name.equals("UIBannerPortlet.gtmpl")) {
-                FileObject webuiDir = targetDir.resolveFile("jboss-as/server/" + instance + "/gatein.ear/web.war/groovy/groovy/webui/component");
+                FileObject webuiDir = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/web.war/groovy/groovy/webui/component");
                 installFile(srcFile, webuiDir, replace);
             } else
             if (name.equals("UILogoPortlet.gtmpl")) {
@@ -242,23 +242,23 @@ public class GateIn3Installer extends VFSInstaller {
 
         if (filtersNodes != null && filtersNodes.getLength() > 0) {
             String xupdJossoFilter =
-                    "\n\t<xupdate:insert-after select=\"/web-app/filter[filter-name='GenericFilter']\" >\n" +
-                            "\t\t<xupdate:element name=\"filter\"> \n" +
+                    "\n\t<xupdate:insert-before select=\"/web-app/filter[filter-name='LocalizationFilter']\">\n" +
+                            "\t\t<xupdate:element name=\"filter\" namespace=\"http://java.sun.com/xml/ns/j2ee\">\n" +
                             "\t\t\t<xupdate:element name=\"filter-name\">GateInSSOAgentFilter</xupdate:element>\n" +
                             "\t\t\t<xupdate:element name=\"filter-class\">org.josso.gatein.agent.GateInSSOAgentFilter</xupdate:element>\n" +
-                            "\t\t</xupdate:element>\n" +
-                            "\t\t\t<xupdate:element name=\"init-param\"> \n" +
+                            "\t\t\t<xupdate:element name=\"init-param\">\n" +
                             "\t\t\t\t<xupdate:element name=\"param-name\">init</xupdate:element>\n" +
                             "\t\t\t\t<xupdate:element name=\"param-value\">lazy</xupdate:element>\n" +
                             "\t\t\t</xupdate:element>\n" +
-                            "\t\t\t<xupdate:element name=\"init-param\"> \n" +
+                            "\t\t\t<xupdate:element name=\"init-param\">\n" +
                             "\t\t\t\t<xupdate:element name=\"param-name\">logoutUrl</xupdate:element>\n" +
                             "\t\t\t\t<xupdate:element name=\"param-value\">http://localhost:8080/portal/josso_logout/</xupdate:element>\n" +
                             "\t\t\t</xupdate:element>\n" +
-                            "\t</xupdate:insert-after>\n\n" +
+                            "\t\t</xupdate:element>\n" +
+                            "\t</xupdate:insert-before>\n\n" +
                             "\t<xupdate:insert-before select=\"/web-app/filter-mapping[1]\" >\n" +
-                            "\t\t<xupdate:element name=\"filter-mapping\">\n" +
-                            "\t\t\t<filter-name>GateInSSOAgent</filter-name>\n" +
+                            "\t\t<xupdate:element name=\"filter-mapping\" namespace=\"http://java.sun.com/xml/ns/j2ee\">\n" +
+                            "\t\t\t<filter-name>GateInSSOAgentFilter</filter-name>\n" +
                             "\t\t\t<url-pattern>/*</url-pattern>\n" +
                             "\t\t</xupdate:element>\n" +
                         "\t</xupdate:insert-before>";

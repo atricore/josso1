@@ -12,7 +12,7 @@
         <module-option name="realmName">gatein-domain</module-option>
       </login-module>
       -->
-      <login-module code="org.gatein.sso.agent.login.SSOLoginModule" flag="required">
+      <login-module code="org.josso.gatein.agent.GateinSSOLoginModule" flag="required">
         <module-option name="portalContainerName">portal</module-option>
         <module-option name="realmName">gatein-domain</module-option>
       </login-module>      

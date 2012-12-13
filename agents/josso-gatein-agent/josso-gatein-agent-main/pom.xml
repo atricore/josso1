@@ -40,6 +40,7 @@
     <properties>
         <!-- exo -->
         <org.gatein.wci.version>2.1.0-GA</org.gatein.wci.version>
+        <org.exoplatform.core.version>2.4.3-GA</org.exoplatform.core.version>
     </properties>
 
     <dependencies>
@@ -50,6 +51,11 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.exoplatform.core</groupId>
+            <artifactId>exo.core.component.organization.api</artifactId>
+            <version>${org.exoplatform.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.gatein.wci</groupId>

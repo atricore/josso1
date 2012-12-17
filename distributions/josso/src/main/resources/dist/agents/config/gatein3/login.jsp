@@ -19,27 +19,34 @@
 
 --%>
 
-<%@ page import="java.net.URLEncoder"%>
-<%@ page import="javax.servlet.http.Cookie"%>
-<%@ page import="org.exoplatform.container.PortalContainer"%>
-<%@ page import="org.exoplatform.services.resources.ResourceBundleService"%>
-<%@ page import="java.util.ResourceBundle"%>
-<%@ page import="org.exoplatform.web.login.InitiateLoginServlet"%>
-<%@ page import="org.gatein.common.text.EntityEncoder"%>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="org.exoplatform.container.PortalContainer" %>
+<%@ page import="org.exoplatform.services.resources.ResourceBundleService" %>
+<%@ page import="java.util.ResourceBundle" %>
+<%@ page import="org.exoplatform.web.login.InitiateLoginServlet" %>
+<%@ page import="org.gatein.common.text.EntityEncoder" %>
 <%@ page language="java" %>
 <%
 
-  String sso_user = (String)request.getSession().getAttribute("username");
+    String sso_user = (String) request.getSession().getAttribute("username");
+    String location = null;
+
+    if (sso_user != null) {
+        location = "/portal/j_security_check?j_username=" + sso_user + "&j_password=wci-ticket";
+    } else {
+        location = "/portal/josso_login/";
+    }
 %>
-<!DOCTYPE html 
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
-  <head>
+<head>
     <script type="text/javascript">
-     window.location = '/portal/j_security_check?j_username=<%=sso_user%>&j_password=wci-ticket';
+        window.location = '<%=location%>';
     </script>
-  </head>
-  <body>
-  </body>
+</head>
+<body>
+</body>
 </html>

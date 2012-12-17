@@ -16,6 +16,7 @@ import org.xml.sax.SAXException;
 import org.xmldb.common.xml.queries.XUpdateQuery;
 import org.xmldb.xupdate.lexus.XUpdateQueryImpl;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -139,6 +140,17 @@ public class GateIn3Installer extends VFSInstaller {
 
             String name = srcFile.getName().getBaseName();
 
+            FileObject webWarFile = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/web.war");
+
+            if (!(webWarFile.getType() == FileType.FOLDER)) {
+                FileObject gateInEar = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear");
+                installJar(webWarFile, gateInEar, "web.war-exploded", true, true);
+                webWarFile.delete();
+                FileObject explodedWebWar = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/web.war-exploded");
+                FileObject webWarFolder = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/web.war");
+                explodedWebWar.moveTo(webWarFolder);
+            }
+
             if (name.equals("gatein-jboss-beans.xml")) {
                 FileObject metaInfDir = targetDir.resolveFile("jboss-as/server/" + instance + "/deploy/gatein.ear/META-INF/");
                 installFile(srcFile, metaInfDir, replace);
@@ -244,22 +256,22 @@ public class GateIn3Installer extends VFSInstaller {
             String xupdJossoFilter =
                     "\n\t<xupdate:insert-before select=\"/web-app/filter[filter-name='LocalizationFilter']\">\n" +
                             "\t\t<xupdate:element name=\"filter\" namespace=\"http://java.sun.com/xml/ns/j2ee\">\n" +
-                            "\t\t\t<xupdate:element name=\"filter-name\">GateInSSOAgentFilter</xupdate:element>\n" +
-                            "\t\t\t<xupdate:element name=\"filter-class\">org.josso.gatein.agent.GateInSSOAgentFilter</xupdate:element>\n" +
-                            "\t\t\t<xupdate:element name=\"init-param\">\n" +
-                            "\t\t\t\t<xupdate:element name=\"param-name\">init</xupdate:element>\n" +
-                            "\t\t\t\t<xupdate:element name=\"param-value\">lazy</xupdate:element>\n" +
+                            "\t\t\t<xupdate:element name=\"filter-name\" namespace=\"http://java.sun.com/xml/ns/j2ee\">GateInSSOAgentFilter</xupdate:element>\n" +
+                            "\t\t\t<xupdate:element name=\"filter-class\" namespace=\"http://java.sun.com/xml/ns/j2ee\">org.josso.gatein.agent.GateInSSOAgentFilter</xupdate:element>\n" +
+                            "\t\t\t<xupdate:element name=\"init-param\" namespace=\"http://java.sun.com/xml/ns/j2ee\">\n" +
+                            "\t\t\t\t<xupdate:element name=\"param-name\" namespace=\"http://java.sun.com/xml/ns/j2ee\">init</xupdate:element>\n" +
+                            "\t\t\t\t<xupdate:element name=\"param-value\" namespace=\"http://java.sun.com/xml/ns/j2ee\">lazy</xupdate:element>\n" +
                             "\t\t\t</xupdate:element>\n" +
-                            "\t\t\t<xupdate:element name=\"init-param\">\n" +
-                            "\t\t\t\t<xupdate:element name=\"param-name\">logoutUrl</xupdate:element>\n" +
-                            "\t\t\t\t<xupdate:element name=\"param-value\">http://localhost:8080/portal/josso_logout/</xupdate:element>\n" +
+                            "\t\t\t<xupdate:element name=\"init-param\" namespace=\"http://java.sun.com/xml/ns/j2ee\">\n" +
+                            "\t\t\t\t<xupdate:element name=\"param-name\" namespace=\"http://java.sun.com/xml/ns/j2ee\">logoutUrl</xupdate:element>\n" +
+                            "\t\t\t\t<xupdate:element name=\"param-value\" namespace=\"http://java.sun.com/xml/ns/j2ee\">http://localhost:8080/portal/josso_logout/</xupdate:element>\n" +
                             "\t\t\t</xupdate:element>\n" +
                             "\t\t</xupdate:element>\n" +
                             "\t</xupdate:insert-before>\n\n" +
-                            "\t<xupdate:insert-before select=\"/web-app/filter-mapping[1]\" >\n" +
+                            "\t<xupdate:insert-before select=\"/web-app/filter-mapping[1]\">\n" +
                             "\t\t<xupdate:element name=\"filter-mapping\" namespace=\"http://java.sun.com/xml/ns/j2ee\">\n" +
-                            "\t\t\t<filter-name>GateInSSOAgentFilter</filter-name>\n" +
-                            "\t\t\t<url-pattern>/*</url-pattern>\n" +
+                            "\t\t\t<xupdate:element name=\"filter-name\" namespace=\"http://java.sun.com/xml/ns/j2ee\">GateInSSOAgentFilter</xupdate:element>\n" +
+                            "\t\t\t<xupdate:element name=\"url-pattern\" namespace=\"http://java.sun.com/xml/ns/j2ee\">/*</xupdate:element>\n" +
                             "\t\t</xupdate:element>\n" +
                         "\t</xupdate:insert-before>";
 

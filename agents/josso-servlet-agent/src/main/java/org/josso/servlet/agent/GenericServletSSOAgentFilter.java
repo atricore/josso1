@@ -432,7 +432,7 @@ public class GenericServletSSOAgentFilter implements Filter {
                 }
 
                 if (log.isDebugEnabled())
-                    log.debug("Outbound relaying succesfull for assertion id [" + assertionId + "]");
+                    log.debug("Outbound relaying successful for assertion id [" + assertionId + "]");
 
                 if (log.isDebugEnabled())
                     log.debug("Assertion id [" + assertionId + "] mapped to SSO session id [" + entry.ssoId + "]");

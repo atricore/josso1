@@ -53,10 +53,10 @@
         <version>1.8.8-SNAPSHOT</version>
     </parent>
 
-    <artifactId>josso-spring-security</artifactId>
+    <artifactId>josso-spring-security-v3</artifactId>
     <packaging>jar</packaging>
-    <name>JOSSO :: Spring Security (ACEGI)</name>
-    <description> Spring Security (ACEGI)</description>
+    <name>JOSSO :: Spring Security V3</name>
+    <description> Spring Security V3</description>
 
     <dependencies>
         <dependency>
@@ -65,9 +65,15 @@
         </dependency>
         
         <dependency>
-            <groupId>org.acegisecurity</groupId>
-            <artifactId>acegi-security</artifactId>
-            <version>1.0.5</version>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>3.1.3.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>3.1.3.RELEASE</version>
         </dependency>
 
         <dependency>

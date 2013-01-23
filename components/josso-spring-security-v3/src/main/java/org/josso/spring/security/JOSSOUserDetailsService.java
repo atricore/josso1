@@ -32,6 +32,7 @@ import org.josso.gateway.identity.exceptions.SSOIdentityException;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,6 +45,8 @@ public class JOSSOUserDetailsService implements UserDetailsService {
 
     private static final Log logger = LogFactory.getLog(JOSSOUserDetailsService.class);
 
+    private String _requester;
+
     private GatewayServiceLocator _gsl;
 
     private SSOIdentityManagerService _im;
@@ -53,10 +56,14 @@ public class JOSSOUserDetailsService implements UserDetailsService {
      */
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, org.springframework.dao.DataAccessException {
         try {
-            // TODO : Test ACEGI with multiple security domains !!!
-            // TODO : Get requester (partner app id!)
-            SSOUser user = getIdentityManager().findUser(null, null, username);
-            SSORole[] roles = _im.findRolesBySSOSessionId(null, username);
+            // NOTE: Assuming that the username is actually user's single sign-on session since the operation for
+            // fetching users in the security domain has not been implemented in the JOSSO binding capability.
+            //
+            // Consequently, it will not work within a JavaEE preauthenticated setting against an IdP built on JOSSO 2.3
+            // since a principal name will be supplied instead of a single sign-on session identifier.
+            SSOUser user = getIdentityManager().findUserInSession(_requester, username);
+            //SSOUser user = getIdentityManager().findUser(_requester, "", username);
+            SSORole[] roles = _im.findRolesBySSOSessionId(_requester, username);
             return toUserDetails(user, roles);
         } catch (NoSuchUserException e) {
             logger.error(e.getMessage(), e);
@@ -78,13 +85,22 @@ public class JOSSOUserDetailsService implements UserDetailsService {
         Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         for (int i = 0; i < roles.length; i++) {
             SSORole role = roles[i];
-            authorities.add(new GrantedAuthorityImpl(role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
 
         UserDetails ud = new User(user.getName(), "NOT AVAILABLE UNDER JOSSO", true, true,
                 true, true, authorities);
 
         return ud;
+    }
+
+
+    public String getRequester() {
+        return _requester;
+    }
+
+    public void setRequester(String requester) {
+        this._requester = requester;
     }
 
 

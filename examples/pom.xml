@@ -64,9 +64,10 @@
         <module>josso-partner-jetty</module>
         <module>josso-partner-php</module>
         <module>josso-partner-asp</module>
-        <module>spring-security-contacts</module>
         <module>josso-partner-wasce</module>
         <module>josso-partner-applet</module>
+        <module>spring-security-contacts</module>
+        <module>spring-security-v3-contacts</module>
     </modules>
     <profiles>
         <profile>

@@ -24,6 +24,8 @@ package org.josso.spring.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.josso.agent.http.JOSSOSecurityContext;
+import org.josso.agent.http.WebAccessControlUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -32,15 +34,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.util.Assert;
+import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.security.Principal;
 
@@ -49,9 +52,9 @@ import java.security.Principal;
  * The principal is retrived from the HTTP request and the JOSSO infrastructure is used to obtain the complete
  * identity information.
  */
-public class JOSSOProcessingFilter implements Filter, InitializingBean, ApplicationEventPublisherAware {
+public class JOSSOAuthenticationFilter extends GenericFilterBean {
 
-    private static final Log logger = LogFactory.getLog(JOSSOProcessingFilter.class);
+    private static final Log logger = LogFactory.getLog(JOSSOAuthenticationFilter.class);
 
     private ApplicationEventPublisher eventPublisher;
 
@@ -60,12 +63,23 @@ public class JOSSOProcessingFilter implements Filter, InitializingBean, Applicat
     private LogoutHandler[] handlers;
 
 
-    public void afterPropertiesSet() throws Exception {
-        // Nothing to do yet.
+    /**
+     * Check whether all required properties have been set.
+     */
+    @Override
+    public void afterPropertiesSet() {
+        try {
+            super.afterPropertiesSet();
+        } catch(ServletException e) {
+            // convert to RuntimeException for passivity on afterPropertiesSet signature
+            throw new RuntimeException(e);
+        }
+        logger.debug("afterPropertiesSet() done");
+        //Assert.notNull(authenticationManager, "An AuthenticationManager must be set");
     }
 
 
-    public JOSSOProcessingFilter(LogoutHandler[] handlers) {
+    public JOSSOAuthenticationFilter(LogoutHandler[] handlers) {
         this.handlers = handlers;
     }
 
@@ -88,8 +102,10 @@ public class JOSSOProcessingFilter implements Filter, InitializingBean, Applicat
 
         // We have to provide Authentication information based on JOSSO auth information ...
 
-        // This is the principal as injected by JOSSO in the container :
-        Principal principal = request.getUserPrincipal();
+        // Obtain a JOSSO security context instance, if none is found is because user has not been authenticated.
+        JOSSOSecurityContext sctx = WebAccessControlUtil.getSecurityContext((HttpServletRequest) request);
+
+        logger.debug("Current JOSSO Security Context is " + sctx );
 
         // This is the authentication information used by ACEGI
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -103,7 +119,7 @@ public class JOSSOProcessingFilter implements Filter, InitializingBean, Applicat
             }
 
             // If there is no principal, we may need to logout this user ... TODO detect anonymous principals ?
-            if (principal == null && authentication.isAuthenticated()) {
+            if (sctx == null && authentication.isAuthenticated()) {
 
                 // If an authenticated Authentication is present, we must issue a logout !
                 if (logger.isDebugEnabled()) {
@@ -122,7 +138,7 @@ public class JOSSOProcessingFilter implements Filter, InitializingBean, Applicat
         }
 
         // We have a principal but no Spring Security authentication, propagate identity from JOSSO to Spring Security.
-        if (principal != null) {
+        if (sctx != null) {
 
             // If a saved request is present, we use the saved request to redirect the user to the original resource.
             SavedRequest savedRequest =
@@ -132,11 +148,11 @@ public class JOSSOProcessingFilter implements Filter, InitializingBean, Applicat
                 logger.debug("Redirecting to original resource " + savedRequest.getRedirectUrl());
 
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getName());
-            String jossoSessionId = (String) request.getAttribute("org.josso.agent.ssoSessionid");
+            UserDetails userDetails = userDetailsService.loadUserByUsername(sctx.getSSOSession());
+//            String jossoSessionId = (String) request.getAttribute("org.josso.agent.ssoSessionid");
 
             // New authenticated autentication instance.
-            Authentication jossoAuth = new JOSSOAuthenticationToken(jossoSessionId, userDetails, userDetails.getAuthorities());
+            Authentication jossoAuth = new JOSSOAuthenticationToken(sctx.getSSOSession(), userDetails, userDetails.getAuthorities());
 
             // Store to SecurityContextHolder
             SecurityContextHolder.getContext().setAuthentication(jossoAuth);
@@ -176,9 +192,4 @@ public class JOSSOProcessingFilter implements Filter, InitializingBean, Applicat
         this.userDetailsService = userDetailsService;
     }
 
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
-
-    public void destroy() {
-    }
 }

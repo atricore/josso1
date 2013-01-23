@@ -65,6 +65,12 @@ public class JOSSOSecurityContext implements Serializable {
     private Map roles;
 
     /**
+     * The current single sign-on session for this user 
+     */
+    private String ssoSession;
+    
+    
+    /**
      * Creates a new security context for the given subject.  The subject must contain at least one SSOUser principal instance.
      */
     public JOSSOSecurityContext(Subject subject) {
@@ -113,5 +119,14 @@ public class JOSSOSecurityContext implements Serializable {
     Subject getSubject() {
         return subject;
     }
+
+    public String getSSOSession() {
+        return ssoSession;
+    }
+
+    public void setSSOSession(String ssoSession) {
+        this.ssoSession = ssoSession;
+    }
+
 
 }

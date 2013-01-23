@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Application context containing authentication, channel
+  - security and web URI beans.
+  -
+  - Only used by "filter" artifact.
+  -
+  -->
+
+<b:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:b="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+    <b:bean id="springSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+        <filter-chain-map path-type="ant">
+            <filter-chain pattern="/**" filters="sif,jossoFilter,logoutFilter,etf,fsi"/>
+        </filter-chain-map>
+    </b:bean>
+
+    <b:bean id="sif" class="org.springframework.security.web.context.SecurityContextPersistenceFilter"/>
+
+    <b:bean id ="jossoFilter" class="org.josso.spring.security.JOSSOAuthenticationFilter">
+        <b:constructor-arg>
+            <b:list>
+                <b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+            </b:list>
+        </b:constructor-arg>
+        <b:property name="userDetailsService"><b:ref local="jossoUserDetailsService"/></b:property>
+    </b:bean>
+
+    <b:bean id="jossoUserDetailsService" class="org.josso.spring.security.JOSSOUserDetailsService">
+        <b:property name="requester" value="contactssp"/>
+        <b:property name="gatewayServiceLocator"><b:ref local="jossoGatewayServiceLocator"/></b:property>
+    </b:bean>
+
+    <b:bean id="jossoGatewayServiceLocator" class="org.josso.gateway.WebserviceGatewayServiceLocator">
+        <b:property name="endpoint">
+            <b:value>localhost:8081</b:value>
+        </b:property>
+        <b:property name="sessionManagerServicePath">
+            <b:value>IDBUS/SPRING-SECURITY-DEMO/JETTY/JOSSO/SSOSessionManager/SOAP</b:value>
+        </b:property>
+        <b:property name="identityManagerServicePath">
+            <b:value>IDBUS/SPRING-SECURITY-DEMO/JETTY/JOSSO/SSOIdentityManager/SOAP</b:value>
+        </b:property>
+        <b:property name="identityProviderServicePath">
+            <b:value>IDBUS/SPRING-SECURITY-DEMO/JETTY/JOSSO/SSOIdentityProvider/SOAP</b:value>
+        </b:property>
+
+    </b:bean>
+
+    <!--
+    <b:bean id="authenticationManager" class="org.josso.spring.security.JOSSOAuthenticationManager">
+    </b:bean>
+    -->
+
+    <b:bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <b:constructor-arg value="/"/>
+        <b:constructor-arg>
+            <b:list>
+                <b:bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+            </b:list>
+        </b:constructor-arg>
+    </b:bean>
+
+    <b:bean id="etf" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+        <b:property name="authenticationEntryPoint" ref="jossoProcessingFilterEntryPoint"/>
+    </b:bean>
+
+    <b:bean id="jossoProcessingFilterEntryPoint"
+          class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
+
+    <b:bean id="fsi" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+        <b:property name="authenticationManager" ref="authenticationManager"/>
+        <b:property name="accessDecisionManager" ref="httpRequestAccessDecisionManager"/>
+        <b:property name="securityMetadataSource">
+            <filter-invocation-definition-source>
+                <intercept-url pattern="/**" access="ROLE_USER"/>
+            </filter-invocation-definition-source>
+        </b:property>
+    </b:bean>
+
+    <b:bean id="httpRequestAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <b:property name="allowIfAllAbstainDecisions" value="false"/>
+        <b:property name="decisionVoters">
+            <b:list>
+                <b:ref bean="roleVoter"/>
+            </b:list>
+        </b:property>
+    </b:bean>
+
+    <b:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter"/>
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider ref="jossoAuthenticationProvider"/>
+    </authentication-manager>
+
+    <b:bean id="jossoAuthenticationProvider" class="org.josso.spring.security.JOSSOAuthenticationProvider">
+    </b:bean>
+
+    <global-method-security pre-post-annotations="enabled">
+        <expression-handler ref="expressionHandler"/>
+    </global-method-security>
+
+    <!--
+    <http realm="Contacts Realm">
+        <intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/index.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/hello.htm" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <intercept-url pattern="/switchuser.jsp" access="ROLE_SUPERVISOR"/>
+        <intercept-url pattern="/j_spring_security_switch_user" access="ROLE_SUPERVISOR"/>
+        <intercept-url pattern="/**" access="ROLE_USER"/>
+
+        <form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1"/>
+        <http-basic/>
+        <logout logout-success-url="/index.jsp"/>
+        <remember-me />
+        <custom-filter ref="switchUserProcessingFilter" position="SWITCH_USER_FILTER"/>
+    </http>
+    -->
+
+    <!--
+    <authentication-manager>
+        <authentication-provider>
+           <password-encoder hash="md5"/>
+           <jdbc-user-service data-source-ref="dataSource"/>
+        </authentication-provider>
+    </authentication-manager>
+    -->
+
+    <!-- Automatically receives AuthenticationEvent messages -->
+    <b:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/>
+
+    <!-- Filter used to switch the user context. Note: the switch and exit url must be secured
+        based on the role granted the ability to 'switch' to another user -->
+    <!-- In this example 'rod' has ROLE_SUPERVISOR that can switch to regular ROLE_USER(s) -->
+    <b:bean id="switchUserProcessingFilter" class="org.springframework.security.web.authentication.switchuser.SwitchUserFilter" autowire="byType">
+       <b:property name="targetUrl" value="/secure/index.htm"/>
+    </b:bean>
+
+    <b:bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+        <b:property name="permissionEvaluator" ref="permissionEvaluator"/>
+        <b:property name="permissionCacheOptimizer">
+            <b:bean class="org.springframework.security.acls.AclPermissionCacheOptimizer">
+                <b:constructor-arg ref="aclService"/>
+            </b:bean>
+        </b:property>
+    </b:bean>
+
+    <b:bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator">
+        <b:constructor-arg ref="aclService"/>
+    </b:bean>
+
+</b:beans>

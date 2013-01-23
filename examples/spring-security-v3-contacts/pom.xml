@@ -7,7 +7,7 @@
         <version>1.8.8-SNAPSHOT</version>
     </parent>
     <artifactId>spring-security-v3-contacts</artifactId>
-    <name>Spring Security - Contacts sample</name>
+    <name>JOSSO :: JOSSified Spring Security V3 - Contacts sample</name>
     <packaging>war</packaging>
 
     <properties>

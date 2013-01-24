@@ -28,6 +28,10 @@
         </dependency>
         <dependency>
             <groupId>org.josso</groupId>
+            <artifactId>josso-jetty6-agent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.josso</groupId>
             <artifactId>josso-servlet-agent</artifactId>
         </dependency>
         <dependency>
@@ -222,22 +226,27 @@
                 <version>${jetty.version}</version>
                 <configuration>
                     <contextPath>/contacts</contextPath>
+                    <jettyConfig>${basedir}/src/test/resources/jetty.xml</jettyConfig>
                     <!--jettyConfig>${basedir}/src/test/resources/jetty.xml</jettyConfig-->
                     <scanIntervalSeconds>5</scanIntervalSeconds>
                     <!--scanTargets>
                         <scanTarget>src/main/webapp/css</scanTarget>
                     </scanTargets-->
                 </configuration>
-                <!--
                                <dependencies>
                                    <dependency>
-                                       <groupId>hsqldb</groupId>
-                                       <artifactId>hsqldb</artifactId>
-                                       <version>1.8.0.7</version>
+                                       <groupId>org.josso</groupId>
+                                       <artifactId>josso-jetty6-agent</artifactId>
+                                       <version>${pom.version}</version>
                                        <scope>runtime</scope>
                                    </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.0</version>
+            <scope>runtime</scope>
+        </dependency>
                                </dependencies>
-                -->
             </plugin>
         </plugins>
     </build>

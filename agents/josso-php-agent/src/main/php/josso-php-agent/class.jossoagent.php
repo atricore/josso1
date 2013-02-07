@@ -427,7 +427,7 @@ class jossoagent  {
     }
 
     /**
-     * Sends a keep-alive notification to the SSO server so that SSO sesison is not lost.
+     * Sends a keep-alive notification to the SSO server so that SSO session is not lost.
      * @access public
      */
     function accessSession() {
@@ -827,7 +827,9 @@ class jossoagent  {
         }
 
         if (isset($contextPath)) {
-            $requester = $this->partnerAppIDs[$contextPath];
+            if (isset($this->partnerAppIDs[$contextPath])) {
+                $requester = $this->partnerAppIDs[$contextPath];
+            }
             if (!isset($requester)) {
                 $requester = $this->partnerAppIDs['/'];
                 if (isset($requester));

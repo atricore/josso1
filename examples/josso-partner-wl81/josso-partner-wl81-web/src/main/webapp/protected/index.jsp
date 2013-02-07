@@ -135,7 +135,7 @@
 <!-- PAGE FOOTER  -->
 
       <div id="footer">
-            <p>Copyright &copy; 2004-2009. Atricore, Inc.</p>
+            <p>Copyright &copy; 2004-2013. Atricore, Inc.</p>
       </div>
 
 

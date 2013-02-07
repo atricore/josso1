@@ -107,7 +107,7 @@ function jossoRequestLogin() {
 
 
 function jossoRequestOptionalLogin() {
-    $currentUrl = $_SERVER['REQUEST_URI'] ; //. $_SERVER['QUERY_STRING'];
+    $currentUrl = $_SERVER['REQUEST_URI'] ;
     jossoRequestLoginForUrl($currentUrl, TRUE);
 }
 
@@ -117,7 +117,7 @@ function jossoRequestOptionalLogin() {
  */
 function jossoRequestLogout() {
 
-    $currentUrl = $_SERVER['REQUEST_URI'] ; //. $_SERVER['QUERY_STRING'];
+    $currentUrl = $_SERVER['REQUEST_URI'] ;
 
     jossoRequestLogoutForUrl($currentUrl);
 }
@@ -147,9 +147,6 @@ function jossoCreateLoginUrl() {
     $josso_agent = & jossoagent::getNewInstance();
 
     $currentUrl = $_SERVER['REQUEST_URI'] ;
-    if (isset($_SERVER['QUERY_STRING']))
-        $currentUrl = $currentUrl . $_SERVER['QUERY_STRING'];
-
     $loginUrl = $josso_agent->getBaseCode().'/josso-login.php'. '?josso_current_url=' .  base64_encode($currentUrl);
 
     return $loginUrl;
@@ -168,9 +165,7 @@ function jossoCreateLogoutUrl($backToUrl) {
     $josso_agent = & jossoagent::getNewInstance();
 
 	if (is_null($backToUrl)) {
-		$backToUrl = createBaseUrl() . $_SERVER['REQUEST_URI'] ; //. $_SERVER['QUERY_STRING'];
-        if (isset($_SERVER['QUERY_STRING']))
-            $backToUrl = $backToUrl . $_SERVER['QUERY_STRING'];
+		$backToUrl = createBaseUrl() . $_SERVER['REQUEST_URI'] ;
     }
 
 	$logoutUrl =  $josso_agent->getBaseCode().'/josso-logout.php'. '?josso_current_url=' . base64_encode($backToUrl);
@@ -210,6 +205,8 @@ function jossoSecurityCheckUrl() {
 }
 
 function jossoRequestLogoutForUrl($currentUrl) {
+
+    $_SESSION['JOSSO_ORIGINAL_URL'] = $currentUrl;
 
     // Get JOSSO Agent instance
     $josso_agent = & jossoagent::getNewInstance();

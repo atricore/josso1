@@ -40,13 +40,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class GateInSSOAgentFilter extends GenericServletSSOAgentFilter
 {
-    protected String logoutUrl;
+    protected String logoutUri;
     private static final String fileEncoding = System.getProperty("file.encoding");
 
     public void init(FilterConfig config) throws ServletException
     {
         super.init(config);
-        this.logoutUrl = config.getInitParameter("logoutUrl");
+        this.logoutUri = config.getInitParameter("logoutUri");
     }
 
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -64,7 +64,7 @@ public class GateInSSOAgentFilter extends GenericServletSSOAgentFilter
             {
                 httpRequest.getSession().setAttribute("SSO_LOGOUT_FLAG", Boolean.TRUE);
 
-                httpResponse.sendRedirect(logoutUrl);
+                httpResponse.sendRedirect(logoutUri);
                 return;
             }
             else

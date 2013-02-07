@@ -63,6 +63,7 @@
         <spring-version>2.5.5</spring-version>
         <junit-version>4.4</junit-version>
         <cxf-version>2.2.2</cxf-version>
+        <spring-security-v3-version>3.1.3.RELEASE</spring-security-v3-version>
     </properties>
 
     <profiles>
@@ -1101,7 +1102,13 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
-                <artifactId>josso-spring-security</artifactId>
+                <artifactId>josso-spring-security-v2</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-spring-security-v3</artifactId>
                 <version>${pom.version}</version>
             </dependency>
 
@@ -1132,6 +1139,12 @@
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-applet-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-jetty6-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
 

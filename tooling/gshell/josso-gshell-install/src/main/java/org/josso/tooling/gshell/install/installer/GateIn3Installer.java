@@ -263,8 +263,8 @@ public class GateIn3Installer extends VFSInstaller {
                             "\t\t\t\t<xupdate:element name=\"param-value\" namespace=\"http://java.sun.com/xml/ns/j2ee\">lazy</xupdate:element>\n" +
                             "\t\t\t</xupdate:element>\n" +
                             "\t\t\t<xupdate:element name=\"init-param\" namespace=\"http://java.sun.com/xml/ns/j2ee\">\n" +
-                            "\t\t\t\t<xupdate:element name=\"param-name\" namespace=\"http://java.sun.com/xml/ns/j2ee\">logoutUrl</xupdate:element>\n" +
-                            "\t\t\t\t<xupdate:element name=\"param-value\" namespace=\"http://java.sun.com/xml/ns/j2ee\">http://localhost:8080/portal/josso_logout/</xupdate:element>\n" +
+                            "\t\t\t\t<xupdate:element name=\"param-name\" namespace=\"http://java.sun.com/xml/ns/j2ee\">logoutUri</xupdate:element>\n" +
+                            "\t\t\t\t<xupdate:element name=\"param-value\" namespace=\"http://java.sun.com/xml/ns/j2ee\">/portal/josso_logout/</xupdate:element>\n" +
                             "\t\t\t</xupdate:element>\n" +
                             "\t\t</xupdate:element>\n" +
                             "\t</xupdate:insert-before>\n\n" +

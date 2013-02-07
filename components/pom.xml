@@ -97,7 +97,9 @@
         <module>josso-db-sessionstore</module>
         <module>josso-serialized-sessionstore</module>
 
-        <module>josso-spring-security</module>
+        <module>josso-spring-security-v2</module>
+        <module>josso-spring-security-v3</module>
+
         <module>josso-seraph-extension</module>
 
         <module>josso-ws</module>

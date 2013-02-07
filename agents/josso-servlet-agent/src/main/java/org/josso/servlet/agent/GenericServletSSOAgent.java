@@ -139,6 +139,7 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
             }
         	GenericServletSSOAgentRequest r = (GenericServletSSOAgentRequest) request;
             JOSSOSecurityContext ctx = new JOSSOSecurityContext(subject);
+            ctx.setSSOSession(ssoSessionId);
             r.setSecurityContext(ctx);
         }
         

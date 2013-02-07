@@ -96,6 +96,7 @@ public class GenericServletNativeSSOAgent extends NativeHttpSSOAgent {
             }
         	GenericServletSSOAgentRequest r = (GenericServletSSOAgentRequest) request;
             JOSSOSecurityContext ctx = new JOSSOSecurityContext(subject);
+            ctx.setSSOSession(ssoSessionId);
             r.setSecurityContext(ctx);
         }
         

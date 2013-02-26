@@ -28,10 +28,6 @@
         </dependency>
         <dependency>
             <groupId>org.josso</groupId>
-            <artifactId>josso-jetty6-agent</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.josso</groupId>
             <artifactId>josso-servlet-agent</artifactId>
         </dependency>
         <dependency>
@@ -226,13 +222,13 @@
                 <version>${jetty.version}</version>
                 <configuration>
                     <contextPath>/contacts</contextPath>
-                    <jettyConfig>${basedir}/src/test/resources/jetty.xml</jettyConfig>
                     <!--jettyConfig>${basedir}/src/test/resources/jetty.xml</jettyConfig-->
                     <scanIntervalSeconds>5</scanIntervalSeconds>
                     <!--scanTargets>
                         <scanTarget>src/main/webapp/css</scanTarget>
                     </scanTargets-->
                 </configuration>
+                <!--
                                <dependencies>
                                    <dependency>
                                        <groupId>org.josso</groupId>
@@ -247,6 +243,7 @@
             <scope>runtime</scope>
         </dependency>
                                </dependencies>
+                -->
             </plugin>
         </plugins>
     </build>

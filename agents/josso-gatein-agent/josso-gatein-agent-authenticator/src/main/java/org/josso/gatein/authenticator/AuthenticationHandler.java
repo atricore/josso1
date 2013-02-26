@@ -21,6 +21,7 @@
 */
 package org.josso.gatein.authenticator;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import javax.security.auth.login.LoginException;
@@ -58,13 +59,16 @@ public class AuthenticationHandler implements ResourceContainer
 	 @Path("/auth/{1}/{2}")
    @Produces(
    {MediaType.TEXT_PLAIN})
-   public String authenticate(@PathParam("1") String username, @PathParam("2") String password)
+   public String authenticate(@PathParam("1") String encodedUsername, @PathParam("2") String encodedPassword)
    {
 		 try
 		 {
+              String username = new String(Base64.decodeBase64(encodedUsername.getBytes()));
+              String password = new String(Base64.decodeBase64(encodedPassword.getBytes()));
+
 			  log.debug("---------------------------------------");
-			  log.debug("Username: "+username);
-			  log.debug("Password: "+password);
+			  log.debug("Username: "+ username);
+			  log.debug("Password: "+ password);
 			  
 			  ExoContainer container = this.getContainer();
 			  Authenticator authenticator = (Authenticator) getContainer().getComponentInstanceOfType(Authenticator.class);

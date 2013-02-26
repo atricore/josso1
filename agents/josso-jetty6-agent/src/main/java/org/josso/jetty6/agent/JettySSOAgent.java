@@ -32,6 +32,7 @@ import org.josso.gateway.identity.SSORole;
 import org.josso.servlet.agent.GenericServletLocalSession;
 import org.josso.servlet.agent.GenericServletSSOAgent;
 import org.josso.servlet.agent.GenericServletSSOAgentRequest;
+import org.mortbay.jetty.Request;
 
 import javax.security.auth.Subject;
 import java.security.Principal;
@@ -63,6 +64,7 @@ public class JettySSOAgent extends GenericServletSSOAgent {
                     log.debug("Publishing JOSSO Security Context instance in session [" + (entry != null ? entry.ssoId : "<NO-SSO-ID>") + "]");
 
                 localSession.setSecurityContext(r.getSecurityContext());
+                ((Request)r.getRequest()).setUserPrincipal(r.getSecurityContext().getCurrentPrincipal());
             }
 
         } else {

@@ -114,7 +114,8 @@ public class GenericServletSSOAgentFilter implements Filter {
         // This allows the container to setup web application's classloader
         // In some containers - such as JRun - a filter will not be able to access web application's resources
         // (e.g. WEB-INF/classes) during initialization due to that this is not fully initialized yet.
-        if (agent == null && !filterConfig.getInitParameter("init").equals(LAZY_STARTUP)) {
+        if (agent == null && (filterConfig.getInitParameter("init") == null ||
+            ( filterConfig.getInitParameter("init") != null && !filterConfig.getInitParameter("init").equals(LAZY_STARTUP)))) {
             startup();
         }
 

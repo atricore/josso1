@@ -1,95 +1,98 @@
 package org.josso.jetty6.agent;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.josso.agent.*;
+import org.josso.agent.http.HttpSSOAgent;
+import org.josso.agent.http.WebAccessControlUtil;
+import org.josso.servlet.agent.GenericServletLocalSession;
+import org.josso.servlet.agent.GenericServletSSOAgentRequest;
+import org.mortbay.jetty.Request;
+import org.mortbay.jetty.Response;
+import org.mortbay.jetty.handler.AbstractHandler;
+import org.mortbay.jetty.handler.ContextHandler;
+import org.mortbay.jetty.security.Authenticator;
+import org.mortbay.jetty.security.UserRealm;
+import org.mortbay.jetty.servlet.Context;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.lang.String;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.josso.agent.*;
-import org.josso.agent.http.JOSSOSecurityContext;
-import org.josso.agent.http.WebAccessControlUtil;
-import org.josso.gateway.identity.SSOUser;
-import org.josso.servlet.agent.GenericServletSSOAgentFilter;
-import org.mortbay.jetty.Request;
-import org.mortbay.jetty.Response;
-import org.mortbay.jetty.security.Authenticator;
-import org.mortbay.jetty.security.UserRealm;
-
-public class JOSSOAuthenticator extends GenericServletSSOAgentFilter implements Authenticator
+public class JOSSOAuthenticator implements Authenticator
 {
     private static final Log log = LogFactory.getLog(JOSSOAuthenticator.class);
 
-    private static final String JOSSO_AUTH = "JOSSO_AUTH";
-
-    private static final FilterChain filterChain = new DummyFilterChain();
-
-    /* ------------------------------------------------------------ */
-    public JOSSOAuthenticator()
-    {
-    }
+    public static final String KEY_SESSION_MAP = "org.josso.jetty6.agent.sessionMap";
+    public static final String LAZY_STARTUP ="lazy";
     
-    /* ------------------------------------------------------------ */
-    /** 
-     * @return UserPrinciple if authenticated or null if not. If
-     * Authentication fails, then the authenticator may have committed
-     * the response as an auth challenge or redirect.
-     * @exception IOException 
+    /**
+     * One agent instance for all applications.
      */
-    public Principal authenticate(UserRealm realm,
-            String pathInContext,
-            Request request,
-            Response response)
-        throws IOException
-    {
+    protected HttpSSOAgent agent;
 
-        SSOUser ssoUser = null;
+    protected void init() throws IOException {
 
         try {
-            if (agent == null) {
-                context = request.getServletContext();
-                context.setAttribute(KEY_SESSION_MAP, new HashMap());
-                startup();
-            }
 
-            doFilter(request, response, null);
+            Lookup lookup = Lookup.getInstance();
+            lookup.init("josso-agent-config.xml"); // For spring compatibility ...
 
-            JOSSOSecurityContext sctx = WebAccessControlUtil.getSecurityContext(request);
+            // We need at least an abstract SSO Agent
+            agent = (HttpSSOAgent) lookup.lookupSSOAgent();
+            if (log.isDebugEnabled())
+                agent.setDebug(1);
+            agent.start();
 
-            if (sctx != null && sctx.getCurrentPrincipal() != null) {
-                ssoUser = sctx.getCurrentPrincipal();
-            }
+        } catch (Exception e) {
+            throw new IOException("Error starting SSO Agent : " + e.getMessage(), e);
+        }
+        
 
-        } catch (ServletException e) {
-            throw new IOException("Fatal error performing JOSSO Authentication");
+    }
+
+    public Principal authenticate(UserRealm userRealm, String s, Request request, Response response) throws IOException {
+        init();
+
+        HttpServletRequest hreq =
+                (HttpServletRequest) request;
+        HttpServletResponse hres =
+                (HttpServletResponse) response;
+
+        Request baseRequest=(request instanceof Request)?(Request)request:null;
+
+        String contextPath = getContextPath(request);
+    
+        log.debug("Request is " + request);
+        log.debug("Response is " + response);
+        log.debug("Session is " + request.getSession(true));
+     
+        return null;
+    }
+
+    public String getAuthMethod() {
+        return HttpServletRequest.FORM_AUTH;
+    }
+
+    private String getContextPath(HttpServletRequest req) {
+        String path = req.getPathInfo();
+        String contextPath = null;
+        
+        if (!path.substring(1).contains("/")) {
+            contextPath = path;
+        } else {
+            contextPath = path.substring(0, path.substring(1).indexOf("/") + 1);
         }
 
-        return ssoUser;
+        return contextPath;
     }
     
-    /* ------------------------------------------------------------ */
-    public String getAuthMethod()
-    {
-        return JOSSO_AUTH;
-    }
-
-    static class DummyFilterChain implements FilterChain {
-
-        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
-            // do nothing
-        }
-    }
-
 }

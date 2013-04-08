@@ -53,7 +53,7 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
 
     private String screenNameProperty;
     private String emailAddressProperty;
-    private String fistNameProperty;
+    private String firstNameProperty;
     private String lastNameProperty;
     private boolean autoScreenName;
 
@@ -149,12 +149,12 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
         this.emailAddressProperty = emailAddressProperty;
     }
 
-    public String getFistNameProperty() {
-        return fistNameProperty;
+    public String getFirstNameProperty() {
+        return firstNameProperty;
     }
 
-    public void setFistNameProperty(String fistNameProperty) {
-        this.fistNameProperty = fistNameProperty;
+    public void setFirstNameProperty(String firstNameProperty) {
+        this.firstNameProperty = firstNameProperty;
     }
 
     public String getLastNameProperty() {

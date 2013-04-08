@@ -70,7 +70,7 @@ public class JossoSSOAutoLogin implements AutoLogin {
             String email;
 
             screenName = getUserProperty(ssoUser, agent.getScreenNameProperty(), ssoUser.getName());
-            firstName = getUserProperty(ssoUser, agent.getFistNameProperty(), ssoUser.getName());
+            firstName = getUserProperty(ssoUser, agent.getFirstNameProperty(), ssoUser.getName());
             lastName = getUserProperty(ssoUser, agent.getLastNameProperty(), ssoUser.getName());
             email = getUserProperty(ssoUser, agent.getEmailAddressProperty(), ssoUser.getName());
 

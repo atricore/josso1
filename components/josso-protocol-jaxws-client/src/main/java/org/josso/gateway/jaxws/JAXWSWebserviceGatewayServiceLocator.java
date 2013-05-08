@@ -129,7 +129,6 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
 
     }
 
-
     public String getWsdlLocation() {
         return wsdlLocation;
     }

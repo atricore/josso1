@@ -215,7 +215,7 @@
 
         <dependency>
             <groupId>org.josso</groupId>
-            <artifactId>josso-spring-security</artifactId>
+            <artifactId>josso-spring-security-v2</artifactId>
         </dependency>
 
         <dependency>

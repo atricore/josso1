@@ -69,7 +69,7 @@ public class WeblogicInstaller extends VFSInstaller {
                 getPrinter().printErrStatus("Target conf", "folder does not exist or is not a directory:" + targetLibDir.getName().getFriendlyURI());
                 valid = false;
             }
-
+    
             FileObject weblogicJar = targetDir.resolveFile("server/lib/weblogic.jar");
             if (weblogicJar == null || !weblogicJar.exists() || !weblogicJar.getType().getName().equals(FileType.FILE.getName())) {
                 valid = false;

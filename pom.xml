@@ -92,6 +92,12 @@
                 <dependencies>
 
                     <dependency>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
+
+                    <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic81-agent</artifactId>
                         <version>${pom.version}</version>

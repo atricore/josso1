@@ -26,14 +26,6 @@
 
 			</td>
 		</tr>
-		<tr>
-		    <td>Login </td>
-		    <td> <a href="/josso/JOSSOIsapiAgent.dll?josso_login">/josso/JOSSOIsapiAgent.dll?josso_login</a></td>
-		</tr>
-		<tr>
-		    <td>Logout </td>
-		    <td> <a href="/josso/JOSSOIsapiAgent.dll?josso_logout">/josso/JOSSOIsapiAgent.dll?josso_logout</a></td>
-		</tr>
 	</table>
 </body>
 </html>

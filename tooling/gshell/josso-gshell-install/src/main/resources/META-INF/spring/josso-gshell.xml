@@ -62,7 +62,7 @@
         <s:property name="printer" ref="messagePrinter"/>
     </tomcat-installer>
 
-    <tomcat-installer id="tc60-installer">
+    <tomcat-installer id="tc60-iDra. Alcira Pignata ‏@nstaller">
         <s:constructor-arg ref="tc60"/>
         <s:property name="printer" ref="messagePrinter"/>
     </tomcat-installer>

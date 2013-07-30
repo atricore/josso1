@@ -67,7 +67,9 @@ public class JBossInstaller extends VFSInstaller {
         boolean valid = true;
 
         try {
-        	String jbossWeb = "jbossweb.sar"; // jboss 5 by default
+
+        	String jbossWeb = "jbossweb.sar"; // jboss 5 and 6 by default
+
         	if (getPlatformVersion().startsWith("4.2"))
                 jbossWeb = "jboss-web.deployer";
             if (getPlatformVersion().startsWith("4.0"))
@@ -131,8 +133,23 @@ public class JBossInstaller extends VFSInstaller {
                 
             } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
                                    artifact.getClassifier() !=  null && 
-                                   artifact.getClassifier().equals("axis")) {
+                                   artifact.getClassifier().equals("axis") &&
+                    !getTargetPlatform().getVersion().startsWith("6.")) {
+                // JBoss 6 uses jaxws
                             installFile(srcFile, this.targetJOSSOLibDir, replace);
+            } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
+                    artifact.getClassifier() !=  null &&
+                    artifact.getClassifier().equals("axis") &&
+                    !getTargetPlatform().getVersion().startsWith("6.")) {
+                // JBoss 6 uses jaxws
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+            } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
+                    artifact.getClassifier() !=  null &&
+                    artifact.getClassifier().equals("jaxws") &&
+                    getTargetPlatform().getVersion().startsWith("6.")) {
+                // JBoss 6 uses jaxws
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+
             } else if (artifact.getBaseName().startsWith("josso-jboss5-agent") &&
                     (getTargetPlatform().getVersion().startsWith("5.") ||
                     getTargetPlatform().getVersion().startsWith("6."))) {
@@ -180,10 +197,18 @@ public class JBossInstaller extends VFSInstaller {
                 artifact.getBaseName().startsWith("commons-logging")))
             return;
 
+
+        if (getTargetPlatform().getVersion().startsWith("6")) {
+            // In JBoss 6, we only need spring, CXF and all the rest is already in JBoss
+            if (!(artifact.getBaseName().startsWith("spring-") ||
+                  artifact.getBaseName().startsWith("xbean-spring-"))) {
+                return;
+            }
+        }
+
         // do not install WSDL4J in jboss 4.x and 5.x platforms !
         if ((getTargetPlatform().getVersion().startsWith("4") ||
-             getTargetPlatform().getVersion().startsWith("5") ||
-             getTargetPlatform().getVersion().startsWith("6")) &&
+             getTargetPlatform().getVersion().startsWith("5")) &&
              artifact.getBaseName().startsWith("axis-wsdl"))
             return;
 

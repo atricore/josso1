@@ -516,32 +516,21 @@
             </snapshots>
         </repository>
 
-        <!-- Apache incubating
         <repository>
-            <id>apache-incubating</id>
-            <name>Apache Incubating Repository</name>
-            <url>http://people.apache.org/repo/m2-incubating-repository</url>
+            <id>jboss-release-repository</id>
+            <name>JBoss Release Repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/release</url>
+            <layout>default</layout>
             <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        -->
-        <!-- Apache snapshot
-        <repository>
-            <id>apache-snapshots</id>
-            <name>Apache Snapshot repository</name>
-            <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-            <releases>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
-        -->
+
         <!-- Codehaus -->
         <repository>
             <id>codehaus</id>
@@ -1143,6 +1132,12 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-jboss7-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-applet-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
@@ -1197,7 +1192,7 @@
                 <type>ear</type>
             </dependency>
 
-			<dependency>
+            <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss5-ejb</artifactId>
                 <version>${pom.version}</version>
@@ -1217,7 +1212,28 @@
                 <version>${pom.version}</version>
                 <type>ear</type>
             </dependency>
-            
+           
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-jboss7-ejb</artifactId>
+                <version>${pom.version}</version>
+                <type>ejb</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-jboss7-web</artifactId>
+                <version>${pom.version}</version>
+                <type>war</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-jboss7-app</artifactId>
+                <version>${pom.version}</version>
+                <type>ear</type>
+            </dependency>
+ 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl81-ejb</artifactId>

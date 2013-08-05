@@ -60,6 +60,7 @@
     <modules>
         <module>josso-partner-jboss</module>
         <module>josso-partner-jboss5</module>
+        <module>josso-partner-jboss7</module>
         <module>josso-partner-tomcat</module>
         <module>josso-partner-jetty</module>
         <module>josso-partner-php</module>

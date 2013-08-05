@@ -22,10 +22,20 @@
   ~
   -->
 
-<jboss-web>
-    <security-domain>java:/jaas/josso</security-domain>
-    <context-root>/partnerapp</context-root>
-    <!--valve>
-        <class-name>org.josso.jb5.agent.JOSSOJASPIAuthenticator</class-name>
-    </valve-->
-</jboss-web>
+<!DOCTYPE jboss PUBLIC
+   "-//JBoss//DTD JBOSS 3.0//EN"
+   "http://www.jboss.org/j2ee/dtd/jboss_3_0.dtd">
+
+<jboss>
+    <!--security-domain>jaspi-test</security-domain-->
+    <security-domain>josso</security-domain>
+
+    <enterprise-beans>
+
+        <session>
+            <ejb-name>PartnerComponentEJB</ejb-name>
+            <jndi-name>josso/samples/PartnerComponentEJB</jndi-name>
+        </session>
+
+    </enterprise-beans>
+</jboss>

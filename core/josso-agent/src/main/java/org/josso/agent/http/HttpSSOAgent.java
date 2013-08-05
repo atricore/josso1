@@ -954,4 +954,18 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         this._automaticStrategies = _automaticStrategies;
     }
 
+    public boolean isAgentReservedUri(String contextPath, String uri) {
+
+        if (uri == null)
+            return false;
+
+        if (contextPath == null)
+            contextPath = "";
+
+        // TODO : Cache URIs so we dont do this all the time.
+        return uri.startsWith(contextPath + getJossoLoginUri()) ||
+               uri.startsWith(contextPath + getJossoSecurityCheckUri()) ||
+               uri.startsWith(contextPath + getJossoLogoutUri()) ||
+               uri.startsWith(contextPath + getJossoUserLoginUri());
+    }
 }

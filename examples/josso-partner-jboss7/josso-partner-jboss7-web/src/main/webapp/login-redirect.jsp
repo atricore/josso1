@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+<%--
   ~ JOSSO: Java Open Single Sign-On
   ~
   ~ Copyright 2004-2009, Atricore, Inc.
@@ -20,12 +18,12 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   ~
-  -->
+  --%>
 
-<jboss-web>
-    <security-domain>java:/jaas/josso</security-domain>
-    <context-root>/partnerapp</context-root>
-    <!--valve>
-        <class-name>org.josso.jb5.agent.JOSSOJASPIAuthenticator</class-name>
-    </valve-->
-</jboss-web>
+<%@page contentType="text/html; charset=UTF-8" language="java" session="true" %>
+<!--
+Redirects the user to the proper login page.  Configured as the login url the web.xml for this application.
+-->
+<%
+    response.sendRedirect(request.getContextPath() + "/josso_login/");
+%>

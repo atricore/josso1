@@ -22,6 +22,8 @@
 
 package org.josso.jaspi.agent;
 
+import org.josso.gateway.identity.SSOUser;
+
 import java.security.Principal;
 import java.util.Map;
 
@@ -32,6 +34,7 @@ import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
 import javax.security.auth.message.callback.CallerPrincipalCallback;
+import javax.security.auth.message.callback.GroupPrincipalCallback;
 import javax.security.auth.message.callback.PasswordValidationCallback;
 import javax.security.auth.message.module.ServerAuthModule;
 import javax.servlet.http.HttpServletRequest;
@@ -80,19 +83,23 @@ public abstract class JOSSOServerAuthModule implements ServerAuthModule {
 	 * @param password password
 	 * @param roles user roles
 	 */
-	protected void registerWithCallbackHandler(Principal userPrincipal, String username, String password) {
+	protected void registerWithCallbackHandler(Principal userPrincipal, String username, String password, String[] groups) {
 		if (this.callbackHandler instanceof JASPICallbackHandler) {
+
 			JASPICallbackHandler cbh = (JASPICallbackHandler) callbackHandler;
 
 			char[] pass = (password == null) ? "".toCharArray() : password.toCharArray();
 			PasswordValidationCallback passwordValidationCallback = 
 				new PasswordValidationCallback(null, username, pass);
 			cbh.setPasswordValidationCallback(passwordValidationCallback);
-			
 			cbh.setCallerPrincipalCallback(new CallerPrincipalCallback(null, userPrincipal));
+            cbh.setGroupPrincipalCallback(new GroupPrincipalCallback(null, groups));
+
       	} else {
       		throw new RuntimeException("Unsupported Callback handler "
       				+ this.callbackHandler.getClass().getCanonicalName());
       	}
 	}
+
+
 }

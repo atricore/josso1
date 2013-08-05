@@ -32,15 +32,14 @@
         <version>1.8.8-SNAPSHOT</version>
     </parent>
 
-    <artifactId>josso-jboss5-agent</artifactId>
+    <artifactId>josso-jboss7-agent</artifactId>
     <packaging>jar</packaging>
-    <name>JOSSO :: JBoss 5, 6 Agent</name>
-    <description>JBoss 5, 6 Agent</description>
+    <name>JOSSO :: JBoss 7 Agent</name>
+    <description>JBoss 7 Agent</description>
 
 	<properties>
-        <jboss-version>5.1.0.GA</jboss-version>
-        <jboss-security-version>2.0.3.SP1</jboss-security-version>
-        <tomcat-version>5.5.23</tomcat-version>
+        <jboss-version>7.1.1.Final</jboss-version>
+        <jboss-web-version>7.0.17.Final</jboss-web-version>
     </properties>
     
     <dependencies>
@@ -81,37 +80,22 @@
         </dependency>
 
 		<dependency>
-            <groupId>tomcat</groupId>
-            <artifactId>catalina</artifactId>
-            <version>${tomcat-version}</version>
+            <groupId>org.jboss.spec.javax.security.auth.message</groupId>
+            <artifactId>jboss-jaspi-api_1.0_spec</artifactId>
+            <version>1.0.1.Final</version>
             <scope>provided</scope>
         </dependency>
 
-		<dependency>
-            <groupId>org.jboss.javaee</groupId>
-			<artifactId>jboss-jaspi-api</artifactId>
-			<version>1.0.0.GA</version>
-            <scope>provided</scope>
-        </dependency>
-                
         <dependency>
-            <groupId>org.jboss.jbossas</groupId>
-            <artifactId>jboss-as-tomcat</artifactId>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-web</artifactId>
             <version>${jboss-version}</version>
-            <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
-            <groupId>org.jboss.security</groupId>
-            <artifactId>jboss-security-spi</artifactId>
-            <version>${jboss-security-version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.jboss.security</groupId>
-            <artifactId>jbosssx</artifactId>
-            <version>${jboss-security-version}</version>
+            <groupId>org.jboss.web</groupId>
+            <artifactId>jbossweb</artifactId>
+            <version>${jboss-web-version}</version>
             <scope>provided</scope>
         </dependency>
         

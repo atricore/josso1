@@ -89,7 +89,7 @@ public abstract class VFSInstaller implements Installer, VariableSolver, Applica
 
     private FileSystemManager fsManager;
 
-    private MessagePrinter printer;
+    private  MessagePrinter printer;
 
     private Renderer renderer = new Renderer();
 
@@ -518,6 +518,9 @@ public abstract class VFSInstaller implements Installer, VariableSolver, Applica
 	    		try {
 	    	    	FileObject agentConfigFile = targetJOSSOConfDir.resolveFile("josso-agent-config.xml");
 	    	    	if (agentConfigFile.exists()) {
+
+                        log.error("DEPRECATED API CALL:updateAgentConfiguration");
+
 	    				// Get a DOM document of the josso-agent-config.xml
 	    	            Node configXmlDom = readContentAsDom(agentConfigFile);
 	    	            
@@ -789,8 +792,11 @@ public abstract class VFSInstaller implements Installer, VariableSolver, Applica
         }
     }
 
-
     protected Document readContentAsDom(FileObject file) throws Exception {
+        return readContentAsDom(file, true);
+    }
+
+    protected Document readContentAsDom(FileObject file, boolean nameSpaceAware) throws Exception {
         InputStream is = null;
 
         try {
@@ -798,7 +804,7 @@ public abstract class VFSInstaller implements Installer, VariableSolver, Applica
 
             DocumentBuilderFactory parserFactory = DocumentBuilderFactory.newInstance();
             parserFactory.setValidating(false);
-            parserFactory.setNamespaceAware(true);
+            parserFactory.setNamespaceAware(nameSpaceAware);
             parserFactory.setIgnoringElementContentWhitespace(false);
             parserFactory.setIgnoringComments(false);
 

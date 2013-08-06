@@ -299,7 +299,7 @@ public class JBossInstaller extends VFSInstaller {
     	 }
     	return super.removeOldComponents(backup);
     }
-    
+
     public void configureAgent() throws InstallException {
 
         // Setup XUpdate :

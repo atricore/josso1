@@ -43,6 +43,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileName;
@@ -835,7 +836,9 @@ public abstract class VFSInstaller implements Installer, VariableSolver, Applica
             }
 
             return doc;
-
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
         } finally {
             if (is != null) try {
                 is.close();
@@ -844,31 +847,39 @@ public abstract class VFSInstaller implements Installer, VariableSolver, Applica
 
     }
 
+    protected void writeContentFromString(String content, FileObject file) throws Exception {
+
+        OutputStream os = null;
+
+        os = file.getContent().getOutputStream();
+        Result result = new StreamResult(os);
+        IOUtils.write(content.getBytes(), os);
+        IOUtils.closeQuietly(os);
+        file.close();
+
+    }
+
     protected void writeContentFromDom(String publicId, String systemId, Node node, FileObject file) throws Exception {
         OutputStream os = null;
 
-        try {
-            os = file.getContent().getOutputStream();
-            Result result = new StreamResult(os);
+        os = file.getContent().getOutputStream();
+        Result result = new StreamResult(os);
 
-            // Write the Server.xml document back to the file!
-            Source source = new DOMSource(node);
+        // Write the Server.xml document back to the file!
+        Source source = new DOMSource(node);
 
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
 
-            if (publicId != null)
-                xformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, publicId);
+        if (publicId != null)
+            xformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, publicId);
 
-            if (systemId != null)
-                xformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, systemId);
+        if (systemId != null)
+            xformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, systemId);
 
-            xformer.transform(source, result);
+        xformer.transform(source, result);
 
-        } finally {
-            if (os != null) try {
-                os.close();
-            } catch (IOException e) { /**/}
-        }
+        IOUtils.closeQuietly(os);
+
     }
 
     protected void writeContentFromDom(Node node, FileObject file) throws Exception {

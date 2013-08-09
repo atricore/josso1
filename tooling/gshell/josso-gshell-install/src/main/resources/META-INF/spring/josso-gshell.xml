@@ -182,8 +182,8 @@
 
         <bin>${target}/bin</bin>
         <lib>${target}/modules</lib>
-        <conf>${target}/${instance}/configuration</conf>
-        <deploy>${target}/${instance}/deployments</deploy>
+        <conf>${target}/standalone/configuration</conf>
+        <deploy>${target}/standalone/deployments</deploy>
         <endorsed>${target}/modules</endorsed>
 
         <josso-conf>${target}/modules/org/josso/main/config</josso-conf>

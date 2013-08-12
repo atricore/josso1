@@ -347,6 +347,12 @@
 
         <dependency>
             <groupId>org.josso</groupId>
+            <artifactId>josso-partner-jboss7-app</artifactId>
+            <type>ear</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
             <artifactId>josso-partner-tomcat-web</artifactId>
             <type>war</type>
         </dependency>

@@ -185,8 +185,12 @@ public class JBossWildFlyInstaller extends VFSInstaller {
         }
 
         if (getTargetPlatform().getVersion().startsWith("7") &&
-                (artifact.getBaseName().startsWith("spring") || artifact.getBaseName().startsWith("xbean-spring"))
+                (artifact.getBaseName().startsWith("spring-") || artifact.getBaseName().startsWith("xbean-spring"))
                 && installSpring) {
+
+            // Avoid installing spring 2.0 artifacts
+            if (artifact.getBaseName().contains("2.0"))
+                return;
 
             try {
 

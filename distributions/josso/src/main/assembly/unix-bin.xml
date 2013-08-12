@@ -188,6 +188,7 @@
                 <include>${pom.groupId}:josso-tomcat50-agent</include>
                 <include>${pom.groupId}:josso-jbportal27-agent</include>
                 <include>${pom.groupId}:josso-jaspi-agent</include>
+                <include>${pom.groupId}:josso-jboss7-agent</include>
                 <include>${pom.groupId}:josso-jboss5-agent</include>				
                 <include>${pom.groupId}:josso-jboss42-agent</include>
                 <include>${pom.groupId}:josso-jboss40-agent</include>

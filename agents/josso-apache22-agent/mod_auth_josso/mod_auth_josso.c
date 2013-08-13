@@ -165,6 +165,7 @@ typedef struct {
 	apr_rmm_t *sso_cache_rmm;
 #endif
 	sso_cache_t *sso_cache;
+	int sso_sessions;
 } server_conf;
 
 static ap_regex_t *robot_regexps[24];
@@ -279,6 +280,7 @@ static void *create_server_config(apr_pool_t *p, server_rec *s)
 #if APR_HAS_SHARED_MEMORY
       scfg->sso_cache_shm = NULL;
       scfg->sso_cache_rmm = NULL;
+      scfg->sso_sessions = 10000;
 #endif
       return scfg;
 }
@@ -524,6 +526,17 @@ static const char *set_shm_sso_lockfile(cmd_parms *cmd, void *dummy, const char 
     return NULL;
 }
 
+static const char *set_shm_sso_sessions(cmd_parms *cmd, void *dummy, const char *arg)
+{
+    server_conf *scfg =
+        (server_conf *)ap_get_module_config(cmd->server->module_config,
+                                                  &auth_josso_module);
+                   
+    scfg->sso_sessions = atoi(arg);
+    return NULL;
+}
+
+
 static const command_rec auth_josso_cmds[] =
 {
    AP_INIT_TAKE1("GatewayLoginUrl", set_gateway_login_url_slot,
@@ -605,6 +618,9 @@ static const command_rec auth_josso_cmds[] =
                   "memory"),
    AP_INIT_TAKE1("ShmSSOLockfile", set_shm_sso_lockfile, NULL, RSRC_CONF,
                   "Filename of global mutex"),
+   AP_INIT_TAKE1("ShmSSOSessions", set_shm_sso_sessions, NULL, RSRC_CONF,
+                  " Number of max concurrent users"),
+
   {NULL}
 
 };
@@ -2061,8 +2077,8 @@ static int josso_post_config(apr_pool_t *pconf, apr_pool_t *plog,
 #endif
 
 #if APR_HAS_SHARED_MEMORY
-    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s, "Creating global shared segment file '%s'", scfg->shmssofile);
-    rv = apr_shm_create(&scfg->sso_cache_shm, sizeof(scfg->sso_cache),
+    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s, "Creating global shared segment file '%s' for '%d' sessions", scfg->shmssofile, scfg->sso_sessions);
+    rv = apr_shm_create(&scfg->sso_cache_shm, sizeof(scfg->sso_cache) * scfg->sso_sessions,
                         scfg->shmssofile, pconf);
     if (rv != APR_SUCCESS) {
         ap_log_error(APLOG_MARK, APLOG_CRIT, rv, s, "Failed to create "
@@ -2109,6 +2125,7 @@ static int josso_post_config(apr_pool_t *pconf, apr_pool_t *plog,
         scfg_vhost->sso_cache_rmm = scfg->sso_cache_rmm;
         scfg_vhost->shmssofile = scfg->shmssofile;
         scfg_vhost->sso_cache = scfg->sso_cache;
+        scfg_vhost->sso_sessions = scfg->sso_sessions;
         ap_log_error(APLOG_MARK, APLOG_DEBUG, rv, s,
                   "JOSSO merging Shared Cache conf: shm=0x%pp rmm=0x%pp "
                   "for VHOST: %s", scfg->sso_cache_shm, scfg->sso_cache_rmm,

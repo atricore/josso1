@@ -2024,7 +2024,13 @@ static int josso_post_config(apr_pool_t *pconf, apr_pool_t *plog,
         /* If the cache file already exists then delete it.  Otherwise we are
          * going to run into problems creating the shared memory. */
         if (scfg->shmssofile) {
-            apr_file_remove(scfg->shmssofile, ptemp);
+            ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s, "Removing shared segment file '%s'", scfg->shmssofile);
+            rv = apr_shm_remove(scfg->shmssofile, ptemp);
+            if (rv != APR_SUCCESS) {
+               ap_log_error(APLOG_MARK, APLOG_CRIT, rv, s, "Failed to remove "
+                     "mod_auth_josso shared segment file '%s'", 
+                     scfg->shmssofile);
+            }
         }
 #endif
         return OK;
@@ -2035,6 +2041,7 @@ static int josso_post_config(apr_pool_t *pconf, apr_pool_t *plog,
      * If we waited until a child had been created, we run in to a race
      * condition.
      */
+    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s, "Creating global mutex file '%s'", scfg->shmssolockfile);
     rv = apr_global_mutex_create(&scfg->mutex, scfg->shmssolockfile, APR_LOCK_DEFAULT, pconf);
     if (rv != APR_SUCCESS) {
         ap_log_error(APLOG_MARK, APLOG_CRIT, rv, s, "Failed to create "
@@ -2054,6 +2061,7 @@ static int josso_post_config(apr_pool_t *pconf, apr_pool_t *plog,
 #endif
 
 #if APR_HAS_SHARED_MEMORY
+    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s, "Creating global shared segment file '%s'", scfg->shmssofile);
     rv = apr_shm_create(&scfg->sso_cache_shm, sizeof(scfg->sso_cache),
                         scfg->shmssofile, pconf);
     if (rv != APR_SUCCESS) {

@@ -184,6 +184,19 @@ public class JBossWildFlyInstaller extends VFSInstaller {
             }
         }
 
+        if ((getTargetPlatform().getVersion().startsWith("7") &&
+                artifact.getBaseName().startsWith("commons-codec"))) {
+
+            try {
+                FileObject srcFile = getFileSystemManager().resolveFile(artifact.getLocation());
+                removeOldJar(srcFile.getName().getBaseName(), this.targetJOSSOLibDir, false);
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+            } catch (IOException e) {
+                throw new InstallException(e.getMessage(), e);
+            }
+        }
+
+
         if (getTargetPlatform().getVersion().startsWith("7") &&
                 (artifact.getBaseName().startsWith("spring-") || artifact.getBaseName().startsWith("xbean-spring"))
                 && installSpring) {

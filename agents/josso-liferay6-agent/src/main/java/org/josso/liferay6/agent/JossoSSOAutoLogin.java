@@ -15,6 +15,7 @@ import com.liferay.util.PwdGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.agent.Lookup;
+import org.josso.agent.SSOPartnerAppConfig;
 import org.josso.gateway.SSONameValuePair;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
@@ -55,11 +56,18 @@ public class JossoSSOAutoLogin implements AutoLogin {
             if (jCookie == null || jCookie.getValue().equals("-")) {
                 return credentials;
             }
-
             String jossoSessionId = jCookie.getValue();
 
+            String contextPath = request.getContextPath();
+            String vhost = request.getServerName();
+
+            // In catalina, the empty context is considered the root context
+            if ("".equals(contextPath))
+                contextPath = "/";
+
+            SSOPartnerAppConfig cfg = agent.getPartnerAppConfig(vhost, contextPath);
             SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
-            SSOUser ssoUser = im.findUserInSession(jossoSessionId, jossoSessionId);
+            SSOUser ssoUser = im.findUserInSession(cfg.getId(), jossoSessionId);
             if (ssoUser == null) {
                 return credentials;
             }
@@ -70,7 +78,7 @@ public class JossoSSOAutoLogin implements AutoLogin {
             String email;
 
             screenName = getUserProperty(ssoUser, agent.getScreenNameProperty(), ssoUser.getName());
-            firstName = getUserProperty(ssoUser, agent.getFistNameProperty(), ssoUser.getName());
+            firstName = getUserProperty(ssoUser, agent.getFirstNameProperty(), ssoUser.getName());
             lastName = getUserProperty(ssoUser, agent.getLastNameProperty(), ssoUser.getName());
             email = getUserProperty(ssoUser, agent.getEmailAddressProperty(), ssoUser.getName());
 

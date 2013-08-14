@@ -29,7 +29,7 @@
     </parent>
 
     <artifactId>spring-security-contacts</artifactId>
-    <name>JOSSO :: Spring Security - sample</name>
+    <name>JOSSO :: JOSSified Spring Security V2 (ACEGI) - Contacts sample</name>
     <packaging>war</packaging>
     <properties>
         <sample-spring-version>2.0.8</sample-spring-version>

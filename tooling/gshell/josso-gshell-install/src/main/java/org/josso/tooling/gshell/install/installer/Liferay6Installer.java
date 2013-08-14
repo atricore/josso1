@@ -30,7 +30,7 @@ import java.io.*;
  */
 public class Liferay6Installer extends VFSInstaller {
 
-    private static final Log log = LogFactory.getLog(Liferay5Installer.class);
+    private static final Log log = LogFactory.getLog(Liferay6Installer.class);
 
 
     public Liferay6Installer(TargetPlatform targetPlatform) {

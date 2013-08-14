@@ -34,8 +34,8 @@
 
     <artifactId>josso-jboss5-agent</artifactId>
     <packaging>jar</packaging>
-    <name>JOSSO :: JBoss 5 Agent</name>
-    <description>JBoss 5 Agent</description>
+    <name>JOSSO :: JBoss 5, 6 Agent</name>
+    <description>JBoss 5, 6 Agent</description>
 
 	<properties>
         <jboss-version>5.1.0.GA</jboss-version>

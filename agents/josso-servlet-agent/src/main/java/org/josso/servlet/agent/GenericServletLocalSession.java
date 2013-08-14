@@ -26,6 +26,8 @@ import javax.servlet.http.HttpSession;
 import org.josso.agent.http.JOSSOSecurityContext;
 import org.josso.agent.http.WebAccessControlUtil;
 
+import java.io.Serializable;
+
 /**
  * This LocalSession implemnetation provides a placeholder for the JOSSO Security Context used by this plugin.
  *
@@ -52,5 +54,10 @@ public class GenericServletLocalSession extends LocalSessionImpl {
     public void updateSession(HttpSession httpSession) {
         setWrapped(httpSession);
         setMaxInactiveInterval(httpSession.getMaxInactiveInterval());
+    }
+
+    public void setAttribute(String key, Serializable value) {
+        HttpSession session = (HttpSession) getWrapped();
+        session.setAttribute(key, value);
     }
 }

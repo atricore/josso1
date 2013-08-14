@@ -23,9 +23,11 @@
 package org.josso.jaspi.agent;
 
 import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
+import javax.security.auth.message.MessagePolicy;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,9 +45,7 @@ import org.josso.agent.http.HttpSSOAgent;
 import org.josso.agent.http.WebAccessControlUtil;
 import org.josso.gateway.identity.SSORole;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * JOSSO server auth module.
@@ -58,25 +58,61 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	
 	private static HttpSSOAgent _agent;
 
+    protected String delegatingLoginContextName = null;
 
+
+    /**
+     * <p>
+     * Creates an instance of {@code JASPISSOAuthModule}.
+     * </p>
+     */
 	public JASPISSOAuthModule() {
-        try {
-        	if (_agent == null) {
-	        	Lookup lookup = Lookup.getInstance();
-	            lookup.init("josso-agent-config.xml");
-	            _agent = (HttpSSOAgent) lookup.lookupSSOAgent();
-	            if (log.isDebugEnabled()) {
-	                _agent.setDebug(1);
-	            }
-	            _agent.start();
-        	}
-        } catch (Exception e) {
-        	log.error("Error starting SSO Agent : " + e.getMessage(), e);
-            throw new RuntimeException("Error starting SSO Agent : " + e.getMessage(), e);
-        }
+        this(null);
 	}
-	
-	@Override
+
+
+    /**
+     * <p>
+     * Creates an instance of {@code HTTPFormServerAuthModule} with the specified delegating login context name.
+     * </p>
+     *
+     * @param delegatingLoginContextName the name of the login context configuration that contains the JAAS modules that
+     *                                   are to be called by this module.
+     */
+    public JASPISSOAuthModule(String delegatingLoginContextName) {
+        super();
+
+        this.delegatingLoginContextName = delegatingLoginContextName;
+    }
+
+    @Override
+    public void initialize(MessagePolicy requestPolicy, MessagePolicy responsePolicy, CallbackHandler handler, Map options) throws AuthException {
+        if (_agent == null) {
+            synchronized(this) {
+                try {
+                    if (_agent == null) {
+                        Lookup lookup = Lookup.getInstance();
+                        lookup.init("josso-agent-config.xml");
+                        _agent = (HttpSSOAgent) lookup.lookupSSOAgent();
+                        if (log.isDebugEnabled()) {
+                            _agent.setDebug(1);
+                        }
+                        _agent.start();
+
+                        if (log.isDebugEnabled())
+                            log.debug("Agent started");
+                    }
+                } catch (Exception e) {
+                    log.error("Error starting SSO Agent : " + e.getMessage(), e);
+                    throw new RuntimeException("Error starting SSO Agent : " + e.getMessage(), e);
+                }
+            }
+        }
+
+        super.initialize(requestPolicy, responsePolicy, handler, options);
+    }
+
+    @Override
 	public AuthStatus secureResponse(MessageInfo messageInfo,
 			Subject serviceSubject) throws AuthException {
 		throw new RuntimeException("Not Applicable");
@@ -243,8 +279,6 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 
             }
 
-
-
 	        // ------------------------------------------------------------------
 	        // Check if the partner application submitted custom login form
 	        // ------------------------------------------------------------------
@@ -397,14 +431,19 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	                	clientSubject.getPrincipals().add(entry.principal);
 	                }
                     SSORole[] ssoRolePrincipals = _agent.getRoleSets(cfg.getId(), entry.ssoId, relayRequest.getNodeId());
+                    List<String> rolesList = new ArrayList<String>();
+
 	                for (int i=0; i < ssoRolePrincipals.length; i++) {
 	                    if (clientSubject.getPrincipals().contains(ssoRolePrincipals[i])) {
 	                        continue;
 	                    }
+                        rolesList.add(ssoRolePrincipals[i].getName());
+
 	                    clientSubject.getPrincipals().add(ssoRolePrincipals[i]);
 	                    log.debug("Added SSORole Principal to the Subject : " + ssoRolePrincipals [i]);
 	                }
-	                registerWithCallbackHandler(entry.principal, entry.principal.getName(), entry.ssoId);
+
+	                registerWithCallbackHandler(entry.principal, entry.principal.getName(), entry.ssoId, rolesList.toArray(new String[rolesList.size()]));
 	            }
 
 	            if (log.isDebugEnabled()) {
@@ -499,14 +538,16 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
                 	clientSubject.getPrincipals().add(entry.principal);
                 }
                 SSORole[] ssoRolePrincipals = _agent.getRoleSets(cfg.getId(), entry.ssoId, r.getNodeId());
+                List<String> rolesList = new ArrayList<String>();
                 for (int i=0; i < ssoRolePrincipals.length; i++) {
                     if (clientSubject.getPrincipals().contains(ssoRolePrincipals[i])) {
                         continue;
                     }
+                    rolesList.add(ssoRolePrincipals[i].getName());
                     clientSubject.getPrincipals().add(ssoRolePrincipals[i]);
                     log.debug("Added SSORole Principal to the Subject : " + ssoRolePrincipals [i]);
                 }
-                registerWithCallbackHandler(entry.principal, entry.principal.getName(), entry.ssoId);
+                registerWithCallbackHandler(entry.principal, entry.principal.getName(), entry.ssoId, rolesList.toArray(new String[rolesList.size()]));
 	        } else {
 	            log.debug("No Valid SSO Session, attempt an optional login?");
 	            // This is a standard anonymous request!
@@ -555,6 +596,7 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	        AuthStatus status = AuthStatus.SUCCESS;
             return status;
 	    } catch (Throwable t) {
+            log.warn(t.getMessage(), t);
 	    	throw new AuthException(t.getMessage());
 	        //return AuthStatus.FAILURE;
 	    } finally {

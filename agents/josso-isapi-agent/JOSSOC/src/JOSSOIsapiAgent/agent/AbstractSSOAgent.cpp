@@ -361,6 +361,7 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 			const char *splashResource = ini.GetValue(section, "splash-resource", NULL);
 			const char *partnerAppId = ini.GetValue(section, "partnerAppId", NULL);
 			const char *appLoginUrl = ini.GetValue(section, "appLoginUrl", NULL);
+			const char *defaultResource = ini.GetValue(section, "default-resource", NULL);
 
 			// To verbose, just do nothing syslog(JK_LOG_WARNING_LEVEL, "'ignored-uris' %s", ignoredUris);
 
@@ -396,6 +397,12 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 					string al = (appLoginUrl);
 					appCfg->setAppLoginUrl(al);
 				}
+
+				if (defaultResource != NULL) {
+					string dr = (defaultResource);
+					appCfg->setDefaultResource(dr);
+				}
+
 
 				std::string partnerAppKey;
 				std::stringstream out;

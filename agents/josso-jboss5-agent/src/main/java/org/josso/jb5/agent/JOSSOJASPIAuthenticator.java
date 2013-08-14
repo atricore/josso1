@@ -99,7 +99,7 @@ public class JOSSOJASPIAuthenticator extends TomcatJASPIAuthenticator {
 		}
 		if (!realm.hasUserDataPermission(request, response, constraints)) {
 			if (log.isDebugEnabled()) {
-				log.debug(" Failed hasUserDataPermission() test");
+				log.debug(" Failed hasUserDataPermission()");
 			}
 			/*
 			 * ASSERT: Authenticator already set the appropriate HTTP status
@@ -110,7 +110,7 @@ public class JOSSOJASPIAuthenticator extends TomcatJASPIAuthenticator {
 
 		if (!authenticate(request, response, config)) {
 			if (log.isDebugEnabled()) {
-				log.debug(" Failed authenticate() test");
+				log.debug(" Failed authenticate()");
 			}
 			/*
 			 * ASSERT: Authenticator already set the appropriate HTTP status
@@ -125,7 +125,7 @@ public class JOSSOJASPIAuthenticator extends TomcatJASPIAuthenticator {
 
 		if (!realm.hasResourcePermission(request, response, constraints, this.context)) {
 			if (log.isDebugEnabled()) {
-				log.debug(" Failed accessControl() test");
+				log.debug(" Failed accessControl()");
 			}
 			/*
 			 * ASSERT: AccessControl method has already set the appropriate HTTP

@@ -188,6 +188,7 @@
                 <include>${pom.groupId}:josso-tomcat50-agent</include>
                 <include>${pom.groupId}:josso-jbportal27-agent</include>
                 <include>${pom.groupId}:josso-jaspi-agent</include>
+                <include>${pom.groupId}:josso-jboss7-agent</include>
                 <include>${pom.groupId}:josso-jboss5-agent</include>				
                 <include>${pom.groupId}:josso-jboss42-agent</include>
                 <include>${pom.groupId}:josso-jboss40-agent</include>
@@ -195,6 +196,8 @@
                 <include>${pom.groupId}:josso-geronimo-agent</include>
                 <include>${pom.groupId}:josso-liferay5-agent</include>
                 <include>${pom.groupId}:josso-liferay6-agent</include>
+                <include>${pom.groupId}:josso-gatein-agent-main</include>
+                <include>${pom.groupId}:josso-gatein-agent-authenticator</include>
                 <include>${pom.groupId}:josso-alfresco-agent</include>
                 <include>${pom.groupId}:josso-servlet-agent</include>
                 <include>${pom.groupId}:josso-weblogic92-agent:jar</include>
@@ -302,6 +305,7 @@
             <includes>
                 <include>${pom.groupId}:josso-partner-jboss-app</include>
                 <include>${pom.groupId}:josso-partner-jboss5-app</include>
+                <include>${pom.groupId}:josso-partner-jboss7-app</include>
                 <include>${pom.groupId}:josso-partner-wl10-app</include>
                 <include>${pom.groupId}:josso-partner-wl92-app</include>
                 <include>${pom.groupId}:josso-partner-wl81-app</include>

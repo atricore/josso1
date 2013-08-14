@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <ear-subdeployments-isolated>false</ear-subdeployments-isolated>
+    <!--deployment>
+        <dependencies>
+            <module name="org.josso" slot="main" />
+        </dependencies>
+    </deployment-->
+
+    <sub-deployment name="josso-partner-jboss7-web-1.8.8-SNAPSHOT.war">
+        <!-- This corresponds to the module for a web deployment -->
+        <!-- it can use all the same tags as the <deployment> entry above -->
+        <!--dependencies>
+            <module name="org.josso" slot="main" />
+        </dependencies-->
+        <!-- Set's local resources to have the lowest priority -->
+        <!-- If the same class is both in the sub deployment and in another sub deployment that -->
+        <!-- is visible to the war, then the Class from the other deployment will be loaded,  -->
+        <!-- rather than the class actually packaged in the war. -->
+        <!-- This can be used to resolve ClassCastExceptions  if the same class is in multiple sub deployments-->
+        <local-last value="false" />
+    </sub-deployment>
+</jboss-deployment-structure>

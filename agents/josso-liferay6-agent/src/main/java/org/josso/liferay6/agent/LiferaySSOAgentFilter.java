@@ -149,6 +149,17 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                 return;
             }
 
+            String nodeId = hreq.getParameter("josso_node");
+            if (nodeId != null) {
+                if (log.isDebugEnabled())
+                    log.debug("Storing JOSSO Node id : " + nodeId);
+                _agent.setAttribute(hreq, hres, "JOSSO_NODE",  nodeId);
+            } else {
+                nodeId = _agent.getAttribute(hreq, "JOSSO_NODE");
+                if (log.isDebugEnabled())
+                    log.debug("Found JOSSO Node id : " + nodeId);
+            }
+
             // ------------------------------------------------------------------
             // Check some basic HTTP handling
             // ------------------------------------------------------------------

@@ -884,4 +884,15 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
     public void setAutomaticLoginStrategies(List _automaticStrategies) {
         this._automaticStrategies = _automaticStrategies;
     }
+
+    public boolean isAgentReservedUri(String uri) {
+
+        if (uri == null)
+            return false;
+        // TODO : Cache URIs so we dont do this all the time.
+        return uri.startsWith(getJossoLoginUri()) ||
+                uri.startsWith(getJossoSecurityCheckUri()) ||
+                uri.startsWith(getJossoLogoutUri()) ||
+                uri.startsWith(getJossoUserLoginUri());
+    }
 }

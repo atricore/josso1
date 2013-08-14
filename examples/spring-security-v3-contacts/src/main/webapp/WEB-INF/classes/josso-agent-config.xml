@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:ns2="http://www.ops4j.org/schema/wicket" xmlns:ns3="http://www.springframework.org/schema/osgi" xmlns:ns4="http://www.springframework.org/schema/tool" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd http://www.ops4j.org/schema/wicket http://www.ops4j.org/schema/wicket/wicket.xsd ">
+    <bean class="org.josso.servlet.agent.GenericServletSSOAgent" name="josso-servlet-agent">
+        <property name="sessionAccessMinInterval">
+            <value>1000</value>
+        </property>
+        <property name="disableJaas">
+            <value>true</value>
+        </property>
+        <property name="gatewayLoginUrl">
+            <value>http://localhost:8081/IDBUS/SPRING-SECURITY-DEMO/JETTY/JOSSO/SSO/REDIR</value>
+        </property>
+        <property name="gatewayLogoutUrl">
+            <value>http://localhost:8081/IDBUS/SPRING-SECURITY-DEMO/JETTY/JOSSO/SLO/REDIR</value>
+        </property>
+        <property name="gatewayServiceLocator">
+            <bean class="org.josso.gateway.WebserviceGatewayServiceLocator">
+                <property name="endpoint">
+                    <value>localhost:8081</value>
+                </property>
+                <property name="sessionManagerServicePath">
+                    <value>IDBUS/SPRING-SECURITY-DEMO/JETTY/JOSSO/SSOSessionManager/SOAP</value>
+                </property>
+                <property name="identityManagerServicePath">
+                    <value>IDBUS/SPRING-SECURITY-DEMO/JETTY/JOSSO/SSOIdentityManager/SOAP</value>
+                </property>
+                <property name="identityProviderServicePath">
+                    <value>IDBUS/SPRING-SECURITY-DEMO/JETTY/JOSSO/SSOIdentityProvider/SOAP</value>
+                </property>
+            </bean>
+        </property>
+        <property name="parametersBuilders">
+            <list>
+                <bean class="org.josso.agent.http.AppIdParametersBuilder"/>
+            </list>
+        </property>
+        <property name="automaticLoginStrategies">
+            <list>
+                <bean class="org.josso.agent.http.DefaultAutomaticLoginStrategy">
+                    <property name="mode">
+                        <value>REQUIRED</value>
+                    </property>
+                    <property name="ignoredReferrers">
+                        <list>
+                            <value>http://localhost:8081/IDBUS/SPRING-SECURITY-DEMO</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+        <property name="configuration">
+            <bean class="org.josso.agent.SSOAgentConfigurationImpl">
+                <property name="ssoPartnerApps">
+                    <list>
+                        <bean class="org.josso.agent.SSOPartnerAppConfig">
+                            <property name="id">
+<value>contactssp</value>
+                            </property>
+                            <property name="vhost">
+<value>localhost</value>
+                            </property>
+                            <property name="context">
+<value>/contacts</value>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>

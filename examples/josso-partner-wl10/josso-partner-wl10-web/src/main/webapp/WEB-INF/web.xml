@@ -87,6 +87,7 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
             <web-resource-name>public-resources</web-resource-name>
 
             <url-pattern>/resources/*</url-pattern>
+            <url-pattern>/josso-wls/*</url-pattern>
 
             <http-method>HEAD</http-method>
             <http-method>GET</http-method>
@@ -115,7 +116,7 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
             <url-pattern>/protected/*</url-pattern>
 
             <!-- Needed by WLS integration -->
-            <url-pattern>/josso-wls/*</url-pattern>
+            <!--url-pattern>/josso-wls/*</url-pattern-->
 
             <http-method>HEAD</http-method>
             <http-method>GET</http-method>

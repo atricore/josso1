@@ -194,6 +194,16 @@
 
         <dependency>
             <groupId>org.josso</groupId>
+            <artifactId>josso-gatein-agent-main</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-gatein-agent-authenticator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
             <artifactId>josso-alfresco-agent</artifactId>
         </dependency>
 
@@ -214,13 +224,23 @@
 
         <dependency>
             <groupId>org.josso</groupId>
+            <artifactId>josso-jboss7-agent</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
             <artifactId>josso-applet-agent</artifactId>
         </dependency>
 
         <!-- JOSSO Client dependency -->
         <dependency>
             <groupId>org.josso</groupId>
-            <artifactId>josso-spring-security</artifactId>
+            <artifactId>josso-spring-security-v2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-spring-security-v3</artifactId>
         </dependency>
 
         <dependency>
@@ -327,6 +347,12 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-partner-jboss5-app</artifactId>
+            <type>ear</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-jboss7-app</artifactId>
             <type>ear</type>
         </dependency>
 

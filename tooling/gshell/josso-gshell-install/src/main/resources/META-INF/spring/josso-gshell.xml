@@ -62,7 +62,7 @@
         <s:property name="printer" ref="messagePrinter"/>
     </tomcat-installer>
 
-    <tomcat-installer id="tc60-installer">
+    <tomcat-installer id="tc60-iDra. Alcira Pignata ‏@nstaller">
         <s:constructor-arg ref="tc60"/>
         <s:property name="printer" ref="messagePrinter"/>
     </tomcat-installer>
@@ -147,6 +147,12 @@
 
     <!-- JBoss -->
 
+    <jboss-wildfly-installer id="jb7-installer">
+        <s:constructor-arg ref="jb7"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </jboss-wildfly-installer>
+
+
     <jboss-installer id="jb6-installer">
         <s:constructor-arg ref="jb6"/>
         <s:property name="printer" ref="messagePrinter"/>
@@ -171,6 +177,24 @@
         <s:constructor-arg ref="jb32"/>
         <s:property name="printer" ref="messagePrinter"/>
     </jboss-installer>
+
+    <platform id="jb7" family="jboss" platformName="JBoss AS (WildFly)" version="7.x">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/modules</lib>
+        <conf>${target}/standalone/configuration</conf>
+        <deploy>${target}/standalone/deployments</deploy>
+        <endorsed>${target}/modules</endorsed>
+
+        <josso-conf>${target}/modules/org/josso/main/config</josso-conf>
+        <josso-lib>${target}/modules/org/josso/main</josso-lib>
+        <josso-shared>${target}/modules/org/josso/main</josso-shared>
+
+        <!-- not supported -->>
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
 
     <platform id="jb6" family="jboss" platformName="JBoss AS" version="6.x">
 
@@ -375,10 +399,23 @@
         <s:property name="printer" ref="messagePrinter"/>
     </liferay6-installer>
 
+
     <platform id="liferay6" family="jee" platformName="Liferay6" version="6.0.6">
         <lib>${target}/WEB-INF/lib</lib>
         <conf>${target}/WEB-INF/classes</conf>
         <josso-conf>${target}/WEB-INF/classes</josso-conf>
+    </platform>
+
+    <!-- GateIn 3 platform -->
+    <gatein3-installer id="gatein3-installer">
+        <s:constructor-arg ref="gatein3"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </gatein3-installer>
+
+    <platform id="gatein3" family="jee" platformName="GateIn" version="3.x">
+        <lib>${target}/jboss-as/server/${instance}/deploy/gatein.ear/lib</lib>
+        <conf>${target}/jboss-as/server/${instance}/deploy/gatein.ear/02portal.war/WEB-INF/classes</conf>
+        <josso-conf>${target}/jboss-as/server/${instance}/deploy/gatein.ear/02portal.war/WEB-INF/classes</josso-conf>
     </platform>
 
     <!-- Alfresco "platform"  -->

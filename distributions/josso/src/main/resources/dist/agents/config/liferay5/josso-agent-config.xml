@@ -12,7 +12,7 @@
             gatewayLoginUrl="http://localhost:8090/josso/signon/login.do"
             gatewayLogoutUrl="http://localhost:8090/josso/signon/logout.do"
             emailAddressProperty="email"
-            fistNameProperty="user.name"
+            firstNameProperty="user.name"
             lastNameProperty="user.lastName"
             autoScreenName="true"
             >

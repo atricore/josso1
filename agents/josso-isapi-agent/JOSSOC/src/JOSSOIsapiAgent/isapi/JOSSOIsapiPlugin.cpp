@@ -534,9 +534,6 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 
 					// Create JOSSO SESSION ID Cookie
 
-					//PartnerAppConfig * appCfg = ssoAgent->getPartnerAppConfigById(partnerAppId);
-					//string appKey(appCfg->getKey());
-
 					string https = req->getServerVariable("HTTPS", MAX_HEADER_SIZE);
 					bool secure = false;
 					if(https == "on" || https == "ON") secure = true;
@@ -554,9 +551,19 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 					} else if (!originalResource.empty()) {
 						jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to JOSSO_RESOURCE [%s]", originalResource.c_str());
 						res->sendRedirect(originalResource);
+					} else if (!partnerAppId.empty()) {
+					    PartnerAppConfig * appCfg = ssoAgent->getPartnerAppConfigById(partnerAppId);
+                        string defaultResource = appCfg->getDefaultResource();
+                        if (!defaultResource.empty()) {
+                            jk_log(ssoAgent->logger, JK_LOG_ERROR, "Redirecting to default resource [%s] for application [%s]", defaultResource.c_str(), partnerAppId.c_str());
+                            res->sendRedirect(defaultResource);
+                        } else {
+    					    jk_log(ssoAgent->logger, JK_LOG_ERROR, "No default resource found for application [%s]", partnerAppId.c_str());
+        				    rv = HSE_STATUS_ERROR;
+                        }
 					} else {
-						jk_log(ssoAgent->logger, JK_LOG_ERROR, "No JOSSO_RESOURCE or JOSSO_SPLASH_RESOURCE received!");
-						rv = HSE_STATUS_ERROR;
+					    jk_log(ssoAgent->logger, JK_LOG_ERROR, "No JOSSO_RESOURCE, JOSSO_SPLASH_RESOURCE or josso_partnerapp_id foun!");
+    				    rv = HSE_STATUS_ERROR;
 					}
 				}
 			}

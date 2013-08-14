@@ -139,6 +139,18 @@ public class  WLSAgentServletFilter implements Filter {
                 return;
             }
 
+            String nodeId = hreq.getParameter("josso_node");
+            if (nodeId != null) {
+                if (log.isDebugEnabled())
+                    log.debug("Storing JOSSO Node id : " + nodeId);
+                _agent.setAttribute(hreq, hres, "JOSSO_NODE",  nodeId);
+            } else {
+                nodeId = _agent.getAttribute(hreq, "JOSSO_NODE");
+                if (log.isDebugEnabled())
+                    log.debug("Found JOSSO Node id : " + nodeId);
+            }
+
+
             // ------------------------------------------------------------------
             // Check some basic HTTP handling
             // ------------------------------------------------------------------
@@ -249,7 +261,7 @@ public class  WLSAgentServletFilter implements Filter {
                     log.debug("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
 
                 SSOAgentRequest customAuthRequest = doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_CUSTOM_AUTHENTICATION,
-                        jossoSessionId, localSession, null, hreq, hres);
+                        jossoSessionId, localSession, null, nodeId, hreq, hres);
                 _agent.processRequest(customAuthRequest);
 
                 return;
@@ -354,7 +366,7 @@ public class  WLSAgentServletFilter implements Filter {
                 if (log.isDebugEnabled())
                     log.debug("Outbound relaying requested for assertion id [" + assertionId + "]");
 
-                relayRequest = doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_RELAY, null, localSession, assertionId, hreq, hres);
+                relayRequest = doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_RELAY, null, localSession, assertionId, nodeId, hreq, hres);
 
                 SingleSignOnEntry entry = _agent.processRequest(relayRequest);
                 if (entry == null) {
@@ -427,7 +439,7 @@ public class  WLSAgentServletFilter implements Filter {
 
             SSOAgentRequest r;
             log.debug("Creating Security Context for Session [" + session + "]");
-            r =  doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_ESTABLISH_SECURITY_CONTEXT, jossoSessionId, localSession, null, hreq, hres);
+            r =  doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_ESTABLISH_SECURITY_CONTEXT, jossoSessionId, localSession, null, nodeId, hreq, hres);
 
             SingleSignOnEntry entry = _agent.processRequest(r);
 
@@ -517,9 +529,9 @@ public class  WLSAgentServletFilter implements Filter {
     /**
      * Creates a new request
      */
-    protected SSOAgentRequest doMakeSSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId,
+    protected SSOAgentRequest doMakeSSOAgentRequest(String requester, int action, String sessionId, LocalSession session, String assertionId, String nodeId,
                                                     HttpServletRequest hreq, HttpServletResponse hres) {
-        GenericServletSSOAgentRequest r = new GenericServletSSOAgentRequest(requester, action, sessionId, session, assertionId);
+        GenericServletSSOAgentRequest r = new GenericServletSSOAgentRequest(requester, action, sessionId, session, assertionId, nodeId);
         r.setRequest(hreq);
         r.setResponse(hres);
 

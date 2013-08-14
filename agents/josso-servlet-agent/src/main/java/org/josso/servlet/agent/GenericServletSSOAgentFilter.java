@@ -66,12 +66,12 @@ public class GenericServletSSOAgentFilter implements Filter {
     /**
      * The servlet context
      */
-    private ServletContext _context;
+    protected ServletContext context;
 
     /**
      * One agent instance for all applications.
      */
-    private HttpSSOAgent _agent;
+    protected HttpSSOAgent agent;
 
     /**
      * Logger
@@ -82,7 +82,7 @@ public class GenericServletSSOAgentFilter implements Filter {
 
     }
 
-    private void startup() throws ServletException {
+    protected void startup() throws ServletException {
 
         try {
 
@@ -90,14 +90,14 @@ public class GenericServletSSOAgentFilter implements Filter {
             lookup.init("josso-agent-config.xml"); // For spring compatibility ...
 
             // We need at least an abstract SSO Agent
-            _agent = (HttpSSOAgent) lookup.lookupSSOAgent();
+            agent = (HttpSSOAgent) lookup.lookupSSOAgent();
             if (log.isDebugEnabled())
-            _agent.setDebug(1);
-            _agent.start();
+            agent.setDebug(1);
+            agent.start();
 
 
             // Publish agent in servlet context
-            _context.setAttribute("org.josso.agent", _agent);
+            context.setAttribute("org.josso.agent", agent);
 
         } catch (Exception e) {
             throw new ServletException("Error starting SSO Agent : " + e.getMessage(), e);
@@ -107,14 +107,15 @@ public class GenericServletSSOAgentFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {
         // Validate and update our current component state
-        _context = filterConfig.getServletContext();
-        _context.setAttribute(KEY_SESSION_MAP, new HashMap());
+        context = filterConfig.getServletContext();
+        context.setAttribute(KEY_SESSION_MAP, new HashMap());
 
         // Lazy startup shifts filter initialization upon the first request is received
         // This allows the container to setup web application's classloader
         // In some containers - such as JRun - a filter will not be able to access web application's resources
         // (e.g. WEB-INF/classes) during initialization due to that this is not fully initialized yet.
-        if (_agent == null && !filterConfig.getInitParameter("init").equals(LAZY_STARTUP)) {
+        if (agent == null && (filterConfig.getInitParameter("init") == null ||
+            ( filterConfig.getInitParameter("init") != null && !filterConfig.getInitParameter("init").equals(LAZY_STARTUP)))) {
             startup();
         }
 
@@ -124,7 +125,7 @@ public class GenericServletSSOAgentFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
 
-        if (_agent == null) {
+        if (agent == null) {
             startup();
         }
 
@@ -149,9 +150,9 @@ public class GenericServletSSOAgentFilter implements Filter {
             if (nodeId != null) {
                 if (log.isDebugEnabled())
                     log.debug("Storing JOSSO Node id : " + nodeId);
-                _agent.setAttribute(hreq, hres, "JOSSO_NODE",  nodeId);
+                agent.setAttribute(hreq, hres, "JOSSO_NODE",  nodeId);
             } else {
-                nodeId = _agent.getAttribute(hreq, "JOSSO_NODE");
+                nodeId = agent.getAttribute(hreq, "JOSSO_NODE");
                 if (log.isDebugEnabled())
                     log.debug("Found JOSSO Node id : " + nodeId);
             }
@@ -160,7 +161,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             if ("".equals(contextPath))
                 contextPath = "/";
 
-            if (!_agent.isPartnerApp(vhost, contextPath)) {
+            if (!agent.isPartnerApp(vhost, contextPath)) {
                 filterChain.doFilter(hreq, hres);
                 if (log.isDebugEnabled())
                     log.debug("Context is not a josso partner app : " + hreq.getContextPath());
@@ -172,7 +173,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             // Check some basic HTTP handling
             // ------------------------------------------------------------------
             // P3P Header for IE 6+ compatibility when embedding JOSSO in a IFRAME
-            SSOPartnerAppConfig cfg = _agent.getPartnerAppConfig(vhost, contextPath);
+            SSOPartnerAppConfig cfg = agent.getPartnerAppConfig(vhost, contextPath);
             if (cfg.isSendP3PHeader() && !hres.isCommitted()) {
                 hres.setHeader("P3P", cfg.getP3PHeaderValue());
             }
@@ -186,27 +187,27 @@ public class GenericServletSSOAgentFilter implements Filter {
             if (log.isDebugEnabled())
                 log.debug("Checking if its a josso_login_request for '" + hreq.getRequestURI() + "'");
 
-            if (hreq.getRequestURI().endsWith(_agent.getJossoLoginUri()) ||
-            		hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
+            if (hreq.getRequestURI().endsWith(agent.getJossoLoginUri()) ||
+            		hreq.getRequestURI().endsWith(agent.getJossoUserLoginUri())) {
 
                 if (log.isDebugEnabled())
                     log.debug("josso_login_request received for uri '" + hreq.getRequestURI() + "'");
 
                 //save referer url in case the user clicked on Login from some public resource (page)
                 //so agent can redirect the user back to that page after successful login
-                if (hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
+                if (hreq.getRequestURI().endsWith(agent.getJossoUserLoginUri())) {
                 	saveLoginBackToURL(hreq, hres, session, true);
                 } else {
                 	saveLoginBackToURL(hreq, hres, session, false);
                 }
                 
-                String loginUrl = _agent.buildLoginUrl(hreq);
+                String loginUrl = agent.buildLoginUrl(hreq);
 
                 if (log.isDebugEnabled())
                     log.debug("Redirecting to login url '" + loginUrl + "'");
 
                 //set non cache headers
-                _agent.prepareNonCacheResponse(hres);
+                agent.prepareNonCacheResponse(hres);
                 hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
 
                 return;
@@ -219,25 +220,25 @@ public class GenericServletSSOAgentFilter implements Filter {
             if (log.isDebugEnabled())
                 log.debug("Checking if its a josso_logout request for '" + hreq.getRequestURI() + "'");
 
-            if (hreq.getRequestURI().endsWith(_agent.getJossoLogoutUri())) {
+            if (hreq.getRequestURI().endsWith(agent.getJossoLogoutUri())) {
 
                 if (log.isDebugEnabled())
                     log.debug("josso_logout request received for uri '" + hreq.getRequestURI() + "'");
 
-                String logoutUrl = _agent.buildLogoutUrl(hreq, cfg);
+                String logoutUrl = agent.buildLogoutUrl(hreq, cfg);
 
                 if (log.isDebugEnabled())
                     log.debug("Redirecting to logout url '" + logoutUrl + "'");
 
                 // Clear previous COOKIE ...
-                Cookie ssoCookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
+                Cookie ssoCookie = agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
                 hres.addCookie(ssoCookie);
                 
                 // invalidate session (unbind josso security context)
                 session.invalidate();
                 
                 //set non cache headers
-                _agent.prepareNonCacheResponse(hres);
+                agent.prepareNonCacheResponse(hres);
                 hres.sendRedirect(hres.encodeRedirectURL(logoutUrl));
 
                 return;
@@ -296,7 +297,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             if (log.isDebugEnabled()){
                 log.debug("Checking if its a josso_authentication for '" + hreq.getRequestURI() + "'");
             }
-            if (hreq.getRequestURI().endsWith(_agent.getJossoAuthenticationUri())) {
+            if (hreq.getRequestURI().endsWith(agent.getJossoAuthenticationUri())) {
 
             	if (log.isDebugEnabled()){
                     log.debug("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
@@ -304,7 +305,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             	
             	GenericServletSSOAgentRequest customAuthRequest = (GenericServletSSOAgentRequest) doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_CUSTOM_AUTHENTICATION, jossoSessionId, nodeId, localSession, null, hreq, hres);
                 
-                _agent.processRequest(customAuthRequest);
+                agent.processRequest(customAuthRequest);
                 
                 return;
             }
@@ -320,37 +321,37 @@ public class GenericServletSSOAgentFilter implements Filter {
 
                 // We have no cookie, remember me is enabled and a security check without assertion was received ...
                 // This means that the user could not be identified ... go back to the original resource
-                if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
+                if (hreq.getRequestURI().endsWith(agent.getJossoSecurityCheckUri()) &&
                     hreq.getParameter("josso_assertion_id") == null) {
 
                 	 if (log.isDebugEnabled())
-                		 log.debug(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
+                		 log.debug(agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
 
                     String requestURI = getSavedRequestURL(hreq);
-                    _agent.prepareNonCacheResponse(hres);
+                    agent.prepareNonCacheResponse(hres);
                     hres.sendRedirect(hres.encodeRedirectURL(requestURI));
                     return;
 
                 }
                 
             	// This is a standard anonymous request!
-                if (!hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri())) {
+                if (!hreq.getRequestURI().endsWith(agent.getJossoSecurityCheckUri())) {
 
-                    if (!_agent.isResourceIgnored(cfg, hreq) && 
-                    		_agent.isAutomaticLoginRequired(hreq, hres)) {
+                    if (!agent.isResourceIgnored(cfg, hreq) &&
+                    		agent.isAutomaticLoginRequired(hreq, hres)) {
 
                         if (log.isDebugEnabled())
                         	log.debug("SSO cookie is not present, attempting automatic login");
 
                         // Save current request, so we can co back to it later ...
                         saveRequestURL(hreq, hres);
-                        String loginUrl = _agent.buildLoginOptionalUrl(hreq);
+                        String loginUrl = agent.buildLoginOptionalUrl(hreq);
 
                         if (log.isDebugEnabled())
                         	log.debug("Redirecting to login url '" + loginUrl + "'");
                         
                         //set non cache headers
-                        _agent.prepareNonCacheResponse(hres);
+                        agent.prepareNonCacheResponse(hres);
                         hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
                         return;
                     } else {
@@ -359,13 +360,13 @@ public class GenericServletSSOAgentFilter implements Filter {
                     }
 
                     // save requested resource
-                	if (!_agent.isResourceIgnored(cfg, hreq)) {
+                	if (!agent.isResourceIgnored(cfg, hreq)) {
     	            	StringBuffer sb = new StringBuffer(hreq.getRequestURI());
     	                if (hreq.getQueryString() != null) {
     	                    sb.append('?');
     	                    sb.append(hreq.getQueryString());
     	                }
-    	            	_agent.setAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
+    	            	agent.setAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
                 	}
 
                 }
@@ -373,7 +374,7 @@ public class GenericServletSSOAgentFilter implements Filter {
                 if (log.isDebugEnabled())
                 	log.debug("SSO cookie is not present, checking for outbound relaying");
 
-                if (!(hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
+                if (!(hreq.getRequestURI().endsWith(agent.getJossoSecurityCheckUri()) &&
                     hreq.getParameter("josso_assertion_id") != null)) {
                     log.debug("SSO cookie not present and relaying was not requested, skipping");
                     filterChain.doFilter(hreq, hres);
@@ -385,7 +386,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             // ------------------------------------------------------------------
             // Check if this URI is subject to SSO protection
             // ------------------------------------------------------------------
-            if (_agent.isResourceIgnored(cfg, hreq)) {
+            if (agent.isResourceIgnored(cfg, hreq)) {
                 filterChain.doFilter(hreq, hres);
                 return;
             }
@@ -406,7 +407,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             if (log.isDebugEnabled())
                 log.debug("Checking if its a josso_security_check for '" + hreq.getRequestURI() + "'");
 
-            if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
+            if (hreq.getRequestURI().endsWith(agent.getJossoSecurityCheckUri()) &&
                 hreq.getParameter("josso_assertion_id") != null) {
 
                 if (log.isDebugEnabled())
@@ -423,7 +424,7 @@ public class GenericServletSSOAgentFilter implements Filter {
 
                 relayRequest = (GenericServletSSOAgentRequest) doMakeSSOAgentRequest( cfg.getId(), SSOAgentRequest.ACTION_RELAY, null, nodeId, localSession, assertionId, hreq, hres);
 
-                SingleSignOnEntry entry = _agent.processRequest(relayRequest);
+                SingleSignOnEntry entry = agent.processRequest(relayRequest);
                 if (entry == null) {
                     // This is wrong! We should have an entry here!
                     log.error("Outbound relaying failed for assertion id [" + assertionId + "], no Principal found.");
@@ -432,14 +433,14 @@ public class GenericServletSSOAgentFilter implements Filter {
                 }
 
                 if (log.isDebugEnabled())
-                    log.debug("Outbound relaying succesfull for assertion id [" + assertionId + "]");
+                    log.debug("Outbound relaying successful for assertion id [" + assertionId + "]");
 
                 if (log.isDebugEnabled())
                     log.debug("Assertion id [" + assertionId + "] mapped to SSO session id [" + entry.ssoId + "]");
 
                 // The cookie is valid to for the partner application only ... in the future each partner app may
                 // store a different auth. token (SSO SESSION) value
-                cookie = _agent.newJossoCookie(hreq.getContextPath(), entry.ssoId, hreq.isSecure());
+                cookie = agent.newJossoCookie(hreq.getContextPath(), entry.ssoId, hreq.isSecure());
                 hres.addCookie(cookie);
 
                 // Redirect the user to the original request URI (which will cause
@@ -454,11 +455,11 @@ public class GenericServletSSOAgentFilter implements Filter {
                         } else {
     		                // If no saved request is found, redirect to the partner app root :
 	    	                requestURI = hreq.getRequestURI().substring(
-		                        0, (hreq.getRequestURI().length() - _agent.getJossoSecurityCheckUri().length()));
+		                        0, (hreq.getRequestURI().length() - agent.getJossoSecurityCheckUri().length()));
                         }
 	                	
 	                    // If we're behind a reverse proxy, we have to alter the URL ... this was not necessary on tomcat 5.0 ?!
-	                    String singlePointOfAccess = _agent.getSinglePointOfAccess();
+	                    String singlePointOfAccess = agent.getSinglePointOfAccess();
 	                    if (singlePointOfAccess != null) {
 	                        requestURI = singlePointOfAccess + requestURI;
 	                    } else {
@@ -474,13 +475,13 @@ public class GenericServletSSOAgentFilter implements Filter {
                 }
 
                 clearSavedRequestURLs(hreq, hres);
-               	_agent.clearAutomaticLoginReferer(hreq, hres);
-               	_agent.prepareNonCacheResponse(hres);
+               	agent.clearAutomaticLoginReferer(hreq, hres);
+               	agent.prepareNonCacheResponse(hres);
                	
                	// Check if we have a post login resource :
                 String postAuthURI = cfg.getPostAuthenticationResource();
                 if (postAuthURI != null) {
-                    String postAuthURL = _agent.buildPostAuthUrl(hres, requestURI, postAuthURI);
+                    String postAuthURL = agent.buildPostAuthUrl(hres, requestURI, postAuthURI);
                     if (log.isDebugEnabled())
                         log.debug("Redirecting to post-auth-resource '" + postAuthURL  + "'");
                     hres.sendRedirect(postAuthURL);
@@ -495,7 +496,7 @@ public class GenericServletSSOAgentFilter implements Filter {
 
 
             SSOAgentRequest r = doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_ESTABLISH_SECURITY_CONTEXT, jossoSessionId, nodeId, localSession, null, hreq, hres);
-            SingleSignOnEntry entry = _agent.processRequest(r);
+            SingleSignOnEntry entry = agent.processRequest(r);
 
             if (log.isDebugEnabled())
                 log.debug("Executed agent.");
@@ -519,24 +520,24 @@ public class GenericServletSSOAgentFilter implements Filter {
 
             	if (cookie != null) {
                 	// cookie is not valid
-                	cookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
+                	cookie = agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
                 	hres.addCookie(cookie);
                 }
             	
-            	if (cookie != null || (getSavedRequestURL(hreq) == null && _agent.isAutomaticLoginRequired(hreq, hres))) {
+            	if (cookie != null || (getSavedRequestURL(hreq) == null && agent.isAutomaticLoginRequired(hreq, hres))) {
 
                     if (log.isDebugEnabled())
                     	log.debug("SSO Session is not valid, attempting automatic login");
 
                     // Save current request, so we can co back to it later ...
                     saveRequestURL(hreq, hres);
-                    String loginUrl = _agent.buildLoginOptionalUrl(hreq);
+                    String loginUrl = agent.buildLoginOptionalUrl(hreq);
 
                     if (log.isDebugEnabled())
                     	log.debug("Redirecting to login url '" + loginUrl + "'");
                     
                     //set non cache headers
-                    _agent.prepareNonCacheResponse(hres);
+                    agent.prepareNonCacheResponse(hres);
                     hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
                     return;
                 } else {
@@ -548,8 +549,8 @@ public class GenericServletSSOAgentFilter implements Filter {
 
             // propagate the login and logout URLs to
             // partner applications.
-            hreq.setAttribute("org.josso.agent.gateway-login-url", _agent.getGatewayLoginUrl() );
-            hreq.setAttribute("org.josso.agent.gateway-logout-url", _agent.getGatewayLogoutUrl() );
+            hreq.setAttribute("org.josso.agent.gateway-login-url", agent.getGatewayLoginUrl() );
+            hreq.setAttribute("org.josso.agent.gateway-logout-url", agent.getGatewayLogoutUrl() );
             hreq.setAttribute("org.josso.agent.ssoSessionid", jossoSessionId);
 
             // ------------------------------------------------------------------
@@ -564,9 +565,9 @@ public class GenericServletSSOAgentFilter implements Filter {
 
     public void destroy() {
         // Validate and update our current component state
-        if (_agent != null) {
-            _agent.stop();
-            _agent = null;
+        if (agent != null) {
+            agent.stop();
+            agent = null;
         }
 
 
@@ -578,7 +579,7 @@ public class GenericServletSSOAgentFilter implements Filter {
      * @param hreq current http request
      */
     private String getSavedSplashResource(HttpServletRequest hreq){
-    	return _agent.getAttribute(hreq, Constants.JOSSO_SPLASH_RESOURCE_PARAMETER);
+    	return agent.getAttribute(hreq, Constants.JOSSO_SPLASH_RESOURCE_PARAMETER);
     }    
 
 
@@ -589,7 +590,7 @@ public class GenericServletSSOAgentFilter implements Filter {
      * @param hreq current http request
      */
     private String getSavedRequestURL(HttpServletRequest hreq) {
-        return _agent.getAttribute(hreq, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
+        return agent.getAttribute(hreq, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
     }
 
     /**
@@ -612,14 +613,14 @@ public class GenericServletSSOAgentFilter implements Filter {
      * @param hres The http servlet response associated to the request
      */
     private void saveRequestURL(HttpServletRequest hreq, HttpServletResponse hres) {
-    	StringBuffer sb = new StringBuffer(hreq.getRequestURI());
+        StringBuffer sb = new StringBuffer(hreq.getRequestURI());
         if (hreq.getQueryString() != null) {
             String q = hreq.getQueryString();
             if (!q.startsWith("?"))
                 sb.append('?');
             sb.append(q);
         }
-        _agent.setAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
+        agent.setAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
     }
 
     /**
@@ -654,7 +655,7 @@ public class GenericServletSSOAgentFilter implements Filter {
     	String referer = request.getHeader("referer");
     	if ((getSavedRequestURL(request) == null || overrideSavedResource) && referer != null && !referer.equals("")) {
 
-    		_agent.setAttribute(request, response, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, referer);
+    		agent.setAttribute(request, response, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, referer);
         }
     }
     
@@ -667,8 +668,8 @@ public class GenericServletSSOAgentFilter implements Filter {
      * @param hres http response
      */
     protected void clearSavedRequestURLs(HttpServletRequest hreq, HttpServletResponse hres) {
-    	_agent.removeAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
-    	_agent.removeAttribute(hreq, hres, Constants.JOSSO_SPLASH_RESOURCE_PARAMETER);
+    	agent.removeAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
+    	agent.removeAttribute(hreq, hres, Constants.JOSSO_SPLASH_RESOURCE_PARAMETER);
     }
 
 }

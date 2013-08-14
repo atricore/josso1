@@ -29,6 +29,7 @@ import org.josso.gateway.identity.SSOUser;
 
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ import java.util.Set;
  *
  * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
  */
-public class JOSSOSecurityContext {
+public class JOSSOSecurityContext implements Serializable {
 
     private static final Log logger = LogFactory.getLog(JOSSOSecurityContext.class);
 
@@ -63,6 +64,12 @@ public class JOSSOSecurityContext {
      */
     private Map roles;
 
+    /**
+     * The current single sign-on session for this user 
+     */
+    private String ssoSession;
+    
+    
     /**
      * Creates a new security context for the given subject.  The subject must contain at least one SSOUser principal instance.
      */
@@ -112,5 +119,14 @@ public class JOSSOSecurityContext {
     Subject getSubject() {
         return subject;
     }
+
+    public String getSSOSession() {
+        return ssoSession;
+    }
+
+    public void setSSOSession(String ssoSession) {
+        this.ssoSession = ssoSession;
+    }
+
 
 }

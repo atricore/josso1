@@ -33,6 +33,7 @@ import org.josso.gateway.session.service.SSOSessionManagerService;
 import org.josso.gateway.ws._1_2.wsdl.*;
 
 import javax.xml.ws.BindingProvider;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -44,6 +45,8 @@ import java.util.Map;
 public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator {
 
     private static final Log logger = LogFactory.getLog(JAXWSWebserviceGatewayServiceLocator.class);
+
+    private String wsdlLocation;
 
     /**
      * Package private Constructor so that it can only be instantiated
@@ -59,7 +62,8 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
      * @throws Exception
      */
     public SSOSessionManagerService getSSOSessionManager() throws Exception {
-        SSOSessionManager port = new SSOSessionManagerWS().getSSOSessionManagerSoap();
+        SSOSessionManager port = new SSOSessionManagerWS(wsdlLocation == null ?
+                SSOSessionManagerWS.WSDL_LOCATION : new URL(wsdlLocation)).getSSOSessionManagerSoap();
 
         String smEndpoint = getSSOSessionManagerEndpoint();
         logger.debug("Using SSOSessionManager endpoint '" + smEndpoint + "'");
@@ -77,7 +81,8 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
      * @throws Exception
      */
     public SSOIdentityManagerService getSSOIdentityManager() throws Exception {
-        SSOIdentityManager port = new SSOIdentityManagerWS().getSSOIdentityManagerSoap();
+        SSOIdentityManager port = new SSOIdentityManagerWS(wsdlLocation == null ?
+                SSOIdentityManagerWS.WSDL_LOCATION : new URL(wsdlLocation)).getSSOIdentityManagerSoap();
 
         String imEndpoint = getSSOIdentityManagerEndpoint();
         logger.debug("Using SSOIdentityManager endpoint '" + imEndpoint + "'");
@@ -95,7 +100,8 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
      * @throws Exception
      */
     public SSOIdentityProviderService getSSOIdentityProvider() throws Exception {
-        SSOIdentityProvider port = new SSOIdentityProviderWS().getSSOIdentityProviderSoap();
+        SSOIdentityProvider port = new SSOIdentityProviderWS(wsdlLocation == null ?
+                SSOIdentityProviderWS.WSDL_LOCATION : new URL(wsdlLocation)).getSSOIdentityProviderSoap();
 
         String ipEndpoint = getSSOIdentityProviderEndpoint();
         logger.debug("Using SSOIdentityProvider endpoint '" + ipEndpoint + "'");
@@ -123,5 +129,11 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
 
     }
 
+    public String getWsdlLocation() {
+        return wsdlLocation;
+    }
 
+    public void setWsdlLocation(String wsdlLocation) {
+        this.wsdlLocation = wsdlLocation;
+    }
 }

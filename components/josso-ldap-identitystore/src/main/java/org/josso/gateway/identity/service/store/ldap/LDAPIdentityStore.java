@@ -1084,6 +1084,9 @@ public class LDAPIdentityStore extends AbstractStore implements ExtendedIdentity
         env.setProperty(Context.SECURITY_PRINCIPAL, securityPrincipal);
         env.put(Context.SECURITY_CREDENTIALS, securityCredential);
 
+        // always follow referrals transparently
+        env.put(Context.REFERRAL, "follow");
+
         // Logon into LDAP server
         if (logger.isDebugEnabled())
             logger.debug("Logging into LDAP server, env=" + env);

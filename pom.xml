@@ -23,7 +23,6 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.josso</groupId>
@@ -63,6 +62,7 @@
         <spring-version>2.5.5</spring-version>
         <junit-version>4.4</junit-version>
         <cxf-version>2.2.2</cxf-version>
+        <spring-security-v3-version>3.1.3.RELEASE</spring-security-v3-version>
     </properties>
 
     <profiles>
@@ -90,6 +90,12 @@
 
             <dependencyManagement>
                 <dependencies>
+
+                    <dependency>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
 
                     <dependency>
                         <groupId>org.josso</groupId>
@@ -510,32 +516,21 @@
             </snapshots>
         </repository>
 
-        <!-- Apache incubating
         <repository>
-            <id>apache-incubating</id>
-            <name>Apache Incubating Repository</name>
-            <url>http://people.apache.org/repo/m2-incubating-repository</url>
+            <id>jboss-release-repository</id>
+            <name>JBoss Release Repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/release</url>
+            <layout>default</layout>
             <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        -->
-        <!-- Apache snapshot
-        <repository>
-            <id>apache-snapshots</id>
-            <name>Apache Snapshot repository</name>
-            <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-            <releases>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
             </snapshots>
         </repository>
-        -->
+
         <!-- Codehaus -->
         <repository>
             <id>codehaus</id>
@@ -583,7 +578,18 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
-        </repository>        
+        </repository>
+
+        <repository>
+            <id>exo-int</id>
+            <url>http://maven2.exoplatform.org/rest/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
 
     </repositories>
     <pluginRepositories>
@@ -1058,6 +1064,18 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-gatein-agent-main</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-gatein-agent-authenticator</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-alfresco-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
@@ -1078,7 +1096,13 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
-                <artifactId>josso-spring-security</artifactId>
+                <artifactId>josso-spring-security-v2</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-spring-security-v3</artifactId>
                 <version>${pom.version}</version>
             </dependency>
 
@@ -1108,7 +1132,19 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-jboss7-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-applet-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-jetty6-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
 
@@ -1156,7 +1192,7 @@
                 <type>ear</type>
             </dependency>
 
-			<dependency>
+            <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss5-ejb</artifactId>
                 <version>${pom.version}</version>
@@ -1176,7 +1212,28 @@
                 <version>${pom.version}</version>
                 <type>ear</type>
             </dependency>
-            
+           
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-jboss7-ejb</artifactId>
+                <version>${pom.version}</version>
+                <type>ejb</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-jboss7-web</artifactId>
+                <version>${pom.version}</version>
+                <type>war</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-jboss7-app</artifactId>
+                <version>${pom.version}</version>
+                <type>ear</type>
+            </dependency>
+ 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl81-ejb</artifactId>

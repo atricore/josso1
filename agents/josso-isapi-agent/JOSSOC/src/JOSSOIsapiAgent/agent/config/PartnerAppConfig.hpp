@@ -18,11 +18,13 @@ public:
 	const char * getSplashResource();
 	const char * getPartnerAppId();
 	const char * getAppLoginUrl();
+	const char * getDefaultResource();
 
 	void setKey(const string &key);
 	void setSplashResource(const string &splashResource);
 	void setPartnerAppId(const string &partnerAppId);
 	void setAppLoginUrl(const string &appLoginUrl);
+	void setDefaultResource(const string &defaultResource);
 
 protected:
 	string id;
@@ -32,6 +34,7 @@ protected:
 	string splashResource;
 	string partnerAppId;
 	string appLoginUrl;
+	string defaultResource;
 
 	friend class AbstractSSOAgent;
 };

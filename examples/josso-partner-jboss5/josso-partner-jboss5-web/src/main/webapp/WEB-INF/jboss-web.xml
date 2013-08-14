@@ -25,4 +25,7 @@
 <jboss-web>
     <security-domain>java:/jaas/josso</security-domain>
     <context-root>/partnerapp</context-root>
+    <!--valve>
+        <class-name>org.josso.jb5.agent.JOSSOJASPIAuthenticator</class-name>
+    </valve-->
 </jboss-web>

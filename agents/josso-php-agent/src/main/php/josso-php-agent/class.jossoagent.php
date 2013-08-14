@@ -427,7 +427,7 @@ class jossoagent  {
     }
 
     /**
-     * Sends a keep-alive notification to the SSO server so that SSO sesison is not lost.
+     * Sends a keep-alive notification to the SSO server so that SSO session is not lost.
      * @access public
      */
     function accessSession() {
@@ -792,6 +792,7 @@ class jossoagent  {
     function getContextPath() {
         $contextPath = null;
         $requestUrl = null;
+        $requester = null;
         if (isset($_SESSION['JOSSO_ORIGINAL_URL'])) {
             $requestUrl = $_SESSION['JOSSO_ORIGINAL_URL'];
         } else if (isset($_GET['josso_current_url'])) {
@@ -823,6 +824,19 @@ class jossoagent  {
                     $contextPath = '/';
                 }
             }
+        }
+
+        if (isset($contextPath)) {
+            if (isset($this->partnerAppIDs[$contextPath])) {
+                $requester = $this->partnerAppIDs[$contextPath];
+            }
+            if (!isset($requester)) {
+                $requester = $this->partnerAppIDs['/'];
+                if (isset($requester));
+                    $contextPath = '/';
+            }
+        } else {
+            $contextPath = '/';
         }
         return $contextPath;
     }

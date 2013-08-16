@@ -216,6 +216,8 @@ public class JOSSOJASPIAuthenticator extends WebJASPIAuthenticator {
             }
         }
 
+        // TODO : Refresh security context
+
         if (log.isDebugEnabled()) {
             log.debug(" Calling accessControl()");
         }

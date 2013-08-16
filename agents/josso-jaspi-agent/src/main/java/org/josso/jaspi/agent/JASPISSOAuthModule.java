@@ -551,10 +551,15 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	        } else {
 	            log.debug("No Valid SSO Session, attempt an optional login?");
 	            // This is a standard anonymous request!
-	            
+
+                if (jossoSessionId != null && jossoSessionId.length() > 1) {
+                    // We have a previous session, clear the security context
+                    if (session != null)
+                        session.invalidate();
+                }
 	            if (cookie != null) {
-	            	// cookie is not valid
-	            	cookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
+	            	// cookie is not valid, is this a logout
+                    cookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
 	            	hres.addCookie(cookie);
 	            }
 	            

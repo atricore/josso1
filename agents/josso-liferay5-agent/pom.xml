@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>agents</artifactId>
-        <version>1.8.8-SNAPSHOT</version>
+        <version>1.8.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>josso-liferay5-agent</artifactId>

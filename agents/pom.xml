@@ -90,6 +90,7 @@
                 <module>josso-jboss32-agent</module>
                 <module>josso-jboss40-agent</module>
                 <module>josso-jboss42-agent</module>
+                <module>josso-jboss7-agent</module>
                 <module>josso-jbportal27-agent</module>
                 <module>josso-geronimo2-agent</module>
                 <module>josso-php-agent</module>
@@ -153,6 +154,7 @@
                 <module>josso-jboss32-agent</module>
                 <module>josso-jboss40-agent</module>
                 <module>josso-jboss42-agent</module>
+                <module>josso-jboss7-agent</module>
                 <module>josso-jbportal27-agent</module>
                 <module>josso-geronimo2-agent</module>
                 <module>josso-php-agent</module>

@@ -518,7 +518,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Redirecting to %s", originalResource.c_str());
 					res->sendRedirect(originalResource);
 				} else {
-					jk_log(ssoAgent->logger, JK_LOG_ERROR, "No original resource received as COOKIE JOSSO_RESOURCE! ");
+					jk_log(ssoAgent->logger, JK_LOG_DEBUG, "No original resource received as COOKIE JOSSO_RESOURCE! ");
 					rv = HSE_STATUS_ERROR;
 				}
 

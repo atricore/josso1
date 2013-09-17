@@ -79,13 +79,13 @@ string FilterAgentRequest::getMethod() {
 
 string FilterAgentRequest::getQueryString() {
 	// TODO : Implement me!
-	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	jk_log(logger, JK_LOG_DEBUG, "IMPLEMENT ME!");
 	return "";
 }
 
 string FilterAgentRequest::getContentType() {
 	// TODO : Implement me!
-	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	jk_log(logger, JK_LOG_DEBUG, "IMPLEMENT ME!");
 	return "";
 }
 
@@ -93,14 +93,14 @@ string FilterAgentRequest::getContentType() {
 
 DWORD FilterAgentRequest::getBodySize() {
 	// TODO : Implement me!
-	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	jk_log(logger, JK_LOG_DEBUG, "IMPLEMENT ME!");
 	return 0;
 }
 
 
 LPBYTE FilterAgentRequest::getBody() {
 	// TODO : Implement me!
-	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	jk_log(logger, JK_LOG_DEBUG, "IMPLEMENT ME!");
 	return NULL;
 }
 

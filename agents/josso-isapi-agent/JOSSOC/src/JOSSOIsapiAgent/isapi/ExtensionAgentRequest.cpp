@@ -26,7 +26,7 @@ bool ExtensionAgentRequest::exportSecurityContext(JOSSOSecurityContext & ctx) {
 	bool ok = true;
 
 	// TODO !!! Is this reuired for our own app?
-	jk_log(logger, JK_LOG_DEBUG, "TODO : IMPLEMENT ME!");
+	jk_log(logger, JK_LOG_DEBUG, "IMPLEMENT ME!");
 
 	return ok;
 }

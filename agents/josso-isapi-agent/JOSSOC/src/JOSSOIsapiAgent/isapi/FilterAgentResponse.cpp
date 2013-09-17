@@ -118,7 +118,7 @@ bool FilterAgentResponse::startResponse(int status, string reason, list<pair<str
 }
 
 bool FilterAgentResponse::sendContent(string content) {
-	jk_log(logger, JK_LOG_ERROR, "IMPLEMENT ME!");
+	jk_log(logger, JK_LOG_DEBUG, "IMPLEMENT ME!");
 	return false;
 }
 

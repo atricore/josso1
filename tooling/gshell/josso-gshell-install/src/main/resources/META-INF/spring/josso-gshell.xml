@@ -190,7 +190,7 @@
         <josso-lib>${target}/modules/org/josso/main</josso-lib>
         <josso-shared>${target}/modules/org/josso/main</josso-shared>
 
-        <!-- not supported -->>
+        <!-- not supported -->
         <josso-war-name>josso.war</josso-war-name>
         <josso-war-exploded>true</josso-war-exploded>
 

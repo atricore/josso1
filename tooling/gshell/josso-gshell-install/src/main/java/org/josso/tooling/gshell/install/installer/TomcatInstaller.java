@@ -103,9 +103,16 @@ public class TomcatInstaller extends VFSInstaller {
             if (artifact.getBaseName().startsWith("josso-agent-shared")) {
                 installFile(srcFile, this.targetJOSSOSharedLibDir, replace);
 
-            } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
-                    (artifact.getClassifier() == null || artifact.getClassifier().equals("axis"))) {
-                installFile(srcFile, this.targetJOSSOLibDir, replace);
+            } else if (artifact.getBaseName().startsWith("josso-agents-bin")) {
+//                    (artifact.getClassifier() == null || artifact.getClassifier().equals("axis"))) {
+                // For Tomcat 6 and 7, jaxws is used
+                if (artifact.getClassifier() == null) {
+                    installFile(srcFile, this.targetJOSSOLibDir, replace);
+                } else if (getTargetPlatform().getVersion().startsWith("6.0") && artifact.getClassifier().equals("jaxws")) {
+                    installFile(srcFile, this.targetJOSSOLibDir, replace);
+                } else if (getTargetPlatform().getVersion().startsWith("7.0") && artifact.getClassifier().equals("jaxws")) {
+                    installFile(srcFile, this.targetJOSSOLibDir, replace);
+                }
 
             } else  if (artifact.getBaseName().startsWith("josso-tomcat50-agent") &&
                     getTargetPlatform().getVersion().startsWith("5.0")) {
@@ -152,7 +159,7 @@ public class TomcatInstaller extends VFSInstaller {
 
             FileObject srcFile = getFileSystemManager().resolveFile(artifact.getLocation());
             
-            // Some jars must be copied in spetial directories in Tomcat 5.5 / 5.0
+            // Some jars must be copied in special directories in Tomcat 5.5 / 5.0
             if (getTargetPlatform().getVersion().startsWith("5.")) {
 
                 if (artifact.getBaseName().startsWith("commons-collections")){
@@ -163,7 +170,23 @@ public class TomcatInstaller extends VFSInstaller {
                     installFile(srcFile, this.targetLibDir, replace);
                 }
 
-            } else {
+            } else if (getTargetPlatform().getVersion().startsWith("6.0") ||
+                    getTargetPlatform().getVersion().startsWith("7.0")) {
+
+                // Minmal set of dependencies for TC 6/7
+                if (artifact.getBaseName().startsWith("spring-")) {
+                    removeOldJar(srcFile.getName().getBaseName(), this.targetLibDir, true);
+                    installFile(srcFile, this.targetLibDir, replace);
+                } else if (artifact.getBaseName().startsWith("xbean-")) {
+                    removeOldJar(srcFile.getName().getBaseName(), this.targetLibDir, true);
+                    installFile(srcFile, this.targetLibDir, replace);
+                } else if (artifact.getBaseName().startsWith("commons-")) {
+                    removeOldJar(srcFile.getName().getBaseName(), this.targetLibDir, true);
+                    installFile(srcFile, this.targetLibDir, replace);
+                }
+
+
+            } else  {
             	removeOldJar(srcFile.getName().getBaseName(), this.targetLibDir, true);
                 installFile(srcFile, this.targetLibDir, replace);
             }

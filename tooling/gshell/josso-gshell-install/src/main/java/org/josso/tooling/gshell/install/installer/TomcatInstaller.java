@@ -104,13 +104,13 @@ public class TomcatInstaller extends VFSInstaller {
                 installFile(srcFile, this.targetJOSSOSharedLibDir, replace);
 
             } else if (artifact.getBaseName().startsWith("josso-agents-bin")) {
-//                    (artifact.getClassifier() == null || artifact.getClassifier().equals("axis"))) {
+
                 // For Tomcat 6 and 7, jaxws is used
-                if (artifact.getClassifier() == null) {
-                    installFile(srcFile, this.targetJOSSOLibDir, replace);
-                } else if (getTargetPlatform().getVersion().startsWith("6.0") && artifact.getClassifier().equals("jaxws")) {
+                if (getTargetPlatform().getVersion().startsWith("6.0") && artifact.getClassifier().equals("jaxws")) {
                     installFile(srcFile, this.targetJOSSOLibDir, replace);
                 } else if (getTargetPlatform().getVersion().startsWith("7.0") && artifact.getClassifier().equals("jaxws")) {
+                    installFile(srcFile, this.targetJOSSOLibDir, replace);
+                } else if (artifact.getClassifier() == null || artifact.getClassifier().equals("axis")) {
                     installFile(srcFile, this.targetJOSSOLibDir, replace);
                 }
 

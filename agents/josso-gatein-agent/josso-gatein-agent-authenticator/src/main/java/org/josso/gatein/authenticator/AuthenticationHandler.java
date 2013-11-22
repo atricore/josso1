@@ -46,60 +46,66 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
 /**
  * This is a RESTful component that is invoked by central SSO servers like CAS server, JOSSO server etc, to invoke
  * Gatein authentication related queries during their own "Authentication process"
- * 
- * 
+ *
  * @author <a href="mailto:sshah@redhat.com">Sohil Shah</a>
  */
 @Path("/sso/authcallback")
-public class AuthenticationHandler implements ResourceContainer
-{
-	 private static Logger log = Logger.getLogger(AuthenticationHandler.class);
-	
-	 @GET
-	 @Path("/auth/{1}/{2}")
-   @Produces(
-   {MediaType.TEXT_PLAIN})
-   public String authenticate(@PathParam("1") String encodedUsername, @PathParam("2") String encodedPassword)
-   {
-		 try
-		 {
-              String username = new String(Base64.decodeBase64(encodedUsername.getBytes()));
-              String password = new String(Base64.decodeBase64(encodedPassword.getBytes()));
+public class AuthenticationHandler implements ResourceContainer {
+    private static Logger log = Logger.getLogger(AuthenticationHandler.class);
 
-			  log.debug("---------------------------------------");
-			  log.debug("Username: "+ username);
-			  log.debug("Password: "+ password);
-			  
-			  ExoContainer container = this.getContainer();
-			  Authenticator authenticator = (Authenticator) getContainer().getComponentInstanceOfType(Authenticator.class);
-			  			  
-			  Credential[] credentials = new Credential[] { new UsernameCredential(username),
-          new PasswordCredential(password) };			  			  
+    private Authenticator authenticator;
 
-			  try
-			  {
-			  	authenticator.validateUser(credentials);
-			  	return ""+Boolean.TRUE;
-			  }
-			  catch(LoginException le)
-			  {
-			  	return ""+Boolean.FALSE;
-			  }			  			  			  			  
-		 }
-		 catch(Exception e)
-		 {
-			 log.error(this, e);
-			 throw new RuntimeException(e);
-		 }
-   }
-	 
-	 private ExoContainer getContainer() throws Exception 
-	 {
-    ExoContainer container = ExoContainerContext.getCurrentContainer();
-    if (container instanceof RootContainer) 
-    {
-      container = RootContainer.getInstance().getPortalContainer("portal");
+    @GET
+    @Path("/auth/{1}/{2}")
+    @Produces({MediaType.TEXT_PLAIN})
+    public String authenticate(@PathParam("1") String encodedUsername, @PathParam("2") String encodedPassword) {
+        try {
+            String username = new String(Base64.decodeBase64(encodedUsername.getBytes()));
+            String password = new String(Base64.decodeBase64(encodedPassword.getBytes()));
+
+            if (log.isDebugEnabled())
+                log.debug("Authenticating : " + username);
+
+            if (log.isTraceEnabled())
+                log.trace("Password: "+ password);
+
+            //ExoContainer container = this.getContainer();
+            if (authenticator  == null) {
+                authenticator = (Authenticator) getContainer().getComponentInstanceOfType(Authenticator.class);
+
+                if (log.isTraceEnabled())
+                    log.trace("Fetched authenticator instance " + authenticator);
+            }
+
+            Credential[] credentials = new Credential[]{new UsernameCredential(username),
+                    new PasswordCredential(password)};
+
+            try {
+                authenticator.validateUser(credentials);
+
+                if (log.isTraceEnabled())
+                    log.trace("User authentication successful for " + username);
+
+                return "" + Boolean.TRUE;
+
+            } catch (LoginException le) {
+
+                if (log.isTraceEnabled())
+                    log.trace("User authentication failure for " + username);
+
+                return "" + Boolean.FALSE;
+            }
+        } catch (Exception e) {
+            log.error(this, e);
+            throw new RuntimeException(e);
+        }
     }
-    return container;
-  }
+
+    private ExoContainer getContainer() throws Exception {
+        ExoContainer container = ExoContainerContext.getCurrentContainer();
+        if (container instanceof RootContainer) {
+            container = RootContainer.getInstance().getPortalContainer("portal");
+        }
+        return container;
+    }
 }

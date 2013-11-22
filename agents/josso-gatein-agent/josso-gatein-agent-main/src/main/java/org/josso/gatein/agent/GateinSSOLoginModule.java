@@ -68,6 +68,10 @@ public final class GateinSSOLoginModule extends AbstractLoginModule
     {
         try
         {
+
+            if (log.isTraceEnabled())
+                log.trace("login() -> START");
+
             Callback[] callbacks = new Callback[2];
             callbacks[0] = new NameCallback("Username");
             callbacks[1] = new PasswordCallback("Password", false);
@@ -99,9 +103,7 @@ public final class GateinSSOLoginModule extends AbstractLoginModule
             if (username == null)
             {
                 //SSO token could not be validated...hence a user id cannot be found
-                log.error("---------------------------------------------------------");
                 log.error("SSOLogin Failed. Credential Not Found!!");
-                log.error("---------------------------------------------------------");
                 return false;
             }
 
@@ -121,11 +123,18 @@ public final class GateinSSOLoginModule extends AbstractLoginModule
             sharedState.put("javax.security.auth.login.name", username);
             subject.getPublicCredentials().add(new UsernameCredential(username));
 
+
             return true;
         }
         catch (final Throwable e)
         {
             throw new LoginException(e.getMessage());
+        }
+        finally
+        {
+            if (log.isTraceEnabled())
+                log.trace("login() -> END");
+
         }
     }
 

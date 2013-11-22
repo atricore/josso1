@@ -556,7 +556,13 @@ public class GenericServletSSOAgentFilter implements Filter {
             // ------------------------------------------------------------------
             // Invoke the next Valve in our pipeline
             // ------------------------------------------------------------------
+
+            if (log.isDebugEnabled())
+                log.debug(" Servlet Agent execution END");
+
             filterChain.doFilter(hreq, hres);
+
+
         } finally {
             if (log.isDebugEnabled())
                 log.debug("Processed : " + hreq.getContextPath());

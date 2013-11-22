@@ -55,10 +55,12 @@ public class GateinSSOAgent extends GenericServletSSOAgent {
             if (r.getSecurityContext() != null) {
                 String principal = r.getSecurityContext().getCurrentPrincipal().getName();
 
-                log.info("-----------------------------------------------------------");
-                log.info("SessionId: "+entry.ssoId);
-                log.info("Principal: "+principal);
-                log.info("-----------------------------------------------------------");
+                if (log.isDebugEnabled()) {
+                    log.debug("-----------------------------------------------------------");
+                    log.debug("SessionId: "+entry.ssoId);
+                    log.debug("Principal: "+principal);
+                    log.debug("-----------------------------------------------------------");
+                }
 
                 Credentials credentials = new Credentials(principal, "");
                 localSession.setAttribute(Credentials.CREDENTIALS, credentials);

@@ -21,6 +21,8 @@
  */
 package org.josso.gatein.agent;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.josso.servlet.agent.GenericServletSSOAgentFilter;
 
 import java.io.IOException;
@@ -40,6 +42,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class GateInSSOAgentFilter extends GenericServletSSOAgentFilter
 {
+
+
+    private static final Log log = LogFactory.getLog(GateInSSOAgentFilter.class);
     protected String logoutUri;
     private static final String fileEncoding = System.getProperty("file.encoding");
 
@@ -52,29 +57,40 @@ public class GateInSSOAgentFilter extends GenericServletSSOAgentFilter
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException
     {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        boolean isLogoutInProgress = this.isLogoutInProgress(httpRequest);
+        try {
+            log.trace("doFilter() -> END");
 
-        if (isLogoutInProgress)
-        {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-            if (httpRequest.getSession().getAttribute("SSO_LOGOUT_FLAG") == null)
+            boolean isLogoutInProgress = this.isLogoutInProgress(httpRequest);
+
+            if (isLogoutInProgress)
             {
-                httpRequest.getSession().setAttribute("SSO_LOGOUT_FLAG", Boolean.TRUE);
 
-                httpResponse.sendRedirect(logoutUri);
-                return;
+                if (httpRequest.getSession().getAttribute("SSO_LOGOUT_FLAG") == null)
+                {
+                    httpRequest.getSession().setAttribute("SSO_LOGOUT_FLAG", Boolean.TRUE);
+
+                    httpResponse.sendRedirect(logoutUri);
+                    return;
+                }
+                else
+                {
+                    // clear the LOGOUT flag
+                    httpRequest.getSession().removeAttribute("SSO_LOGOUT_FLAG");
+                }
             }
-            else
-            {
-                // clear the LOGOUT flag
-                httpRequest.getSession().removeAttribute("SSO_LOGOUT_FLAG");
-            }
+
+            if (log.isTraceEnabled())
+                log.trace("Gatein Servlet Agent execution END ");
+
+            super.doFilter(request, response, chain);
+
+        } finally {
+            log.trace("doFilter() -> END");
         }
-
-        super.doFilter(request, response, chain);
     }
 
     private boolean isLogoutInProgress(HttpServletRequest request) throws UnsupportedEncodingException

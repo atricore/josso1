@@ -488,6 +488,24 @@
 
         </repository>
 
+        <!-- Dependencies not on central repo -->
+        <repository>
+
+            <id>atricore-m2-repo</id>
+            <name>Atricore Maven2 Repository</name>
+            <url>http://repository.atricore.org/m2-release-repository</url>
+
+            <releases>
+                <checksumPolicy>fail</checksumPolicy>
+                <enabled>true</enabled>
+            </releases>
+
+            <snapshots>
+                <checksumPolicy>fail</checksumPolicy>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
         <!-- Apache 
         <repository>
             <id>apache</id>
@@ -593,6 +611,26 @@
 
     </repositories>
     <pluginRepositories>
+
+
+        <!-- Dependencies not on central repo -->
+        <pluginRepository>
+
+            <id>atricore-m2-repo</id>
+            <name>Atricore Maven2 Repository</name>
+            <url>http://repository.atricore.org/m2-release-repository</url>
+
+            <releases>
+                <checksumPolicy>fail</checksumPolicy>
+                <enabled>true</enabled>
+            </releases>
+
+            <snapshots>
+                <checksumPolicy>fail</checksumPolicy>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+
         <!-- Apache releases 
         <pluginRepository>
             <id>apache-releases</id>

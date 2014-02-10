@@ -23,19 +23,28 @@
 package org.josso.servlet.agent;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.security.auth.Subject;
-import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.*;
+import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.josso.agent.Lookup;
+import org.josso.agent.SSOAgent;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.SingleSignOnEntry;
 import org.josso.agent.http.JOSSOSecurityContext;
 import org.josso.agent.http.JaasHttpSSOAgent;
 import org.josso.agent.http.SSOGatewayHandler;
 import org.josso.gateway.identity.SSORole;
+import org.josso.gateway.identity.SSOUser;
+import org.josso.gateway.identity.exceptions.SSOIdentityException;
+import org.josso.gateway.identity.service.SSOIdentityManagerService;
 import org.josso.servlet.agent.jaas.SSOGatewayLoginModule;
 
 /**
@@ -108,35 +117,55 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
 
         Principal ssoUser = null;
         if (_disableJaas) {
-            // DO NOT USE JAAS, just go locally
-            SSOGatewayLoginModule m = new SSOGatewayLoginModule ();
-            try {
-                Subject s = new Subject();
-                CallbackHandler ch  = new SSOGatewayHandler(request.getRequester(), ssoSessionId, request.getNodeId());
-                m.initialize(s, ch, null, null );
-                m.login();
-                m.commit();
-                JOSSOSecurityContext ctx = new JOSSOSecurityContext(s);
-                ssoUser = ctx.getCurrentPrincipal();
 
-            } catch (LoginException e) {
-                try { m.abort(); } catch (LoginException e1) { log.error(e1.getMessage(), e1); }
-                log.error(e.getMessage(), e);
-                return null;
+
+            log.debug("Requested authentication to gateway by " + request.getRequester() + " using sso session " + ssoSessionId );
+
+            try {
+
+                // If no session is found, ignore this module.
+                if (ssoSessionId == null) {
+                    log.debug("Session authentication failed : " + ssoSessionId);
+                    return null;
+                }
+
+                SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+                SSOIdentityManagerService im = agent.getSSOIdentityManager();
+
+                if (request.getNodeId() == null && !"".equals(request.getNodeId())) {
+                    im = agent.getSSOIdentityManager(request.getNodeId());
+                }
+
+                ssoUser = im.findUserInSession(request.getRequester(), ssoSessionId);
+
+                log.debug("Session authentication succeeded : " + ssoSessionId);
+
+            } catch (SSOIdentityException e) {
+                // Ignore this ... (user does not exist for this session)
+                if (log.isDebugEnabled())
+                    log.debug(e.getMessage());
+
+            } catch (Exception e) {
+                log.error("Session authentication failed : " + ssoSessionId, e);
             }
+
+
         } else {
             // Delegate authentication to JAAS Agent
             ssoUser = super.authenticate(request);
         }
 
         if (ssoUser != null) {
-        	Subject subject = new Subject();
-        	subject.getPrincipals().add(ssoUser);
+            Set<Principal> principals = new HashSet<Principal>();
+            principals.add(ssoUser);
+
             SSORole[] ssoRolePrincipals = getRoleSets(request.getRequester(), ssoSessionId, request.getNodeId());
             for (int i=0; i < ssoRolePrincipals.length; i++) {
-                subject.getPrincipals().add(ssoRolePrincipals[i]);
+                principals.add(ssoRolePrincipals[i]);
                 log.debug("Added SSORole Principal to the Subject : " + ssoRolePrincipals[i]);
             }
+
+            Subject subject = new Subject(true, principals, Collections.emptySet(), Collections.emptySet());
         	GenericServletSSOAgentRequest r = (GenericServletSSOAgentRequest) request;
             JOSSOSecurityContext ctx = new JOSSOSecurityContext(subject);
             ctx.setSSOSession(ssoSessionId);

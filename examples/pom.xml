@@ -67,6 +67,7 @@
         <module>josso-partner-asp</module>
         <module>josso-partner-wasce</module>
         <module>josso-partner-applet</module>
+        <module>josso-partner-gae</module>
         <module>spring-security-contacts</module>
         <module>spring-security-v3-contacts</module>
     </modules>

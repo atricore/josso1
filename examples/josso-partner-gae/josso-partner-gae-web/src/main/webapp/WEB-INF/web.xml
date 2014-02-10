@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web
+Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- JOSSO web.xml sample descriptor for deploying on Tomcat, JBoss, Geronimo          -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+
+<web-app>
+
+    <display-name>JOSSO Partner Application</display-name>
+
+    <!-- This filter will provide security context, if present -->
+    <filter>
+        <filter-name>JOSSOGenericServletFilter</filter-name>
+        <description>JOSSO Generic Servlet Container filter</description>
+        <filter-class>org.josso.servlet.agent.GenericServletSSOAgentFilter</filter-class>
+    </filter>
+
+    <!-- This filter will automatically request user authentication -->
+    <filter>
+        <filter-name>JOSSOWebAccessControlServletFilter</filter-name>
+        <description>JOSSO Generic Web Acces Control servlet filter</description>
+        <filter-class>org.josso.agent.http.WebAccessControlFilter</filter-class>
+    </filter>
+
+    <!-- User information will be available when accessing this URLs  -->
+    <filter-mapping>
+        <filter-name>JOSSOGenericServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- User must be authenticated to access this URLs -->
+    <filter-mapping>
+        <filter-name>JOSSOWebAccessControlServletFilter</filter-name>
+        <url-pattern>/protected-managed.jsp</url-pattern>
+    </filter-mapping>
+
+    <welcome-file-list id="WelcomeFileList">
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+</web-app>

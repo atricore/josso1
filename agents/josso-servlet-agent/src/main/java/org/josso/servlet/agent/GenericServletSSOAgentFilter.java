@@ -486,9 +486,14 @@ public class GenericServletSSOAgentFilter implements Filter {
                         log.debug("Redirecting to post-auth-resource '" + postAuthURL  + "'");
                     hres.sendRedirect(postAuthURL);
                 } else {
-                	if (log.isDebugEnabled())
-                         log.debug("Redirecting to original '" + requestURI + "'");
-                    hres.sendRedirect(hres.encodeRedirectURL(requestURI));
+                	if (!"".equals(requestURI)) {
+                        if (log.isDebugEnabled())
+                             log.debug("Redirecting to original '" + requestURI + "'");
+                        hres.sendRedirect(hres.encodeRedirectURL(requestURI));
+                    } else {
+                        log.debug("Redirecting to application's root context '" +  contextPath);
+                        hres.sendRedirect(hres.encodeRedirectURL(contextPath));
+                    }
                 }
                	
                 return;
@@ -558,7 +563,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             // ------------------------------------------------------------------
 
             if (log.isDebugEnabled())
-                log.debug(" Servlet Agent execution END");
+                log.debug("Servlet Agent execution END");
 
             filterChain.doFilter(hreq, hres);
 

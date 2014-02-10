@@ -66,7 +66,6 @@
 
         <!-- This property is required by the car:package mojo -->
         <geronimoVersion>2.1.4</geronimoVersion>
-
         <geronimoSchemaVersion>1.2</geronimoSchemaVersion>
 
         <gbeanDeployer>org.apache.geronimo.framework/geronimo-gbean-deployer/${geronimoVersion}/car</gbeanDeployer>

@@ -20,6 +20,7 @@
   ~
   --%>
 <%@ page import="org.josso.gateway.identity.SSOUser"%>
+<%@ page import="org.josso.agent.http.JOSSOSecurityContext" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -81,7 +82,10 @@
                         <p>This is a very simple JOSSO partner application, you're accessing a protected web resource. You can find some tips to use in your own web apps!</p>
 
                         <div class="highlight horizontal info">
+                              <p><strong>Username: <%=((JOSSOSecurityContext)request.getSession().getAttribute("org.josso.servlet.agent.JOSSOSecurityContext")).getCurrentPrincipal()%></strong> Retrieved From : [<code>((JOSSOSecurityContext)request.getSession().getAttribute("org.josso.servlet.agent.JOSSOSecurityContext")).getCurrentPrincipal();</code>]</p>
+                              <p>When performing SSO login, getters mentioned below will return null</p>
                               <p><strong>Username: <%=request.getRemoteUser()%></strong> Retrieved From : [<code>request.getRemoteUser();</code>]</p>
+                              <p><strong>Username: <%=request.getUserPrincipal()%></strong> Retrieved From : [<code>request.getUserPrincipal();</code>]</p>
                               <div class="footer"></div>
                         </div><!-- /highlight -->
 
@@ -102,10 +106,10 @@
                             <div id="col3">
                                 <h3 class="arrow">SSO User Properties</h3>
                                 <ul>
-                                <li>Retrieved from [<code>((org.josso.gateway.identity.SSOUser) request.getUserPrincipal()).getProperties();</code>]</li>
+                                <li>Retrieved from [<code>SSOUser ssoUser = (SSOUser)((JOSSOSecurityContext)request.getSession().getAttribute("org.josso.servlet.agent.JOSSOSecurityContext")).getCurrentPrincipal();</code>]</li>
 
                         <%      // Cast the principal to a josso specific user, and iterate over its properties.
-                                SSOUser ssoUser = (SSOUser) request.getUserPrincipal();
+                                SSOUser ssoUser = (SSOUser)((JOSSOSecurityContext)request.getSession().getAttribute("org.josso.servlet.agent.JOSSOSecurityContext")).getCurrentPrincipal();
                                 for (int i = 0 ; i < ssoUser.getProperties().length ; i++)
                                 { %>
                                     <li><h4><%=ssoUser.getProperties()[i].getName()%></h4><%=ssoUser.getProperties()[i].getValue()%> </li>

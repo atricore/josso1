@@ -84,7 +84,7 @@
                   <div class="main">
                         <h2>Welcome!</h2>
 
-                        <p>This is a very simple JOSSO partner application, you're accessing a protected web resource.</p>
+                        <p>This is a very simple JOSSO partner application, you're accessing a non-protected web resource.</p>
 
                         <%  if (request.getSession().getAttribute("org.josso.servlet.agent.JOSSOSecurityContext") == null) { %>
 
@@ -111,7 +111,8 @@
 
                         <% }  else { %>
 
-                        <div class="highlight horizontal info">
+
+                      <div class="highlight horizontal info">
                             <p><strong>You're logged in as <%=((JOSSOSecurityContext)request.getSession().getAttribute("org.josso.servlet.agent.JOSSOSecurityContext")).getCurrentPrincipal().getName() %>.</strong></p>
                             <div class="footer"></div>
                         </div><!-- /highlight -->
@@ -123,11 +124,6 @@
                         <div id="col1">
                             <h3 class="arrow">To access a protected resource</h3>
                             <p>Access a protected resource: <a href="<%=request.getContextPath()%>/protected/">protected</a>.</p>
-                        </div>
-
-                        <div id="col2">
-                            <h3 class="arrow">To see extended user info</h3>
-                            <p>See extended user info, try <a href="<%=request.getContextPath()%>/protected-josso">protected-josso</a>.</p>
                         </div>
 
                         </div> <!-- /login-options -->
@@ -146,7 +142,7 @@
 <!-- PAGE FOOTER  -->
 
       <div id="footer">
-            <p>Copyright &copy; 2004-2013. Atricore, Inc.</p>
+            <p>Copyright &copy; 2004-2014. Atricore, Inc.</p>
       </div>
 
 

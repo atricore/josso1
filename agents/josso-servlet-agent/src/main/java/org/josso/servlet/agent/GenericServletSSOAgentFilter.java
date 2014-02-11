@@ -198,7 +198,8 @@ public class GenericServletSSOAgentFilter implements Filter {
                 if (hreq.getRequestURI().endsWith(agent.getJossoUserLoginUri())) {
                 	saveLoginBackToURL(hreq, hres, session, true);
                 } else {
-                	saveLoginBackToURL(hreq, hres, session, false);
+                    saveRequestURL(hreq, hres);
+//                	saveLoginBackToURL(hreq, hres, session, false);
                 }
                 
                 String loginUrl = agent.buildLoginUrl(hreq);
@@ -345,7 +346,7 @@ public class GenericServletSSOAgentFilter implements Filter {
 
                         // Save current request, so we can co back to it later ...
                         saveRequestURL(hreq, hres);
-                        String loginUrl = agent.buildLoginOptionalUrl(hreq);
+                        String loginUrl = agent.buildLoginUrl(hreq);
 
                         if (log.isDebugEnabled())
                         	log.debug("Redirecting to login url '" + loginUrl + "'");
@@ -534,12 +535,12 @@ public class GenericServletSSOAgentFilter implements Filter {
                     if (log.isDebugEnabled())
                     	log.debug("SSO Session is not valid, attempting automatic login");
 
-                    // Save current request, so we can co back to it later ...
+                    // Save current request, so we can come back to it later ...
                     saveRequestURL(hreq, hres);
                     String loginUrl = agent.buildLoginOptionalUrl(hreq);
 
                     if (log.isDebugEnabled())
-                    	log.debug("Redirecting to login url '" + loginUrl + "'");
+                    	log.debug("Redirecting to option login url '" + loginUrl + "'");
                     
                     //set non cache headers
                     agent.prepareNonCacheResponse(hres);

@@ -21,7 +21,27 @@
   --%>
 <%@ page import="java.util.Enumeration" %>
 <%@ page import="org.josso.agent.http.JOSSOSecurityContext" %>
+<%@ page import="org.josso.agent.http.WebAccessControlUtil" %>
+<%@ page import="org.josso.gateway.identity.SSOUser" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
+<%
+    // Requires a filter that will trigger authentication
+
+    // Obtain a JOSSO security context instance, if none is found is because user has not been authenticated.
+    JOSSOSecurityContext ctx = WebAccessControlUtil.getSecurityContext(request);
+    if (ctx != null) {
+        if (!ctx.isUserInRole("Administrators")) {
+            // User has been authenticated but does not have role1, return a 403 FORBIDDEN error.
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+    } else {
+        // No security context available
+        response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+    }
+%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -101,6 +121,18 @@
                             </div>
 
                             <div id="col3">
+                                <h3 class="arrow">SSO User Properties</h3>
+                                <ul>
+                                    <%  // Cast the principal to a josso specific user, and iterate over its properties.
+                                        SSOUser ssoUser = (SSOUser)((JOSSOSecurityContext)request.getSession().getAttribute("org.josso.servlet.agent.JOSSOSecurityContext")).getCurrentPrincipal();
+                                        for (int i = 0 ; i < ssoUser.getProperties().length ; i++)
+                                        { %>
+                                    <li><h4><%=ssoUser.getProperties()[i].getName()%></h4><%=ssoUser.getProperties()[i].getValue()%> </li>
+                                    <%      } %>
+                                </ul>
+                            </div>
+
+                            <div id="col3">
                                 <h3 class="arrow">Http Headers</h3>
 
                                 <%
@@ -136,7 +168,7 @@
 <!-- PAGE FOOTER  -->
 
       <div id="footer">
-            <p>Copyright &copy; 2004-2013. Atricore, Inc.</p>
+            <p>Copyright &copy; 2004-2014. Atricore, Inc.</p>
       </div>
 
 

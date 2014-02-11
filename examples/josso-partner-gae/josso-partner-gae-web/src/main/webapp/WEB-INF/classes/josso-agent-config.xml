@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:ns2="http://www.ops4j.org/schema/wicket" xmlns:ns3="http://www.springframework.org/schema/osgi" xmlns:ns4="http://www.springframework.org/schema/tool" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd http://www.ops4j.org/schema/wicket http://www.ops4j.org/schema/wicket/wicket.xsd ">
     <bean class="org.josso.servlet.agent.GenericServletSSOAgent" name="josso-servlet-agent">
+        <property name="isStateOnClient">
+            <value>true</value>
+        </property>
         <property name="sessionAccessMinInterval">
             <value>1000</value>
         </property>

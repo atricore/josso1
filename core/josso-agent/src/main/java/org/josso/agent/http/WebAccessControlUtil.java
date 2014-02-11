@@ -74,7 +74,7 @@ public class WebAccessControlUtil {
     }
 
     /**
-     * This method provides access to JOSSO securit context, if no context is present is because user is not authenticated.
+     * This method provides access to JOSSO security context, if no context is present is because user is not authenticated.
      *
      * @param request
      * @return

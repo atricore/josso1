@@ -43,7 +43,7 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     <!-- This filter will automatically request user authentication -->
     <filter>
         <filter-name>JOSSOWebAccessControlServletFilter</filter-name>
-        <description>JOSSO Generic Web Acces Control servlet filter</description>
+        <description>JOSSO Generic Web Access Control servlet filter</description>
         <filter-class>org.josso.agent.http.WebAccessControlFilter</filter-class>
     </filter>
 
@@ -53,11 +53,10 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-
     <!-- User must be authenticated to access this URLs -->
     <filter-mapping>
         <filter-name>JOSSOWebAccessControlServletFilter</filter-name>
-        <url-pattern>/protected-managed.jsp</url-pattern>
+        <url-pattern>/protected</url-pattern>
     </filter-mapping>
 
     <welcome-file-list id="WelcomeFileList">

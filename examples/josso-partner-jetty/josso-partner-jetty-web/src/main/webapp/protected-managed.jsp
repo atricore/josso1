@@ -58,14 +58,14 @@
     // Obtain a JOSSO security context instance, if none is found is because user has not been authenticated.
     JOSSOSecurityContext ctx = WebAccessControlUtil.getSecurityContext(request);
     if (ctx != null) {
-        if (!ctx.isUserInRole("role1")) {
+        if (!ctx.isUserInRole("admin")) {
             // User has been authenticated but does not have role1, return a 403 FORBIDDEN error.
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
 %>
 <html>
   <head><title>Simple JOSSO protected page in managed mode</title></head>
-  <body>This is a simple JSP that will only bee accesible if user has been authenticated and is in role <b>role1</b></body>
+  <body>This is a simple JSP that will only bee accessible if user has been authenticated and is in role <b>admin</b></body>
   <p>Http Headers are :</p>
   <%
    out.println("<ul>");

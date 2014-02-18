@@ -17,7 +17,7 @@
             <value>http://localhost:8081/IDBUS/GAEDEMO/GAE-EE/JOSSO/SLO/REDIR</value>
         </property>
         <property name="gatewayServiceLocator">
-            <bean class="org.josso.gateway.WebserviceGatewayServiceLocator">
+            <bean class="org.josso.gateway.jaxws.JAXWSWebserviceGatewayServiceLocator">
                 <property name="endpoint">
                     <value>localhost:8081</value>
                 </property>
@@ -60,7 +60,10 @@
                                 <value>gaesp</value>
                             </property>
                             <property name="vhost">
+                                <!--
                                 <value>localhost</value>
+                                -->
+                                <value>josso-partner-gae.appspot.com</value>
                             </property>
                             <property name="context">
                                 <value>/</value>

@@ -5,7 +5,7 @@
   S T Y L E S   F O R   I E 6   O N L Y
 ************************************************************************************************************************************************/
 
-      p.alert {padding:10px 0 10px 0; background:#FFFFA5 url(../img/icon[alert].gif) no-repeat 10px; color:#000; font-size:1.2em;  border-bottom:1px solid #DED181;  text-align:left;  text-indent:30px; margin-bottom:1px} 
+      p.alert {padding:10px 0 10px 0; background:#FFFFA5 url(../img/icon-alert.gif) no-repeat 10px; color:#000; font-size:1.2em;  border-bottom:1px solid #DED181;  text-align:left;  text-indent:30px; margin-bottom:1px}
       body {background-position:0 33px;}
       label {padding:0 0 0 0; }
 

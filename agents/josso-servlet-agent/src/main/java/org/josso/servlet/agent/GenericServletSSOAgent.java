@@ -113,19 +113,17 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
 
     	String ssoSessionId = request.getSessionId();
 
-        log.debug("authenticate requester = " + request.getRequester());
-
         Principal ssoUser = null;
         if (_disableJaas) {
 
 
-            log.debug("Requested authentication to gateway by " + request.getRequester() + " using sso session " + ssoSessionId );
+            log.info("Requested authentication to gateway by " + request.getRequester() + " using sso session " + ssoSessionId );
 
             try {
 
                 // If no session is found, ignore this module.
                 if (ssoSessionId == null) {
-                    log.debug("Session authentication failed : " + ssoSessionId);
+                    log.error("Session authentication failed : " + ssoSessionId);
                     return null;
                 }
 
@@ -138,7 +136,7 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
 
                 ssoUser = im.findUserInSession(request.getRequester(), ssoSessionId);
 
-                log.debug("Session authentication succeeded : " + ssoSessionId);
+                log.info("Session authentication succeeded : " + ssoSessionId);
 
             } catch (SSOIdentityException e) {
                 // Ignore this ... (user does not exist for this session)
@@ -189,10 +187,10 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
     }
 
     protected void log(String message) {
-        log.debug(message);
+        log.info(message);
     }
 
     protected void log(String message, Throwable throwable) {
-        log.debug(message, throwable);
+        log.info(message, throwable);
     }
 }

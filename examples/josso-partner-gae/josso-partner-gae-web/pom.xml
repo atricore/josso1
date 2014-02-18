@@ -68,7 +68,7 @@
 
     <properties>
         <appengine.app.version>1</appengine.app.version>
-        <appengine.target.version>1.8.4</appengine.target.version>
+        <appengine.target.version>1.8.9</appengine.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>3.0.7.RELEASE</spring.version>
     </properties>
@@ -78,11 +78,31 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-servlet-agent</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-protocol-jaxws-client</artifactId>
+        </dependency>
+        <!--
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-protocol-client</artifactId>
         </dependency>
+        -->
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agent</artifactId>
@@ -115,6 +135,12 @@
             <artifactId>commons-discovery</artifactId>
             <version>0.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-jetty</artifactId>
+            <version>${cxf-version}</version>
+        </dependency>
+
         <!-- Spring
         <dependency>
             <groupId>org.springframework</groupId>
@@ -203,6 +229,9 @@
                 <groupId>com.google.appengine</groupId>
                 <artifactId>appengine-maven-plugin</artifactId>
                 <version>${appengine.target.version}</version>
+                <configuration>
+                  <version>${appengine.app.version}</version> 
+                </configuration>
             </plugin>
         </plugins>
     </build>

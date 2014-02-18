@@ -93,16 +93,26 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Use JAX-WS implementation provided by the GAE runtime. Using CXF's one works too whereas it increases
+             application's footprint -->
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-protocol-jaxws-client</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-bindings-soap</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.josso</groupId>
-            <artifactId>josso-protocol-client</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agent</artifactId>
@@ -135,49 +145,6 @@
             <artifactId>commons-discovery</artifactId>
             <version>0.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http-jetty</artifactId>
-            <version>${cxf-version}</version>
-        </dependency>
-
-        <!-- Spring
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <scope>compile</scope>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <scope>compile</scope>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <scope>compile</scope>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        -->
-
         <!-- GAE test dependencies -->
         <dependency>
             <groupId>junit</groupId>

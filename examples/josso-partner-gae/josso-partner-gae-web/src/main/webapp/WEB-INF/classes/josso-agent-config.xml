@@ -60,10 +60,10 @@
                                 <value>gaesp</value>
                             </property>
                             <property name="vhost">
-                                <!--
                                 <value>localhost</value>
-                                -->
+                                <!-- fill with the fully qualified host name the SSO-ified GAE app is bound to
                                 <value>josso-partner-gae.appspot.com</value>
+                                -->
                             </property>
                             <property name="context">
                                 <value>/</value>

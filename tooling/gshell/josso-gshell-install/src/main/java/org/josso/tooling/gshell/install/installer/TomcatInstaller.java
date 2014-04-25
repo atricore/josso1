@@ -107,7 +107,8 @@ public class TomcatInstaller extends VFSInstaller {
 
                 // For Tomcat 6 and 7, jaxws is used now
                 if (getTargetPlatform().getVersion().startsWith("6.0") ||
-                    getTargetPlatform().getVersion().startsWith("7.0")) {
+                    getTargetPlatform().getVersion().startsWith("7.0") ||
+                    getTargetPlatform().getVersion().startsWith("8.0")) {
 
                     if (artifact.getClassifier().equals("jaxws")) {
                         installFile(srcFile, this.targetJOSSOLibDir, replace);
@@ -132,6 +133,11 @@ public class TomcatInstaller extends VFSInstaller {
 
             } else if (artifact.getBaseName().startsWith("josso-tomcat70-agent") &&
                     getTargetPlatform().getVersion().startsWith("7.0")) {
+                // We do not have TC8 specific files
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+
+            } else if (artifact.getBaseName().startsWith("josso-tomcat70-agent") &&
+                    getTargetPlatform().getVersion().startsWith("8.0")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
             } else {
@@ -175,9 +181,10 @@ public class TomcatInstaller extends VFSInstaller {
                 }
 
             } else if (getTargetPlatform().getVersion().startsWith("6.0") ||
-                    getTargetPlatform().getVersion().startsWith("7.0")) {
+                    getTargetPlatform().getVersion().startsWith("7.0") ||
+                    getTargetPlatform().getVersion().startsWith("8.0")) {
 
-                // Minmal set of dependencies for TC 6/7
+                // Minmal set of dependencies for TC 6/7/8
                 if (artifact.getBaseName().startsWith("spring-")) {
                     removeOldJar(srcFile.getName().getBaseName(), this.targetLibDir, true);
                     installFile(srcFile, this.targetLibDir, replace);
@@ -362,7 +369,9 @@ public class TomcatInstaller extends VFSInstaller {
         // Because we removed all realms, we always add JOSSO realm
         String usersClassNames = "org.josso.gateway.identity.service.BaseUserImpl";
         String roleClassNames = "org.josso.gateway.identity.service.BaseRoleImpl";
-        String realmClass = "org.josso."+getPlatformId()+".agent.jaas.CatalinaJAASRealm"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
+
+        // For TC80 we're still using tc7 classes
+        String realmClass = "org.josso." + (getPlatformId().equals("tc80") ? "tc70" : "") + ".agent.jaas.CatalinaJAASRealm"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
 
         // Check if josso agent valve is already present
 
@@ -435,7 +444,7 @@ public class TomcatInstaller extends VFSInstaller {
         XPath xpath = XPathFactory.newInstance().newXPath();
 
         // Check if josso agent valve is already present
-        String valveClass = "org.josso."+getPlatformId()+".agent.SSOAgentValve"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
+        String valveClass = "org.josso." + (getPlatformId().equals("tc80") ? "tc70" : "") + ".agent.SSOAgentValve"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
         XPathExpression findAgentValve = xpath.compile("/Server/Service/Engine/Host/Valve[@className=\""+valveClass+"\"]");
         NodeList agentValves = (NodeList) findAgentValve.evaluate(serverXmlDom, XPathConstants.NODESET);
 

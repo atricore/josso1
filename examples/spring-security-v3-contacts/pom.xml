@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>examples</artifactId>
-        <version>1.8.9-SNAPSHOT</version>
+        <version>1.8.9</version>
     </parent>
     <artifactId>spring-security-v3-contacts</artifactId>
     <name>JOSSO :: JOSSified Spring Security V3 - Contacts sample</name>

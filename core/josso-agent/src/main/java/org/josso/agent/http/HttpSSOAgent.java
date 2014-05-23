@@ -22,11 +22,7 @@
 
 package org.josso.agent.http;
 
-import org.josso.agent.AbstractSSOAgent;
-import org.josso.agent.Lookup;
-import org.josso.agent.SSOAgentRequest;
-import org.josso.agent.SSOPartnerAppConfig;
-import org.josso.agent.Constants;
+import org.josso.agent.*;
 import org.josso.auth.util.CipherUtil;
 import org.josso.gateway.SSONameValuePair;
 import org.josso.gateway.identity.SSORole;
@@ -109,6 +105,11 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         if (partnerAppConfig.getSecurityContextPropagationConfig() == null) {
             // No security propagation configuration found, ignore this.
             return;
+        }
+
+        SSOIdentityManagerService im = partnerAppConfig.getIdentityManagerService();
+        if (im == null) {
+            im = getSSOIdentityManager();
         }
 
         String binding = partnerAppConfig.getSecurityContextPropagationConfig().getBinding();
@@ -316,9 +317,18 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      */
     public String buildLogoutUrl(HttpServletRequest hreq, String backToPath) {
 
-        String backto = buildBackToURL(hreq, backToPath);
+        // Support specifying an external form for each application.
+        SSOPartnerAppConfig appCfg = getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
+        String logoutUrl = null;
+        if (appCfg != null && appCfg.getGatewayLoginUrl() != null) {
+            logoutUrl = appCfg.getGatewayLogoutUrl();
+        } else {
+            logoutUrl = getGatewayLogoutUrl();
+        }
 
-        String logoutUrl = getGatewayLogoutUrl() + (backto != null ? "?josso_back_to=" + backto : "");
+        String backto = buildBackToURL(hreq, backToPath);
+        if (backto != null)
+            logoutUrl += (backto != null ? "?josso_back_to=" + backto : "");
 
         logoutUrl += buildLogoutUrlParams(hreq);
 
@@ -334,13 +344,16 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
 
         // Support specifying an external form for each application.
         SSOPartnerAppConfig appCfg = getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
-        if (appCfg != null && appCfg.getAppLoginUrl() != null) {
-            return appCfg.getAppLoginUrl();
+        String loginUrl = null;
+        if (appCfg != null && appCfg.getGatewayLoginUrl() != null) {
+            loginUrl = appCfg.getGatewayLoginUrl();
+        } else {
+            loginUrl = getGatewayLoginUrl();
         }
 
-        String loginUrl = getGatewayLoginUrl();
         String backto = buildBackToURL(hreq, getJossoSecurityCheckUri());
-        loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") + "josso_back_to=" + backto;
+        if (backto != null)
+            loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") + "josso_back_to=" + backto;
 
         // Add login URL parameters
         loginUrl += buildLoginUrlParams(hreq);
@@ -353,12 +366,20 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      * required by the front-channel part of the SSO protocol.
      */
     public String buildLoginOptionalUrl(HttpServletRequest hreq) {
-        String loginUrl = getGatewayLoginUrl();
+        // Support specifying an external form for each application.
+        SSOPartnerAppConfig appCfg = getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
+        String loginUrl = null;
+        if (appCfg != null && appCfg.getGatewayLoginUrl() != null) {
+            loginUrl = appCfg.getGatewayLoginUrl();
+        } else {
+            loginUrl = getGatewayLoginUrl();
+        }
 
+        // Add back_to param if available
         String backto = buildBackToURL(hreq, getJossoSecurityCheckUri());
-
-
-        loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") +  "josso_cmd=login_optional&josso_back_to=" + backto;
+        loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") +  "josso_cmd=login_optional";
+        if (backto != null)
+            loginUrl += "&josso_back_to=" + backto;
 
         // Add login URL parameters
         loginUrl += buildLoginUrlParams(hreq);
@@ -378,6 +399,12 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      */
     public String buildBackToURL(HttpServletRequest hreq, String uri) {
         String backto = null;
+
+        // Check if back_to needs to be added to the URL (JOSSO 2 does not require back_to)
+        SSOPartnerAppConfig partnerAppConfig = getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
+        if (partnerAppConfig != null && partnerAppConfig.isDisableBackTo()) {
+            return null;
+        }
 
         // Build the back to url.
         String contextPath = hreq.getContextPath();
@@ -494,7 +521,6 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      * @return
      */
     protected String buildLogoutUrlParams(HttpServletRequest hreq) {
-
 
         SSOPartnerAppConfig cfg = super.getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
 
@@ -724,21 +750,24 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      */
     public SSORole[] getRoleSets(String requester, String ssoSessionId, String nodeId) {
         try {
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
-            SSORole[] roleSets = null;
 
-            if (nodeId != null && !"".equals(nodeId)) {
-                NodeServices svcs = servicesByNode.get(nodeId);
-                if (svcs != null) {
-                    roleSets = svcs.getIm().findRolesBySSOSessionId(requester, ssoSessionId);
-                } else  {
-                    roleSets = im.findRolesBySSOSessionId(requester, ssoSessionId);
+            SSOAgentRequest request = _currentRequest.get();
+            SSOIdentityManagerService im = request.getConfig(this).getIdentityManagerService();
+            if (im == null) {
+                im = this.getSSOIdentityManager();
+
+                if (nodeId != null && !"".equals(nodeId)) {
+                    NodeServices svcs = servicesByNode.get(nodeId);
+                    if (svcs != null && svcs.getIm() != null) {
+                        im = svcs.getIm();
+                    }
                 }
-            } else {
-                roleSets = im.findRolesBySSOSessionId(requester, ssoSessionId);
             }
 
+            SSORole[] roleSets = im.findRolesBySSOSessionId(requester, ssoSessionId);
+
             return roleSets;
+
         } catch(Exception e) {
         	log("Error finding roles for : " + ssoSessionId, e);
             throw new RuntimeException("Error finding roles for : " + ssoSessionId);

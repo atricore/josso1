@@ -101,4 +101,8 @@ public class SSOAgentRequestImpl implements SSOAgentRequest {
     public void setNodeId(String nodeId) {
         _nodeId = nodeId;
     }
+
+    public SSOPartnerAppConfig getConfig(SSOAgent agent) {
+        throw new UnsupportedOperationException("Not implemented at this level");
+    }
 }

@@ -24,7 +24,7 @@ package org.josso.liferay6.agent.jaas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.josso.agent.Lookup;
+import org.josso.agent.*;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
@@ -142,7 +142,13 @@ public class SSOGatewayLoginModule implements LoginModule {
 
             _currentSSOSessionId = ssoSessionId;
 
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
+            SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+
+            SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
+            if (im == null)
+                im = agent.getSSOIdentityManager();
+
             SSOUser ssoUser = im.findUserInSession(_requester, ssoSessionId);
 
             logger.debug("Session authentication succeeded : " + ssoSessionId);
@@ -282,8 +288,14 @@ public class SSOGatewayLoginModule implements LoginModule {
      */
     protected SSORole[] getRoleSets() throws LoginException {
         try {
+
             // obtain user roles principals and add it to the subject
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
+            SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+
+            SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
+            if (im == null)
+                agent.getSSOIdentityManager();
 
             return im.findRolesBySSOSessionId(_requester, _currentSSOSessionId);
         } catch (Exception e) {

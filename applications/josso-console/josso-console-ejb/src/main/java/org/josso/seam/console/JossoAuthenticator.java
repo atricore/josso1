@@ -27,11 +27,15 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
 import org.jboss.seam.security.Identity;
+import org.josso.agent.AbstractSSOAgent;
 import org.josso.agent.Lookup;
 import org.josso.agent.SSOAgent;
+import org.josso.agent.SSOAgentRequest;
 import org.josso.gateway.identity.SSORole;
+import org.josso.gateway.identity.service.SSOIdentityManagerService;
 import org.josso.gateway.session.SSOSession;
 import org.josso.gateway.session.exceptions.NoSuchSessionException;
+import org.josso.gateway.session.service.SSOSessionManagerService;
 import org.josso.gateway.signon.Constants;
 
 import javax.faces.context.FacesContext;
@@ -83,13 +87,22 @@ public class JossoAuthenticator {
         try {
             if (sessionId != null && !"".equals(sessionId)) {
                 SSOAgent jossoAgent = Lookup.getInstance().lookupSSOAgent();
+                SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
+                SSOIdentityManagerService im = request.getConfig(jossoAgent).getIdentityManagerService();
+                if (im == null)
+                    im = jossoAgent.getSSOIdentityManager();
+
                 // TODO : Send requester !
-                SSOSession session = jossoAgent.getSSOSessionManager().getSession(null, sessionId);
+                SSOSessionManagerService sm = request.getConfig(jossoAgent).getSessionManagerService();
+                if (sm == null)
+                    sm = jossoAgent.getSSOSessionManager();
+
+                SSOSession session = sm.getSession(null, sessionId);
                 String username = session.getUsername();
                 identity.setUsername(username);
                 identity.setPassword(username);
                 log.info( "User " + username + " logged into Seam via JossoAuthenticator module.");
-                SSORole[] roles = jossoAgent.getSSOIdentityManager().findRolesBySSOSessionId(null, sessionId );
+                SSORole[] roles = im.findRolesBySSOSessionId(null, sessionId );
                 for (int i=0; i<roles.length; i++) {
                     String role = roles[i].getName();
                     log.info( "User " + username + " adding role " + role);

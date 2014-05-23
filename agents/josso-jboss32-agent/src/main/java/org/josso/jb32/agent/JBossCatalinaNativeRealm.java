@@ -45,6 +45,7 @@ import org.jboss.web.tomcat.security.JBossSecurityMgrRealm;
 import org.jboss.web.tomcat.security.SecurityAssociationValve;
 import org.josso.agent.AbstractSSOAgent;
 import org.josso.agent.Lookup;
+import org.josso.agent.SSOAgent;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.SSOUser;
@@ -157,16 +158,20 @@ public class JBossCatalinaNativeRealm extends JBossSecurityMgrRealm {
             if (credentials != null)
                 passwordChars = credentials.toCharArray();
             
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+
             
             String requester = "";
 			// Check for nulls ?
             SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
-            if (request != null)
-            	requester = request.getRequester();
-            else
-                logger.warn("No SSO Agent request found in thread local variable, can't identify requester");
-            
+            if (request == null)
+                logger.error("No SSO Agent request found in thread local variable, can't identify requester!");
+
+            SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+            SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
+            if (im == null)
+                im = agent.getSSOIdentityManager();
+
+            requester = request.getRequester();
 	        ssoUser = im.findUserInSession(requester, username);
 			
             if (ssoUser != null) {

@@ -14,7 +14,7 @@ import com.liferay.portal.util.PortalUtil;
 import com.liferay.util.PwdGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.josso.agent.Lookup;
+import org.josso.agent.*;
 import org.josso.gateway.SSONameValuePair;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
@@ -58,7 +58,11 @@ public class JossoSSOAutoLogin implements AutoLogin {
 
             String jossoSessionId = jCookie.getValue();
 
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOPartnerAppConfig appConfig = agent.getPartnerAppConfig(request.getServerName(), request.getContextPath());
+            SSOIdentityManagerService im = appConfig .getIdentityManagerService();
+            if (im == null)
+                im = agent.getSSOIdentityManager();
+
             SSOUser ssoUser = im.findUserInSession(jossoSessionId, jossoSessionId);
             if (ssoUser == null) {
                 return credentials;

@@ -169,7 +169,11 @@ public class AlfrescoSSOAgentFilter implements Filter {
 
         if (isNormalRequest) {
             try {
-                SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+                // TODO : Use partenrapp specific services!!!
+                SSOIdentityManagerService im = _agent.getPartnerAppConfig(hReq.getServerName(), hReq.getContextPath()).getIdentityManagerService();
+                if (im == null)
+                   im = _agent.getSSOIdentityManager();
+
                 SSOUser ssoUser = im.findUserInSession(token, token);
                 String principal = "";
                 if (ssoUser != null)

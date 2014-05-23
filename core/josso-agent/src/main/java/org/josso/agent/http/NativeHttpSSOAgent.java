@@ -29,6 +29,8 @@ import org.apache.commons.logging.LogFactory;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
+import org.josso.gateway.identity.service.SSOIdentityManagerService;
+import org.josso.gateway.session.service.SSOSessionManagerService;
 
 /**
  * Native Agent implementation.
@@ -52,8 +54,12 @@ public class NativeHttpSSOAgent extends HttpSSOAgent {
             	log.debug("Session authentication failed : " + ssoSessionId);
                 return null;
             }
-            
-            SSOUser ssoUser = getSSOIdentityManager().findUserInSession(request.getRequester(), ssoSessionId);
+
+            SSOIdentityManagerService im = request.getConfig(this).getIdentityManagerService();
+            if (im == null)
+                im = getSSOIdentityManager();
+
+            SSOUser ssoUser = im.findUserInSession(request.getRequester(), ssoSessionId);
             
             log.debug("Session authentication succeeded : " + ssoSessionId);
             return ssoUser;

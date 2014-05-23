@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.josso.agent.AbstractSSOAgent;
 import org.josso.agent.Lookup;
 import org.josso.agent.SSOAgent;
+import org.josso.agent.SSOAgentRequest;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
@@ -154,12 +155,14 @@ public class SSOGatewayLoginModule  implements LoginModule {
             _currentSSOSessionId = ssoSessionId;
 
             SSOUser ssoUser = null;
+
             SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
-            SSOIdentityManagerService im = agent.getSSOIdentityManager();
-
-            if (_nodeId != null && !"".equals(_nodeId)) {
-                im = agent.getSSOIdentityManager(_nodeId);
-
+            SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
+            SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
+            if (im == null) {
+                im = agent.getSSOIdentityManager();
+                if (_nodeId != null && !"".equals(_nodeId))
+                    im = agent.getSSOIdentityManager(_nodeId);
             }
 
             ssoUser = im.findUserInSession(_requester, ssoSessionId);
@@ -302,10 +305,14 @@ public class SSOGatewayLoginModule  implements LoginModule {
         try {
             // obtain user roles principals and add it to the subject
             SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
-            SSOIdentityManagerService im = agent.getSSOIdentityManager();
+            SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
+            SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
 
-            if (_nodeId != null && !"".equals(_nodeId)) {
-                im = agent.getSSOIdentityManager(_nodeId);
+            if (im == null) {
+                im = agent.getSSOIdentityManager();
+                if (_nodeId != null && !"".equals(_nodeId)) {
+                    im = agent.getSSOIdentityManager(_nodeId);
+                }
             }
 
             return im.findRolesBySSOSessionId(_requester, _currentSSOSessionId);

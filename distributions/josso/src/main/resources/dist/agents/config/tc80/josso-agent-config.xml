@@ -22,7 +22,7 @@
   -->
 
 <s:beans xmlns:s="http://www.springframework.org/schema/beans"
-         xmlns:tc70="urn:org:josso:agent:tomcat80"
+         xmlns:tc80="urn:org:josso:agent:tomcat80"
          xmlns:agent="urn:org:josso:agent:core"
          xmlns:protocol="urn:org:josso:protocol:client"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

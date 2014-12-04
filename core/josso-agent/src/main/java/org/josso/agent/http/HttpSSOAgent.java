@@ -327,9 +327,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         }
 
         String backto = buildBackToURL(hreq, backToPath);
-        if (backto != null)
-            logoutUrl += (backto != null ? "?josso_back_to=" + backto : "");
-
+        logoutUrl = logoutUrl + (logoutUrl.indexOf('?') >= 0 ? "&" : "?") + "josso_back_to=" + (backto != null ? backto : "NA");
         logoutUrl += buildLogoutUrlParams(hreq);
 
         return logoutUrl;
@@ -352,8 +350,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         }
 
         String backto = buildBackToURL(hreq, getJossoSecurityCheckUri());
-        if (backto != null)
-            loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") + "josso_back_to=" + backto;
+        loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") + "josso_back_to=" + (backto != null ? backto : "NA");
 
         // Add login URL parameters
         loginUrl += buildLoginUrlParams(hreq);
@@ -380,6 +377,8 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") +  "josso_cmd=login_optional";
         if (backto != null)
             loginUrl += "&josso_back_to=" + backto;
+        else
+            loginUrl += "&josso_back_to=NA";
 
         // Add login URL parameters
         loginUrl += buildLoginUrlParams(hreq);

@@ -151,7 +151,7 @@ class JOSSOSoapClient
 
     function __construct($url='http://www.josso.org/wsdl/josso-1.2/josso-1.2.wsdl')
     {
-        $this->soapClient = new SoapClient($url,array("classmap"=>self::$classmap,"trace" => true,"exceptions" => true));
+        $this->soapClient = new nusoap_client($url,array("classmap"=>self::$classmap,"trace" => true,"exceptions" => true));
     }
 
     function resolveAuthenticationAssertion($ResolveAuthenticationAssertionRequestType)

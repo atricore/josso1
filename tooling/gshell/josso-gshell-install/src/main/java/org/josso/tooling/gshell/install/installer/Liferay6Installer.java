@@ -1,5 +1,6 @@
 package org.josso.tooling.gshell.install.installer;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs.FileObject;
@@ -8,10 +9,7 @@ import org.apache.commons.vfs.FileType;
 import org.josso.tooling.gshell.install.JOSSOArtifact;
 import org.josso.tooling.gshell.install.TargetPlatform;
 import org.josso.tooling.gshell.install.util.XUpdateUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xmldb.common.xml.queries.XUpdateQuery;
 import org.xmldb.xupdate.lexus.XUpdateQueryImpl;
@@ -159,10 +157,16 @@ public class Liferay6Installer extends VFSInstaller {
         // --------------------------------------------------------------------
 
 
-        FileObject webXml = null;
+        String webConfigFilePath = "";
+        FileObject webXml;
 
         try {
-            webXml = targetDir.resolveFile("WEB-INF/web.xml");
+            webConfigFilePath = "WEB-INF/liferay-web.xml";
+            webXml = targetDir.resolveFile(webConfigFilePath);
+            if (!webXml.exists()) {
+                webConfigFilePath = "WEB-INF/web.xml";
+                webXml = targetDir.resolveFile(webConfigFilePath);
+            }
 
             // Get a DOM document of the web.xml :
             Node webXmlNode = loadAsDom(webXml);
@@ -170,14 +174,14 @@ public class Liferay6Installer extends VFSInstaller {
             boolean modified = false;
 
             // Perform specific configurations
-            if (configureFilters(webXmlNode))
+            if (configureFilters(webXmlNode, webConfigFilePath))
                 modified = true;
 
             if (modified) {
 
                 // Backup Container configuration.  If we cannot perform a backup, do nothing
                 if (!backupFile(webXml, targetDir)) {
-                    getPrinter().printActionWarnStatus("Configure", targetDir.getName().getFriendlyURI() + "/WEB-INF/web.xml", "Must be done manually (Follow setup guide)");
+                    getPrinter().printActionWarnStatus("Configure", targetDir.getName().getFriendlyURI() + "/" + webConfigFilePath, "Must be done manually (Follow setup guide)");
                     return;
                 }
 
@@ -196,13 +200,13 @@ public class Liferay6Installer extends VFSInstaller {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             getPrinter().printErrStatus("Cannot configure container : ", e.getMessage());
-            getPrinter().printActionWarnStatus("Configure", targetDir.getName().getFriendlyURI() + "/WEB-INF/web.xml", "Must be done manually (Follow setup guide)");
+            getPrinter().printActionWarnStatus("Configure", targetDir.getName().getFriendlyURI() + "/" + webConfigFilePath, "Must be done manually (Follow setup guide)");
         }
 
 
     }
 
-    protected boolean configureFilters(Node xmlDom) throws Exception {
+    protected boolean configureFilters(Node xmlDom, String webConfigFilePath) throws Exception {
 
         XPath xpath = XPathFactory.newInstance().newXPath();
         NodeList filtersNodes = (NodeList) xpath.evaluate("/web-app/filter", xmlDom, XPathConstants.NODESET);
@@ -213,7 +217,7 @@ public class Liferay6Installer extends VFSInstaller {
 
         // Append josso filter after auto-login filter in web.xml
         if (jossoFilterNode != null) {
-            getPrinter().printActionWarnStatus("Configure", "JOSSO SSO Filter", "Already configured : " + (jossoFilterNode != null ? jossoFilterNode.getNodeValue() : "<unknown>"));
+            getPrinter().printActionWarnStatus("Configure", "JOSSO SSO Filter", "Already configured: " + webConfigFilePath);
             return false;
         }
 
@@ -221,29 +225,48 @@ public class Liferay6Installer extends VFSInstaller {
         // Append josso filter after auto-login filter in web.xml
 
         if (filtersNodes != null && filtersNodes.getLength() > 0) {
-            String xupdJossoFilter =
-                    "\n\t<xupdate:insert-after select=\"/web-app/filter[filter-class='com.liferay.portal.servlet.filters.autologin.AutoLoginFilter']\" >\n" +
-                            "\t\t<xupdate:element name=\"filter\"> \n" +
-                            "\t\t\t<xupdate:element name=\"filter-name\">SSO Josso Filter</xupdate:element>\n" +
-                            "\t\t\t<xupdate:element name=\"filter-class\">org.josso.liferay6.agent.LiferaySSOAgentFilter</xupdate:element>\n" +
-                            "\t\t</xupdate:element>\n" +
-                            "\t</xupdate:insert-after>\n\n" +
-                            "\t<xupdate:insert-before select=\"/web-app/filter-mapping[1]\" >\n" +
-                            "\t\t<xupdate:element name=\"filter-mapping\">\n" +
-                            "\t\t\t<filter-name>SSO Josso Filter</filter-name>\n" +
-                            "\t\t\t<url-pattern>/*</url-pattern>\n" +
-                            "\t\t</xupdate:element>\n" +
-                        "\t</xupdate:insert-before>";
+            // Note: we are not using xupdate because of namespace issues
+            Document doc = (Document) xmlDom;
 
+            // filter
+            Element filterNameElem = doc.createElement("filter-name");
+            filterNameElem.setTextContent("SSO Josso Filter");
 
-            String qry = XUpdateUtil.XUPDATE_START + xupdJossoFilter + XUpdateUtil.XUPDATE_END;
-            log.debug("XUPDATE QUERY: \n" + qry);
-            XUpdateQuery xq = new XUpdateQueryImpl();
-            xq.setQString(qry);
-            xq.execute(xmlDom);
+            Element filterClassElem = doc.createElement("filter-class");
+            filterClassElem.setTextContent("org.josso.liferay6.agent.LiferaySSOAgentFilter");
 
-            getPrinter().printActionOkStatus("Added josso filter into web.xml", "JOSSO Liferay 6 Agent ", "WEB-INF/web.xml");
+            Element filterElem = doc.createElement("filter");
+            filterElem.appendChild(doc.createTextNode("\n\t\t"));
+            filterElem.appendChild(filterNameElem);
+            filterElem.appendChild(doc.createTextNode("\n\t\t"));
+            filterElem.appendChild(filterClassElem);
+            filterElem.appendChild(doc.createTextNode("\n\t"));
 
+            XPathExpression autoLoginFilterExp = xpath.compile("/web-app/filter[filter-class='com.liferay.portal.servlet.filters.autologin.AutoLoginFilter']");
+            Node autoLoginFilterNode = (Node) autoLoginFilterExp.evaluate(xmlDom, XPathConstants.NODE);
+            autoLoginFilterNode.getParentNode().insertBefore(filterElem, autoLoginFilterNode.getNextSibling());
+            autoLoginFilterNode.getParentNode().insertBefore(doc.createTextNode("\n\t"), autoLoginFilterNode.getNextSibling());
+
+            // filter mapping
+            Element filterNameMappingElem = doc.createElement("filter-name");
+            filterNameMappingElem.setTextContent("SSO Josso Filter");
+
+            Element urlPatternElem = doc.createElement("url-pattern");
+            urlPatternElem.setTextContent("/*");
+
+            Element filterMappingElem = doc.createElement("filter-mapping");
+            filterMappingElem.appendChild(doc.createTextNode("\n\t\t"));
+            filterMappingElem.appendChild(filterNameMappingElem);
+            filterMappingElem.appendChild(doc.createTextNode("\n\t\t"));
+            filterMappingElem.appendChild(urlPatternElem);
+            filterMappingElem.appendChild(doc.createTextNode("\n\t"));
+
+            XPathExpression firstFilterMappingExp = xpath.compile("/web-app/filter-mapping[1]");
+            Node firstFilterMappingNode = (Node) firstFilterMappingExp.evaluate(xmlDom, XPathConstants.NODE);
+            firstFilterMappingNode.getParentNode().insertBefore(filterMappingElem, firstFilterMappingNode);
+            firstFilterMappingNode.getParentNode().insertBefore(doc.createTextNode("\n\t"), firstFilterMappingNode);
+
+            getPrinter().printActionOkStatus("Added josso filter into web config file", "JOSSO Liferay 6 Agent ", webConfigFilePath);
 
             return true;
         }
@@ -309,14 +332,47 @@ public class Liferay6Installer extends VFSInstaller {
             log.debug("[configureJaasModule]: Tomcat install dir: " + tcInstallDir);
             try {
                 FileObject tomcatInstallDir = getFileSystemManager().resolveFile(tcInstallDir);
-                FileObject jaasConfigFile = tomcatInstallDir.resolveFile("conf/jaas.config");
+                FileObject jaasConfigFile = tomcatInstallDir.resolveFile("conf/jaas.conf");
                 if (jaasConfigFile != null) {
-                    BufferedWriter writerJaas =
-                            new BufferedWriter(
-                                    new OutputStreamWriter(new FileOutputStream(jaasConfigFile.getURL().getFile(), true)));
-                    writerJaas.write(JOSSO_TOMCAT_MODULE_DEFINITION);
-                    writerJaas.flush();
-                    writerJaas.close();
+                    String jaasFileContent = null;
+                    if (jaasConfigFile.exists()) {
+                        jaasFileContent = IOUtils.toString(jaasConfigFile.getContent().getInputStream());
+                    }
+                    if (jaasFileContent == null || !jaasFileContent.contains("org.josso.liferay6.agent.jaas.SSOGatewayLoginModule")) {
+                        BufferedWriter writerJaas =
+                                new BufferedWriter(
+                                        new OutputStreamWriter(new FileOutputStream(jaasConfigFile.getURL().getFile(), true)));
+                        writerJaas.write(JOSSO_TOMCAT_MODULE_DEFINITION);
+                        writerJaas.flush();
+                        writerJaas.close();
+                    }
+
+                    FileObject setEnvShFile = tomcatInstallDir.resolveFile("bin/setenv.sh");
+                    if (setEnvShFile != null && setEnvShFile.exists()) {    // it's should always be there, it's distributed with Liferay/Tomcat
+                        String setEnvFileContent = IOUtils.toString(setEnvShFile.getContent().getInputStream());
+                        if (!setEnvFileContent.contains("jaas.conf")) {
+                            BufferedWriter writerSetEnv =
+                                    new BufferedWriter(
+                                            new OutputStreamWriter(new FileOutputStream(setEnvShFile.getURL().getFile(), true)));
+                            writerSetEnv.write("\nJAVA_OPTS=\"$JAVA_OPTS -Djava.security.auth.login.config=$CATALINA_HOME/conf/jaas.conf\"");
+                            writerSetEnv.flush();
+                            writerSetEnv.close();
+                        }
+                    }
+
+                    FileObject setEnvBatFile = tomcatInstallDir.resolveFile("bin/setenv.bat");
+                    if (setEnvBatFile != null && setEnvBatFile.exists()) {    // it's should always be there, it's distributed with Liferay/Tomcat
+                        String setEnvFileContent = IOUtils.toString(setEnvBatFile.getContent().getInputStream());
+                        if (!setEnvFileContent.contains("jaas.conf")) {
+                            BufferedWriter writerSetEnv =
+                                    new BufferedWriter(
+                                            new OutputStreamWriter(new FileOutputStream(setEnvBatFile.getURL().getFile(), true)));
+                            writerSetEnv.write("\nset JAVA_OPTS=\"%JAVA_OPTS% -Djava.security.auth.login.config=%CATALINA_HOME%\\conf\\jaas.conf\"");
+                            writerSetEnv.flush();
+                            writerSetEnv.close();
+                        }
+                    }
+
                     return true;
                 } else {
                     getPrinter().printActionErrStatus("Configure", "JOSSO SSO Filter", "jaas.conf doesn't exist on given path");
@@ -331,38 +387,102 @@ public class Liferay6Installer extends VFSInstaller {
 
         if (jbInstallDir != null) {
             log.debug("[configureJaasModule]: JBoss install dir: " + jbInstallDir);
-            FileObject jbossInstallDir = null;
             try {
-                jbossInstallDir = getFileSystemManager().resolveFile(jbInstallDir);
-                FileObject loginConfig = jbossInstallDir.resolveFile("server/default/conf/login-config.xml");
-                Node xDom = readContentAsDom(loginConfig);
+                FileObject jbossInstallDir = getFileSystemManager().resolveFile(jbInstallDir);
+                boolean jboss7Config = false;
+                String loginConfigFilePath = "server/default/conf/login-config.xml";
+                FileObject loginConfig = jbossInstallDir.resolveFile(loginConfigFilePath);
+                if (loginConfig == null || !loginConfig.exists()) {
+                    jboss7Config = true;
+                    loginConfigFilePath = "standalone/configuration/standalone.xml";
+                    loginConfig = jbossInstallDir.resolveFile(loginConfigFilePath);
+                }
+                if (loginConfig != null && loginConfig.exists()) {
+                    Node xDom = readContentAsDom(loginConfig);
 
-                if ( xDom == null ) {
-                    log.debug("[configureJaasModule]: XML is not loaded.  " + loginConfig.getName().getFriendlyURI());
+                    if ( xDom == null ) {
+                        log.debug("[configureJaasModule]: XML is not loaded.  " + loginConfigFilePath);
+                        return false;
+                    }
+
+                    boolean configChanged = false;
+                    XPath xpath = XPathFactory.newInstance().newXPath();
+                    if (jboss7Config) {
+                        // Note: we could also use SimpleNamespaceContext to select what we want
+                        XPathExpression jossoSecurityDomainExp = xpath.compile("//*[local-name()='subsystem']/*[local-name()='security-domains']/*[local-name()='security-domain'][@name='josso']");
+                        Node jossoSecurityDomainNode = (Node) jossoSecurityDomainExp.evaluate(xDom, XPathConstants.NODE);
+                        if (jossoSecurityDomainNode == null) {
+                            // Note: we are not using xupdate because of namespace issues
+                            Document doc = (Document) xDom;
+
+                            Element jossoModuleOptionElem = doc.createElement("module-option");
+                            jossoModuleOptionElem.setAttribute("name", "debug");
+                            jossoModuleOptionElem.setAttribute("value", "true");
+
+                            Element jossoLoginModuleElem = doc.createElement("login-module");
+                            jossoLoginModuleElem.setAttribute("code", "org.josso.liferay6.agent.jaas.SSOGatewayLoginModule");
+                            jossoLoginModuleElem.setAttribute("flag", "required");
+                            jossoLoginModuleElem.appendChild(doc.createTextNode("\n\t\t\t\t\t"));
+                            jossoLoginModuleElem.appendChild(jossoModuleOptionElem);
+                            jossoLoginModuleElem.appendChild(doc.createTextNode("\n\t\t\t\t"));
+
+                            Element jossoAuthenticationElem = doc.createElement("authentication");
+                            jossoAuthenticationElem.appendChild(doc.createTextNode("\n\t\t\t\t"));
+                            jossoAuthenticationElem.appendChild(jossoLoginModuleElem);
+                            jossoAuthenticationElem.appendChild(doc.createTextNode("\n\t\t\t"));
+
+                            Element jossoSecurityDomainElem = doc.createElement("security-domain");
+                            jossoSecurityDomainElem.setAttribute("name", "josso");
+                            jossoSecurityDomainElem.appendChild(doc.createTextNode("\n\t\t\t"));
+                            jossoSecurityDomainElem.appendChild(jossoAuthenticationElem);
+                            jossoSecurityDomainElem.appendChild(doc.createTextNode("\n\t\t"));
+
+                            XPathExpression securityDomainsExp = xpath.compile("//*[local-name()='subsystem']/*[local-name()='security-domains']");
+                            Node securityDomainsNode = (Node) securityDomainsExp.evaluate(xDom, XPathConstants.NODE);
+                            securityDomainsNode.appendChild(jossoSecurityDomainElem);
+                            securityDomainsNode.appendChild(doc.createTextNode("\n\t"));
+
+                            configChanged = true;
+                        }
+                    } else {
+                        XPathExpression jossoAppPolicyExp = xpath.compile("/policy/application-policy[@name='josso']");
+                        Node jossoAppPolicyNode = (Node) jossoAppPolicyExp.evaluate(xDom, XPathConstants.NODE);
+                        if (jossoAppPolicyNode == null) {
+                            String xupdJossoModule =
+                                    "\n\t<xupdate:append select=\"/policy\" >\n" +
+                                            "\t\t<xupdate:element name=\"application-policy\">\n" +
+                                            "\t\t\t<xupdate:attribute name=\"name\">josso</xupdate:attribute>\n" +
+                                            "\t\t\t<authentication>\n" +
+                                            "\t\t\t\t<login-module code=\"org.josso.liferay6.agent.jaas.SSOGatewayLoginModule\" flag=\"required\">\n" +
+                                            "\t\t\t\t\t<module-option name=\"debug\">true</module-option>\n" +
+                                            "\t\t\t\t</login-module>\n" +
+                                            "\t\t\t</authentication>\n" +
+                                            "\t\t</xupdate:element>\n" +
+                                            "\t</xupdate:append>";
+
+                            String qry = XUpdateUtil.XUPDATE_START + xupdJossoModule + XUpdateUtil.XUPDATE_END;
+                            log.debug("XUPDATE QUERY: \n" + qry);
+                            XUpdateQuery xq = new XUpdateQueryImpl();
+                            xq.setQString(qry);
+                            xq.execute(xDom);
+                            configChanged = true;
+                        }
+                    }
+                    if (configChanged) {
+                        if (!backupFile(loginConfig, loginConfig.getParent())) {
+                            getPrinter().printActionWarnStatus("Configure", loginConfigFilePath, "Must be done manually (Follow setup guide)");
+                            return false;
+                        }
+                        writeContentFromDom(xDom, loginConfig);
+                        getPrinter().printActionOkStatus("Changed login configuration", "JOSSO Liferay 6 Agent ", loginConfigFilePath);
+                    } else {
+                        getPrinter().printActionWarnStatus("Configure login", "JOSSO Liferay 6 Agent", "Already configured: " + loginConfigFilePath);
+                    }
+                } else {
+                    log.debug("[configureJaasModule]: Unknown Jboss configuration!");
                     return false;
                 }
-                String xupdJossoModule =
-                                "\n\t<xupdate:append select=\"/policy\" >\n" +
-                                "\t\t<xupdate:element name=\"application-policy\">\n" +
-                                "\t\t\t<xupdate:attribute name=\"name\">josso</xupdate:attribute>\n" +
-                                "\t\t\t<authentication>\n" +
-                                "\t\t\t\t<login-module code=\"org.josso.liferay6.agent.jaas.SSOGatewayLoginModule\" flag=\"required\">\n" +
-                                "\t\t\t\t\t<module-option name=\"debug\">true</module-option>\n" +
-                                "\t\t\t\t</login-module>\n" +
-                                "\t\t\t</authentication>\n" + 
-                                "\t\t</xupdate:element>\n" +
-                                "\t</xupdate:append>";
 
-
-                String qry = XUpdateUtil.XUPDATE_START + xupdJossoModule + XUpdateUtil.XUPDATE_END;
-                log.debug("XUPDATE QUERY: \n" + qry);
-                XUpdateQuery xq = new XUpdateQueryImpl();
-                xq.setQString(qry);
-                xq.execute(xDom);
-
-                writeContentFromDom(xDom, loginConfig);
-
-                getPrinter().printActionOkStatus("Changed login-config.xml", "JOSSO Liferay 6 Agent ", "server/default/conf/login-config.xml");
                 return true;
 
             } catch (FileSystemException e) {

@@ -1,4 +1,25 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
 
 <s:beans xmlns:s="http://www.springframework.org/schema/beans"
          xmlns:liferay6="urn:org:josso:agent:liferay6"
@@ -7,41 +28,42 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation=""
         >
-    <liferay6:agent
-            sessionAccessMinInterval="1000"
-            gatewayLoginUrl="http://localhost:8090/josso/signon/login.do"
-            gatewayLogoutUrl="http://localhost:8090/josso/signon/logout.do"
-            emailAddressProperty="email"
-            firstNameProperty="user.name"
-            lastNameProperty="user.lastName"
-            autoScreenName="true"
-            >
 
-        <liferay6:automaticLoginStrategies>
-            <agent:default-automaticlogin-strategy mode="REQUIRED">
-                <agent:ignoredReferrers>
-                    <s:value>http://localhost:8080/IDBUS</s:value>
-                </agent:ignoredReferrers>
-            </agent:default-automaticlogin-strategy>
-        </liferay6:automaticLoginStrategies>
+    <liferay6:agent name="josso-liferay-agent" sessionAccessMinInterval="1000">
 
+        <!-- Gateway LOGIN and LOGOUT URLs -->
+        <gatewayLoginUrl>http://localhost:8080/josso/signon/login.do</gatewayLoginUrl>
+        <gatewayLogoutUrl>http://localhost:8080/josso/signon/logout.do</gatewayLogoutUrl>
 
-        <liferay6:configuration>
+        <!-- Gateway service locator -->
+        <gatewayServiceLocator>
+            <!-- Other properties for ws-service-locator :
+            username, password, servicesWebContext, transportSecurity
+            -->
+            <protocol:ws-service-locator endpoint="localhost:8080" />
+        </gatewayServiceLocator>
+
+        <emailAddressProperty>email</emailAddressProperty>
+        <firstNameProperty>user.name</firstNameProperty>
+        <lastNameProperty>user.lastName</lastNameProperty>
+        <autoScreenName>true</autoScreenName>
+
+        <configuration>
             <agent:agent-configuration>
                 <agent:partner-apps>
-                    <agent:partner-app id="Liferay" context="/">
-                    </agent:partner-app>
+                    <agent:partner-app id="Liferay" context="/"/>
                 </agent:partner-apps>
             </agent:agent-configuration>
-        </liferay6:configuration>
+        </configuration>
 
-        <liferay6:gatewayServiceLocator>
-            <protocol:ws-service-locator endpoint="localhost:8090"/>
-        </liferay6:gatewayServiceLocator>
+        <parametersBuilders>
+            <agent:appid-parameters-builder/>
+        </parametersBuilders>
 
-        <liferay6:parametersBuilders>
-            <agent:vhost-parameters-builder/>
-            <agent:appctx-parameters-builder/>
-        </liferay6:parametersBuilders>
+        <automaticLoginStrategies>
+            <agent:disabled-automaticlogin-strategy mode="REQUIRED"/>
+        </automaticLoginStrategies>
+
     </liferay6:agent>
+
 </s:beans>

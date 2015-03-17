@@ -295,7 +295,7 @@ public class SSOGatewayLoginModule implements LoginModule {
 
             SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
             if (im == null)
-                agent.getSSOIdentityManager();
+                im = agent.getSSOIdentityManager();
 
             return im.findRolesBySSOSessionId(_requester, _currentSSOSessionId);
         } catch (Exception e) {

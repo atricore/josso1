@@ -22,38 +22,10 @@
 
 package org.josso.tooling.gshell.install.installer;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.vfs.FileName;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.FileSystemManager;
-import org.apache.commons.vfs.FileType;
-import org.apache.commons.vfs.FileUtil;
-import org.apache.commons.vfs.Selectors;
-import org.apache.commons.vfs.VFS;
+import org.apache.commons.vfs.*;
 import org.apache.commons.vfs.provider.local.LocalFileName;
 import org.apache.geronimo.gshell.ansi.Renderer;
 import org.josso.tooling.gshell.core.support.MessagePrinter;
@@ -70,6 +42,21 @@ import org.w3c.dom.DocumentType;
 import org.w3c.dom.Node;
 import org.xmldb.common.xml.queries.XUpdateQuery;
 import org.xmldb.xupdate.lexus.XUpdateQueryImpl;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * This is a base installer that works on a virtual filesystem.
@@ -545,10 +532,15 @@ public abstract class VFSInstaller implements Installer, VariableSolver, Applica
 
 	    	            updateIDP += "<xupdate:update select=\"//@endpoint\">" +
 										hostAndPort + "</xupdate:update>";
-	    	            
-	    	            updateIDP += "<xupdate:update select=\"//property[@name='ignoredReferrers']/list/value\">" +
-										"http://" + hostAndPort + "/IDBUS</xupdate:update>";
-	    	            
+
+                        XPath xpath = XPathFactory.newInstance().newXPath();
+                        XPathExpression ignoredReferrersExp = xpath.compile("//property[@name='ignoredReferrers']/list/value");
+                        Node ignoredReferrersNode = (Node) ignoredReferrersExp.evaluate(configXmlDom, XPathConstants.NODE);
+                        if (ignoredReferrersNode != null) {
+                            updateIDP += "<xupdate:update select=\"//property[@name='ignoredReferrers']/list/value\">" +
+                                    "http://" + hostAndPort + "/IDBUS</xupdate:update>";
+                        }
+
 	    	            if (idpType.equals("atricore-idbus")) {
 		    	            updateIDP += "<xupdate:append select=\"//protocol:ws-service-locator\">";
 		    	            updateIDP += "<xupdate:attribute name=\"identityManagerServicePath\">IDBUS/BP-1/JOSSO/SSOIdentityManager/SOAP</xupdate:attribute>";

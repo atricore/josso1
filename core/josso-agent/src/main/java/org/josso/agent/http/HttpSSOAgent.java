@@ -62,6 +62,8 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
     private String _jossoLogoutUri = DEFAULT_JOSSO_LOGOUT_URI;
     private String _jossoAuthenticationUri = DEFAULT_JOSSO_AUTHENTICATION_URI;
 
+    private String _uriEncoding;
+
     private List<FrontChannelParametersBuilder> _builders = new ArrayList<FrontChannelParametersBuilder>();
 
     private List<AutomaticLoginStrategy> _automaticStrategies = new ArrayList<AutomaticLoginStrategy>();
@@ -853,7 +855,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             String cookieValue = null;
             try {
             	// TODO: upgrade to commons-codec 1.4 and use URL-safe mode?
-            	cookieValue = CipherUtil.encodeBase64(value.getBytes());
+            	cookieValue = CipherUtil.encodeBase64(value.getBytes("UTF-8"));
             	cookieValue = URLEncoder.encode(cookieValue, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 			    log("Base64 encoding failed : " + value, e);
@@ -981,6 +983,15 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
 
     public void setAutomaticLoginStrategies(List<AutomaticLoginStrategy> _automaticStrategies) {
         this._automaticStrategies = _automaticStrategies;
+    }
+
+
+    public void setUriEncoding(String uriEncoding) {
+        this._uriEncoding = uriEncoding;
+    }
+
+    public String getUriEncoding() {
+        return _uriEncoding;
     }
 
     public boolean isAgentReservedUri(String contextPath, String uri) {

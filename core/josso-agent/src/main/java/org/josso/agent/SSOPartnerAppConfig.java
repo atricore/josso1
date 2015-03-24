@@ -107,7 +107,6 @@ public class SSOPartnerAppConfig implements Serializable {
 
     }
 
-
     public boolean isRememberMeEnabled() {
         return _rememberMeEnabled;
     }

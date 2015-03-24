@@ -124,15 +124,21 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
                 java.net.URL myUrl = new java.net.URL(mySelf.toString());
 
                 // This should build the base url of the java application
-                String myUrlStr = myUrl.getProtocol() + "://" + myUrl.getHost() + ((myUrl.getPort() > 0 && myUrl.getPort() != 80 && myUrl.getPort() != 443) ? ":" + myUrl.getPort() : "") + hreq.getContextPath();
+                String myUrlStrTmp = myUrl.getHost() + ((myUrl.getPort() > 0 && myUrl.getPort() != 80 && myUrl.getPort() != 443) ? ":" + myUrl.getPort() : "") + hreq.getContextPath();
+                String myUrlStrNonSecure = "http://" + myUrlStrTmp;
+                String myUrlStrSecure = "https://" + myUrlStrTmp;
 
-                if (log.isDebugEnabled())
-                    log.debug("Processing referer " + referer + " for host " + myUrlStr);
+                if (log.isDebugEnabled()) {
+                    log.debug("Processing referrer " + referer + " for host (non-secure) " + myUrlStrNonSecure);
+                    log.debug("Processing referrer " + referer + " for host (non-secure) " + myUrlStrSecure);
+                }
 
-                if (!referer.startsWith(myUrlStr)) {
+                // On some proxies, the protocol may differ, try SSL and non-SSL urls
+                if (!referer.startsWith(myUrlStrSecure) &&
+                        !referer.startsWith(myUrlStrNonSecure)) {
 
                     if (log.isDebugEnabled())
-                        log.debug("Referer found differs from current host.  Require Autologin!");
+                        log.debug("Referrer found differs from current host.  Require Autologin!");
 
                     // Store referer for future reference!
                     getAgent().setAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER", referer);

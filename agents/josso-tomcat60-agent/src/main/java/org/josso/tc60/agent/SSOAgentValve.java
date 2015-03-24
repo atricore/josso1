@@ -298,6 +298,14 @@ public class SSOAgentValve extends ValveBase
                 return;
             }
 
+            // URI Encoding
+            if (_agent.getUriEncoding() != null) {
+                if (debug >= 1)
+                    log("Setting request/response encoding to " + _agent.getUriEncoding());
+                hreq.setCharacterEncoding(_agent.getUriEncoding());
+                hres.setCharacterEncoding(_agent.getUriEncoding());
+            }
+
             String nodeId = hreq.getParameter("josso_node");
             if (nodeId != null) {
                 if (debug >= 1)
@@ -313,7 +321,6 @@ public class SSOAgentValve extends ValveBase
             // ------------------------------------------------------------------
             // Check some basic HTTP handling
             // ------------------------------------------------------------------
-            // P3P Header for IE 6+ compatibility when embedding JOSSO in a IFRAME
             SSOPartnerAppConfig cfg = _agent.getPartnerAppConfig(vhost, contextPath);
             if (cfg.isSendP3PHeader() && !hres.isCommitted()) {
                 hres.setHeader("P3P", cfg.getP3PHeaderValue());

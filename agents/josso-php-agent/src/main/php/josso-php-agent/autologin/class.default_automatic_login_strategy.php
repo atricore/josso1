@@ -34,7 +34,7 @@ class default_automatic_login_strategy extends abstract_automatic_login_strategy
 
 	/**
 	* Constructor
-	* 
+	*
 	* @access public
 	*/
 	function default_automatic_login_strategy() {
@@ -54,7 +54,7 @@ class default_automatic_login_strategy extends abstract_automatic_login_strategy
 	        $autoLoginExecuted = $_SESSION["JOSSO_AUTOMATIC_LOGIN_EXECUTED"];
 
 	    // If no referer host is found but we did not executed auto login yet, give it a try.
-	    if (!isset($autoLoginExecuted)) {
+	    if (!isset($autoLoginExecuted) || empty($autoLoginExecuted)) {
 			$_SESSION["JOSSO_AUTOMATIC_LOGIN_EXECUTED"] = TRUE;
 			return TRUE;
 	    }
@@ -63,7 +63,7 @@ class default_automatic_login_strategy extends abstract_automatic_login_strategy
 			$referer = $_SERVER['HTTP_REFERER'];
 
 	    // If we have a referer host that differs from our we require an autologinSSs
-	    if (isset($referer)) {
+	    if (isset($referer) && !empty($referer)) {
 
             if (isset($_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"]))
 			    $oldReferer = $_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"];
@@ -72,18 +72,18 @@ class default_automatic_login_strategy extends abstract_automatic_login_strategy
 			    unset($_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"]);
 			    return FALSE;
 			}
-	
+
 			$protocol = 'http';
 			$host = $_SERVER['HTTP_HOST'];
-	
+
 			if (isset($_SERVER['HTTPS'])) {
-	
+
 			    // This is a secure connection, the default PORT is 443
 			    $protocol = 'https';
 			    if ($_SERVER['SERVER_PORT'] != 443) {
 					$port = $_SERVER['SERVER_PORT'];
 			    }
-	
+
 			} else {
 			    // This is a NON secure connection, the default PORT is 80
 			    $protocol = 'http';
@@ -91,25 +91,13 @@ class default_automatic_login_strategy extends abstract_automatic_login_strategy
 					$port = $_SERVER['SERVER_PORT'];
 			    }
 			}
-	
+
+            // This is coming from another server/application
 			$baseUrl = $protocol.'://'.$host.(isset($port) ? ':'.$port : '');
-	
-			if (strncmp($referer, $baseUrl, strlen($baseUrl) != 0)) {
-	
+			if (strncmp($referer, $baseUrl, strlen($baseUrl)) != 0) {
 			    // Store referer for future reference!
 			    $_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"] = $referer;
 			    return TRUE;
-			}
-	    } else {
-			if (isset($_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"])) {
-			    $oldReferer = $_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"];
-			    if (isset($oldReferer)  && strcmp($oldReferer, "NO_REFERER") != 0) {
-					unset($_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"]);
-					return FALSE;
-			    } else {
-					$_SESSION["JOSSO_AUTOMATIC_LOGIN_REFERER"] = "NO_REFERER";
-					return TRUE;
-			    }
 			}
 	    }
 

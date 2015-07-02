@@ -833,7 +833,7 @@ class jossoagent  {
 
 
         if (!isset($contextPath)) {
-            error_log("JOSSO : No context path found, forcing '/'");
+            //error_log("JOSSO : No context path found, forcing '/'");
             $contextPath = '/';
         }
 

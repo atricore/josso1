@@ -171,6 +171,10 @@ public class WeblogicInstaller extends VFSInstaller {
                     getTargetPlatform().getVersion().startsWith("10.")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
+            } else if (artifact.getBaseName().startsWith("josso-weblogic12-agent") &&
+                    getTargetPlatform().getVersion().startsWith("12.")) {
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+
             } else if (artifact.getBaseName().startsWith("josso-servlet-agent")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 

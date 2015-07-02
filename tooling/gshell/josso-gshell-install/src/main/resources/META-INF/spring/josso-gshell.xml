@@ -318,6 +318,12 @@
         <s:property name="printer" ref="messagePrinter"/>
     </weblogic-installer>
 
+    <weblogic-installer id="wl12-installer">
+        <s:constructor-arg ref="wl12"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </weblogic-installer>
+
+
     <platform id="wl92" family="weblogic" platformName="Weblogic" version="9.2+">
 
         <bin>${target}/${domain}/bin</bin>
@@ -337,6 +343,23 @@
     </platform>
 
     <platform id="wl10" family="weblogic" platformName="Weblogic" version="10.0+">
+
+        <bin>${target}/${domain}/bin</bin>
+        <lib>${target}/${domain}/lib</lib>
+        <conf>${target}/${domain}/config</conf>
+        <deploy>${target}/${domain}/autodeploy</deploy>
+        <endorsed>${target}/${domain}/lib</endorsed>
+
+        <josso-conf>${target}/${domain}/</josso-conf>
+        <josso-lib>${target}/${domain}/lib</josso-lib>
+        <josso-shared>${target}/${domain}/lib/</josso-shared>
+
+        <josso-war-name>josso.war</josso-war-name>
+        <josso-war-exploded>false</josso-war-exploded>
+
+    </platform>
+
+    <platform id="wl12" family="weblogic" platformName="Weblogic" version="12.0+">
 
         <bin>${target}/${domain}/bin</bin>
         <lib>${target}/${domain}/lib</lib>

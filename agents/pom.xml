@@ -61,6 +61,7 @@
                 <module>josso-weblogic81-agent</module>
                 <module>josso-weblogic92-agent</module>
                 <module>josso-weblogic10-agent</module>
+                <module>josso-weblogic12-agent</module>
                 <module>josso-php-agent</module>
                 <module>josso-phpBB-agent</module>
                 <module>josso-microsoft-agent</module>
@@ -126,6 +127,15 @@
                 <module>josso-agent-shared</module>
                 <module>josso-servlet-agent</module>
                 <module>josso-weblogic10-agent</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>weblogic12</id>
+            <modules>
+                <module>josso-agent-shared</module>
+                <module>josso-servlet-agent</module>
+                <module>josso-weblogic12-agent</module>
             </modules>
         </profile>
 

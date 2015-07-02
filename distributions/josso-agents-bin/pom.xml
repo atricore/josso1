@@ -345,6 +345,14 @@
 
                 <dependency>
                     <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <version>1.8.10-SNAPSHOT</version>
+                    <type>jar</type>
+                </dependency>
+
+
+                <dependency>
+                    <groupId>org.josso</groupId>
                     <artifactId>josso-tomcat70-agent</artifactId>
                     <version>1.8.10-SNAPSHOT</version>
                     <type>jar</type>
@@ -422,6 +430,27 @@
                 </dependency>
             </dependencies>
         </profile>
+
+        <profile>
+            <id>weblogic12</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <version>1.8.10-SNAPSHOT</version>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <version>1.8.10-SNAPSHOT</version>
+                    <type>jar</type>
+                </dependency>
+            </dependencies>
+        </profile>
+
 
         <profile>
             <id>jdk6</id>

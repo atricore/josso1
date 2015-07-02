@@ -495,7 +495,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <namespace>urn:org:josso:agent:weblogic10</namespace>
+                            <namespace>urn:org:josso:agent:weblogic12</namespace>
                         </configuration>
                         <goals>
                             <goal>mapping</goal>

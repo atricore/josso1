@@ -197,6 +197,7 @@
                 <include>${pom.groupId}:josso-servlet-agent</include>
                 <include>${pom.groupId}:josso-weblogic92-agent:jar</include>
                 <include>${pom.groupId}:josso-weblogic10-agent:jar</include>
+                <include>${pom.groupId}:josso-weblogic12-agent:jar</include>
                 <include>${pom.groupId}:josso-applet-agent</include>
                 <include>${pom.groupId}:josso-agents-bin:jar:axis</include>
                 <include>${pom.groupId}:josso-agents-bin:jar:jaxws</include>
@@ -235,6 +236,15 @@
                 <include>${pom.groupId}:josso-weblogic10-agent:tar.gz:mbeans-src</include>
             </includes>
         </dependencySet>
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/src/josso-weblogic12-agent-mbeans-src</outputDirectory>
+            <unpack>true</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-weblogic12-agent:tar.gz:mbeans-src</include>
+            </includes>
+        </dependencySet>
+
 
         <!-- JOSSO Client jars -->
         <dependencySet>

@@ -607,6 +607,27 @@
                     <type>ear</type>
                 </dependency>
 
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <type>jar</type>
+                </dependency>
+
+
             </dependencies>
         </profile>
 
@@ -706,6 +727,33 @@
                     <type>ear</type>
                 </dependency>
 
+
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>weblogic12</id>
+            <dependencies>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>zip</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <classifier>mbeans-src</classifier>
+                    <type>tar.gz</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-weblogic12-agent</artifactId>
+                    <type>jar</type>
+                </dependency>
 
             </dependencies>
         </profile>

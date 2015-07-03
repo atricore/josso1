@@ -309,6 +309,7 @@
                 <include>${pom.groupId}:josso-partner-jboss-app</include>
                 <include>${pom.groupId}:josso-partner-jboss5-app</include>
                 <include>${pom.groupId}:josso-partner-jboss7-app</include>
+                <include>${pom.groupId}:josso-partner-wl12-app</include>
                 <include>${pom.groupId}:josso-partner-wl10-app</include>
                 <include>${pom.groupId}:josso-partner-wl92-app</include>
                 <include>${pom.groupId}:josso-partner-wl81-app</include>

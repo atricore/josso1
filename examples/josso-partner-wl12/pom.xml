@@ -23,6 +23,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <!--
     ~ JOSSO: Java Open Single Sign-On
     ~
@@ -48,38 +49,18 @@
 
     <parent>
         <groupId>org.josso</groupId>
-        <artifactId>josso-parent</artifactId>
+        <artifactId>examples</artifactId>
         <version>1.8.10-SNAPSHOT</version>
     </parent>
 
     <groupId>org.josso</groupId>
-    <artifactId>examples</artifactId>
-    <name>JOSSO :: Sample Applications</name>
+    <artifactId>josso-partner-wl12</artifactId>
+    <name>JOSSO :: Weblogic 12 Sample Application</name>
     <packaging>pom</packaging>
 
     <modules>
-        <module>josso-partner-jboss</module>
-        <module>josso-partner-jboss5</module>
-        <module>josso-partner-jboss7</module>
-        <module>josso-partner-tomcat</module>
-        <module>josso-partner-jetty</module>
-        <module>josso-partner-php</module>
-        <module>josso-partner-asp</module>
-        <module>josso-partner-wasce</module>
-        <module>josso-partner-applet</module>
-        <!--module>josso-partner-gae</module-->
-        <module>spring-security-contacts</module>
-        <module>spring-security-v3-contacts</module>
+        <module>josso-partner-wl12-app</module>
+        <module>josso-partner-wl12-web</module>
+        <module>josso-partner-wl12-ejb</module>
     </modules>
-    <profiles>
-        <profile>
-            <id>all</id>
-            <modules>
-                <module>josso-partner-wl81</module>
-                <module>josso-partner-wl10</module>
-                <module>josso-partner-wl92</module>
-                <module>josso-partner-wl12</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

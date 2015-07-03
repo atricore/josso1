@@ -1398,6 +1398,27 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-partner-wl12-ejb</artifactId>
+                <version>${pom.version}</version>
+                <type>ejb</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-wl12-web</artifactId>
+                <version>${pom.version}</version>
+                <type>war</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-partner-wl12-app</artifactId>
+                <version>${pom.version}</version>
+                <type>ear</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-partner-tomcat-web</artifactId>
                 <version>${pom.version}</version>
                 <type>war</type>

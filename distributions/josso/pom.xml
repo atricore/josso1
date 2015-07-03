@@ -609,6 +609,12 @@
 
                 <dependency>
                     <groupId>org.josso</groupId>
+                    <artifactId>josso-partner-wl12-app</artifactId>
+                    <type>ear</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic12-agent</artifactId>
                     <classifier>mbeans-src</classifier>
                     <type>zip</type>
@@ -753,6 +759,12 @@
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic12-agent</artifactId>
                     <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
+                    <artifactId>josso-partner-wl12-app</artifactId>
+                    <type>ear</type>
                 </dependency>
 
             </dependencies>

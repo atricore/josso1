@@ -23,6 +23,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <!--
     ~ JOSSO: Java Open Single Sign-On
     ~
@@ -48,38 +49,56 @@
 
     <parent>
         <groupId>org.josso</groupId>
-        <artifactId>josso-parent</artifactId>
+        <artifactId>josso-partner-wl12</artifactId>
         <version>1.8.10-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.josso</groupId>
-    <artifactId>examples</artifactId>
-    <name>JOSSO :: Sample Applications</name>
-    <packaging>pom</packaging>
+    <artifactId>josso-partner-wl12-app</artifactId>
+    <packaging>ear</packaging>
+    <name>JOSSO :: Weblogic 12 Partner Application (EAR)</name>
+    <description>JOSSO Weblogic 12 Partner Application (EAR)</description>
 
-    <modules>
-        <module>josso-partner-jboss</module>
-        <module>josso-partner-jboss5</module>
-        <module>josso-partner-jboss7</module>
-        <module>josso-partner-tomcat</module>
-        <module>josso-partner-jetty</module>
-        <module>josso-partner-php</module>
-        <module>josso-partner-asp</module>
-        <module>josso-partner-wasce</module>
-        <module>josso-partner-applet</module>
-        <!--module>josso-partner-gae</module-->
-        <module>spring-security-contacts</module>
-        <module>spring-security-v3-contacts</module>
-    </modules>
-    <profiles>
-        <profile>
-            <id>all</id>
-            <modules>
-                <module>josso-partner-wl81</module>
-                <module>josso-partner-wl10</module>
-                <module>josso-partner-wl92</module>
-                <module>josso-partner-wl12</module>
-            </modules>
-        </profile>
-    </profiles>
+    <dependencies>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-wl12-web</artifactId>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.josso</groupId>
+            <artifactId>josso-partner-wl12-ejb</artifactId>
+            <type>ejb</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <configuration>
+                    <modules>
+                        <webModule>
+                            <groupId>org.josso</groupId>
+                            <artifactId>josso-partner-wl12-web</artifactId>
+                            <contextRoot>/partnerapp</contextRoot>
+                        </webModule>
+                        <ejbModule>
+                            <groupId>org.josso</groupId>
+                            <artifactId>josso-partner-wl12-ejb</artifactId>
+                        </ejbModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

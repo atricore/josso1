@@ -43,13 +43,13 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     <filter>
         <filter-name>WLAuthenticatorProviderFilter</filter-name>
         <description>Weblogic 12.0 Authenticator Provider Serlvet Filter</description>
-        <filter-class>org.josso.wls10.agent.WLSAgentServletFilter</filter-class>
+        <filter-class>org.josso.wls12.agent.WLSAgentServletFilter</filter-class>
     </filter>
 
     <filter>
         <filter-name>WLSessionEnforcementServletFilter</filter-name>
         <description>WebLogic 12.0 Session Enforcement Servlet Filter</description>
-        <filter-class>org.josso.wls10.agent.WLSSessionEnforcementServletFilter</filter-class>
+        <filter-class>org.josso.wls12.agent.WLSSessionEnforcementServletFilter</filter-class>
     </filter>
 
     <!--

@@ -550,7 +550,7 @@
         </repository>
 
         <!-- Codehaus -->
-        <repository>
+        <!--repository>
             <id>codehaus</id>
             <name>Codehaus repository</name>
             <url>http://repository.codehaus.org</url>
@@ -560,7 +560,7 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-        </repository>
+        </repository-->
         <!-- Java.net -->
         <repository>
             <id>java.net</id>

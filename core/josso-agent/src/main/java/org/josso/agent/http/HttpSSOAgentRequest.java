@@ -22,8 +22,10 @@
 
 package org.josso.agent.http;
 
+import org.josso.agent.SSOAgent;
 import org.josso.agent.SSOAgentRequestImpl;
 import org.josso.agent.LocalSession;
+import org.josso.agent.SSOPartnerAppConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,6 +77,11 @@ public class HttpSSOAgentRequest extends SSOAgentRequestImpl {
 
     public HttpServletResponse getResponse() {
         return response;
+    }
+
+    public SSOPartnerAppConfig getConfig(SSOAgent agent) {
+        HttpSSOAgent httpAgent = (HttpSSOAgent) agent;
+        return httpAgent.getPartnerAppConfig(request.getServerName(), request.getContextPath());
     }
 
 }

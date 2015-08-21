@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.agent.AbstractSSOAgent;
 import org.josso.agent.Lookup;
+import org.josso.agent.SSOAgent;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.SSOUser;
@@ -52,11 +53,16 @@ public class CatalinaNativeRealm extends RealmBase {
 	@Override
 	public Principal authenticate(String username, String credentials) {
 		try {
-			SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
+            SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+
+            SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
+            if (im == null)
+                im = agent.getSSOIdentityManager();
 			
 			String requester = "";
 			// Check for nulls ?
-            SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
+
             if (request != null)
             	requester = request.getRequester();
             else

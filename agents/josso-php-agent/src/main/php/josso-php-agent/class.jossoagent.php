@@ -708,11 +708,11 @@ class jossoagent  {
         // Lazy load the propper soap client
         if (!isset($this->identityMgrClient)) {
             if (isset($this->wsdlUrl)) {
-                $this->identityMgrClient = new soapclient($this->wsdlUrl , true,
+                $this->identityMgrClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
             }
             else {
-                $this->identityMgrClient = new soapclient($this->endpoint . $this->identityManagerServicePath, false,
+                $this->identityMgrClient = new nusoap_client($this->endpoint . $this->identityManagerServicePath, false,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
             }
             // Sets default encoding to UTF-8 ...
@@ -731,11 +731,11 @@ class jossoagent  {
         // Lazy load the propper soap client
         if (!isset($this->identityProviderClient)) {
             if (isset($this->wsdlUrl)) {
-                $this->identityProviderClient = new soapclient($this->wsdlUrl , true,
+                $this->identityProviderClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
             }
             else {
-                $this->identityProviderClient = new soapclient($this->endpoint . $this->identityProviderServicePath, false,
+                $this->identityProviderClient = new nusoap_client($this->endpoint . $this->identityProviderServicePath, false,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
             }
             // Sets default encoding to UTF-8 ...
@@ -756,11 +756,11 @@ class jossoagent  {
         if (!isset($this->sessionMgrClient)) {
             // SSOSessionManager SOAP Client
             if (isset($this->wsdlUrl)) {
-                $this->sessionMgrClient = new soapclient($this->wsdlUrl , true,
+                $this->sessionMgrClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
             }
             else {
-                $this->sessionMgrClient = new soapclient($this->endpoint . $this->sessionManagerServicePath, false,
+                $this->sessionMgrClient = new nusoap_client($this->endpoint . $this->sessionManagerServicePath, false,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
             }
         }
@@ -793,11 +793,16 @@ class jossoagent  {
         $contextPath = null;
         $requestUrl = null;
         $requester = null;
+
         if (isset($_SESSION['JOSSO_ORIGINAL_URL'])) {
             $requestUrl = $_SESSION['JOSSO_ORIGINAL_URL'];
-        } else if (isset($_GET['josso_current_url'])) {
+        }
+
+        if ((!isset($requestUrl) || $requestUrl == "") && isset($_GET['josso_current_url'])) {
             $requestUrl = $_GET['josso_current_url'];
-        } else {
+        }
+
+        if (!isset($requestUrl) || $requestUrl == "") {
             $requestUrl = $_SERVER['REQUEST_URI'];
         }
 
@@ -826,18 +831,26 @@ class jossoagent  {
             }
         }
 
-        if (isset($contextPath)) {
-            if (isset($this->partnerAppIDs[$contextPath])) {
-                $requester = $this->partnerAppIDs[$contextPath];
-            }
-            if (!isset($requester)) {
-                $requester = $this->partnerAppIDs['/'];
-                if (isset($requester));
-                    $contextPath = '/';
-            }
-        } else {
+
+        if (!isset($contextPath)) {
+            error_log("JOSSO : No context path found, forcing '/'");
             $contextPath = '/';
         }
+
+        if (isset($this->partnerAppIDs[$contextPath])) {
+            $requester = $this->partnerAppIDs[$contextPath];
+        }
+
+        if (!isset($requester)) {
+            $requester = $this->partnerAppIDs['/'];
+            if (isset($requester));
+                $contextPath = '/';
+        }
+
+        if (!isset($contextPath) || $contextPath == "") {
+            error_log("JOSSO : Cannot resolve context path (no request URI)");
+        }
+
         return $contextPath;
     }
 
@@ -850,10 +863,17 @@ class jossoagent  {
      */
     function getRequester() {
         if (isset($this->partnerAppIDs)) {
-            $requester = $this->partnerAppIDs[$this->getContextPath()];
+
+            if(!array_key_exists($this->getContextPath(), $this->partnerAppIDs)) {
+                error_log("JOSSO : No partner application defined for context " + $this->getContextPath());
+            } else {
+                $requester = $this->partnerAppIDs[$this->getContextPath()];
+            }
+
             if (isset($requester)) {
                 return $requester;
             }
+            error_log("JOSSO : Cannot find requester for " . $this->getContextPath());
         }
         return null;
     }

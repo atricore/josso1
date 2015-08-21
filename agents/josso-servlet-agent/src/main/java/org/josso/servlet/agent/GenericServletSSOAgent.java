@@ -128,10 +128,12 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
                 }
 
                 SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
-                SSOIdentityManagerService im = agent.getSSOIdentityManager();
-
-                if (request.getNodeId() == null && !"".equals(request.getNodeId())) {
-                    im = agent.getSSOIdentityManager(request.getNodeId());
+                SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
+                if (im == null) {
+                    im = agent.getSSOIdentityManager();
+                    if (request.getNodeId() == null && !"".equals(request.getNodeId())) {
+                        im = agent.getSSOIdentityManager(request.getNodeId());
+                    }
                 }
 
                 ssoUser = im.findUserInSession(request.getRequester(), ssoSessionId);

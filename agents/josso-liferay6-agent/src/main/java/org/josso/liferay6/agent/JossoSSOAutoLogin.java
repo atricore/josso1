@@ -66,7 +66,10 @@ public class JossoSSOAutoLogin implements AutoLogin {
                 contextPath = "/";
 
             SSOPartnerAppConfig cfg = agent.getPartnerAppConfig(vhost, contextPath);
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOIdentityManagerService im = cfg.getIdentityManagerService();
+            if (im == null)
+                im = agent.getSSOIdentityManager();
+
             SSOUser ssoUser = im.findUserInSession(cfg.getId(), jossoSessionId);
             if (ssoUser == null) {
                 return credentials;

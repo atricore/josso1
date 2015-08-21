@@ -60,7 +60,7 @@ if (isset($user)) {
     $properties = $user->getProperties();
     if (is_array($properties)) {
         foreach ($properties as $property) {
-            echo $property['name'] . '=' . $property['value'] . '<br>';
+            echo $property['!name'] . '=' . $property['!value'] . '<br>';
         }
     }
 

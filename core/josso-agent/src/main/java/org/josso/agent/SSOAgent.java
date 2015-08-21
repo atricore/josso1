@@ -23,6 +23,7 @@ package org.josso.agent;
 
 import org.josso.gateway.GatewayServiceLocator;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
+import org.josso.gateway.identity.service.SSOIdentityProviderService;
 import org.josso.gateway.session.service.SSOSessionManagerService;
 
 /**
@@ -85,6 +86,14 @@ public interface SSOAgent extends LocalSessionListener {
     SSOIdentityManagerService getSSOIdentityManager();
 
     SSOIdentityManagerService getSSOIdentityManager(String nodeId);
+
+    /**
+     * Gets the SSO Identity Manager used by this agent.
+     */
+    SSOIdentityProviderService getSSOIdentityProvider();
+
+    SSOIdentityProviderService getSSOIdentityProvider(String nodeId);
+
 
     /**
      * Configures this agent.

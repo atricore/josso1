@@ -73,4 +73,6 @@ public interface SSOAgentRequest {
 
     void setAssertionId(String assertionId);
 
+    SSOPartnerAppConfig getConfig(SSOAgent agent);
+
 }

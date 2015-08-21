@@ -50,8 +50,6 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
     protected FileObject srcsDir;
     protected FileObject trdpartyDir;
     protected FileObject confDir;
-    protected FileObject iis32Dir;
-    protected FileObject iis64Dir;
 
     public InstallJavaAgentCommand() {
         this.setShell("agent");
@@ -75,8 +73,6 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
         srcsDir = homeDir.resolveFile("dist/agents/src");
         trdpartyDir = libsDir.resolveFile("3rdparty");
         confDir = homeDir.resolveFile("dist/agents/config/" + getTargetPlatformId());
-        iis32Dir = libsDir.resolveFile("Win32");
-        iis64Dir = libsDir.resolveFile("Win64");
     }
 
     protected void verifyTarget() throws Exception {
@@ -98,8 +94,6 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
 
     protected void installJOSSOAgentJars() throws Exception {
         processDir(libsDir, false);
-        processDir(iis32Dir, true);
-        processDir(iis64Dir, true);
     }
 
     protected void installJOSSOAgentJarsFromSrc() throws Exception {

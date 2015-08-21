@@ -21,6 +21,11 @@
  */
 package org.josso.agent;
 
+import org.josso.gateway.GatewayServiceLocator;
+import org.josso.gateway.identity.service.SSOIdentityManagerService;
+import org.josso.gateway.identity.service.SSOIdentityProviderService;
+import org.josso.gateway.session.service.SSOSessionManagerService;
+
 import java.io.Serializable;
 
 /**
@@ -41,22 +46,29 @@ public class SSOPartnerAppConfig implements Serializable {
     private String _vhost;
     private String[] _ignoredWebResources;
     private String[] _ignoredUrlPatterns;
-    private String _appLoginUrl;
+
+    private String _gatewayLoginUrl;
+    private String _gatewayLogoutUrl;
+    private GatewayServiceLocator _gsl;
 
     private boolean _rememberMeEnabled;
 
     private boolean _sendP3PHeader;
 
     private String _p3pHeaderValue;
-    
     private String _splashResource;
-
     private String _defaultResource;
 
     // If this is set, after login the agent should go here and export the original request as request parameter
     private String _postAuthenticationResource;
 
+    private boolean _disableBackTo;
+
     private SecurityContextPropagationConfig _securityContextPropagationConfig;
+
+    protected transient SSOSessionManagerService sm;
+    protected transient SSOIdentityManagerService im;
+    protected transient SSOIdentityProviderService ip;
 
     /**
      * Stores the received context as part of this Partner App. configuration.
@@ -94,7 +106,6 @@ public class SSOPartnerAppConfig implements Serializable {
     public SSOPartnerAppConfig() {
 
     }
-
 
     public boolean isRememberMeEnabled() {
         return _rememberMeEnabled;
@@ -195,12 +206,12 @@ public class SSOPartnerAppConfig implements Serializable {
         return _ignoredUrlPatterns;
     }
 
-    public String getAppLoginUrl() {
-        return _appLoginUrl;
+    public String getGatewayLoginUrl() {
+        return _gatewayLoginUrl;
     }
 
-    public void setAppLoginUrl(String appLoginUrl) {
-        _appLoginUrl = appLoginUrl;
+    public void setGatewayLoginUrl(String appLoginUrl) {
+        _gatewayLoginUrl = appLoginUrl;
     }
     
     public boolean isSendP3PHeader() {
@@ -222,12 +233,80 @@ public class SSOPartnerAppConfig implements Serializable {
         this._p3pHeaderValue = value;
     }
 
+    public GatewayServiceLocator getGatewayServiceLocator() {
+        return _gsl;
+    }
+
+    public void setGatewayServiceLocator(GatewayServiceLocator _gsl) {
+        this._gsl = _gsl;
+    }
+
+    public String getGatewayLogoutUrl() {
+        return _gatewayLogoutUrl;
+    }
+
+    public void setGatewayLogoutUrl(String appLogoutUrl) {
+        this._gatewayLogoutUrl = appLogoutUrl;
+    }
+
+    public boolean isDisableBackTo() {
+        return _disableBackTo;
+    }
+
+    public void setDisableBackTo(boolean _disableBackTo) {
+        this._disableBackTo = _disableBackTo;
+    }
+
     /**
      *
      * @org.apache.xbean.Property alias="security-context-propagation"
      */
     public SecurityContextPropagationConfig getSecurityContextPropagationConfig() {
         return _securityContextPropagationConfig;
+    }
+
+    public SSOSessionManagerService getSessionManagerService() {
+        try {
+            if (_gsl == null)
+                return null;
+
+            if (sm == null)
+                sm = _gsl.getSSOSessionManager();
+
+            return sm;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public SSOIdentityManagerService getIdentityManagerService() {
+        try {
+
+            if (_gsl == null)
+                return null;
+
+            if (im == null)
+                im = _gsl.getSSOIdentityManager();
+
+            return im;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public SSOIdentityProviderService getIdentityProviderService() {
+        try {
+
+            if (_gsl == null)
+                return null;
+
+            if (ip == null)
+                ip = _gsl.getSSOIdentityProvider();
+
+            return ip;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String toString() {
@@ -244,4 +323,5 @@ public class SSOPartnerAppConfig implements Serializable {
                 (_securityContextPropagationConfig != null ? " [" + _securityContextPropagationConfig + "]" : ""
                 );
     }
+
 }

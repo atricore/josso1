@@ -33,7 +33,11 @@ import org.josso.gateway.session.service.SSOSessionManagerService;
 import org.josso.gateway.ws._1_2.wsdl.*;
 
 import javax.xml.ws.BindingProvider;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.Map;
 
 /**
@@ -62,8 +66,7 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
      * @throws Exception
      */
     public SSOSessionManagerService getSSOSessionManager() throws Exception {
-        SSOSessionManager port = new SSOSessionManagerWS(wsdlLocation == null ?
-                SSOSessionManagerWS.WSDL_LOCATION : new URL(wsdlLocation)).getSSOSessionManagerSoap();
+        SSOSessionManager port = new SSOSessionManagerWS(getWsdl(SSOSessionManagerWS.WSDL_LOCATION)).getSSOSessionManagerSoap();
 
         String smEndpoint = getSSOSessionManagerEndpoint();
         logger.debug("Using SSOSessionManager endpoint '" + smEndpoint + "'");
@@ -81,8 +84,7 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
      * @throws Exception
      */
     public SSOIdentityManagerService getSSOIdentityManager() throws Exception {
-        SSOIdentityManager port = new SSOIdentityManagerWS(wsdlLocation == null ?
-                SSOIdentityManagerWS.WSDL_LOCATION : new URL(wsdlLocation)).getSSOIdentityManagerSoap();
+        SSOIdentityManager port = new SSOIdentityManagerWS(getWsdl(SSOIdentityManagerWS.WSDL_LOCATION)).getSSOIdentityManagerSoap();
 
         String imEndpoint = getSSOIdentityManagerEndpoint();
         logger.debug("Using SSOIdentityManager endpoint '" + imEndpoint + "'");
@@ -100,8 +102,7 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
      * @throws Exception
      */
     public SSOIdentityProviderService getSSOIdentityProvider() throws Exception {
-        SSOIdentityProvider port = new SSOIdentityProviderWS(wsdlLocation == null ?
-                SSOIdentityProviderWS.WSDL_LOCATION : new URL(wsdlLocation)).getSSOIdentityProviderSoap();
+        SSOIdentityProvider port = new SSOIdentityProviderWS(getWsdl(SSOIdentityProviderWS.WSDL_LOCATION)).getSSOIdentityProviderSoap();
 
         String ipEndpoint = getSSOIdentityProviderEndpoint();
         logger.debug("Using SSOIdentityProvider endpoint '" + ipEndpoint + "'");
@@ -129,11 +130,45 @@ public class JAXWSWebserviceGatewayServiceLocator extends GatewayServiceLocator 
 
     }
 
+    public URL getWsdl(URL defaultWsdl) throws MalformedURLException {
+        URL wsdl = null;
+        if (wsdlLocation != null) {
+            if (logger.isDebugEnabled())
+                logger.debug("Using specific WSDL location " + wsdlLocation);
+            wsdl = new URL(wsdlLocation);
+        } else {
+            if (logger.isDebugEnabled())
+                logger.debug("Using default WSDL location " + defaultWsdl);
+            wsdl = defaultWsdl;
+        }
+        return wsdl;
+    }
+
     public String getWsdlLocation() {
         return wsdlLocation;
     }
 
     public void setWsdlLocation(String wsdlLocation) {
         this.wsdlLocation = wsdlLocation;
+    }
+
+    /** A {@link URLStreamHandler} that handles resources on the classpath. */
+    public class Handler extends URLStreamHandler {
+        /** The classloader to find resources from. */
+        private final ClassLoader classLoader;
+
+        public Handler() {
+            this.classLoader = getClass().getClassLoader();
+        }
+
+        public Handler(ClassLoader classLoader) {
+            this.classLoader = classLoader;
+        }
+
+        @Override
+        protected URLConnection openConnection(URL u) throws IOException {
+            final URL resourceUrl = classLoader.getResource(u.getPath());
+            return resourceUrl.openConnection();
+        }
     }
 }

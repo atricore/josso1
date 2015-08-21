@@ -73,14 +73,14 @@ class jossouser {
      *   (
      *       [0] => Array
      *           (
-     *               [name] => description
-     *               [value] => User1 CN
+     *               [!name] => description
+     *               [!value] => User1 CN
      *           )
      *
      *       [1] => Array
      *           (
-     *               [name] => mail
-     *               [value] => user1@joss.org
+     *               [!name] => mail
+     *               [!value] => user1@joss.org
      *           )
      *
      *   )

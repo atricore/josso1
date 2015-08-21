@@ -25,13 +25,15 @@ import org.josso.gateway.session.service.SSOSessionManagerService;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
 import org.josso.gateway.identity.service.SSOIdentityProviderService;
 
+import java.io.Serializable;
+
 /**
  * Locates services provided by the Single Sign-On Gateway.
  *
  * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
  * @version CVS $Id: GatewayServiceLocator.java 568 2008-07-31 18:39:20Z sgonzalez $
  */
-public abstract class GatewayServiceLocator {
+public abstract class GatewayServiceLocator implements Serializable {
 
     /**
      * The property name of the factory to be used

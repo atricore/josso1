@@ -195,6 +195,7 @@ SSOAgentRequest *IsapiSSOAgent::initIsapiExtensionRequest(LPEXTENSION_CONTROL_BL
 const char *IsapiSSOAgent::getRequester(SSOAgentRequest *req) {
 
 	string originalResource = req->getPath();
+	string &host = req->getHost();
 
 	// Look for original resource as JOSSO_RESOURCE:
 	if (originalResource.empty() || !originalResource.find(this->getExtensionUri())) {
@@ -211,7 +212,7 @@ const char *IsapiSSOAgent::getRequester(SSOAgentRequest *req) {
 	jk_log(req->logger, JK_LOG_TRACE, "Looking application definition for [%s]", originalResource.c_str());
 
 	if (!originalResource.empty()) {
-		PartnerAppConfig *appCfg = getPartnerAppConfig(originalResource);
+		PartnerAppConfig *appCfg = getPartnerAppConfig(host, originalResource);
 		if (appCfg != NULL) {
 			jk_log(req->logger, JK_LOG_TRACE, "Found application definition %s for [%s]",
 				appCfg->getId(), originalResource.c_str());

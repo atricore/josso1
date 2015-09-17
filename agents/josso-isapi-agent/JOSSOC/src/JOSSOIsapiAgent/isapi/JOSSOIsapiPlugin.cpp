@@ -140,10 +140,11 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 	}
 
 	string &path = req->getPath();
-	jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Processing request for URI %s", path.c_str());
+	string &host = req->getHost();
+	jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Processing request for URI [%s] %s", host.c_str(), path.c_str());
 
 	// Verify that this URI is a partner application
-	PartnerAppConfig *appCfg = ssoAgent->getPartnerAppConfig(path);
+	PartnerAppConfig *appCfg = ssoAgent->getPartnerAppConfig(host, path);
 	if (appCfg == NULL) {
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "[%s] is not associated to a partner application, ignoring", path.c_str());
 

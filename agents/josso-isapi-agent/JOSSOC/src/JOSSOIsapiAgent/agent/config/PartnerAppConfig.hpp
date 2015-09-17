@@ -13,14 +13,16 @@ public:
 		this->id.assign(id);
 	}
 
-	const char * getId() ;
-	const char * getKey() ;
+	const char * getId();
+	const char * getKey();
+	const char * getHost();
 	const char * getSplashResource();
 	const char * getPartnerAppId();
 	const char * getAppLoginUrl();
 	const char * getDefaultResource();
 
 	void setKey(const string &key);
+	void setHost(const string &host);
 	void setSplashResource(const string &splashResource);
 	void setPartnerAppId(const string &partnerAppId);
 	void setAppLoginUrl(const string &appLoginUrl);
@@ -29,6 +31,7 @@ public:
 protected:
 	string id;
 	string key;
+	string host;
 	vector<string> baseUris;
 	vector<string> ignoredUris;
 	string splashResource;

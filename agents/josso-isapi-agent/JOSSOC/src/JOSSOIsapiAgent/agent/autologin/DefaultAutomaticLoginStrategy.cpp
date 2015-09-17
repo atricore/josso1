@@ -25,9 +25,10 @@ bool DefaultAutomaticLoginStrategy::isAutomaticLoginRequired(SSOAgentRequest *re
 	// Extension used by ISAPI Agent
 	string extensionUri = ssoAgent->getExtensionUri();
 	string &path = req->getPath();
+	string &host = req->getHost();
 
 	// If this is the extension URI, appCfg can be NULL
-	PartnerAppConfig *appCfg = ssoAgent->getPartnerAppConfig(path);
+	PartnerAppConfig *appCfg = ssoAgent->getPartnerAppConfig(host, path);
 
 	// Default splash resource, disable autologin:
 	string splashResource ;

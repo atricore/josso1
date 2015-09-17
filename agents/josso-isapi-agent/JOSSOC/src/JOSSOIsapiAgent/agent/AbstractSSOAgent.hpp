@@ -109,7 +109,7 @@ public:
 	/**
 	 * Partner application configuration that patches the base-uri with the given path
 	 */
-	virtual PartnerAppConfig * getPartnerAppConfig(const string & path) ;
+	virtual PartnerAppConfig * getPartnerAppConfig(const string & host, const string & path) ;
 
 	virtual PartnerAppConfig * getPartnerAppConfigById(string id) ;
 
@@ -197,7 +197,7 @@ protected:
 	 */
 	virtual bool accessSession(string ssoSessionId, SSOAgentRequest *ssoAgentReq);
 
-	SecurityConstraintConfig *getSecurityConstraintConfig(const string & path);
+	SecurityConstraintConfig *getSecurityConstraintConfig(const string & host, const string & path);
 
 	virtual AgentConfig *createAgentConfig() =0 ;
 

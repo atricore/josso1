@@ -107,13 +107,14 @@ bool FilterAgentResponse::startResponse(int status, string reason, list<pair<str
 	plainHeaders.append("\r\n");
 	const char * cHeaders = plainHeaders.c_str();
 
-	if(!pfc->ServerSupportFunction (pfc, SF_REQ_SEND_RESPONSE_HEADER, (PVOID) statusLine, (DWORD) cHeaders, 0)) {
+	if(!pfc->ServerSupportFunction (pfc, SF_REQ_SEND_RESPONSE_HEADER, (PVOID) statusLine, (ULONG_PTR) cHeaders, 0)) {
+
 		DWORD dwError;
 		dwError = GetLastError();
 		jk_log(logger, JK_LOG_ERROR, "ServerSupportFunction[SF_REQ_SEND_RESPONSE_HEADER] failed = %d (%x)", dwError, dwError);
 		return false;
 	}
-		
+
 	return true;
 }
 

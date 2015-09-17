@@ -21,7 +21,10 @@ class SSOAgentRequest {
 
 public:
 
+
 	virtual string getPath() ;
+
+	virtual string getHost() ;
 
 	virtual string getQueryString() =0;
 

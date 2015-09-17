@@ -28,6 +28,11 @@ string SSOAgentRequest::getPath() {
 	return uri;
 }
 
+string SSOAgentRequest::getHost() {
+	return getHeader("HTTP_HOST");
+}
+
+
 string SSOAgentRequest::getCookie(string cName) {
 
 	jk_log(logger, JK_LOG_TRACE, "Requesting COOKIE [%s]", cName.c_str());

@@ -8,6 +8,10 @@ const char * PartnerAppConfig::getKey() {
 	return key.c_str();
 }
 
+const char * PartnerAppConfig::getHost() {
+	return host.c_str();
+}
+
 const char * PartnerAppConfig::getSplashResource() {
 	return splashResource.c_str();
 }
@@ -29,6 +33,9 @@ void PartnerAppConfig::setKey(const string &key) {
 	this->key.assign(key);
 }
 
+void PartnerAppConfig::setHost(const string &host) {
+	this->host.assign(host);
+}
 
 void PartnerAppConfig::setSplashResource(const string &splashResource) {
 	this->splashResource.assign(splashResource);

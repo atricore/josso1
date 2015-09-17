@@ -362,6 +362,7 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 			const char *partnerAppId = ini.GetValue(section, "partnerAppId", NULL);
 			const char *appLoginUrl = ini.GetValue(section, "appLoginUrl", NULL);
 			const char *defaultResource = ini.GetValue(section, "default-resource", NULL);
+			const char *host = ini.GetValue(section, "host", NULL );
 
 			// To verbose, just do nothing syslog(JK_LOG_WARNING_LEVEL, "'ignored-uris' %s", ignoredUris);
 
@@ -385,6 +386,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 				if (partnerAppId != NULL) {
 					string appId (partnerAppId);
 					appCfg->setPartnerAppId(appId);
+				}
+
+				if (host != NULL) {
+					string h (host);
+					appCfg->setHost(h);
 				}
 
 				if (ignoredUris != NULL) {
@@ -438,6 +444,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 			if (priority == NULL) {
 				syslog(JK_LOG_WARNING_LEVEL, "'priority' not found in '%s' section", section);
 			}
+
+			const char *host = ini.GetValue(section, "host", NULL );
+			if (host == NULL) {
+				syslog(JK_LOG_INFO_LEVEL, "'host' not found in '%s' section", section);
+			}
 			
 			if (baseUris != NULL) {
 
@@ -455,8 +466,11 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 					StringUtil::tokenize(r, secCfg->roles, ",");
 				}
 
+				if (host != NULL) {
+					secCfg->host.assign(host);
+				}
+
 				if (priority != NULL) {
-					string p (priority);
 					secCfg->priority.assign(priority);
 				}
 
@@ -562,7 +576,8 @@ bool AbstractSSOAgent::stop() {
 // -------------------------------------------------------------------
 bool AbstractSSOAgent::isAuthorized(SSOAgentRequest *req) {
 	string path (req->getPath());
-	SecurityConstraintConfig * sec = getSecurityConstraintConfig(path);
+	string host (req->getHost());
+	SecurityConstraintConfig * sec = getSecurityConstraintConfig(host, path);
 
 	if (sec == NULL) {
 		jk_log(logger, JK_LOG_DEBUG, "PATH : %s does not have a security constraint, authorizing.", path.c_str());
@@ -1130,24 +1145,52 @@ EndpointConfig *AbstractSSOAgent::getEndpointConfig(string id) {
 	return cfg;
 }
 
-PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfig(const string & path) {
+PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfig(const string & host, const string & path) {
 
 	PartnerAppConfig *cfg = NULL;
 	list<PartnerAppConfig>::iterator app;
 
 	string p (path);
 	std::transform(p.begin(), p.end(), p.begin(), tolower);
+	jk_log(logger, JK_LOG_DEBUG, "Path %s ", path.c_str());
+
+	string h (host);
+	std::transform(h.begin(), h.end(), h.begin(), tolower);
+	jk_log(logger, JK_LOG_DEBUG, "Host %s ", host.c_str());
 
 	size_t maxLength = 0;
 	for (app = this->agentConfig->apps.begin() ; app != this->agentConfig->apps.end() ; app ++ ) {
+
+		string appId = (app->getPartnerAppId());
+
+		// If a host is configured, make sure that it matches
+		string eh = (app->getHost());
+
+		if (!eh.empty()) {
+			jk_log(logger, JK_LOG_DEBUG, "Host [%s] against partner app. config [%s]", host.c_str(), appId.c_str());
+			
+			std::transform(eh.begin(), eh.end(), eh.begin(), tolower);
+			if (eh.compare(h) != 0) {
+				continue;
+			}
+		} 
+
+		jk_log(logger, JK_LOG_DEBUG, "Path [%s] against partner app. config [%s]", path.c_str(), appId.c_str());
+
+		// Match the longest possible base-uri with the received path
 		vector<string>::iterator baseUriIter;
 		for (baseUriIter = app->baseUris.begin() ; baseUriIter != app->baseUris.end() ; baseUriIter ++) {
+
 			string baseUri = *baseUriIter;
+
+			// Base URI (to lowercase)
 			std::transform(baseUri.begin(), baseUri.end(), baseUri.begin(), tolower);
 			
+			// Find base URI in received PATH
 			size_t pos = p.find(baseUri);
+
 			if (pos != string::npos && pos==0) {
-				// Now, we match the longest baseUri
+				// Now, we check if this is the longest baseURI we used
 				if (baseUri.length() > maxLength) {
 					maxLength = baseUri.length();
 					cfg = &(*app);
@@ -1158,37 +1201,56 @@ PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfig(const string & path) {
 	return cfg;
 }
 
-SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const string & path) {
+SecurityConstraintConfig *AbstractSSOAgent::getSecurityConstraintConfig(const string & host, const string & path) {
 
 	SecurityConstraintConfig *cfg = NULL;
 	list<SecurityConstraintConfig>::iterator sec;
 
 	string p (path);
+	string h (host);
 	std::transform(p.begin(), p.end(), p.begin(), tolower);
 
 	size_t maxLength = 0;
 	for (sec = this->agentConfig->secConstraints.begin() ; sec != this->agentConfig->secConstraints.end() ; sec ++ ) {
 
 		SecurityConstraintConfig s = *sec;
-		vector<string>::iterator baseUri;
 
+		// If a host is configured, make sure that it matches
+		if (!s.host.empty()) {
+			jk_log(logger, JK_LOG_DEBUG, "Host %s against security constraint [%s]", host.c_str(), sec->id.c_str());
+			string eh = (sec->host);
+
+			std::transform(eh.begin(), eh.end(), eh.begin(), tolower);
+			std::transform(h.begin(), h.end(), h.begin(), tolower);
+
+			if (eh.compare(h) != 0) {
+				continue;
+			}
+		}
+
+		// Host is OK, now match the URIs
 		jk_log(logger, JK_LOG_DEBUG, "Matching path %s against security constraint [%s]", path.c_str(), sec->id.c_str());
 
+		vector<string>::iterator baseUri;
 		for (baseUri = s.baseUris.begin() ; baseUri != s.baseUris.end() ; baseUri ++) {
+
+			// New string for base URI, to lowercase
 			string b = *baseUri;
 			std::transform(b.begin(), b.end(), b.begin(), tolower);
+
+			// Find Base URI in the request's path
 			size_t pos = p.find(b);
 
 			jk_log(logger, JK_LOG_DEBUG, "Matching path %s against security constraint URI %s", path.c_str(), b.c_str());
 
+			// Run a regular expression match, if 
 			if ( match(p, b) == true ) {
 				cfg = &(*sec);
 				jk_log(logger, JK_LOG_DEBUG, "Matched path %s against security constraint URI %s", path.c_str(), b.c_str());
 				return cfg;
 			} 
 
-
-			/*
+			/* 
 			if (pos != string::npos && pos==0) {
 				if (b.length() > maxLength) {
 					maxLength = b.length();

@@ -8,7 +8,7 @@
 		<sys:moduleId>
       		<sys:groupId>org.josso</sys:groupId>
       		<sys:artifactId>josso-gateway-web</sys:artifactId>
-      		<sys:version>1.8.10-SNAPSHOT</sys:version>
+      		<sys:version>1.8.10</sys:version>
       		<sys:type>car</sys:type>
     	</sys:moduleId>
     	<sys:dependencies>

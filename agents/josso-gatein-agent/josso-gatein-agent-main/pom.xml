@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>josso-gatein-agent</artifactId>
-        <version>1.8.10-SNAPSHOT</version>
+        <version>1.8.10</version>
     </parent>
 
     <artifactId>josso-gatein-agent-main</artifactId>

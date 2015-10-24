@@ -606,6 +606,7 @@ bool AbstractSSOAgent::isAuthorized(SSOAgentRequest *req) {
 bool AbstractSSOAgent::isIgnored(PartnerAppConfig * appCfg, SSOAgentRequest *req ) {
 
 	string p (req->getPath());
+	std::transform(p.begin(), p.end(), p.begin(), tolower);
 	vector<string>::iterator ignoredUri;
 	for (ignoredUri = appCfg->ignoredUris.begin() ; ignoredUri != appCfg->ignoredUris.end() ; ignoredUri ++) {
 

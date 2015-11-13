@@ -204,6 +204,8 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
     
       #partner-public #login-options #col1, 
       #partner-public #login-options #col2  {float:left; width:320px; }
+
+      #partner-public #login-options #col3  {width:100%; clear:both; }
       
       #partner-public #login-options h3 {display:block; border-bottom:1px solid #DDDDDD; margin:0 0 5px 0; }
       #partner-public #login-options h4 {float:left; padding:0 5px 0 0; clear:left; }

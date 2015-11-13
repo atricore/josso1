@@ -19,7 +19,7 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   ~
   --%>
-
+<%@ page import="org.josso.gateway.identity.SSOUser" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -130,6 +130,22 @@
                             <h3 class="arrow">To see extended user info</h3>
                             <p>See extended user info, try <a href="<%=request.getContextPath()%>/protected-josso">protected-josso</a>.</p>
                         </div>
+
+                            <%  if (request.getUserPrincipal() != null) { %>
+                            <div id="col3">
+                                <h3 class="arrow">SSO User Properties</h3>
+                                <ul>
+                                    <li>Retrieved from [<code>((org.josso.gateway.identity.SSOUser) request.getUserPrincipal()).getProperties();</code>]</li>
+
+                                    <%      // Cast the principal to a josso specific user, and iterate over its properties.
+                                        SSOUser ssoUser = (SSOUser) request.getUserPrincipal();
+                                        for (int i = 0 ; i < ssoUser.getProperties().length ; i++)
+                                        { %>
+                                    <li><h4><%=ssoUser.getProperties()[i].getName()%></h4><%=ssoUser.getProperties()[i].getValue()%> </li>
+                                    <%      } %>
+                                </ul>
+                            </div>
+                            <% } %>
 
                         </div> <!-- /login-options -->
 

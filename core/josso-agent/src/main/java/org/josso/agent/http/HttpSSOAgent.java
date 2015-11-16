@@ -322,7 +322,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         // Support specifying an external form for each application.
         SSOPartnerAppConfig appCfg = getPartnerAppConfig(hreq.getServerName(), hreq.getContextPath());
         String logoutUrl = null;
-        if (appCfg != null && appCfg.getGatewayLoginUrl() != null) {
+        if (appCfg != null && appCfg.getGatewayLogoutUrl() != null) {
             logoutUrl = appCfg.getGatewayLogoutUrl();
         } else {
             logoutUrl = getGatewayLogoutUrl();

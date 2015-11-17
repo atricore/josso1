@@ -47,7 +47,7 @@
         <dependency>
             <groupId>java</groupId>
             <artifactId>plugin</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <systemPath>${JAVA_HOME}/jre/lib/plugin.jar</systemPath>
             <scope>system</scope>
         </dependency>

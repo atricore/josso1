@@ -351,6 +351,14 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             loginUrl = getGatewayLoginUrl();
         }
 
+        if (hreq.getParameter("josso_force_authn") != null && Boolean.parseBoolean(hreq.getParameter("josso_force_authn"))) {
+            loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") +  "josso_cmd=login_force";
+        }
+
+        if (hreq.getParameter("josso_authn_ctx") != null) {
+            loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") +  "josso_authn_ctx=" + hreq.getParameter("josso_authn_ctx");
+        }
+
         String backto = buildBackToURL(hreq, getJossoSecurityCheckUri());
         loginUrl = loginUrl + (loginUrl.indexOf('?') >= 0 ? "&" : "?") + "josso_back_to=" + (backto != null ? backto : "NA");
 

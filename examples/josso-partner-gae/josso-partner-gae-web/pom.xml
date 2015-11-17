@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>josso-partner-gae</artifactId>
-        <version>1.8.10-SNAPSHOT</version>
+        <version>1.8.11-SNAPSHOT</version>
     </parent>
 
     <artifactId>josso-partner-gae-web</artifactId>
@@ -68,7 +68,7 @@
 
     <properties>
         <appengine.app.version>1</appengine.app.version>
-        <appengine.target.version>1.8.10</appengine.target.version>
+        <appengine.target.version>1.8.11</appengine.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>3.0.7.RELEASE</spring.version>
     </properties>

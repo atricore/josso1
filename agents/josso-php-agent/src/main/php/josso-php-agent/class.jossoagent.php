@@ -710,6 +710,9 @@ class jossoagent  {
             if (isset($this->wsdlUrl)) {
                 $this->identityMgrClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
+                if (isset($this->endpoint) && isset($this->identityManagerServicePath)) {
+                    $this->identityMgrClient->setEndpoint($this->endpoint . $this->identityManagerServicePath);
+                }
             }
             else {
                 $this->identityMgrClient = new nusoap_client($this->endpoint . $this->identityManagerServicePath, false,
@@ -733,6 +736,9 @@ class jossoagent  {
             if (isset($this->wsdlUrl)) {
                 $this->identityProviderClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
+                if (isset($this->endpoint) && isset($this->identityProviderServicePath)) {
+                    $this->identityProviderClient->setEndpoint($this->endpoint . $this->identityProviderServicePath);
+                }
             }
             else {
                 $this->identityProviderClient = new nusoap_client($this->endpoint . $this->identityProviderServicePath, false,
@@ -758,6 +764,9 @@ class jossoagent  {
             if (isset($this->wsdlUrl)) {
                 $this->sessionMgrClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
+                if (isset($this->endpoint) && isset($this->sessionManagerServicePath)) {
+                    $this->sessionMgrClient->setEndpoint($this->endpoint . $this->sessionManagerServicePath);
+                }
             }
             else {
                 $this->sessionMgrClient = new nusoap_client($this->endpoint . $this->sessionManagerServicePath, false,

@@ -39,6 +39,17 @@
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
 
+        <fileSet>
+            <directory>${project.build.directory}/josso-ws/org/josso/gateway/ws/_1_2/wsdl</directory>
+            <outputDirectory>/josso-php-inc/wsdl</outputDirectory>
+            <lineEnding>unix</lineEnding>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <includes>
+                <include>josso-1.2.wsdl</include>
+                <include>josso-1.2.xsd</include>
+            </includes>
+        </fileSet>
+
         <!-- Copy PHP components -->
         <fileSet>
             <directory>src/main/php/josso-php-partnerapp</directory>

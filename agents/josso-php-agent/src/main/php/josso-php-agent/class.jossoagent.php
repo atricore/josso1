@@ -266,14 +266,23 @@ class jossoagent  {
 
         if (isset($josso_sessionManagerServicePath)) {
             $this->sessionManagerServicePath = $josso_sessionManagerServicePath;
+            if (!$this->startsWith($this->sessionManagerServicePath, '/')) {
+                $this->sessionManagerServicePath = '/' . $this->sessionManagerServicePath;
+            }
         }
 
         if (isset($josso_identityManagerServicePath)) {
             $this->identityManagerServicePath = $josso_identityManagerServicePath;
+            if (!$this->startsWith($this->identityManagerServicePath, '/')) {
+                $this->identityManagerServicePath = '/' . $this->identityManagerServicePath;
+            }
         }
 
         if (isset($josso_identityProviderServicePath)) {
             $this->identityProviderServicePath = $josso_identityProviderServicePath;
+            if (!$this->startsWith($this->identityProviderServicePath, '/')) {
+                $this->identityProviderServicePath = '/' . $this->identityProviderServicePath;
+            }
         }
 
         if (isset($josso_automaticLoginStrategies)) {

@@ -188,14 +188,18 @@ function jossoRequestLoginForUrl($currentUrl, $optional = FALSE) {
     if ($optional) {
         $loginUrl = $loginUrl . '&josso_cmd=login_optional' ;
     } else {
-        $forceAuthn = $_GET['josso_force_authn'];
-        if (isset($forceAuthn) && !empty($forceAuthn) && strtolower($forceAuthn) != "false") {
-            $loginUrl = $loginUrl . '&josso_cmd=login_force';
+        if (isset($_GET['josso_force_authn'])) {
+            $forceAuthn = $_GET['josso_force_authn'];
+            if (!empty($forceAuthn) && strtolower($forceAuthn) != "false") {
+                $loginUrl = $loginUrl . '&josso_cmd=login_force';
+            }
         }
 
-        $authnCtx = $_GET['josso_authn_ctx'];
-        if (isset($authnCtx) && !empty($authnCtx)) {
-            $loginUrl = $loginUrl . '&josso_authn_ctx=' . $authnCtx;
+        if (isset($_GET['josso_authn_ctx'])) {
+            $authnCtx = $_GET['josso_authn_ctx'];
+            if (!empty($authnCtx)) {
+                $loginUrl = $loginUrl . '&josso_authn_ctx=' . $authnCtx;
+            }
         }
     }
 

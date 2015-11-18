@@ -123,19 +123,21 @@ string IsapiSSOAgent::buildGwyLoginUrl(SSOAgentRequest *req, string url) {
 	url.append("&josso_partnerapp_host=");
 	url.append(host.c_str()); // TODO : Take host from baseBackTo URL if any ?
 
-	// Add Force Authn parameter
-	string pForceAuthn = req->getParameter("josso_force_authn");
-	std::transform(pForceAuthn.begin(), pForceAuthn.end(), pForceAuthn.begin(), tolower);
-	if (!pForceAuthn.empty() && strcmp(pForceAuthn.c_str(), "false") != 0) {
-		url.append("&josso_cmd=login_force");
-	}
+    if (req->getParameter("josso_login_optional").empty()) {
+        // Add Force Authn parameter
+        string pForceAuthn = req->getParameter("josso_force_authn");
+        std::transform(pForceAuthn.begin(), pForceAuthn.end(), pForceAuthn.begin(), tolower);
+        if (!pForceAuthn.empty() && strcmp(pForceAuthn.c_str(), "false") != 0) {
+            url.append("&josso_cmd=login_force");
+        }
 
-	// Add Authn Ctx parameter
-	string pAuthnCtx = req->getParameter("josso_authn_ctx");
-	if (!pAuthnCtx.empty()) {
-		url.append("&josso_authn_ctx=");
-		url.append(pAuthnCtx.c_str());
-	}
+        // Add Authn Ctx parameter
+        string pAuthnCtx = req->getParameter("josso_authn_ctx");
+        if (!pAuthnCtx.empty()) {
+            url.append("&josso_authn_ctx=");
+            url.append(pAuthnCtx.c_str());
+        }
+    }
 
 	return url;
 

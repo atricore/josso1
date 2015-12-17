@@ -84,6 +84,7 @@ $josso_ignoredResources = array('/ignored', '/public', 'partner-login.php');
 $josso_defaultResource = '/index.php?arg1=one';
 
 // $josso_partner_app_ids = array('/josso-php-partnerapp' => 'partnerapp1');
+// $josso_partnerapp_vhosts = array('example.com' => array('/josso-php-partnerapp' => 'partnerapp1'));
 
 /*
   Automatic login strategies.

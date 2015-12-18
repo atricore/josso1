@@ -761,7 +761,10 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         try {
 
             SSOAgentRequest request = _currentRequest.get();
-            SSOIdentityManagerService im = request.getConfig(this).getIdentityManagerService();
+            SSOIdentityManagerService im = null;
+            if (request != null) {
+                im = request.getConfig(this).getIdentityManagerService();
+            }
             if (im == null) {
                 im = this.getSSOIdentityManager();
 

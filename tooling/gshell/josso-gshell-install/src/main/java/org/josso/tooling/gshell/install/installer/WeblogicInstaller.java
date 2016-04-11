@@ -363,8 +363,11 @@ public class WeblogicInstaller extends VFSInstaller {
                         "-Dfiles=" + getLocalFilePath(srcDir),
                         "-DMDF=" + getLocalFilePath(descriptorFile),
                         "-DtargetNameSpace=urn:org:josso:wls" + wlVersionStr + ":agent:mbeans",
+                        "-DschemaLocation=" + getLocalFilePath(descriptorFile),
                         "-DpreserveStubs=false",
                         "-DcreateStubs=true",
+                        "-Dtarget=1.6",
+                        "-target=1.6",
                         "-classpath",
                         classpath,
                         "weblogic.management.commo.WebLogicMBeanMaker");
@@ -406,6 +409,8 @@ public class WeblogicInstaller extends VFSInstaller {
                         "-DMJF=" + getLocalFilePath(mbeanFile),
                         "-DpreserveStubs=false",
                         "-DcreateStubs=true",
+                        "-Dtarget=1.6",
+                        "-target=1.6",
                         "-classpath",
                         classpath,
                         "weblogic.management.commo.WebLogicMBeanMaker");

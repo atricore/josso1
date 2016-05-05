@@ -198,8 +198,7 @@ public class GenericServletSSOAgentFilter implements Filter {
                 if (hreq.getRequestURI().endsWith(agent.getJossoUserLoginUri())) {
                 	saveLoginBackToURL(hreq, hres, session, true);
                 } else {
-                    saveRequestURL(hreq, hres);
-//                	saveLoginBackToURL(hreq, hres, session, false);
+                	saveLoginBackToURL(hreq, hres, session, false);
                 }
                 
                 String loginUrl = agent.buildLoginUrl(hreq);
@@ -346,7 +345,7 @@ public class GenericServletSSOAgentFilter implements Filter {
 
                         // Save current request, so we can co back to it later ...
                         saveRequestURL(hreq, hres);
-                        String loginUrl = agent.buildLoginUrl(hreq);
+                        String loginUrl = agent.buildLoginOptionalUrl(hreq);
 
                         if (log.isDebugEnabled())
                         	log.debug("Redirecting to login url '" + loginUrl + "'");

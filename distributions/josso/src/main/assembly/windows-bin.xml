@@ -63,15 +63,15 @@
             <outputDirectory>/dist/agents/bin/3rdparty/</outputDirectory>
         </fileSet>
 
-        <fileSet>
+        <!--fileSet>
             <directory>${project.build.directory}/jdk14/3rdparty/josso-agents-j14bin-${pom.version}/</directory>
             <outputDirectory>/dist/agents/bin/jdk14/3rdparty/</outputDirectory>
-        </fileSet>
+        </fileSet-->
 
-        <fileSet>
+        <!--fileSet>
             <directory>${project.build.directory}/jdk14/3rdparty-axis/josso-agents-j14bin-${pom.version}/</directory>
             <outputDirectory>/dist/agents/bin/jdk14/3rdparty-axis/</outputDirectory>
-        </fileSet>
+        </fileSet-->
 
 
 		<fileSet>
@@ -203,7 +203,7 @@
                 <include>${pom.groupId}:josso-agents-bin:jar:jaxws</include>
             </includes>
         </dependencySet>
-        <dependencySet>
+        <!--dependencySet>
             <outputDirectory>/dist/agents/bin/jdk14</outputDirectory>
             <unpack>false</unpack>
             <includes>
@@ -211,7 +211,7 @@
                 <include>${pom.groupId}:josso-agents-j14bin:jar</include>
                 <include>${pom.groupId}:josso-agentj14-shared:jar</include>
             </includes>
-        </dependencySet>
+        </dependencySet-->
 
         <dependencySet>
             <outputDirectory>/dist/agents/src/josso-weblogic81-agent-mbeans-src</outputDirectory>

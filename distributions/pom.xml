@@ -60,7 +60,7 @@
     <modules>
         <module>josso-gateway-web</module>
         <module>josso-agents-bin</module>
-        <module>josso-agents-j14bin</module>
+        <!--module>josso-agents-j14bin</module-->
         <module>josso</module>
     </modules>
 

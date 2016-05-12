@@ -75,7 +75,7 @@
         <profile>
             <id>all</id>
             <modules>
-                <module>josso-partner-wl81</module>
+                <!--module>josso-partner-wl81</module-->
                 <module>josso-partner-wl10</module>
                 <module>josso-partner-wl92</module>
                 <module>josso-partner-wl12</module>

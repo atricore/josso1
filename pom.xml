@@ -625,11 +625,11 @@
             </snapshots>
         </repository-->
         <!-- Java.net -->
-        <repository>
+        <!--repository>
             <id>java.net</id>
             <url>http://download.java.net/maven/1</url>
             <layout>legacy</layout>
-        </repository>
+        </repository-->
 
         <!-- JBoss -->
         <repository>
@@ -661,7 +661,7 @@
             </releases>
         </repository>
 
-        <repository>
+        <!--repository>
             <id>exo-int</id>
             <url>http://maven2.exoplatform.org/rest/maven2</url>
             <releases>
@@ -670,7 +670,7 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
+        </repository-->
 
     </repositories>
     <pluginRepositories>
@@ -993,51 +993,51 @@
 
             <!-- JOSSO Agents -->
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agent-j14compat</artifactId>
                 <version>${pom.version}</version>
-            </dependency>
+            </dependency-->
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
                 <version>${pom.version}</version>
                 <classifier>3rdparty-j14</classifier>
                 <type>zip</type>
-            </dependency>
+            </dependency-->
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
                 <version>${pom.version}</version>
                 <classifier>3rdparty-j14axis</classifier>
                 <type>zip</type>
-            </dependency>
+            </dependency-->
 
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
                 <version>${pom.version}</version>
                 <classifier>3rdparty-j14</classifier>
                 <type>tar.gz</type>
-            </dependency>
+            </dependency-->
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
                 <version>${pom.version}</version>
                 <classifier>3rdparty-j14axis</classifier>
                 <type>tar.gz</type>
-            </dependency>
+            </dependency-->
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
                 <version>${pom.version}</version>
                 <type>jar</type>
-            </dependency>
+            </dependency-->
 
             <dependency>
                 <groupId>org.josso</groupId>
@@ -1085,11 +1085,11 @@
                 <version>${pom.version}</version>
             </dependency>
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agentj14-shared</artifactId>
                 <version>${pom.version}</version>
-            </dependency>
+            </dependency-->
 
             <dependency>
                 <groupId>org.josso</groupId>

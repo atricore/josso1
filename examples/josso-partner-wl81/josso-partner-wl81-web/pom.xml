@@ -97,7 +97,7 @@
         </dependency>
         -->
 
-        <dependency>
+        <!--dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agent-j14compat</artifactId>
             
@@ -132,7 +132,7 @@
                     <artifactId>commons-logging-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.josso</groupId>

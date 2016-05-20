@@ -25,17 +25,18 @@ import org.josso.gateway.SSONameValuePair;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.service.BaseUser;
 import weblogic.security.principal.WLSAbstractPrincipal;
+import weblogic.security.spi.WLSUser;
 
 /**
  * This principal extends Weblogic abstract principal, implementing also SSOUser interface.
- * WebLogic exptects principals to implement WLUser and WLRole interfaces.
+ * WebLogic expects principals to implement WLUser and WLRole interfaces.
  *
  * Date: Nov 26, 2007
  * Time: 7:24:03 PM
  *
  * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
  */
-public class WLSJOSSOUser extends WLSAbstractPrincipal implements SSOUser {
+public class WLSJOSSOUser extends WLSAbstractPrincipal implements SSOUser, WLSUser {
 
     private SSOUser ssoUser;
 

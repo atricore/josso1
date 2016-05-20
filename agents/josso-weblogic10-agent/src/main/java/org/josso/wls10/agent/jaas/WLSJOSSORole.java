@@ -24,20 +24,21 @@ package org.josso.wls10.agent.jaas;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.service.BaseRole;
 import weblogic.security.principal.WLSAbstractPrincipal;
+import weblogic.security.spi.WLSGroup;
 
 import java.security.Principal;
 import java.util.*;
 
 /**
  * This principal extends Weblogic abstract principal, implementing also SSORole interface.
- * WebLogic exptects principals to implement WLUser and WLRole interfaces. 
+ * WebLogic expects principals to implement WLUser and WLRole interfaces.
  *
  * Date: Nov 26, 2007
  * Time: 7:35:45 PM
  *
  * @author <a href="mailto:sgonzalez@josso.org">Sebastian Gonzalez Oyuela</a>
  */
-public class WLSJOSSORole extends WLSAbstractPrincipal implements BaseRole {
+public class WLSJOSSORole extends WLSAbstractPrincipal implements BaseRole, WLSGroup {
 
     private SSORole ssoRole;
     private HashMap members;

@@ -1105,7 +1105,7 @@ PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfigById(string id) {
 
 		jk_log(logger, JK_LOG_TRACE, "Looking for Partner Application ID [%s], checking [%s]", id.c_str(), app->partnerAppId.c_str());
 
-		if (app->partnerAppId.compare(id) == 0) {
+		if (stricmp(app->partnerAppId.c_str(), id.c_str()) == 0) {
 			cfg = &(*app);
 			break;
 		}

@@ -355,37 +355,43 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 					// If this is not a login optional, we must trigger the login.  Check if the app. has a specific URL
 					PartnerAppConfig *appCfg = ssoAgent->getPartnerAppConfigById(pJossoAppId);
 
-					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Looking for Partner Application login URL, found config [%s]", appCfg->getId());
+					if (appCfg != NULL) {
+						jk_log(ssoAgent->logger, JK_LOG_TRACE, "Looking for Partner Application login URL, found config [%s]", appCfg->getId());
 
-					string appLoginUrl = appCfg->getAppLoginUrl();
+						string appLoginUrl = appCfg->getAppLoginUrl();
 
-					if (!appLoginUrl.empty()) {
-						jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application Login URL %s", appLoginUrl.c_str());
-						gwyLoginUrl.assign(ssoAgent->buildGwyLoginUrl(req, appLoginUrl));
+						if (!appLoginUrl.empty()) {
+							jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application Login URL %s", appLoginUrl.c_str());
+							gwyLoginUrl.assign(ssoAgent->buildGwyLoginUrl(req, appLoginUrl));
+						}
+					} else {
+						jk_log(ssoAgent->logger, JK_LOG_ERROR, "Cannot find PartnerApp config for app id [%s]", pJossoAppId.c_str());
+						rv = HSE_STATUS_ERROR;
 					}
 				}
 
+				if (rv != HSE_STATUS_ERROR) {
+					if (!pJossoLoginOptional.empty()) {
+						gwyLoginUrl.append("&josso_cmd=login_optional");
+					}
 
-				if (!pJossoLoginOptional.empty()) {
-					gwyLoginUrl.append("&josso_cmd=login_optional");
+					jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application ID %s", pJossoAppId.c_str());
+					gwyLoginUrl.append("&josso_partnerapp_id=");
+					gwyLoginUrl.append(pJossoAppId.c_str());
 				}
-
-				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Partner Application ID %s", pJossoAppId.c_str());
-				gwyLoginUrl.append("&josso_partnerapp_id=");
-				gwyLoginUrl.append(pJossoAppId.c_str());
 			}
 
-			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_login/josso_login_optional' received, redirecting to %s", gwyLoginUrl.c_str());
+			if (rv != HSE_STATUS_ERROR) {
+				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_login/josso_login_optional' received, redirecting to %s", gwyLoginUrl.c_str());
 
-
-			if (!res->sendRedirect(gwyLoginUrl.c_str()))
-				rv = HSE_STATUS_ERROR;
-
+				if (!res->sendRedirect(gwyLoginUrl.c_str()))
+					rv = HSE_STATUS_ERROR;
+			}
 		}
 
 		// check for 'josso_logout'
 		string pJossoLogout = req->getParameter("josso_logout");
-		if (!pJossoLogout.empty()) {
+		if (rv != HSE_STATUS_ERROR && !pJossoLogout.empty()) {
 			
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_logout' received");
 
@@ -405,7 +411,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 
 		// check for 'josso_authentication' (could be a POST !)
 		string pJossoAuthentication = req->getParameter("josso_authentication");
-		if (!pJossoAuthentication.empty()) {
+		if (rv != HSE_STATUS_ERROR && !pJossoAuthentication.empty()) {
 
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_authentication' received");
 
@@ -496,7 +502,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 
 		// check for 'josso_security_check'
 		string pJossoSecurityCheck = req->getParameter("josso_security_check");
-		if (!pJossoSecurityCheck.empty()) {
+		if (rv != HSE_STATUS_ERROR && !pJossoSecurityCheck.empty()) {
 
 			jk_log(ssoAgent->logger, JK_LOG_DEBUG, "'josso_security_check' received ... ");			
 
@@ -554,14 +560,19 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 						res->sendRedirect(originalResource);
 					} else if (!partnerAppId.empty()) {
 					    PartnerAppConfig * appCfg = ssoAgent->getPartnerAppConfigById(partnerAppId);
-                        string defaultResource = appCfg->getDefaultResource();
-                        if (!defaultResource.empty()) {
-                            jk_log(ssoAgent->logger, JK_LOG_ERROR, "Redirecting to default resource [%s] for application [%s]", defaultResource.c_str(), partnerAppId.c_str());
-                            res->sendRedirect(defaultResource);
-                        } else {
-    					    jk_log(ssoAgent->logger, JK_LOG_ERROR, "No default resource found for application [%s]", partnerAppId.c_str());
-        				    rv = HSE_STATUS_ERROR;
-                        }
+					    if (appCfg != NULL) {
+					    	string defaultResource = appCfg->getDefaultResource();
+							if (!defaultResource.empty()) {
+								jk_log(ssoAgent->logger, JK_LOG_ERROR, "Redirecting to default resource [%s] for application [%s]", defaultResource.c_str(), partnerAppId.c_str());
+								res->sendRedirect(defaultResource);
+							} else {
+								jk_log(ssoAgent->logger, JK_LOG_ERROR, "No default resource found for application [%s]", partnerAppId.c_str());
+								rv = HSE_STATUS_ERROR;
+							}
+					    } else {
+					    	jk_log(ssoAgent->logger, JK_LOG_ERROR, "Cannot find PartnerApp config for app id [%s]", partnerAppId.c_str());
+					    	rv = HSE_STATUS_ERROR;
+					    }
 					} else {
 					    jk_log(ssoAgent->logger, JK_LOG_ERROR, "No JOSSO_RESOURCE, JOSSO_SPLASH_RESOURCE or josso_partnerapp_id foun!");
     				    rv = HSE_STATUS_ERROR;
@@ -575,7 +586,11 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 	} else {
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Processed request with ERROR");
 	}
-	
+
+	if (rv == HSE_STATUS_ERROR) {
+		lpEcb->dwHttpStatusCode = 500;
+	}
+
 	// -----------------------------------------------
 	// !!! IMPORTAT : CLEAN UP AFTER EACH REQUEST !!!!
 	// -----------------------------------------------

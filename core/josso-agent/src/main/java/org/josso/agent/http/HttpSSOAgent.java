@@ -121,7 +121,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         String user = principal.getName();
         String nodeId = request.getNodeId();
 
-        if (binding != null && userPlaceHolder != null && rolesPlaceHolder != null) {
+        if (binding != null && userPlaceHolder != null && rolesPlaceHolder != null && propertiesPlaceholder != null) {
             SSORole[] roleSets;
 
             try {
@@ -186,7 +186,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
 
                 SSOUser usr = (SSOUser) principal;
                 if (usr.getProperties() != null) {
-                    Properties props = new Properties();
+                    //Properties props = new Properties();
                     for (int i = 0 ; i < usr.getProperties().length ; i++) {
                         attrs.put(propertiesPlaceholder + "_" +  usr.getProperties()[i].getName(),
                                 usr.getProperties()[i].getValue());

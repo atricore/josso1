@@ -64,6 +64,11 @@
         <cxf-version>2.2.2</cxf-version>
         <spring-security-v3-version>3.1.3.RELEASE</spring-security-v3-version>
 
+        <blueprint.noosgi.version>1.1.2</blueprint.noosgi.version>
+        <blueprint.api.version>1.0.1</blueprint.api.version>
+        <blueprint.core.version>1.4.3</blueprint.core.version>
+        <blueprint.parser.version>1.3.1</blueprint.parser.version>
+
 	<update>001</update>
     </properties>
 
@@ -1454,7 +1459,7 @@
                 <type>war</type>
             </dependency>
             
-            <!-- Therd party dependencies -->
+            <!-- Third party dependencies -->
 
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -1507,6 +1512,39 @@
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Apache Blueprint Container -->
+            <dependency>
+                <groupId>org.apache.aries.blueprint</groupId>
+                <artifactId>org.apache.aries.blueprint.noosgi</artifactId>
+                <version>${blueprint.noosgi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.aries.blueprint</groupId>
+                <artifactId>org.apache.aries.blueprint.api</artifactId>
+                <version>${blueprint.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.aries.blueprint</groupId>
+                <artifactId>blueprint-parser</artifactId>
+                <version>${blueprint.parser.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.aries.blueprint</groupId>
+                <artifactId>org.apache.aries.blueprint.core</artifactId>
+                <version>${blueprint.core.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.aries.quiesce</groupId>
+                        <artifactId>org.apache.aries.quiesce.api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.aries</groupId>
+                        <artifactId>org.apache.aries.util</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

@@ -136,7 +136,7 @@ public class TomcatInstaller extends VFSInstaller {
                 // We do not have TC8 specific files
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
-            } else if (artifact.getBaseName().startsWith("josso-tomcat70-agent") &&
+            } else if (artifact.getBaseName().startsWith("josso-tomcat80-agent") &&
                     getTargetPlatform().getVersion().startsWith("8.0")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
@@ -371,7 +371,7 @@ public class TomcatInstaller extends VFSInstaller {
         String roleClassNames = "org.josso.gateway.identity.service.BaseRoleImpl";
 
         // For TC80 we're still using tc7 classes
-        String realmClass = "org.josso." + (getPlatformId().equals("tc80") ? "tc70" : getPlatformId()) + ".agent.jaas.CatalinaJAASRealm"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
+        String realmClass = "org.josso." + getPlatformId() + ".agent.jaas.CatalinaJAASRealm"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
 
         // Check if josso agent valve is already present
 
@@ -444,7 +444,7 @@ public class TomcatInstaller extends VFSInstaller {
         XPath xpath = XPathFactory.newInstance().newXPath();
 
         // Check if josso agent valve is already present
-        String valveClass = "org.josso." + (getPlatformId().equals("tc80") ? "tc70" : getPlatformId()) + ".agent.SSOAgentValve"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
+        String valveClass = "org.josso." + getPlatformId() + ".agent.SSOAgentValve"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
         XPathExpression findAgentValve = xpath.compile("/Server/Service/Engine/Host/Valve[@className=\""+valveClass+"\"]");
         NodeList agentValves = (NodeList) findAgentValve.evaluate(serverXmlDom, XPathConstants.NODESET);
 

@@ -360,6 +360,13 @@
 
                 <dependency>
                     <groupId>org.josso</groupId>
+                    <artifactId>josso-tomcat80-agent</artifactId>
+                    <version>1.8.11-SNAPSHOT</version>
+                    <type>jar</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.josso</groupId>
                     <artifactId>josso-liferay6-agent</artifactId>
                     <version>1.8.11-SNAPSHOT</version>
                     <type>jar</type>

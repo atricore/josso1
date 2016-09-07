@@ -33,7 +33,7 @@
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <includes>
-                <include>org.josso:josso-tomcat70-agent</include>
+                <include>org.josso:josso-tomcat80-agent</include>
                 <include>org.josso:josso-agent-shared</include>
                 <include>org.apache.axis:axis</include>
                 <include>commons-beanutils:commons-beanutils</include>

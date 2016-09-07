@@ -34,7 +34,7 @@
             <outputDirectory>lib</outputDirectory>
             <includes>
 
-                <include>org.josso:josso-tomcat70-agent</include>
+                <include>org.josso:josso-tomcat80-agent</include>
                 <include>org.josso:josso-agent-shared</include>
                 <include>org.josso:josso-core</include>
                 <include>org.josso:josso-protocol-client</include>

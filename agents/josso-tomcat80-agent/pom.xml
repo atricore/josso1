@@ -144,7 +144,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <namespace>urn:org:josso:agent:tomcat70</namespace>
+                            <namespace>urn:org:josso:agent:tomcat80</namespace>
                         </configuration>
                         <goals>
                             <goal>mapping</goal>

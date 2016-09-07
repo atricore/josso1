@@ -20,15 +20,15 @@
  *
  */
 
-package org.josso.tc70.agent;
+package org.josso.tc80.agent;
 
 import org.apache.catalina.*;
 import org.apache.catalina.authenticator.SavedRequest;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
-import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.josso.agent.*;
 import org.josso.agent.http.WebAccessControlUtil;
 
@@ -250,7 +250,7 @@ public class SSOAgentValve extends ValveBase
      * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
      *                 in the current processing pipeline
-     * @throws java.io.IOException      if an input/output error occurs
+     * @throws IOException      if an input/output error occurs
      * @throws javax.servlet.ServletException if a servlet error occurs
      */
 
@@ -704,8 +704,7 @@ public class SSOAgentValve extends ValveBase
             t.printStackTrace();
 
             // Mark this response as error!
-            //response.setError();
-            response.setStatus(500);
+            response.setError();
 
             // Let the next valves work on this
             getNext().invoke(request, response);
@@ -849,7 +848,7 @@ public class SSOAgentValve extends ValveBase
      *
      * @param request The request to be saved
      * @param session The session to contain the saved information
-     * @throws java.io.IOException
+     * @throws IOException
      */
     protected void saveRequest(Request request, Session session)
         throws IOException {
@@ -977,7 +976,7 @@ public class SSOAgentValve extends ValveBase
         if (ignoredWebResources != null && ignoredWebResources.length > 0) {
 
             Realm realm = request.getContext().getRealm();
-            SecurityConstraint [] constraints
+            SecurityConstraint[] constraints
                 = realm.findSecurityConstraints(request, request.getContext());
 
             if ((constraints != null)) {

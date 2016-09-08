@@ -136,7 +136,7 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 	string pJossoNode = req->getParameter("josso_node");
 	if (!pJossoNode.empty()) {
-		res->setCookie("JOSSO_NODE", pJossoNode, "/", false);
+		res->setCookie("JOSSO_NODE", pJossoNode, "/", false, true);
 	}
 
 	string &path = req->getPath();
@@ -169,7 +169,7 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Cleaning SSO Cookie");
 
-				res->setCookie("JOSSO_SESSIONID", "-", "/");
+				res->setCookie("JOSSO_SESSIONID", "-", "/", false, true);
 				
 			}
 
@@ -195,12 +195,12 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 				// This is an authenticated request, clean up any autologin state if present.
 				string autoLoginExecuted = req->getCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED");
 				if (!autoLoginExecuted.empty() && autoLoginExecuted.compare("-") != 0) {
-					res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/", false);
+					res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/", false, true);
 				}
 
 				string autoLoginReferer = req->getCookie("JOSSO_AUTOLOGIN_REFERER");
 				if (!autoLoginReferer.empty() && autoLoginReferer.compare("-") != 0) {
-					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false); 
+					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false, true); 
 				}
 			}
 
@@ -327,7 +327,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 		string pJossoLoginOptional = req->getParameter("josso_login_optional");
 
 		if (!pJossoNode.empty()) {
-			res->setCookie("JOSSO_NODE", pJossoNode, "/", false);
+			res->setCookie("JOSSO_NODE", pJossoNode, "/", false, true);
 		}
 
 		if (!pJossoLogin.empty() || !pJossoLoginOptional.empty()) { // Parameter is present without value, see : SSOAgentRequest::EMPTY_PARAM
@@ -339,7 +339,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				string encodedPath = StringUtil::encode64(backTo);
 
 				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Back To PATH (encoded) %s", encodedPath.c_str());
-				res->setCookie("JOSSO_RESOURCE", encodedPath, "/", false);
+				res->setCookie("JOSSO_RESOURCE", encodedPath, "/", false, true);
 			}
 
 			string gwyLoginUrl (ssoAgent->buildGwyLoginUrl(req));
@@ -416,7 +416,7 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 				string encodedSplashResource = StringUtil::encode64(splashResource);
 
 				jk_log(ssoAgent->logger, JK_LOG_TRACE, "Splash resource %s (encoded %s)", splashResource.c_str(), encodedSplashResource.c_str());
-				res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/", false);
+				res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/", false, true);
 			}
 
 			// Since the URL is for JOSSO Extension, we need the app. id as parameter
@@ -539,8 +539,8 @@ DWORD WINAPI HttpExtensionProc(LPEXTENSION_CONTROL_BLOCK lpEcb)
 					bool secure = false;
 					if(https == "on" || https == "ON") secure = true;
 
-					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/", secure);
-					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false); // Clean stored referer
+					res->setCookie("JOSSO_SESSIONID", ssoSessionId, "/", secure, true);
+					res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false, true); // Clean stored referer
 
 					// Retrieve and decode splash resource
 					string splashResource = req->getCookie("JOSSO_SPLASH_RESOURCE");

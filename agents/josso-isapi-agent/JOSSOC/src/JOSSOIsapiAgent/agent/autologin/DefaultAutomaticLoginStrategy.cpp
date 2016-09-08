@@ -81,30 +81,30 @@ bool DefaultAutomaticLoginStrategy::isAutomaticLoginRequired(SSOAgentRequest *re
 			// The referer does not match the old referer and it is not a 'local' referer.
 			if (md5Referer.compare(md5OldReferer) !=0 && pos >= 0) {
 				// Store old referer
-				res->setCookie("JOSSO_AUTOLOGIN_REFERER", md5Referer, "/", false);
+				res->setCookie("JOSSO_AUTOLOGIN_REFERER", md5Referer, "/", false, true);
 				// Trigger auto login process
 				jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Starting Automatic Login for referer %s (%s)", referer.c_str(), md5Referer.c_str());
 				return true;
 			} else {
 				//jk_log(ssoAgent->logger, JK_LOG_TRACE, "Clean old referer (%s)", md5OldReferer.c_str());
 				// TODO : This does not work, because we do not handle this request ....
-				res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false); 
+				res->setCookie("JOSSO_AUTOLOGIN_REFERER", "-", "/", false, true); 
 			}
 		} else {
 
 			string autoLoginExecuted = req->getCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED");
 			if (autoLoginExecuted.empty() || autoLoginExecuted.compare("-") == 0 ) {
 				// Start automatic login
-				res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "TRUE", "/", false);
+				res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "TRUE", "/", false, true);
 				if (!referer.empty()) {
 					string md5Referer = StringUtil::getHashFromString(referer);
-					res->setCookie("JOSSO_AUTOLOGIN_REFERER", md5Referer, "/", false);
+					res->setCookie("JOSSO_AUTOLOGIN_REFERER", md5Referer, "/", false, true);
 				}
 				//jk_log(ssoAgent->logger, JK_LOG_DEBUG, "Starting Automatic Login for the first time");
 				return true;
 			} else {
 				// Do not clean previous flag, if user goes to another app and come back, a referer is needed!
-				// res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/", false);
+				// res->setCookie("JOSSO_AUTOMATIC_LOGIN_EXECUTED", "-", "/", false, true);
 			}
 
 		}

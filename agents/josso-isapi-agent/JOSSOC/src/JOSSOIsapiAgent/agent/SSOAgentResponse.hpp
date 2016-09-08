@@ -26,7 +26,7 @@ public:
 
 	virtual bool setCookie(string name, string value, string path);
 
-	virtual bool setCookie(string name, string value, string path, bool secure);
+	virtual bool setCookie(string name, string value, string path, bool secure, bool httpOnly);
 
 	virtual bool flushHeaders() =0;
 

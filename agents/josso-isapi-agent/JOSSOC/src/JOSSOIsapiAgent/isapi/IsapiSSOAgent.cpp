@@ -73,8 +73,8 @@ bool IsapiSSOAgent::requestLogin(SSOAgentRequest * req, SSOAgentResponse * res, 
 	jk_log(this->logger, JK_LOG_TRACE, "Encoded PATH %s", encodedPath.c_str());
 	jk_log(this->logger, JK_LOG_TRACE, "Encoded SPLASH RESOURCE %s", encodedSplashResource.c_str());
 					
-	res->setCookie("JOSSO_RESOURCE", encodedPath, "/", false);
-	res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/", false);
+	res->setCookie("JOSSO_RESOURCE", encodedPath, "/", false, true);
+	res->setCookie("JOSSO_SPLASH_RESOURCE", encodedSplashResource, "/", false, true);
 	
 	res->sendRedirect(agentLoginUrl);
 

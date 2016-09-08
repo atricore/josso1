@@ -214,13 +214,13 @@
             </includes>
         </dependencySet-->
 
-        <dependencySet>
+        <!--dependencySet>
             <outputDirectory>/dist/agents/src/josso-weblogic81-agent-mbeans-src</outputDirectory>
             <unpack>true</unpack>
             <includes>
                 <include>${pom.groupId}:josso-weblogic81-agent:zip:mbeans-src</include>
             </includes>
-        </dependencySet>
+        </dependencySet-->
 
         <dependencySet>
             <outputDirectory>/dist/agents/src/josso-weblogic92-agent-mbeans-src</outputDirectory>

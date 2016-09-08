@@ -140,7 +140,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
         if (nodeId != null) {
             NodeServices svcs = servicesByNode.get(nodeId);
             if (svcs != null && svcs.getSm() != null)
-                svcs.getSm();
+                return svcs.getSm();
         }
 
         return smDefault;

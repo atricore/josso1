@@ -18,7 +18,7 @@
 body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0; font-family:Arial, Tahoma, Verdana, Helvetica, sans-serif;}
 #wrapper {width:840px; margin:0 auto!important; font-size:1.4em; }
 
-      
+
 /* Header */
 
       #header {background:#EAEAEA url(../img/header.jpg) no-repeat; position:relative; width:835px; height:196px; }
@@ -29,16 +29,16 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
 
 /* Content */
 
-      /* Notifications */ 
+      /* Notifications */
       .message {background:#FFF7C2; border-bottom:1px solid #EEE7C2; padding:13px; }
       .message p {color:#625D49; padding:0 0 0 30px; font-weight:bold; font-size:0.9em; background:url(../img/icons.gif) no-repeat -2px -58px;}
       .message.error p {background-position:-2px -113px;}
 
 
-      /* Main Content */ 
+      /* Main Content */
       #content {text-align:left; background:#fff; color:#1A2739; border-top:4px solid #1A2739; width:798px; position:relative; margin:0 auto; margin-top:-52px; }
       #content #subwrapper {margin:50px 60px 0 60px; padding-bottom:20px; position:relative; }
-      
+
       #content .button {display:block; background:#8C1012 url(../img/buttons.jpg) no-repeat; width:123px; height:39px; border:0; font-size:1.2em; color:#fff; font-family:Arial;
       line-height:39px; text-align:center; text-decoration:none;  }
       #content .button:hover {background-position:0 -70px; color:#fff; }
@@ -46,7 +46,7 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
       #content .button.medium:hover {background-position:0 -207px;}
       #content .button.big {background-position:0 -277px; width:262px;}
       #content .button.big:hover {background-position:0 -346px;}
-      
+
       #content h2 {color:#1A2739; font-size:1.5em; margin:0 0 25px 0; }
       #content h3 {color:#8F080A; font-size:1.1em; margin:0 0 25px 0; }
       #content .main p {margin:0 0 25px 0;}
@@ -55,9 +55,9 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
       #content a:hover, #content a:focus {color:#BF181F; }
       #content .arrow {background:#fff url(../img/icons.gif) no-repeat -8px -161px;padding:2px 3px 3px 16px ;  }
       #content .note {font-size:0.9em}
-      
-      
-      /* Highlight */       
+
+
+      /* Highlight */
       #content .highlight {text-align:left; background:#FFF7C2 url(../img/highlight-top.jpg) repeat-x; padding:20px 23px 23px 23px; border:1px solid #ECE6C4; margin:0 0 25px 0; }
       #content .highlight.info {padding:8px 23px; }
       #content .highlight h3 {color:#000101; font-size:1.2em; margin:0 0 5px 0; }
@@ -68,15 +68,15 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
       #content .highlight.horizontal {padding:8px 10px; position:relative; margin-bottom:35px; background:#FFF7C2; }
       #content .highlight.horizontal p {color:#625D49; padding:2px 0 2px 30px;  font-size:0.9em; background:#FFF7C2 url(../img/icons.gif) no-repeat -2px -58px; }
       #content .highlight.horizontal .footer {background-position: 50% -70px; height:33px; position:absolute; bottom:-35px; left:0; }
-      
-      
+
+
 /* Footer */
 
       #footer {text-align:center; background:#1A2739 url(../img/footer.gif) no-repeat center top; padding-top:40px; /* position:relative; top:-65px;  */
       color:#939AAE; font-family:Tahoma; font-size:0.8em; }
-      
 
-      
+
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  $ Authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -84,19 +84,19 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
 
 /* Content */
 
-      /* Main Content */ 
+      /* Main Content */
       #content #authentication  { }
       #content #authentication  fieldset {width:340px; display:block; }
       #content #authentication  form label {width:110px;  }
       #content #authentication  form .indent, #content .main p.indent {margin-left:107px; clear:both; }
       #content #authentication  form .checkbox {}
-      
-      /* Highlight */  
+
+      /* Highlight */
       #content #authentication  .highlight {position:absolute; top:115px; right:0; width:246px; } /* Check IE6 Stylesheet too */
       #content #authentication  .highlight .footer {width:290px; right:0px;}
-      
-      
-      
+
+
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  $ Authentication-success
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -104,36 +104,36 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
 
 /* Content */
 
-      /* Main Content */ 
+      /* Main Content */
       #content #authentication-success { }
-      
-      /* Highlight */  
+
+      /* Highlight */
       #content #authentication-success .highlight {width:510px; float:left; } /* Check IE6 Stylesheet too */
       #content #authentication-success .highlight .footer {width:528px; right:0px;}
-      
+
       #content #authentication-success .button {float:right;}
 
-      /* User info */        
+      /* User info */
       #content #authentication-success #user-info {clear:both; padding-top:10px; width:100%; overflow:hidden; } /* Check IE6 and IE7 Stylesheets too */
-      
-      #authentication-success #user-info #col1, 
+
+      #authentication-success #user-info #col1,
       #authentication-success #user-info #col3  {margin:0 38px 0 0; }
 
-      #authentication-success #user-info #col1, 
+      #authentication-success #user-info #col1,
       #authentication-success #user-info #col2  {margin-bottom:30px; }
-      
-      #authentication-success #user-info #col1, 
-      #authentication-success #user-info #col2, 
-      #authentication-success #user-info #col3, 
+
+      #authentication-success #user-info #col1,
+      #authentication-success #user-info #col2,
+      #authentication-success #user-info #col3,
       #authentication-success #user-info #col4  {float:left; width:320px; }
-      
+
       #authentication-success #user-info h3 {display:block; border-bottom:1px solid #DDDDDD; margin:0 0 5px 0; }
       #authentication-success #user-info h4 {float:left; padding:0 5px 0 0; clear:left; }
       #authentication-success #user-info p {margin:0; float:left; }
       #authentication-success #user-info ul {font-size:0.9em; }
-      
 
-      
+
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  $ Lost-password
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -143,9 +143,9 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
       #content #lost-password form label {float:none;}
       #content #lost-password form input.text {width:292px; }
       #content #lost-password form input.button {clear:both; }
-      
-      
-      /* Highlight */  
+
+
+      /* Highlight */
       #content #lost-password .highlight {position:absolute; top:115px; right:0; width:246px; } /* Check IE6 Stylesheet too */
       #content #lost-password .highlight .footer {width:290px; right:0px;}
 
@@ -178,9 +178,9 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
 
       /* Highlight */
       #content #authentication  .highlight {position:absolute; top:115px; right:0; width:246px; } /* Check IE6 Stylesheet too */
-      #content #authentication  .highlight .footer {width:290px; right:0px;}     
+      #content #authentication  .highlight .footer {width:290px; right:0px;}
 
-      
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  $ Partner-public
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -188,23 +188,23 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
 
 /* Content */
 
-      /* Main Content */ 
+      /* Main Content */
       #content #partner-public { }
-      
-      /* Highlight */  
+
+      /* Highlight */
       #content #partner-public .highlight {width:510px; float:left; } /* Check IE6 Stylesheet too */
       #content #partner-public .highlight .footer {width:528px; right:0px;}
-      
+
       #content #partner-public .button {float:right;}
 
-      /* Login-options */        
+      /* Login-options */
       #content #partner-public #login-options {clear:both; padding-top:10px; width:100%; overflow:hidden; } /* Check IE6 and IE7 Stylesheets too */
-      
+
       #partner-public #login-options #col1  {margin:0 38px 0 0; }
-    
-      #partner-public #login-options #col1, 
+
+      #partner-public #login-options #col1,
       #partner-public #login-options #col2  {float:left; width:320px; }
-      
+
       #partner-public #login-options h3 {display:block; border-bottom:1px solid #DDDDDD; margin:0 0 5px 0; }
       #partner-public #login-options h4 {float:left; padding:0 5px 0 0; clear:left; }
       #partner-public #login-options p {margin:0; float:left; line-height:1.4;font-size:0.9em;  }
@@ -212,33 +212,33 @@ body {text-align:center; background:#1A2739 url(../img/body.jpg) no-repeat 50% 0
 
 
 
-      
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  $ Partner-protected
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-     
+
 
 /* Content */
 
-      /* Main Content */ 
+      /* Main Content */
       #content #partner-protected { }
-      
-      /* Highlight */  
+
+      /* Highlight */
       #content #partner-protected .highlight {width:510px; float:left; } /* Check IE6 Stylesheet too */
       #content #partner-protected .highlight .footer {width:528px; right:0px;}
-      
+
       #content #partner-protected .button {float:right;}
 
-      /* Login-options */        
+      /* Login-options */
       #content #partner-protected #login-options {clear:both; padding-top:10px; width:100%; overflow:hidden; } /* Check IE6 and IE7 Stylesheets too */
-      
+
       #partner-protected #login-options #col1  {margin:0 38px 0 0; }
-    
-      #partner-protected #login-options #col1, 
+
+      #partner-protected #login-options #col1,
       #partner-protected #login-options #col2  {float:left; width:320px; margin-bottom:30px;}
 
       #partner-protected #login-options #col3  {width:100%; clear:both; }
-      
+
       #partner-protected #login-options h3 {display:block; border-bottom:1px solid #DDDDDD; margin:0 0 5px 0; }
       #partner-protected #login-options h4 {float:left; padding:0 5px 0 0; clear:left; }
       #partner-protected #login-options p {margin:0; float:left; line-height:1.4;font-size:0.9em;  }

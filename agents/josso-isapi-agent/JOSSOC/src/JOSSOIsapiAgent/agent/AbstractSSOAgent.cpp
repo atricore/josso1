@@ -606,6 +606,7 @@ bool AbstractSSOAgent::isAuthorized(SSOAgentRequest *req) {
 bool AbstractSSOAgent::isIgnored(PartnerAppConfig * appCfg, SSOAgentRequest *req ) {
 
 	string p (req->getPath());
+	std::transform(p.begin(), p.end(), p.begin(), tolower);
 	vector<string>::iterator ignoredUri;
 	for (ignoredUri = appCfg->ignoredUris.begin() ; ignoredUri != appCfg->ignoredUris.end() ; ignoredUri ++) {
 
@@ -1104,7 +1105,7 @@ PartnerAppConfig *AbstractSSOAgent::getPartnerAppConfigById(string id) {
 
 		jk_log(logger, JK_LOG_TRACE, "Looking for Partner Application ID [%s], checking [%s]", id.c_str(), app->partnerAppId.c_str());
 
-		if (app->partnerAppId.compare(id) == 0) {
+		if (stricmp(app->partnerAppId.c_str(), id.c_str()) == 0) {
 			cfg = &(*app);
 			break;
 		}

@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>josso-partner-wl81</artifactId>
-        <version>1.8.10-SNAPSHOT</version>
+        <version>1.8.11-SNAPSHOT</version>
     </parent>
 
     <artifactId>josso-partner-wl81-web</artifactId>
@@ -97,7 +97,7 @@
         </dependency>
         -->
 
-        <dependency>
+        <!--dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agent-j14compat</artifactId>
             
@@ -132,12 +132,12 @@
                     <artifactId>commons-logging-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-weblogic81-agent</artifactId>
-            <version>1.8.10-SNAPSHOT</version> <!-- TODO : Should not be necessary ? -->
+            <version>1.8.11-SNAPSHOT</version> <!-- TODO : Should not be necessary ? -->
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.axis</groupId>

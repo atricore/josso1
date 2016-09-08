@@ -34,9 +34,9 @@ public class SecurityContextPropagationConfig implements Serializable {
 
 
     private String _binding;
-    private String _userPlaceHolder;
-    private String _rolesPlaceHolder;
-    private String _propertiesPlaceHolder;
+    private String _userPlaceHolder = "JOSSO_USER";
+    private String _rolesPlaceHolder = "JOSSO_ROLE";
+    private String _propertiesPlaceHolder = "JOSSO_PROPERTY";
 
 
     public String getBinding() {

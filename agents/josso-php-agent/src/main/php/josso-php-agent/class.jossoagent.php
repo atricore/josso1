@@ -198,6 +198,13 @@ class jossoagent  {
     var $partnerAppIDs;
 
     /**
+     * Partner application IDs by hostname.
+     * @var array
+     * @access private
+     */
+    var $partnerAppIDsByHosts;
+
+    /**
      * @return jossoagent a new Josso PHP Agent instance.
      */
     function getNewInstance() {
@@ -205,7 +212,7 @@ class jossoagent  {
         global $josso_gatewayLoginUrl, $josso_gatewayLogoutUrl, $josso_endpoint, $josso_wsdl_url, $josso_proxyhost,
         $josso_proxyport, $josso_proxyusername, $josso_proxypassword, $josso_agentBasecode, $josso_p3pHeaderValue,
         $josso_sessionManagerServicePath, $josso_identityManagerServicePath, $josso_identityProviderServicePath,
-        $josso_automaticLoginStrategies, $josso_partner_app_ids,$josso_sessionAccessMinInterval;
+        $josso_automaticLoginStrategies, $josso_partner_app_ids, $josso_partnerapp_vhosts, $josso_sessionAccessMinInterval;
 
         return new jossoagent($josso_gatewayLoginUrl,
             $josso_gatewayLogoutUrl,
@@ -222,6 +229,7 @@ class jossoagent  {
             $josso_identityProviderServicePath,
             $josso_automaticLoginStrategies,
             $josso_partner_app_ids,
+            $josso_partnerapp_vhosts,
             $josso_sessionAccessMinInterval);
     }
 
@@ -241,7 +249,7 @@ class jossoagent  {
     function jossoagent($josso_gatewayLoginUrl, $josso_gatewayLogoutUrl, $josso_endpoint,$josso_wsdl_url,
                         $josso_proxyhost, $josso_proxyport, $josso_proxyusername, $josso_proxypassword, $josso_agentBasecode, $josso_p3pHeaderValue,
                         $josso_sessionManagerServicePath, $josso_identityManagerServicePath, $josso_identityProviderServicePath,
-                        $josso_automaticLoginStrategies, $josso_partner_app_ids, $josso_sessionAccessMinInterval) {
+                        $josso_automaticLoginStrategies, $josso_partner_app_ids, $josso_partnerapp_vhosts, $josso_sessionAccessMinInterval) {
 
         // WS Config
         $this->endpoint = $josso_endpoint;
@@ -266,14 +274,23 @@ class jossoagent  {
 
         if (isset($josso_sessionManagerServicePath)) {
             $this->sessionManagerServicePath = $josso_sessionManagerServicePath;
+            if (!$this->startsWith($this->sessionManagerServicePath, '/')) {
+                $this->sessionManagerServicePath = '/' . $this->sessionManagerServicePath;
+            }
         }
 
         if (isset($josso_identityManagerServicePath)) {
             $this->identityManagerServicePath = $josso_identityManagerServicePath;
+            if (!$this->startsWith($this->identityManagerServicePath, '/')) {
+                $this->identityManagerServicePath = '/' . $this->identityManagerServicePath;
+            }
         }
 
         if (isset($josso_identityProviderServicePath)) {
             $this->identityProviderServicePath = $josso_identityProviderServicePath;
+            if (!$this->startsWith($this->identityProviderServicePath, '/')) {
+                $this->identityProviderServicePath = '/' . $this->identityProviderServicePath;
+            }
         }
 
         if (isset($josso_automaticLoginStrategies)) {
@@ -303,6 +320,9 @@ class jossoagent  {
 
         if (isset($josso_partner_app_ids)) {
             $this->partnerAppIDs = $josso_partner_app_ids;
+        }
+        if (isset($josso_partnerapp_vhosts)) {
+            $this->partnerAppIDsByHosts = $josso_partnerapp_vhosts;
         }
     }
 
@@ -710,6 +730,9 @@ class jossoagent  {
             if (isset($this->wsdlUrl)) {
                 $this->identityMgrClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
+                if (isset($this->endpoint) && isset($this->identityManagerServicePath)) {
+                    $this->identityMgrClient->setEndpoint($this->endpoint . $this->identityManagerServicePath);
+                }
             }
             else {
                 $this->identityMgrClient = new nusoap_client($this->endpoint . $this->identityManagerServicePath, false,
@@ -733,6 +756,9 @@ class jossoagent  {
             if (isset($this->wsdlUrl)) {
                 $this->identityProviderClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
+                if (isset($this->endpoint) && isset($this->identityProviderServicePath)) {
+                    $this->identityProviderClient->setEndpoint($this->endpoint . $this->identityProviderServicePath);
+                }
             }
             else {
                 $this->identityProviderClient = new nusoap_client($this->endpoint . $this->identityProviderServicePath, false,
@@ -758,6 +784,9 @@ class jossoagent  {
             if (isset($this->wsdlUrl)) {
                 $this->sessionMgrClient = new nusoap_client($this->wsdlUrl , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
+                if (isset($this->endpoint) && isset($this->sessionManagerServicePath)) {
+                    $this->sessionMgrClient->setEndpoint($this->endpoint . $this->sessionManagerServicePath);
+                }
             }
             else {
                 $this->sessionMgrClient = new nusoap_client($this->endpoint . $this->sessionManagerServicePath, false,
@@ -837,12 +866,13 @@ class jossoagent  {
             $contextPath = '/';
         }
 
-        if (isset($this->partnerAppIDs[$contextPath])) {
-            $requester = $this->partnerAppIDs[$contextPath];
+        $partnerAppIDs = $this->getPartnerAppIDs();
+        if (isset($partnerAppIDs[$contextPath])) {
+            $requester = $partnerAppIDs[$contextPath];
         }
 
         if (!isset($requester)) {
-            $requester = $this->partnerAppIDs['/'];
+            $requester = $partnerAppIDs['/'];
             if (isset($requester));
                 $contextPath = '/';
         }
@@ -862,20 +892,48 @@ class jossoagent  {
      * @access private
      */
     function getRequester() {
-        if (isset($this->partnerAppIDs)) {
+        $partnerAppIDs = $this->getPartnerAppIDs();
 
-            if(!array_key_exists($this->getContextPath(), $this->partnerAppIDs)) {
-                error_log("JOSSO : No partner application defined for context " + $this->getContextPath());
+        if (isset($partnerAppIDs)) {
+
+            $contextPath = $this->getContextPath();
+
+            if(!array_key_exists($contextPath, $partnerAppIDs)) {
+                error_log("JOSSO : No partner application defined for context " . $contextPath);
             } else {
-                $requester = $this->partnerAppIDs[$this->getContextPath()];
+                $requester = $partnerAppIDs[$contextPath];
             }
 
             if (isset($requester)) {
                 return $requester;
             }
-            error_log("JOSSO : Cannot find requester for " . $this->getContextPath());
+            error_log("JOSSO : Cannot find requester for " . $contextPath);
         }
         return null;
+    }
+
+    /**
+     *
+     * Gets the context/appID mappings.
+     *
+     * @return array
+     * @access private
+     */
+    function getPartnerAppIDs() {
+        $partnerAppIDs = $this->partnerAppIDs;
+        if (isset($this->partnerAppIDsByHosts)) {
+            if (array_key_exists('HTTP_HOST', $_SERVER)) {
+                $host_name = $_SERVER['HTTP_HOST'];
+                // need to cater for `host:port` since some "buggy" SAPI(s) have been known to return the port too, see http://goo.gl/bFrbCO
+                $strpos = strpos($host_name, ':');
+                if ($strpos !== false) {
+                    $host_name = substr($host_name, 0, $strpos);
+                }
+            }
+            // resolve partner map if one is found
+            $partnerAppIDs = isset($this->partnerAppIDsByHosts[$host_name]) ? $this->partnerAppIDsByHosts[$host_name] : $partnerAppIDs;
+        }
+        return $partnerAppIDs;
     }
 }
 ?>

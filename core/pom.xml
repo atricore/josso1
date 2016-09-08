@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>josso-parent</artifactId>
-        <version>1.8.10-SNAPSHOT</version>
+        <version>1.8.11-SNAPSHOT</version>
     </parent>
 
     <groupId>org.josso</groupId>
@@ -61,6 +61,7 @@
         <module>josso-core</module>
         <module>josso-agent</module>
         <module>josso-common</module>
-        <module>josso-agent-j14compat</module>
+        <!--module>josso-agent-j14compat</module-->
+        <!-- -->
     </modules>
 </project>

@@ -87,7 +87,7 @@ struct rmm_hash_t {
     RMM_OFF_T(rmm_hash_entry_t)  free;  /* List of recycled entries */
 };
 
-#define INITIAL_MAX 15 /* tunable == 2^n - 1 */
+#define INITIAL_MAX 1500 /* tunable == 2^n - 1 */
 
 
 /*

@@ -185,8 +185,23 @@ function jossoRequestLoginForUrl($currentUrl, $optional = FALSE) {
 
     $loginUrl = $josso_agent->getGatewayLoginUrl(). '?josso_back_to=' . $securityCheckUrl;
 
-    if ($optional)
+    if ($optional) {
         $loginUrl = $loginUrl . '&josso_cmd=login_optional' ;
+    } else {
+        if (isset($_GET['josso_force_authn'])) {
+            $forceAuthn = $_GET['josso_force_authn'];
+            if (!empty($forceAuthn) && strtolower($forceAuthn) != "false") {
+                $loginUrl = $loginUrl . '&josso_cmd=login_force';
+            }
+        }
+
+        if (isset($_GET['josso_authn_ctx'])) {
+            $authnCtx = $_GET['josso_authn_ctx'];
+            if (!empty($authnCtx)) {
+                $loginUrl = $loginUrl . '&josso_authn_ctx=' . $authnCtx;
+            }
+        }
+    }
 
     $loginUrl = $loginUrl . createFrontChannelParams();
 

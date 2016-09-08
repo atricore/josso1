@@ -43,7 +43,7 @@ import weblogic.security.spi.WLSUser;
 import weblogic.security.spi.WLSGroup;
 
 /**
- * SSO Gateway Login Module implementation for Weblogic trhat uses built-in principals instead of
+ * SSO Gateway Login Module implementation for Weblogic that uses built-in principals instead of
  * JOSSO-specific ones.
  *
  * Date: Nov 20, 2007
@@ -53,7 +53,7 @@ import weblogic.security.spi.WLSGroup;
  */
 public class SSOGatewayLoginModuleNoCustomPrincipalsImpl implements LoginModule {
 
-    private static final Log logger = LogFactory.getLog(org.josso.wls10.agent.jaas.SSOGatewayLoginModuleImpl.class);
+    private static final Log logger = LogFactory.getLog(SSOGatewayLoginModuleNoCustomPrincipalsImpl.class);
 
     // initial state
     private Subject _subject;

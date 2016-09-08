@@ -217,6 +217,7 @@ static const char *getHost(request_rec *r);
 static const char *createBaseUrl(request_rec *r);
 static const char *getRequestedUrl(request_rec *r, int includeParameters);
 static const char *getContextPath(request_rec *r);
+static const char *getOriginalUrl(request_rec *r);
 static int isPublicResource(request_rec *r);
 static int isResourceIgnored(request_rec *r);
 static void prepareNonCacheResponse(request_rec *r);
@@ -686,7 +687,7 @@ static int authenticate_josso_user(request_rec *r)
 				ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "assertion resolved to session identifier [%s]", jossoSessionId);
 				set_session_cookie(r, JOSSO_SINGLE_SIGN_ON_COOKIE, jossoSessionId, path, NULL);
 
-				const char *originalUrl = get_cookie(r, JOSSO_PROTECTED_RESOURCE_COOKIE);
+				const char *originalUrl = getOriginalUrl(r);
 				prepareNonCacheResponse(r);
 				ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "redirecting to original url [%s]", originalUrl);
 				apr_table_setn(r->err_headers_out, "Location", originalUrl);
@@ -699,7 +700,7 @@ static int authenticate_josso_user(request_rec *r)
 				return HTTP_FORBIDDEN;
 			}
 		} else {
-			const char *originalUrl = get_cookie(r, JOSSO_PROTECTED_RESOURCE_COOKIE);
+			const char *originalUrl = getOriginalUrl(r);
 			prepareNonCacheResponse(r);
 			apr_table_setn(r->err_headers_out, "Location", originalUrl);
 			ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "assertion is null, redirecting to original url [%s]", originalUrl);
@@ -1510,6 +1511,22 @@ static const char *getContextPath(request_rec *r)
 	}
 
 	return path;
+}
+
+static const char *getOriginalUrl(request_rec *r)
+{
+    const char *originalUrl = get_cookie(r, JOSSO_PROTECTED_RESOURCE_COOKIE);
+    if (originalUrl == NULL) {
+        ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Original URL not found, using configured DefaultResource or Context.");
+        auth_josso_config_rec *cfg = ap_get_module_config(r->per_dir_config, &auth_josso_module);
+        const char *baseUrl = createBaseUrl(r);
+        const char *defaultResource = cfg->defaultResource;
+        if (defaultResource == NULL) {
+            defaultResource = getContextPath(r);
+        }
+        originalUrl = apr_psprintf(r->pool, "%s%s", baseUrl, defaultResource);
+    }
+    return originalUrl;
 }
 
 static int isPublicResource(request_rec *r)

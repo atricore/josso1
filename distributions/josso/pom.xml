@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>distributions</artifactId>
-        <version>1.8.10-SNAPSHOT</version>
+        <version>1.8.11-SNAPSHOT</version>
     </parent>
 
     <groupId>org.josso</groupId>
@@ -89,25 +89,25 @@
         <!-- JOSSO Agents                                                          -->
         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-        <dependency>
+        <!--dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agents-j14bin</artifactId>
             <classifier>3rdparty-j14</classifier>
             <type>tar.gz</type>
-        </dependency>
+        </dependency-->
 
-        <dependency>
+        <!--dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agents-j14bin</artifactId>
             <classifier>3rdparty-j14axis</classifier>
             <type>tar.gz</type>
-        </dependency>
+        </dependency-->
 
-        <dependency>
+        <!--dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agents-j14bin</artifactId>
             <type>jar</type>
-        </dependency>
+        </dependency-->
 
 
         <dependency>
@@ -137,10 +137,10 @@
             <artifactId>josso-agent-shared</artifactId>
         </dependency>
 
-        <dependency>
+        <!--dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-agentj14-shared</artifactId>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.josso</groupId>
@@ -446,7 +446,7 @@
                                     <outputDirectory>${project.build.directory}/3rdparty</outputDirectory>
                                     <overWrite>true</overWrite>
                                 </artifactItem>
-                                <artifactItem>
+                                <!--artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-agents-j14bin</artifactId>
                                     <version>${pom.version}</version>
@@ -454,8 +454,8 @@
                                     <type>tar.gz</type>
                                     <outputDirectory>${project.build.directory}/jdk14/3rdparty</outputDirectory>
                                     <overWrite>true</overWrite>
-                                </artifactItem>
-                                <artifactItem>
+                                </artifactItem-->
+                                <!--artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-agents-j14bin</artifactId>
                                     <version>${pom.version}</version>
@@ -463,7 +463,7 @@
                                     <type>tar.gz</type>
                                     <outputDirectory>${project.build.directory}/jdk14/3rdparty-axis</outputDirectory>
                                     <overWrite>true</overWrite>
-                                </artifactItem>
+                                </artifactItem-->
                                 <artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-wasce-agent</artifactId>

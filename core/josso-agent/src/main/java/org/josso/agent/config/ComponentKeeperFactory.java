@@ -52,7 +52,11 @@ public abstract class ComponentKeeperFactory {
     /**
      * The default factory class : org.josso.MBeanComponentKeeperFactoryImpl
      */
-    private static String factoryClass = "org.josso.agent.config.SpringComponentKeeperFactoryImpl";
+    private static String factoryClass = null;
+
+    private static String blueprintsFactoryClass = "org.josso.agent.config.BlueprintComponentKeeperFactoryImpl";
+
+    private static String springFactoryClass = "org.josso.agent.config.SpringComponentKeeperFactoryImpl";
 
     /**
      * The name of the resource holding JOSSO configuration
@@ -61,11 +65,45 @@ public abstract class ComponentKeeperFactory {
 
     public static ComponentKeeperFactory getInstance() {
 
-        if (System.getProperty(COMPONENT_KEEKPER_FACTORY) != null)
+        // 1. Try configured factory class
+        if (System.getProperty(COMPONENT_KEEKPER_FACTORY) != null) {
             factoryClass = System.getProperty(COMPONENT_KEEKPER_FACTORY);
+            try {
+                logger.info("Attempting to create configured factory ["+factoryClass+"]");
+                return getInstance(factoryClass);
+            } catch (FactoryConfigurationError e) {
+                logger.error (e.getMessage(), e);
+            }
+        }
+
+        logger.info("Attempting to create default factories ...");
+
+        // 2. Try spring factory
+        factoryClass = springFactoryClass;
+        try {
+            logger.info("Attempting to create Spring factory ["+factoryClass+"]");
+            return getInstance(factoryClass);
+        } catch (FactoryConfigurationError e) {
+            logger.warn(e.getMessage(), e);
+        }
+
+        //3. Try blueprint factory
+        factoryClass = blueprintsFactoryClass;
+        try {
+            logger.info("Attempting to create Blueprints factory ["+factoryClass+"]");
+            return getInstance(factoryClass);
+        } catch (FactoryConfigurationError e) {
+            logger.warn(e.getMessage(), e);
+        }
+
+        throw new RuntimeException("Cannot create Component Keeper factory");
+
+    }
+
+    protected static ComponentKeeperFactory getInstance(String fqcn) throws FactoryConfigurationError {
 
         try {
-            return (ComponentKeeperFactory) Class.forName(factoryClass).newInstance();
+            return (ComponentKeeperFactory) Class.forName(fqcn).newInstance();
 
         } catch (InstantiationException e) {
             logger.error(e.getMessage(), e);
@@ -76,7 +114,7 @@ public abstract class ComponentKeeperFactory {
             throw new FactoryConfigurationError(e);
 
         } catch (ClassNotFoundException e) {
-            logger.warn("Class not found : " + factoryClass);
+            logger.warn("Class not found : " + fqcn);
             throw new FactoryConfigurationError(e);
         }
 

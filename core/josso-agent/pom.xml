@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>core</artifactId>
-        <version>1.8.10-SNAPSHOT</version>
+        <version>1.8.11-SNAPSHOT</version>
     </parent>
 
     <artifactId>josso-agent</artifactId>
@@ -90,6 +90,38 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Apache Blueprint Container -->
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.noosgi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>blueprint-parser</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.aries.quiesce</groupId>
+                    <artifactId>org.apache.aries.quiesce.api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.aries</groupId>
+                    <artifactId>org.apache.aries.util</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

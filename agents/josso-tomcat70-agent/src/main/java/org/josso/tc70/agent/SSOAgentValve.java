@@ -32,6 +32,7 @@ import org.apache.catalina.valves.ValveBase;
 import org.josso.agent.*;
 import org.josso.agent.http.WebAccessControlUtil;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -697,10 +698,14 @@ public class SSOAgentValve extends ValveBase
             // some stuff and invoke the next valve in the chain always ...
 
             // Store this error, it will be checked by the ErrorReportingValve
-            request.setAttribute(Globals.EXCEPTION_ATTR, t);
+            request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, t);
+
+            System.err.println(t);
+            t.printStackTrace();
 
             // Mark this response as error!
-            response.setError();
+            //response.setError();
+            response.setStatus(500);
 
             // Let the next valves work on this
             getNext().invoke(request, response);

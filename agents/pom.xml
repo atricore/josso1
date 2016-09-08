@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.josso</groupId>
         <artifactId>josso-parent</artifactId>
-        <version>1.8.10-SNAPSHOT</version>
+        <version>1.8.11-SNAPSHOT</version>
     </parent>
 
     <groupId>org.josso</groupId>
@@ -42,7 +42,7 @@
             <id>all</id>
             <modules>
                 <module>josso-agent-shared</module>
-                <module>josso-agentj14-shared</module>
+                <!--module>josso-agentj14-shared</module-->
                 <module>josso-servlet-agent</module>
                 <module>josso-liferay5-agent</module>
                 <module>josso-liferay6-agent</module>
@@ -51,6 +51,7 @@
                 <module>josso-tomcat55-agent</module>
                 <module>josso-tomcat60-agent</module>
                 <module>josso-tomcat70-agent</module>
+                <module>josso-tomcat80-agent</module>
                 <module>josso-jboss32-agent</module>
                 <module>josso-jboss40-agent</module>
                 <module>josso-jboss42-agent</module>
@@ -58,7 +59,7 @@
                 <module>josso-jboss7-agent</module>
                 <module>josso-jbportal27-agent</module>
                 <module>josso-geronimo2-agent</module>
-                <module>josso-weblogic81-agent</module>
+                <!--module>josso-weblogic81-agent</module-->
                 <module>josso-weblogic92-agent</module>
                 <module>josso-weblogic10-agent</module>
                 <module>josso-weblogic12-agent</module>
@@ -80,7 +81,7 @@
             </activation>
             <modules>
                 <module>josso-agent-shared</module>
-                <module>josso-agentj14-shared</module>
+                <!--module>josso-agentj14-shared</module-->
                 <module>josso-servlet-agent</module>
                 <module>josso-liferay5-agent</module>
                 <module>josso-liferay6-agent</module>
@@ -89,6 +90,7 @@
                 <module>josso-tomcat55-agent</module>
                 <module>josso-tomcat60-agent</module>
                 <module>josso-tomcat70-agent</module>
+                <module>josso-tomcat80-agent</module>
                 <module>josso-jboss32-agent</module>
                 <module>josso-jboss40-agent</module>
                 <module>josso-jboss42-agent</module>
@@ -153,7 +155,7 @@
             </activation>
             <modules>
                 <module>josso-agent-shared</module>
-                <module>josso-agentj14-shared</module>
+                <!--module>josso-agentj14-shared</module-->
                 <module>josso-servlet-agent</module>
                 <module>josso-liferay5-agent</module>
                 <module>josso-liferay6-agent</module>
@@ -162,6 +164,7 @@
                 <module>josso-tomcat55-agent</module>
                 <module>josso-tomcat60-agent</module>
                 <module>josso-tomcat70-agent</module>
+                <module>josso-tomcat80-agent</module>
                 <module>josso-jboss32-agent</module>
                 <module>josso-jboss40-agent</module>
                 <module>josso-jboss42-agent</module>

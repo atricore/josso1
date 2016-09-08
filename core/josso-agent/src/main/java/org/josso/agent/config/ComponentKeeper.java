@@ -33,6 +33,7 @@ public interface ComponentKeeper {
 
     SSOAgent fetchSSOAgent() throws Exception;
 
+    @Deprecated
     ReverseProxyConfiguration fetchReverseProxyConfiguration() throws Exception;
 
 

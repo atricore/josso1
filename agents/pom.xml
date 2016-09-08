@@ -148,41 +148,5 @@
             </modules>
         </profile>
 
-        <profile>
-            <id>main-jdk6</id>
-            <activation>
-                <jdk>1.6</jdk>
-            </activation>
-            <modules>
-                <module>josso-agent-shared</module>
-                <!--module>josso-agentj14-shared</module-->
-                <module>josso-servlet-agent</module>
-                <module>josso-liferay5-agent</module>
-                <module>josso-liferay6-agent</module>
-                <module>josso-alfresco-agent</module>
-                <module>josso-tomcat50-agent</module>
-                <module>josso-tomcat55-agent</module>
-                <module>josso-tomcat60-agent</module>
-                <module>josso-tomcat70-agent</module>
-                <module>josso-tomcat80-agent</module>
-                <module>josso-jboss32-agent</module>
-                <module>josso-jboss40-agent</module>
-                <module>josso-jboss42-agent</module>
-                <module>josso-jboss7-agent</module>
-                <module>josso-jbportal27-agent</module>
-                <module>josso-geronimo2-agent</module>
-                <module>josso-php-agent</module>
-                <module>josso-phpBB-agent</module>
-                <module>josso-microsoft-agent</module>
-                <module>josso-apache22-agent</module>
-                <module>josso-wasce2-agent</module>
-                <module>josso-jaspi-agent</module>
-                <module>josso-jboss5-agent</module>
-                <module>josso-applet-agent</module>
-                <module>josso-gatein-agent</module>
-                <module>josso-jetty6-agent</module>
-            </modules>
-        </profile>
-
     </profiles>
 </project>

@@ -528,7 +528,7 @@
             <id>all</id>
             <dependencies>
 
-                <dependency>
+                <!--dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic81-agent</artifactId>
                     <classifier>mbeans-src</classifier>
@@ -540,9 +540,9 @@
                     <artifactId>josso-weblogic81-agent</artifactId>
                     <classifier>mbeans-src</classifier>
                     <type>tar.gz</type>
-                </dependency>
+                </dependency-->
 
-                <dependency>
+                <!--dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic81-agent</artifactId>
                     <type>jar</type>
@@ -552,7 +552,7 @@
                     <groupId>org.josso</groupId>
                     <artifactId>josso-partner-wl81-app</artifactId>
                     <type>ear</type>
-                </dependency>
+                </dependency-->
 
                 <dependency>
                     <groupId>org.josso</groupId>

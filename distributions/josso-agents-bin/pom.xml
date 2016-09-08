@@ -322,12 +322,12 @@
             <id>all</id>
             <dependencies>
 
-                <dependency>
+                <!--dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-weblogic81-agent</artifactId>
                     <version>1.8.11-SNAPSHOT</version>
                     <type>jar</type>
-                </dependency>
+                </dependency-->
                 
                 <dependency>
                     <groupId>org.josso</groupId>

@@ -145,6 +145,10 @@ DWORD OnPreprocHeaders( HTTP_FILTER_CONTEXT *           pfc,
 
 	// Verify that this URI is a partner application
 	PartnerAppConfig *appCfg = ssoAgent->getPartnerAppConfig(host, path);
+
+	if (ssoAgent->getAgentConfig()->getNodeId() != NULL)
+		res->addHeader("X-JOSSO-Agent", ssoAgent->getAgentConfig()->getNodeId());
+
 	if (appCfg == NULL) {
 		jk_log(ssoAgent->logger, JK_LOG_DEBUG, "[%s] is not associated to a partner application, ignoring", path.c_str());
 

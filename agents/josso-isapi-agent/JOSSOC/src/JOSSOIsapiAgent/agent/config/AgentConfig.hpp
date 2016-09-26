@@ -36,6 +36,10 @@ public:
 
 	char* getBackToBaseUrl() { return backToBaseUrl; }
 
+	const char* getNodeId();
+
+	void setNodeId(const string &nodeId);
+
 
 protected:
 
@@ -73,6 +77,8 @@ protected:
 	char caFile[MAX_PATH + 2];
 
 	friend class AbstractSSOAgent;
+
+	string nodeId;
 };
 
 #endif

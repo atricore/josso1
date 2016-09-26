@@ -200,6 +200,13 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	// ----------------------------------------
 	// Agent main configuration
 	// ----------------------------------------
+
+	const char *nodeId = ini.GetValue("agent", "nodeId", NULL);
+	if (nodeId != NULL) {
+		cfg->nodeId.assign(nodeId);
+		syslog(JK_LOG_DEBUG_LEVEL, "'nodeId' found in configuration 'angent' section %s", nodeId);
+	}
+
 	// Gateway endpoint
 	const char *gwyEndpoint = ini.GetValue("agent", "gatewayEndpoint", NULL );
 	if (gwyEndpoint != NULL) {
@@ -268,7 +275,6 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 	//If using SSL, what is soap timeout interval
 	cfg->soapTransportTimeout = ini.GetLongValue("agent", "soapTransportTimeout", DEFAULT_SOAP_TRANSPORT_TIMEOUT );
 
-
 	const char *caFile = ini.GetValue("agent", "caFile", NULL );
 	if (caFile != NULL) {
 		StringCbCopy(cfg->caFile, MAX_PATH + 2, caFile);
@@ -308,12 +314,12 @@ bool AbstractSSOAgent::configureAgent(AgentConfig *cfg) {
 			// Create an endpoint configuration
 	        EndpointConfig *endpoint = new EndpointConfig();
 
-			const char *id = ini.GetValue(section, "nodeId", NULL);
+			const char *id = ini.GetValue(section, "sso-server-id", NULL);
 			if (id != NULL) {
 				string idStr (id);
 				endpoint->id.assign(idStr);
 			} else {
-				syslog(JK_LOG_ERROR_LEVEL, "'nodeId' not found in configuration '%s' section", section);
+				syslog(JK_LOG_ERROR_LEVEL, "'sso-server-id' not found in configuration '%s' section", section);
 				ok = false;
 			}
 

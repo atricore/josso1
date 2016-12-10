@@ -52,6 +52,7 @@
                 <module>josso-tomcat60-agent</module>
                 <module>josso-tomcat70-agent</module>
                 <module>josso-tomcat80-agent</module>
+                <module>josso-tomcat85-agent</module>
                 <module>josso-jboss32-agent</module>
                 <module>josso-jboss40-agent</module>
                 <module>josso-jboss42-agent</module>
@@ -91,6 +92,7 @@
                 <module>josso-tomcat60-agent</module>
                 <module>josso-tomcat70-agent</module>
                 <module>josso-tomcat80-agent</module>
+                <module>josso-tomcat85-agent</module>
                 <module>josso-jboss32-agent</module>
                 <module>josso-jboss40-agent</module>
                 <module>josso-jboss42-agent</module>

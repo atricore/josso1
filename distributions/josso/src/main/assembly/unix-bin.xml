@@ -182,6 +182,7 @@
             <unpack>false</unpack>
             <includes>
                 <include>${pom.groupId}:josso-agent-shared</include>
+                <include>${pom.groupId}:josso-tomcat85-agent</include>
                 <include>${pom.groupId}:josso-tomcat80-agent</include>
                 <include>${pom.groupId}:josso-tomcat70-agent</include>
                 <include>${pom.groupId}:josso-tomcat60-agent</include>

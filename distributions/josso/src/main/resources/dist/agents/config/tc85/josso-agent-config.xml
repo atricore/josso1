@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ JOSSO: Java Open Single Sign-On
+  ~
+  ~ Copyright 2004-2009, Atricore, Inc.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~
+  -->
+
+<s:beans xmlns:s="http://www.springframework.org/schema/beans"
+         xmlns:tc85="urn:org:josso:agent:tomcat80"
+         xmlns:agent="urn:org:josso:agent:core"
+         xmlns:protocol="urn:org:josso:protocol:client"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+         urn:org:josso:agent:tomcat80 http://www.josso.org/schema/josso-tomcat80-agent.xsd
+         urn:org:josso:agent:core http://www.josso.org/schema/josso-agent.xsd
+         urn:org:josso:protocol:client http://www.josso.org/schema/josso-protocol-client.xsd">
+
+    <tc85:agent name="josso-tomcat85-agent" sessionAccessMinInterval="1000">
+
+        <!-- Gateway LOGIN and LOGOUT URLs -->
+        <gatewayLoginUrl>http://localhost:8080/josso/signon/login.do</gatewayLoginUrl>
+        <gatewayLogoutUrl>http://localhost:8080/josso/signon/logout.do</gatewayLogoutUrl>
+
+        <!-- Gateway service locator -->
+        <gatewayServiceLocator>
+            <!-- Other properties for ws-service-locator :
+            username, password, servicesWebContext, transportSecurity
+            -->
+            <protocol:ws-service-locator endpoint="localhost:8080" />
+        </gatewayServiceLocator>
+
+        <configuration>
+            <agent:agent-configuration>
+
+                <!-- ============================================================================= -->
+                <!--                                                                               -->
+                <!-- JOSSO Parnter application definicions :                                       -->
+                <!--                                                                               -->
+                <!-- Configure all web applications that should be a josso partner application     -->
+                <!-- within this server.                                                           -->
+                <!-- For each partner application you have to define the proper web-context.      -->
+                <!-- ============================================================================= -->
+
+                <agent:partner-apps>
+
+                    <!-- Simple definition of a partner application -->
+                    <agent:partner-app id="MySimplePartnerApp" context="/simple-partnerapp"/>
+                    
+                    <agent:partner-app id="MyPartnerApp1" context="/partnerapp" defaultResource="/index.jsp">
+
+                        <!-- The vhost is an ooptional feature:
+                        Specify the Host/Virtual Host where this application is runnig
+                        This is useful when configuring multiple security domains. -->
+                        <!-- vhost>localhost</vhost--> <!-- You can configure this as a 'partner-app' element attribute as well -->
+
+                        <!-- This is an optional feature :
+                        You can reference any web resource collection that should not be subject to SSO protection.
+                        The SSO agent will not provide identity nor demand authentication to requests matching the
+                        security constraint associated to this web resource collections.
+                        In order to work, the security constraint must not contain auth-constraints declarations.
+                        See sample web.xml file from josso partnerapp.
+                        -->
+                        <ignore-web-resource-collections>public-resources,img-resources</ignore-web-resource-collections>
+
+                        <!-- In addition to the standard JEE security, JOSSO can propagate the security context using
+                        alternative mechanisms, such as custom http headers, request attributes and cookies, thus making it available
+                        to applications which do not rely on JEE security APIs. -->
+                        <!--
+                        <security-context-propagation>
+                            <agent:security-context-propagation-config
+                                binding="HTTP_HEADERS"
+                                userPlaceHolder="currentLoginName"
+                                rolesPlaceHolder="currentUserRoles"/>
+                        </security-context-propagation>
+                        -->
+                    </agent:partner-app>
+
+                </agent:partner-apps>
+
+            </agent:agent-configuration>
+
+
+        </configuration>
+
+        <parametersBuilders>
+            <agent:appid-parameters-builder/>
+        </parametersBuilders>
+
+        <automaticLoginStrategies>
+            <agent:default-automaticlogin-strategy mode="REQUIRED">
+                <property name="ignoredReferrers">
+                    <list>
+                       <value>http://localhost:8080/IDBUS</value>
+                    </list>
+                </property>
+            </agent:default-automaticlogin-strategy>
+        </automaticLoginStrategies>
+        
+        <!-- Only useful when configuring multiple security domains -->
+        <!-- You can configure your own parameter builder to send parameters to your SecurityDomainMatcher  -->
+        <!--
+        <parametersBuilders>
+            <agent:vhost-parameters-builder/>
+            <agent:appctx-parameters-builder/>
+        </parametersBuilders>
+        -->
+
+		<!-- If not defined then default-automaticlogin-strategy is used.
+			 Possible modes are: REQUIRED, SUFFICIENT and OPTIONAL.
+			 Default bots file for bot-automaticlogin-strategy is bots.properties
+			 packaged inside josso-agents-bin jar. If you want to use different
+			 bots file put it in the same directory where josso-agent-config.xml 
+			 is located and reference it from bot-automaticlogin-strategy bean, 
+			 e.g. <agent:bot-automaticlogin-strategy mode="REQUIRED" file="/myfile.txt" />
+			 Bots file should use RFC 822 Record format (look at the packaged 
+			 bots.properties file for exact format and property names used).
+		-->
+		<!--
+		<automaticLoginStrategies>
+			<agent:bot-automaticlogin-strategy mode="REQUIRED" />
+			<agent:urlbased-automaticlogin-strategy mode="REQUIRED">
+				<ignoredUrlPatterns>
+					<value>regex1</value>
+					<value>regex2</value>
+				</ignoredUrlPatterns>
+			</agent:urlbased-automaticlogin-strategy>
+			<agent:default-automaticlogin-strategy mode="REQUIRED" />
+		</automaticLoginStrategies>
+		-->
+		
+    </tc85:agent>
+
+</s:beans>

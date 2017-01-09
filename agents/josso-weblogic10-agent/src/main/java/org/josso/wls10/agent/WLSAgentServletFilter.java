@@ -236,13 +236,22 @@ public class  WLSAgentServletFilter implements Filter {
             Cookie cookies[] = hreq.getCookies();
             if (cookies == null)
                 cookies = new Cookie[0];
+
+            if (log.isDebugEnabled())
+                log.debug("Checking for SSO cookie. cookies.length" + cookies.length);
             for (int i = 0; i < cookies.length; i++) {
+                if (log.isDebugEnabled())
+                    log.debug("Checking for SSO cookie. cookies["+i+"].name=" + cookies[i].getName());
+
                 if (org.josso.gateway.Constants.JOSSO_SINGLE_SIGN_ON_COOKIE.equals(cookies[i].getName())) {
                     cookie = cookies[i];
+                    if (log.isDebugEnabled())
+                        log.debug("SSO cookie found. cookies["+i+"].value=["+cookie.getValue()+"]");
+
                     break;
                 }
             }
-            
+
             String jossoSessionId = (cookie == null) ? null : cookie.getValue();
             if (log.isDebugEnabled())
                 log.debug("Session is: " + session);

@@ -37,8 +37,11 @@ public class CatalinaLocalSession extends LocalSessionImpl {
 
        setWrapped(catalinaSession);
        setMaxInactiveInterval(catalinaSession.getMaxInactiveInterval());
-
-
+    }
+    
+    @Override
+    public String toString() {
+        return "CatalinaLocalSession [toString()=" + super.toString() + "]";
     }
 
 }

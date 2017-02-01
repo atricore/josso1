@@ -22,31 +22,7 @@
 
 package org.josso.tc70.agent;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.LifecycleState;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Realm;
-import org.apache.catalina.Session;
-import org.apache.catalina.SessionEvent;
-import org.apache.catalina.SessionListener;
+import org.apache.catalina.*;
 import org.apache.catalina.authenticator.SavedRequest;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
@@ -55,13 +31,17 @@ import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.josso.agent.Constants;
-import org.josso.agent.LocalSession;
-import org.josso.agent.Lookup;
-import org.josso.agent.SSOAgentRequest;
-import org.josso.agent.SSOPartnerAppConfig;
-import org.josso.agent.SingleSignOnEntry;
+import org.josso.agent.*;
 import org.josso.agent.http.WebAccessControlUtil;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Single Sign-On Agent implementation for Tomcat Catalina.
@@ -70,15 +50,9 @@ import org.josso.agent.http.WebAccessControlUtil;
  * @version $Id: SSOAgentValve.java 1657 2010-10-13 20:48:21Z sgonzalez $
  */
 public class SSOAgentValve extends ValveBase
-        implements Lifecycle, SessionListener {
+        implements Lifecycle, SessionListener, ContainerListener {
 
     private static final Log LOG = LogFactory.getLog(SSOAgentValve.class);
-
-    /**
-     * The debugging detail level for this component.
-     */
-    protected int debug = 0;
-
 
     /**
      * Descriptive information about this Valve implementation.
@@ -103,35 +77,12 @@ public class SSOAgentValve extends ValveBase
      */
     private Map<String, LocalSession> _sessionMap = Collections.synchronizedMap(new HashMap<String, LocalSession>());
 
-    // ------------------------------------------------------------- Properties
-
-    /**
-     * Return the debugging detail level.
-     */
-    public int getDebug() {
-
-        return (this.debug);
-
-    }
-
-
-    /**
-     * Set the debugging detail level.
-     *
-     * @param debug The new debugging detail level
-     */
-    public void setDebug(int debug) {
-
-        this.debug = debug;
-
-    }
-
     // ------------------------------------------------------ SessionListener Methods
 
     public void sessionEvent(SessionEvent event) {
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("JOSSO: SSOAgentValve.sessionEvent: " + event);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("JOSSO: SSOAgentValve.sessionEvent: " + event);
         }
 
         // extra protective guard
@@ -141,84 +92,54 @@ public class SSOAgentValve extends ValveBase
             LocalSession localSession = _sessionMap.get(event.getSession().getId());
 
             if (event.getType().equals(Session.SESSION_DESTROYED_EVENT)) {
-                // This was the main bug
                 if (localSession != null) {
                     localSession.expire();
-                    LOG.info("JOSSO: SSOAgentValve.sessionEvent: session not null. can expire.");
-                } else {
-                    LOG.info("JOSSO: SSOAgentValve.sessionEvent: session is null. using brute force.");
-
-                    String foundId = null;
-
-                    Session eventSession = event.getSession();
-                    String authType = eventSession.getAuthType();
-                    long creationTime = eventSession.getCreationTime();
-                    String id = eventSession.getId();
-                    Principal p = eventSession.getPrincipal();
-
+                    _sessionMap.remove(event.getSession().getId());
                     if (LOG.isDebugEnabled())
-                        LOG.debug("JOSSO: SSOAgentValve.sessionEvent: eventSession: authType=" + authType
-                                + ", creationTime=" + creationTime + ", id=" + id + ", Principal=" + p);
-
-                    // free any sessions that can't be looked up
-                    synchronized (_sessionMap) {
-                        for (Entry<String, LocalSession> ks : _sessionMap.entrySet()) {
-                            String key = ks.getKey();
-                            LocalSession mapSession = ks.getValue();
-
-                            if (LOG.isDebugEnabled())
-                                LOG.debug("JOSSO: SSOAgentValve.sessionEvent: _sessionMap: key: " + key + ", value: "
-                                        + mapSession);
-
-                            Object mapWrapped = mapSession.getWrapped();
-                            if (mapWrapped instanceof Session) {
-                                Session mapS = (Session) mapWrapped;
-                                String mapAuthType = mapS.getAuthType();
-                                long mapCreationTime = mapS.getCreationTime();
-                                String mapId = mapS.getId();
-                                Principal mapP = mapS.getPrincipal();
-
-                                if (LOG.isDebugEnabled())
-                                    LOG.debug("JOSSO: SSOAgentValve.sessionEvent: mapWrapped Session: authType="
-                                            + mapAuthType + ", creationTime=" + mapCreationTime + ", id=" + mapId
-                                            + ", Principal=" + mapP);
-
-                                if (creationTime == mapCreationTime && id != null && id.equals(mapId)) {
-
-                                    if (LOG.isDebugEnabled())
-                                        LOG.debug("JOSSO: SSOAgentValve.sessionEvent: Found ID match: " + key);
-
-                                    foundId = key;
-                                    break;
-                                }
-                            }
-
-                        }
-
-                        if (foundId != null) {
-                            _sessionMap.remove(foundId);
-                            if (LOG.isInfoEnabled())
-                                LOG.info("JOSSO: SSOAgentValve.sessionEvent: removed by brute force: " + foundId);
-                        }
-
-                    }
-
+                        LOG.debug("JOSSO: SSOAgentValve.sessionEvent: session not null. can expire.");
                 }
-
-                _sessionMap.remove(event.getSession().getId());
-
-                if (LOG.isInfoEnabled())
-                    LOG.info("JOSSO: SSOAgentValve.sessionEvent: sessionMap.size remaining: " + _sessionMap.size());
             }
 
-        } catch (
-
-        Exception ex) {
-            LOG.error("JOSSO: SESSION FIX EXCEPTION: ", ex);
+        } catch (Exception ex) {
+            LOG.error("JOSSO: SESSION PURGE EXCEPTION: ", ex);
         }
 
-        LOG.debug("JOSSO: SSOAgentValve.sessionEvent: complete");
+        if (LOG.isDebugEnabled())
+            LOG.debug("JOSSO: SSOAgentValve.sessionEvent: sessionMap.size remaining: " + _sessionMap.size());
 
+        if (LOG.isDebugEnabled())
+            LOG.debug("JOSSO: SSOAgentValve.sessionEvent: complete");
+
+    }
+
+    // ------------------------------------------------------ ContainerListener Methods
+
+    public void containerEvent(ContainerEvent event) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("JOSSO: SSOAgentValve.containerEvent: " + event);
+        }
+
+        if (event.getType().equals(Context.CHANGE_SESSION_ID_EVENT)) {
+            String[] sessionIds = (String[]) event.getData();
+            String oldId = sessionIds[0];
+            String newId = sessionIds[1];
+            if (LOG.isDebugEnabled())
+                LOG.debug("JOSSO: Due to session fixation protection session id " + oldId + " has changed to " + newId);
+
+            LocalSession localSession = _sessionMap.get(oldId);
+            if (localSession != null) {
+                localSession.expire();
+                _sessionMap.remove(oldId);
+                if (LOG.isDebugEnabled())
+                    LOG.debug("JOSSO: Expired local session " + oldId + " as it's no longer in use");
+            }
+
+        }
+        if (LOG.isDebugEnabled())
+            LOG.debug("JOSSO: SSOAgentValve.containerEvent: sessionMap.size remaining: " + _sessionMap.size());
+
+        if (LOG.isDebugEnabled())
+            LOG.debug("JOSSO: SSOAgentValve.containerEvent: complete");
     }
 
     // ------------------------------------------------------ Lifecycle Methods
@@ -262,15 +183,15 @@ public class SSOAgentValve extends ValveBase
      * Set the Container to which this Valve is attached.
      *
      * @param container The container to which we are attached
-     public void setContainer(Container container) {
+    public void setContainer(Container container) {
 
-     if (!(container instanceof Context))
-     throw new IllegalArgumentException
-     ("The SSOAgentValve must be associated to a Catalina Context or Host");
+    if (!(container instanceof Context))
+    throw new IllegalArgumentException
+    ("The SSOAgentValve must be associated to a Catalina Context or Host");
 
-     super.setContainer(container);
-     _container = container;
-     }
+    super.setContainer(container);
+    _container = container;
+    }
      */
 
     /**
@@ -279,7 +200,7 @@ public class SSOAgentValve extends ValveBase
      * and before any of the public methods of the component are utilized.
      *
      * @throws org.apache.catalina.LifecycleException if this component detects a fatal error
-     *                            that prevents this component from being used
+     *                                                that prevents this component from being used
      */
     protected synchronized void startInternal() throws LifecycleException {
 
@@ -294,7 +215,7 @@ public class SSOAgentValve extends ValveBase
             Lookup lookup = Lookup.getInstance();
             lookup.init("josso-agent-config.xml");
             _agent = (CatalinaSSOAgent) lookup.lookupSSOAgent();
-            _agent.setDebug(debug);
+            _agent.setDebug(LOG.isDebugEnabled() ? 1 : 0);
             _agent.setCatalinaContainer(container);
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -303,8 +224,8 @@ public class SSOAgentValve extends ValveBase
         }
         _agent.start();
 
-        if (debug >= 1)
-            log("Started");
+
+        log("Started");
 
         setState(LifecycleState.STARTING);
     }
@@ -315,12 +236,12 @@ public class SSOAgentValve extends ValveBase
      * instance of this component.
      *
      * @throws org.apache.catalina.LifecycleException if this component detects a fatal error
-     *                            that needs to be reported
+     *                                                that needs to be reported
      */
     protected synchronized void stopInternal() throws LifecycleException {
 
         setState(LifecycleState.STOPPING);
-        
+
         // Validate and update our current component state
         if (!started)
             throw new LifecycleException
@@ -330,11 +251,10 @@ public class SSOAgentValve extends ValveBase
 
         _agent.stop();
 
-        if (debug >= 1)
-            log("Stopped");
+
+        log("Stopped");
 
     }
-
 
 
     // ---------------------------------------------------------- Valve Methods
@@ -353,21 +273,18 @@ public class SSOAgentValve extends ValveBase
      * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
      *                 in the current processing pipeline
-     * @throws java.io.IOException      if an input/output error occurs
+     * @throws java.io.IOException            if an input/output error occurs
      * @throws javax.servlet.ServletException if a servlet error occurs
      */
 
     public void invoke(Request request, Response response)
             throws IOException, ServletException {
 
-        HttpServletRequest hreq =
-                (HttpServletRequest) request.getRequest();
-        HttpServletResponse hres =
-                (HttpServletResponse) response.getResponse();
+        HttpServletRequest hreq = request.getRequest();
+        HttpServletResponse hres = response.getResponse();
 
 
-       if (debug >= 1)
-            log("Processing : " + hreq.getContextPath() + " ["+hreq.getRequestURL()+"]");
+        log("Processing : " + hreq.getContextPath() + " [" + hreq.getRequestURL() + "]");
 
         try {
             // ------------------------------------------------------------------
@@ -382,21 +299,21 @@ public class SSOAgentValve extends ValveBase
 
             if (!_agent.isPartnerApp(vhost, contextPath)) {
                 getNext().invoke(request, response);
-                if (debug >= 1)
-                    log("Context is not a josso partner app : " + hreq.getContextPath());
+
+                log("Context is not a josso partner app : " + hreq.getContextPath());
 
                 return;
             }
 
             String nodeId = hreq.getParameter("josso_node");
             if (nodeId != null) {
-                if (debug >= 1)
-                    log("Storing JOSSO Node id : " + nodeId);
-                _agent.setAttribute(hreq, hres, "JOSSO_NODE",  nodeId);
+
+                log("Storing JOSSO Node id : " + nodeId);
+                _agent.setAttribute(hreq, hres, "JOSSO_NODE", nodeId);
             } else {
                 nodeId = _agent.getAttribute(hreq, "JOSSO_NODE");
-                if (debug >= 1)
-                    log("Found JOSSO Node id : " + nodeId);
+
+                log("Found JOSSO Node id : " + nodeId);
             }
 
 
@@ -415,27 +332,27 @@ public class SSOAgentValve extends ValveBase
             // ------------------------------------------------------------------
             // Check if the partner application required the login form
             // ------------------------------------------------------------------
-            if (debug >= 1)
-                log("Checking if its a josso_login_request for '" + hreq.getRequestURI() + "'");
+
+            log("Checking if its a josso_login_request for '" + hreq.getRequestURI() + "'");
 
             if (hreq.getRequestURI().endsWith(_agent.getJossoLoginUri()) ||
-            		hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
+                    hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
 
-                if (debug >= 1)
-                    log("josso_login_request received for uri '" + hreq.getRequestURI() + "'");
+
+                log("josso_login_request received for uri '" + hreq.getRequestURI() + "'");
 
                 //save referer url in case the user clicked on Login from some public resource (page)
                 //so agent can redirect the user back to that page after successful login
                 if (hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
-                	saveLoginBackToURL(hreq, hres, session, true);
+                    saveLoginBackToURL(hreq, hres, session, true);
                 } else {
-                	saveLoginBackToURL(hreq, hres, session, false);
+                    saveLoginBackToURL(hreq, hres, session, false);
                 }
 
                 String loginUrl = _agent.buildLoginUrl(hreq);
 
-                if (debug >= 1)
-                    log("Redirecting to login url '" + loginUrl + "'");
+
+                log("Redirecting to login url '" + loginUrl + "'");
 
                 //set non cache headers
                 _agent.prepareNonCacheResponse(hres);
@@ -448,18 +365,18 @@ public class SSOAgentValve extends ValveBase
             // ------------------------------------------------------------------
             // Check if the partner application required a logout
             // ------------------------------------------------------------------
-            if (debug >= 1)
-                log("Checking if its a josso_logout request for '" + hreq.getRequestURI() + "'");
+
+            log("Checking if its a josso_logout request for '" + hreq.getRequestURI() + "'");
 
             if (hreq.getRequestURI().endsWith(_agent.getJossoLogoutUri())) {
 
-                if (debug >= 1)
-                    log("josso_logout request received for uri '" + hreq.getRequestURI() + "'");
+
+                log("josso_logout request received for uri '" + hreq.getRequestURI() + "'");
 
                 String logoutUrl = _agent.buildLogoutUrl(hreq, cfg);
 
-                if (debug >= 1)
-                    log("Redirecting to logout url '" + logoutUrl + "'");
+
+                log("Redirecting to logout url '" + logoutUrl + "'");
 
                 // Clear previous COOKIE ...
                 Cookie ssoCookie = _agent.newJossoCookie(request.getContextPath(), "-", hreq.isSecure());
@@ -476,8 +393,8 @@ public class SSOAgentValve extends ValveBase
             // ------------------------------------------------------------------
             // Check for the single sign on cookie
             // ------------------------------------------------------------------
-            if (debug >= 1)
-                log("Checking for SSO cookie");
+
+            log("Checking for SSO cookie");
             Cookie cookie = null;
             Cookie cookies[] = hreq.getCookies();
             if (cookies == null)
@@ -490,30 +407,33 @@ public class SSOAgentValve extends ValveBase
             }
 
             String jossoSessionId = (cookie == null) ? null : cookie.getValue();
-            if (debug >= 1)
-                log("Session is: " + session);
+
+            log("Session is: " + session);
             LocalSession localSession = _sessionMap.get(session.getId());
             if (localSession == null) {
                 localSession = new CatalinaLocalSession(session);
                 // the local session is new so, make the valve listen for its events so that it can
                 // map them to local session events.
                 session.addSessionListener(this);
+                session.getManager().getContainer().addContainerListener(this);
                 _sessionMap.put(session.getId(), localSession);
+
+                log("Monitoring session " + session.getId());
             }
             // ------------------------------------------------------------------
             // Check if the partner application submitted custom login form
             // ------------------------------------------------------------------
 
-            if (debug >= 1){
+            {
                 log("Checking if its a josso_authentication for '" + hreq.getRequestURI() + "'");
             }
             if (hreq.getRequestURI().endsWith(_agent.getJossoAuthenticationUri())) {
 
-                if (debug >= 1)
-                    log("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
+
+                log("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
 
                 CatalinaSSOAgentRequest customAuthRequest = new CatalinaSSOAgentRequest(cfg.getId(),
-                		SSOAgentRequest.ACTION_CUSTOM_AUTHENTICATION, jossoSessionId, localSession);
+                        SSOAgentRequest.ACTION_CUSTOM_AUTHENTICATION, jossoSessionId, localSession);
 
                 customAuthRequest.setRequest(hreq);
                 customAuthRequest.setResponse(hres);
@@ -530,16 +450,16 @@ public class SSOAgentValve extends ValveBase
                 // Trigger LOGIN OPTIONAL if required
                 // ------------------------------------------------------------------
 
-                if (debug >= 1)
-                    log("SSO cookie is not present, verifying optional login process ");
+
+                log("SSO cookie is not present, verifying optional login process ");
 
                 // We have no cookie, remember me is enabled and a security check without assertion was received ...
                 // This means that the user could not be identified ... go back to the original resource
                 if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
-                    hreq.getParameter("josso_assertion_id") == null) {
+                        hreq.getParameter("josso_assertion_id") == null) {
 
-                    if (debug >= 1)
-                        log(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
+
+                    log(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
 
                     String requestURI = this.getSavedRequestURL(hreq, session);
                     _agent.prepareNonCacheResponse(hres);
@@ -555,40 +475,40 @@ public class SSOAgentValve extends ValveBase
                     if (!isResourceIgnored(cfg, request) &&
                             _agent.isAutomaticLoginRequired(hreq, hres)) {
 
-                        if (debug >= 1)
-                            log("SSO cookie is not present, attempting automatic login");
+
+                        log("SSO cookie is not present, attempting automatic login");
 
                         // Save current request, so we can co back to it later ...
                         saveRequest(request, session);
                         String loginUrl = _agent.buildLoginOptionalUrl(hreq);
 
-                        if (debug >= 1)
-                            log("Redirecting to login url '" + loginUrl + "'");
+
+                        log("Redirecting to login url '" + loginUrl + "'");
 
                         //set non cache headers
                         _agent.prepareNonCacheResponse(hres);
                         hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
                         return;
                     } else {
-                        if (debug >= 1)
-                            log("SSO cookie is not present, but login optional process is not required");
+
+                        log("SSO cookie is not present, but login optional process is not required");
                     }
                     // save requested resource
-                	if (!isResourceIgnored(cfg, request)) {
-    	            	StringBuffer sb = new StringBuffer(hreq.getRequestURI());
-    	                if (hreq.getQueryString() != null) {
-    	                    sb.append('?');
-    	                    sb.append(hreq.getQueryString());
-    	                }
-    	            	_agent.setAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
-                	}
+                    if (!isResourceIgnored(cfg, request)) {
+                        StringBuffer sb = new StringBuffer(hreq.getRequestURI());
+                        if (hreq.getQueryString() != null) {
+                            sb.append('?');
+                            sb.append(hreq.getQueryString());
+                        }
+                        _agent.setAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
+                    }
                 }
 
-                if (debug >= 1)
-                    log("SSO cookie is not present, checking for outbound relaying");
+
+                log("SSO cookie is not present, checking for outbound relaying");
 
                 if (!(hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
-                    hreq.getParameter("josso_assertion_id") != null)) {
+                        hreq.getParameter("josso_assertion_id") != null)) {
                     log("SSO cookie not present and relaying was not requested, skipping");
                     getNext().invoke(request, response);
                     return;
@@ -605,41 +525,41 @@ public class SSOAgentValve extends ValveBase
             }
 
             // This URI should be protected by SSO, go on ...
-            if (debug >= 1)
-                log("Session is: " + session);
+
+            log("Session is: " + session);
 
             // ------------------------------------------------------------------
             // Invoke the SSO Agent
             // ------------------------------------------------------------------
-            if (debug >= 1)
-                log("Executing agent...");
+
+            log("Executing agent...");
 
             _agent.setCatalinaContainer(request.getContext());
 
             // ------------------------------------------------------------------
             // Check if a user has been authenticated and should be checked by the agent.
             // ------------------------------------------------------------------
-            if (debug >= 1)
-                log("Checking if its a josso_security_check for '" + hreq.getRequestURI() + "'");
+
+            log("Checking if its a josso_security_check for '" + hreq.getRequestURI() + "'");
 
             if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
-                hreq.getParameter("josso_assertion_id") != null) {
+                    hreq.getParameter("josso_assertion_id") != null) {
 
-                if (debug >= 1)
-                    log("josso_security_check received for uri '" + hreq.getRequestURI() + "' assertion id '" +
-                            hreq.getParameter("josso_assertion_id")
-                    );
+
+                log("josso_security_check received for uri '" + hreq.getRequestURI() + "' assertion id '" +
+                        hreq.getParameter("josso_assertion_id")
+                );
 
                 String assertionId = hreq.getParameter(Constants.JOSSO_ASSERTION_ID_PARAMETER);
 
                 CatalinaSSOAgentRequest relayRequest;
 
-                if (debug >= 1)
-                    log("Outbound relaying requested for assertion id [" + assertionId + "]");
+
+                log("Outbound relaying requested for assertion id [" + assertionId + "]");
 
                 relayRequest = new CatalinaSSOAgentRequest(cfg.getId(),
                         SSOAgentRequest.ACTION_RELAY, null, localSession, assertionId
-                    );
+                );
                 relayRequest.setRequest(hreq);
                 relayRequest.setResponse(hres);
                 relayRequest.setContext(request.getContext());
@@ -647,17 +567,17 @@ public class SSOAgentValve extends ValveBase
                 SingleSignOnEntry entry = _agent.processRequest(relayRequest);
                 if (entry == null) {
                     // This is wrong! We should have an entry here!
-                    if (debug >= 1)
-                        log("Outbound relaying failed for assertion id [" + assertionId + "], no Principal found.");
+
+                    log("Outbound relaying failed for assertion id [" + assertionId + "], no Principal found.");
                     // Throw an exception, we will handle it below !
                     throw new RuntimeException("Outbound relaying failed. No Principal found. Verify your SSO Agent Configuration!");
                 }
 
-                if (debug >= 1)
-                    log("Outbound relaying succesfull for assertion id [" + assertionId + "]");
 
-                if (debug >= 1)
-                    log("Assertion id [" + assertionId + "] mapped to SSO session id [" + entry.ssoId + "]");
+                log("Outbound relaying succesfull for assertion id [" + assertionId + "]");
+
+
+                log("Assertion id [" + assertionId + "] mapped to SSO session id [" + entry.ssoId + "]");
 
                 // The cookie is valid to for the partner application only ... in the future each partner app may
                 // store a different auth. token (SSO SESSION) value
@@ -666,48 +586,48 @@ public class SSOAgentValve extends ValveBase
 
                 //Redirect user to the saved splash resource (in case of auth request) or to request URI otherwise
                 String requestURI = getSavedSplashResource(hreq);
-                if(requestURI == null) {
-                	requestURI = getSavedRequestURL(hreq, session);
+                if (requestURI == null) {
+                    requestURI = getSavedRequestURL(hreq, session);
                     if (requestURI == null) {
 
                         if (cfg.getDefaultResource() != null) {
                             requestURI = cfg.getDefaultResource();
                         } else {
-    		                // If no saved request is found, redirect to the partner app root :
-	    	                requestURI = hreq.getRequestURI().substring(
-		                        0, (hreq.getRequestURI().length() - _agent.getJossoSecurityCheckUri().length()));
+                            // If no saved request is found, redirect to the partner app root :
+                            requestURI = hreq.getRequestURI().substring(
+                                    0, (hreq.getRequestURI().length() - _agent.getJossoSecurityCheckUri().length()));
                         }
 
-		                // If we're behind a reverse proxy, we have to alter the URL ... this was not necessary on tomcat 5.0 ?!
-		                String singlePointOfAccess = _agent.getSinglePointOfAccess();
-		                if (singlePointOfAccess != null) {
-		                    requestURI = singlePointOfAccess + requestURI;
-		                } else {
-		                    String reverseProxyHost = hreq.getHeader(org.josso.gateway.Constants.JOSSO_REVERSE_PROXY_HEADER);
-		                    if (reverseProxyHost != null) {
-		                        requestURI = reverseProxyHost + requestURI;
-		                    }
-		                }
+                        // If we're behind a reverse proxy, we have to alter the URL ... this was not necessary on tomcat 5.0 ?!
+                        String singlePointOfAccess = _agent.getSinglePointOfAccess();
+                        if (singlePointOfAccess != null) {
+                            requestURI = singlePointOfAccess + requestURI;
+                        } else {
+                            String reverseProxyHost = hreq.getHeader(org.josso.gateway.Constants.JOSSO_REVERSE_PROXY_HEADER);
+                            if (reverseProxyHost != null) {
+                                requestURI = reverseProxyHost + requestURI;
+                            }
+                        }
 
-		                if (debug >= 1)
-		                    log("No saved request found, using : '" + requestURI + "'");
-		            }
+
+                        log("No saved request found, using : '" + requestURI + "'");
+                    }
                 }
 
                 clearSavedRequestURLs(hreq, hres, session);
-               	_agent.clearAutomaticLoginReferer(hreq, hres);
+                _agent.clearAutomaticLoginReferer(hreq, hres);
                 _agent.prepareNonCacheResponse(hres);
 
                 // Check if we have a post login resource :
                 String postAuthURI = cfg.getPostAuthenticationResource();
                 if (postAuthURI != null) {
                     String postAuthURL = _agent.buildPostAuthUrl(hres, requestURI, postAuthURI);
-                    if (debug >= 1)
-                        log("Redirecting to post-auth-resource '" + postAuthURL  + "'");
+
+                    log("Redirecting to post-auth-resource '" + postAuthURL + "'");
                     hres.sendRedirect(postAuthURL);
                 } else {
-                    if (debug >= 1)
-                        log("Redirecting to original '" + requestURI + "'");
+
+                    log("Redirecting to original '" + requestURI + "'");
                     hres.sendRedirect(hres.encodeRedirectURL(requestURI));
                 }
 
@@ -726,18 +646,18 @@ public class SSOAgentValve extends ValveBase
 
             SingleSignOnEntry entry = _agent.processRequest(r);
 
-            if (debug >= 1)
-                log("Executed agent.");
+
+            log("Executed agent.");
 
             // ------------------------------------------------------------------
             // Has a valid user already been authenticated?
             // ------------------------------------------------------------------
-            if (debug >= 1)
-                log("Process request for '" + hreq.getRequestURI() + "'");
+
+            log("Process request for '" + hreq.getRequestURI() + "'");
 
             if (entry != null) {
-                if (debug >= 1)
-                    log("Principal '" + entry.principal +
+
+                log("Principal '" + entry.principal +
                         "' has already been authenticated");
 
                 (request).setAuthType(entry.authType);
@@ -748,38 +668,38 @@ public class SSOAgentValve extends ValveBase
                 // This is a standard anonymous request!
 
                 if (cookie != null) {
-                	// cookie is not valid
-                	cookie = _agent.newJossoCookie(request.getContextPath(), "-", hreq.isSecure());
-                	hres.addCookie(cookie);
+                    // cookie is not valid
+                    cookie = _agent.newJossoCookie(request.getContextPath(), "-", hreq.isSecure());
+                    hres.addCookie(cookie);
                 }
 
                 if (cookie != null || (getSavedRequestURL(hreq, session) == null && _agent.isAutomaticLoginRequired(hreq, hres))) {
 
-                    if (debug >= 1)
-                        log("SSO Session is not valid, attempting automatic login");
+
+                    log("SSO Session is not valid, attempting automatic login");
 
                     // Save current request, so we can co back to it later ...
                     saveRequest(request, session);
                     String loginUrl = _agent.buildLoginOptionalUrl(hreq);
 
-                    if (debug >= 1)
-                        log("Redirecting to login url '" + loginUrl + "'");
+
+                    log("Redirecting to login url '" + loginUrl + "'");
 
                     //set non cache headers
                     _agent.prepareNonCacheResponse(hres);
                     hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
                     return;
                 } else {
-                    if (debug >= 1)
-                        log("SSO cookie is not present, but login optional process is not required");
+
+                    log("SSO cookie is not present, but login optional process is not required");
                 }
 
             }
 
             // propagate the login and logout URLs to
             // partner applications.
-            hreq.setAttribute("org.josso.agent.gateway-login-url", _agent.getGatewayLoginUrl() );
-            hreq.setAttribute("org.josso.agent.gateway-logout-url", _agent.getGatewayLogoutUrl() );
+            hreq.setAttribute("org.josso.agent.gateway-login-url", _agent.getGatewayLoginUrl());
+            hreq.setAttribute("org.josso.agent.gateway-logout-url", _agent.getGatewayLogoutUrl());
             hreq.setAttribute("org.josso.agent.ssoSessionid", jossoSessionId);
 
             // ------------------------------------------------------------------
@@ -801,8 +721,8 @@ public class SSOAgentValve extends ValveBase
             return;
 
         } finally {
-            if (debug >= 1)
-                log("Processed : " + hreq.getContextPath() + " ["+hreq.getRequestURL()+"]");
+
+            log("Processed : " + hreq.getContextPath() + " [" + hreq.getRequestURL() + "]");
         }
     }
 
@@ -824,8 +744,6 @@ public class SSOAgentValve extends ValveBase
 
 
     // -------------------------------------------------------- Package Methods
-
-
 
 
     // ------------------------------------------------------ Protected Methods
@@ -855,16 +773,16 @@ public class SSOAgentValve extends ValveBase
         HttpServletRequest hreq =
                 (HttpServletRequest) request.getRequest();
         HttpSession hses = hreq.getSession(create);
-        if (debug >= 1)
-            log("getSession() : hses " + hses);
+
+        log("getSession() : hses " + hses);
 
         if (hses == null)
             return (null);
         // Get catalina Context from request ...
         Manager manager = request.getContext().getManager();
 
-        if (debug >= 1)
-            log("getSession() : manager is " + manager);
+
+        log("getSession() : manager is " + manager);
         if (manager == null)
             return (null);
         else {
@@ -904,33 +822,34 @@ public class SSOAgentValve extends ValveBase
      * Return the request URI (with the corresponding query string, if any)
      * from the saved request so that we can redirect to it.
      *
-     * @param hreq http request
+     * @param hreq    http request
      * @param session Our current session
      */
     private String getSavedRequestURL(HttpServletRequest hreq, Session session) {
-    	String savedURL = _agent.getAttribute(hreq, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
-    	if (savedURL == null || savedURL.equals("")) {
-    		SavedRequest saved =
-                (SavedRequest) session.getNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE);
-	        if (saved == null)
-	            return (null);
-	        StringBuffer sb = new StringBuffer(saved.getRequestURI());
-	        if (saved.getQueryString() != null) {
-	            sb.append('?');
-	            sb.append(saved.getQueryString());
-	        }
-	        savedURL = sb.toString();
-    	}
+        String savedURL = _agent.getAttribute(hreq, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
+        if (savedURL == null || savedURL.equals("")) {
+            SavedRequest saved =
+                    (SavedRequest) session.getNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE);
+            if (saved == null)
+                return (null);
+            StringBuffer sb = new StringBuffer(saved.getRequestURI());
+            if (saved.getQueryString() != null) {
+                sb.append('?');
+                sb.append(saved.getQueryString());
+            }
+            savedURL = sb.toString();
+        }
         return savedURL;
     }
 
     /**
      * Return the splash resource from session so that we can redirect the user to it
      * if (s)he was logged in using custom form
+     *
      * @param hreq http request
      */
     private String getSavedSplashResource(HttpServletRequest hreq) {
-    	return _agent.getAttribute(hreq, Constants.JOSSO_SPLASH_RESOURCE_PARAMETER);
+        return _agent.getAttribute(hreq, Constants.JOSSO_SPLASH_RESOURCE_PARAMETER);
     }
 
     /**
@@ -941,7 +860,7 @@ public class SSOAgentValve extends ValveBase
      * @throws java.io.IOException
      */
     protected void saveRequest(Request request, Session session)
-        throws IOException {
+            throws IOException {
 
         // Create and populate a SavedRequest object for this request
         SavedRequest saved = new SavedRequest();
@@ -966,28 +885,28 @@ public class SSOAgentValve extends ValveBase
         }
 
         /** Need more catalina classes
-        if ("POST".equalsIgnoreCase(request.getMethod())) {
-            ByteChunk body = new ByteChunk();
-            body.setLimit(request.getConnector().getMaxSavePostSize());
+         if ("POST".equalsIgnoreCase(request.getMethod())) {
+         ByteChunk body = new ByteChunk();
+         body.setLimit(request.getConnector().getMaxSavePostSize());
 
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            InputStream is = request.getInputStream();
+         byte[] buffer = new byte[4096];
+         int bytesRead;
+         InputStream is = request.getInputStream();
 
-            while ( (bytesRead = is.read(buffer) ) >= 0) {
-                body.append(buffer, 0, bytesRead);
-            }
-            saved.setContentType(request.getContentType());
-            saved.setBody(body);
-        } */
+         while ( (bytesRead = is.read(buffer) ) >= 0) {
+         body.append(buffer, 0, bytesRead);
+         }
+         saved.setContentType(request.getContentType());
+         saved.setBody(body);
+         } */
 
         saved.setMethod(request.getMethod());
         saved.setQueryString(request.getQueryString());
         saved.setRequestURI(request.getRequestURI());
-        
+
         // Stash the SavedRequest in our session for later use
         session.setNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE, saved);
-        
+
         StringBuffer sb = new StringBuffer(request.getRequestURI());
         if (request.getQueryString() != null) {
             String q = request.getQueryString();
@@ -997,25 +916,25 @@ public class SSOAgentValve extends ValveBase
         }
         _agent.setAttribute(request.getRequest(), request.getResponse().getResponse(), WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
     }
-    
+
     /**
      * Save referer URI into our session for later use.
-     * 
+     * <p>
      * This method is used so agent can know from which
      * public resource (page) user requested login.
-     * 
-     * @param request http request
-     * @param response http response
-     * @param session current session
+     *
+     * @param request               http request
+     * @param response              http response
+     * @param session               current session
      * @param overrideSavedResource true if saved resource should be overridden, false otherwise
      */
     protected void saveLoginBackToURL(HttpServletRequest request, HttpServletResponse response, Session session, boolean overrideSavedResource) {
-    	String referer = request.getHeader("referer");
+        String referer = request.getHeader("referer");
         //saved request will exist only if user requested some protected resource
-    	String savedURL = _agent.getAttribute(request, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
-    	SavedRequest saved =
-    		(SavedRequest) session.getNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE);
-    	if (((savedURL == null && saved == null) || overrideSavedResource) && referer != null && !referer.equals("")) {
+        String savedURL = _agent.getAttribute(request, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
+        SavedRequest saved =
+                (SavedRequest) session.getNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE);
+        if (((savedURL == null && saved == null) || overrideSavedResource) && referer != null && !referer.equals("")) {
 
             saved = new SavedRequest();
 
@@ -1023,51 +942,51 @@ public class SSOAgentValve extends ValveBase
 
             String uri = p >= 0 ? referer.substring(0, p) : referer;
             String queryStr = p >= 0 ? referer.substring(p) : null;
-        	saved.setRequestURI(uri);
+            saved.setRequestURI(uri);
             saved.setQueryString(queryStr);
 
             session.setNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE, saved);
-            
+
             _agent.setAttribute(request, response, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, referer);
         } else if (saved != null) {
-        	StringBuffer sb = new StringBuffer(saved.getRequestURI());
+            StringBuffer sb = new StringBuffer(saved.getRequestURI());
             if (saved.getQueryString() != null) {
                 String q = saved.getQueryString();
                 if (!q.startsWith("?"))
                     sb.append('?');
                 sb.append(q);
             }
-        	_agent.setAttribute(request, response, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
+            _agent.setAttribute(request, response, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
         }
     }
-    
+
     /**
-     * Remove saved request URLs from session 
-     * to avoid mixing up resources from previous operations 
+     * Remove saved request URLs from session
+     * to avoid mixing up resources from previous operations
      * (logins, logouts) with the current one.
-     * 
-     * @param hreq http request
-     * @param hres http response
+     *
+     * @param hreq    http request
+     * @param hres    http response
      * @param session Our current session
      */
     protected void clearSavedRequestURLs(HttpServletRequest hreq, HttpServletResponse hres, Session session) {
-    	session.removeNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE);
-    	_agent.removeAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
-    	_agent.removeAttribute(hreq, hres, Constants.JOSSO_SPLASH_RESOURCE_PARAMETER);
+        session.removeNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE);
+        _agent.removeAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI);
+        _agent.removeAttribute(hreq, hres, Constants.JOSSO_SPLASH_RESOURCE_PARAMETER);
     }
 
     protected boolean isResourceIgnored(SSOPartnerAppConfig cfg, Request request) {
         // There are some web-resources to ignore.
         String[] ignoredWebResources = cfg.getIgnoredWebRources();
 
-        if (debug >= 1)
-            log("Found [" +  (ignoredWebResources!= null ? ignoredWebResources.length+"" : "no") + "] ignored web resources ");
+
+        log("Found [" + (ignoredWebResources != null ? ignoredWebResources.length + "" : "no") + "] ignored web resources ");
 
         if (ignoredWebResources != null && ignoredWebResources.length > 0) {
 
             Realm realm = request.getContext().getRealm();
-            SecurityConstraint [] constraints
-                = realm.findSecurityConstraints(request, request.getContext());
+            SecurityConstraint[] constraints
+                    = realm.findSecurityConstraints(request, request.getContext());
 
             if ((constraints != null)) {
 
@@ -1082,8 +1001,8 @@ public class SSOAgentValve extends ValveBase
                         if (constraint.findCollection(ignoredWebResource) != null) {
 
                             // We should ignore this URI, it's not subject to SSO protection.
-                            if (debug >= 1)
-                                log("Not subject to SSO protection :  web-resource-name:" + ignoredWebResource);
+
+                            log("Not subject to SSO protection :  web-resource-name:" + ignoredWebResource);
 
                             return true;
                         }

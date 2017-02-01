@@ -105,11 +105,13 @@ public class CatalinaSSOAgent extends HttpSSOAgent {
     }
 
     protected void log(String message) {
-        LOG.debug(message);
+        if (LOG.isDebugEnabled())
+            LOG.debug(message);
     }
 
     protected void log(String message, Throwable throwable) {
-        LOG.debug(message, throwable);
+        if (LOG.isDebugEnabled())
+            LOG.debug(message, throwable);
     }
 
     /**

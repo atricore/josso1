@@ -22,15 +22,14 @@
 
 package org.josso.tc70.agent;
 
-import org.apache.catalina.*;
-import org.apache.catalina.authenticator.SavedRequest;
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
-import org.apache.catalina.deploy.SecurityConstraint;
-import org.apache.catalina.util.LifecycleSupport;
-import org.apache.catalina.valves.ValveBase;
-import org.josso.agent.*;
-import org.josso.agent.http.WebAccessControlUtil;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -38,9 +37,31 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.*;
 
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.LifecycleState;
+import org.apache.catalina.Manager;
+import org.apache.catalina.Realm;
+import org.apache.catalina.Session;
+import org.apache.catalina.SessionEvent;
+import org.apache.catalina.SessionListener;
+import org.apache.catalina.authenticator.SavedRequest;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+import org.apache.catalina.deploy.SecurityConstraint;
+import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.valves.ValveBase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.josso.agent.Constants;
+import org.josso.agent.LocalSession;
+import org.josso.agent.Lookup;
+import org.josso.agent.SSOAgentRequest;
+import org.josso.agent.SSOPartnerAppConfig;
+import org.josso.agent.SingleSignOnEntry;
+import org.josso.agent.http.WebAccessControlUtil;
 
 /**
  * Single Sign-On Agent implementation for Tomcat Catalina.
@@ -50,6 +71,8 @@ import java.util.*;
  */
 public class SSOAgentValve extends ValveBase
         implements Lifecycle, SessionListener {
+
+    private static final Log LOG = LogFactory.getLog(SSOAgentValve.class);
 
     /**
      * The debugging detail level for this component.
@@ -78,7 +101,7 @@ public class SSOAgentValve extends ValveBase
     /**
      * Catalina Session to Local Session Map.
      */
-    Map _sessionMap = Collections.synchronizedMap(new HashMap());
+    private Map<String, LocalSession> _sessionMap = Collections.synchronizedMap(new HashMap<String, LocalSession>());
 
     // ------------------------------------------------------------- Properties
 
@@ -107,15 +130,95 @@ public class SSOAgentValve extends ValveBase
 
     public void sessionEvent(SessionEvent event) {
 
-
-        // obtain the local session for the catalina session, and notify the listeners for it.
-        LocalSession localSession = (LocalSession) _sessionMap.get(event.getSession().getId());
-
-        if (event.getType().equals(Session.SESSION_DESTROYED_EVENT)) {
-            localSession.expire();
-            _sessionMap.remove(event.getSession().getId());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("JOSSO: SSOAgentValve.sessionEvent: " + event);
         }
-            
+
+        // extra protective guard
+        try {
+            // obtain the local session for the catalina session, and notify the
+            // listeners for it.
+            LocalSession localSession = _sessionMap.get(event.getSession().getId());
+
+            if (event.getType().equals(Session.SESSION_DESTROYED_EVENT)) {
+                // This was the main bug
+                if (localSession != null) {
+                    localSession.expire();
+                    LOG.info("JOSSO: SSOAgentValve.sessionEvent: session not null. can expire.");
+                } else {
+                    LOG.info("JOSSO: SSOAgentValve.sessionEvent: session is null. using brute force.");
+
+                    String foundId = null;
+
+                    Session eventSession = event.getSession();
+                    String authType = eventSession.getAuthType();
+                    long creationTime = eventSession.getCreationTime();
+                    String id = eventSession.getId();
+                    Principal p = eventSession.getPrincipal();
+
+                    if (LOG.isDebugEnabled())
+                        LOG.debug("JOSSO: SSOAgentValve.sessionEvent: eventSession: authType=" + authType
+                                + ", creationTime=" + creationTime + ", id=" + id + ", Principal=" + p);
+
+                    // free any sessions that can't be looked up
+                    synchronized (_sessionMap) {
+                        for (Entry<String, LocalSession> ks : _sessionMap.entrySet()) {
+                            String key = ks.getKey();
+                            LocalSession mapSession = ks.getValue();
+
+                            if (LOG.isDebugEnabled())
+                                LOG.debug("JOSSO: SSOAgentValve.sessionEvent: _sessionMap: key: " + key + ", value: "
+                                        + mapSession);
+
+                            Object mapWrapped = mapSession.getWrapped();
+                            if (mapWrapped instanceof Session) {
+                                Session mapS = (Session) mapWrapped;
+                                String mapAuthType = mapS.getAuthType();
+                                long mapCreationTime = mapS.getCreationTime();
+                                String mapId = mapS.getId();
+                                Principal mapP = mapS.getPrincipal();
+
+                                if (LOG.isDebugEnabled())
+                                    LOG.debug("JOSSO: SSOAgentValve.sessionEvent: mapWrapped Session: authType="
+                                            + mapAuthType + ", creationTime=" + mapCreationTime + ", id=" + mapId
+                                            + ", Principal=" + mapP);
+
+                                if (creationTime == mapCreationTime && id != null && id.equals(mapId)) {
+
+                                    if (LOG.isDebugEnabled())
+                                        LOG.debug("JOSSO: SSOAgentValve.sessionEvent: Found ID match: " + key);
+
+                                    foundId = key;
+                                    break;
+                                }
+                            }
+
+                        }
+
+                        if (foundId != null) {
+                            _sessionMap.remove(foundId);
+                            if (LOG.isInfoEnabled())
+                                LOG.info("JOSSO: SSOAgentValve.sessionEvent: removed by brute force: " + foundId);
+                        }
+
+                    }
+
+                }
+
+                _sessionMap.remove(event.getSession().getId());
+
+                if (LOG.isInfoEnabled())
+                    LOG.info("JOSSO: SSOAgentValve.sessionEvent: sessionMap.size remaining: " + _sessionMap.size());
+            }
+
+        } catch (
+
+        Exception ex) {
+            LOG.error("JOSSO: SESSION FIX EXCEPTION: ", ex);
+        }
+
+        LOG.debug("JOSSO: SSOAgentValve.sessionEvent: complete");
+
     }
 
     // ------------------------------------------------------ Lifecycle Methods
@@ -399,7 +502,7 @@ public class SSOAgentValve extends ValveBase
             String jossoSessionId = (cookie == null) ? null : cookie.getValue();
             if (debug >= 1)
                 log("Session is: " + session);
-            LocalSession localSession = (LocalSession) _sessionMap.get(session.getId());
+            LocalSession localSession = _sessionMap.get(session.getId());
             if (localSession == null) {
                 localSession = new CatalinaLocalSession(session);
                 // the local session is new so, make the valve listen for its events so that it can
@@ -699,9 +802,6 @@ public class SSOAgentValve extends ValveBase
 
             // Store this error, it will be checked by the ErrorReportingValve
             request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, t);
-
-            System.err.println(t);
-            t.printStackTrace();
 
             // Mark this response as error!
             //response.setError();

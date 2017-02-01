@@ -307,8 +307,7 @@ public class SSOAgentValve extends ValveBase
 
             // URI Encoding
             if (_agent.getUriEncoding() != null) {
-                if (debug >= 1)
-                    log("Setting request/response encoding to " + _agent.getUriEncoding());
+                log("Setting request/response encoding to " + _agent.getUriEncoding());
                 hreq.setCharacterEncoding(_agent.getUriEncoding());
                 hres.setCharacterEncoding(_agent.getUriEncoding());
             }

@@ -82,6 +82,11 @@
                         <artifactId>axistools-maven-plugin</artifactId>
                         <version>1.1</version>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.10</version>
+                    </plugin>
                 </plugins>
             </build>
             <modules>
@@ -363,6 +368,11 @@
                         <artifactId>axistools-maven-plugin</artifactId>
                         <version>1.1</version>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.10</version>
+                    </plugin>
                 </plugins>
             </build>
             <modules>
@@ -387,6 +397,11 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>axistools-maven-plugin</artifactId>
                         <version>1.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.10</version>
                     </plugin>
                 </plugins>
             </build>
@@ -418,6 +433,11 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>axistools-maven-plugin</artifactId>
                         <version>1.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.10</version>
                     </plugin>
                 </plugins>
             </build>

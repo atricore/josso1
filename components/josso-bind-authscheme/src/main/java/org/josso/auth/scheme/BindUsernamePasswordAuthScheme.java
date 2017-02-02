@@ -79,6 +79,9 @@ public class BindUsernamePasswordAuthScheme extends UsernamePasswordAuthScheme {
             return false;
         }
 
+        // hash the password if needed.
+        password = createPasswordHash(password);
+
         // Authenticate the user against the configured store via a bind
         // The configured store could be using a LDAP server , a DB, etc.
         if (((BindableCredentialStore) _credentialStore).bind(username, password)) {

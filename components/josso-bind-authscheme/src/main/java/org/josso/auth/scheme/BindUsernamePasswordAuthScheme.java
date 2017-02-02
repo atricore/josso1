@@ -80,7 +80,7 @@ public class BindUsernamePasswordAuthScheme extends UsernamePasswordAuthScheme {
         }
 
         // hash the password if needed.
-	password = createPasswordHash(password);
+        password = createPasswordHash(password);
 
         // Authenticate the user against the configured store via a bind
         // The configured store could be using a LDAP server , a DB, etc.

@@ -427,8 +427,8 @@ public class GenericServletSSOAgentFilter implements Filter {
                 SingleSignOnEntry entry = agent.processRequest(relayRequest);
                 if (entry == null) {
                     // This is wrong! We should have an entry here!
-                    log.error("Outbound relaying failed for assertion id [" + assertionId + "], no Principal found.");
-                    // Throw an exception and let the container send the INERNAL SERVER ERROR
+                    log.debug("Outbound relaying failed for assertion id [" + assertionId + "], no Principal found.");
+                    // Throw an exception and let the container deal with it
                     throw new ServletException("No Principal found. Verify your SSO Agent Configuration!");
                 }
 

@@ -39,7 +39,7 @@ import javax.security.auth.Subject;
 import java.security.Principal;
 
 /**
- * Catalina Realm replacement that will authenticate users 
+ * Catalina Realm replacement that will authenticate users
  * directly against the gateway.
  */
 public class CatalinaNativeRealm extends RealmBase {
@@ -49,58 +49,58 @@ public class CatalinaNativeRealm extends RealmBase {
      * Descriptive information about this Realm implementation.
      */
     protected static final String name = "CatalinaNativeRealm";
-    
-	@Override
-	public Principal authenticate(String username, String credentials) {
-		try {
+
+    @Override
+    public Principal authenticate(String username, String credentials) {
+        try {
             SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
             SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
 
             SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
             if (im == null)
                 im = agent.getSSOIdentityManager();
-			
-			String requester = "";
-			// Check for nulls ?
+
+            String requester = "";
+            // Check for nulls ?
 
             if (request != null)
-            	requester = request.getRequester();
+                requester = request.getRequester();
             else
                 log.warn("No SSO Agent request found in thread local variable, can't identify requester");
 
             SSOUser ssoUser = im.findUserInSession(requester, username);
-			
-	        Principal principal = null;
-	        
-	        if (ssoUser != null) {
-	        	Subject subject = new Subject();
-	        	subject.getPrincipals().add(ssoUser);
+
+            Principal principal = null;
+
+            if (ssoUser != null) {
+                Subject subject = new Subject();
+                subject.getPrincipals().add(ssoUser);
                 SSORole[] ssoRolePrincipals = im.findRolesBySSOSessionId(requester, username);
-	            for (int i=0; i < ssoRolePrincipals.length; i++) {
-	                subject.getPrincipals().add(ssoRolePrincipals[i]);
-	            }
-	            // Return the appropriate Principal for this authenticated Subject
-	            principal = createPrincipal(username, subject);
-	        }
-			
-	        return principal;
-		} catch (SSOIdentityException e) {
+                for (int i = 0; i < ssoRolePrincipals.length; i++) {
+                    subject.getPrincipals().add(ssoRolePrincipals[i]);
+                }
+                // Return the appropriate Principal for this authenticated Subject
+                principal = createPrincipal(username, subject);
+            }
+
+            return principal;
+        } catch (SSOIdentityException e) {
             // Ignore this ... (user does not exist for this session)
             if (log.isDebugEnabled()) {
-            	log.debug(e.getMessage());
+                log.debug(e.getMessage());
             }
             return null;
         } catch (Exception e) {
-        	log.error("Session authentication failed : " + username, e);
+            log.error("Session authentication failed : " + username, e);
             throw new RuntimeException("Fatal error authenticating session : " + e);
         }
-	}
+    }
 
-	/**
+    /**
      * Construct and return a java.security.Principal instance
      * representing the authenticated user for the specified Subject. If no
      * such Principal can be constructed, return null.
-     *
+     * <p>
      * The Principal constructed is CatalinaSSOUser which is a SSOUser.
      * The Partner Application can access SSOUser-specific properties that are not available
      * in GenericPrincipal.
@@ -111,18 +111,18 @@ public class CatalinaNativeRealm extends RealmBase {
         return CatalinaSSOUser.newInstance(this, subject);
     }
 
-	@Override
-	protected String getName() {
-		return name;
-	}
+    @Override
+    protected String getName() {
+        return name;
+    }
 
-	@Override
-	protected String getPassword(String username) {
-		return null;
-	}
+    @Override
+    protected String getPassword(String username) {
+        return null;
+    }
 
-	@Override
-	protected Principal getPrincipal(String username) {
-		return authenticate(username, username);
-	}
+    @Override
+    protected Principal getPrincipal(String username) {
+        return authenticate(username, username);
+    }
 }

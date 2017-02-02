@@ -103,5 +103,11 @@ public class LocalSessionImpl implements LocalSession {
     public Object getWrapped() {
         return _wrapped;
     }
+
+    @Override
+    public String toString() {
+        return "LocalSessionImpl [_creationTime=" + _creationTime + ", _id=" + _id + ", _lastAccessedTime="
+                + _lastAccessedTime + ", _maxInactiveInterval=" + _maxInactiveInterval + ", _wrapped=" + _wrapped + "]";
+    }
 }
 

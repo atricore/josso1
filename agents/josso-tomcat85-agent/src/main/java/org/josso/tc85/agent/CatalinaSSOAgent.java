@@ -25,6 +25,8 @@ package org.josso.tc85.agent;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Realm;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.http.HttpSSOAgent;
 
@@ -41,12 +43,13 @@ import java.security.Principal;
  */
 public class CatalinaSSOAgent extends HttpSSOAgent {
 
+    private static final Log LOG = LogFactory.getLog(CatalinaSSOAgent.class);
+
     private Container _container;
 
     public CatalinaSSOAgent() {
         super();
     }
-
 
     public CatalinaSSOAgent(Container container) {
         super();
@@ -101,19 +104,13 @@ public class CatalinaSSOAgent extends HttpSSOAgent {
     }
 
     protected void log(String message) {
-        if (_container != null) {
-            if (_container.getLogger().isDebugEnabled())
-            _container.getLogger().debug(this.toString() + ": " + message);
-        } else
-            System.out.println(this.toString() + ": " + message);
+        if (LOG.isDebugEnabled())
+            LOG.debug(message);
     }
 
     protected void log(String message, Throwable throwable) {
-        if (_container != null) {
-            if (_container.getLogger().isDebugEnabled())
-                _container.getLogger().debug(this.toString() + ": " + message, throwable);
-        } else
-            System.out.println(this.toString() + ": " + message);
+        if (LOG.isDebugEnabled())
+            LOG.debug(message, throwable);
     }
 
     /**

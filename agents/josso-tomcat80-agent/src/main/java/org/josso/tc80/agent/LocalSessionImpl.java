@@ -93,7 +93,7 @@ public class LocalSessionImpl implements LocalSession {
     }
 
     public void invalidate() {
-        ((Session)_wrapped).expire();
+        ((Session) _wrapped).expire();
     }
 
     public void setWrapped(Object wrapped) {
@@ -102,6 +102,12 @@ public class LocalSessionImpl implements LocalSession {
 
     public Object getWrapped() {
         return _wrapped;
+    }
+
+    @Override
+    public String toString() {
+        return "LocalSessionImpl [_creationTime=" + _creationTime + ", _id=" + _id + ", _lastAccessedTime="
+                + _lastAccessedTime + ", _maxInactiveInterval=" + _maxInactiveInterval + ", _wrapped=" + _wrapped + "]";
     }
 }
 

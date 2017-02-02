@@ -1142,6 +1142,24 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-tomcat70-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-tomcat80-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-tomcat85-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-jboss32-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>

@@ -20,13 +20,12 @@
  *
  */
 
-package org.josso.tc80.agent;
+package org.josso.tc85.agent;
 
 import org.apache.catalina.*;
 import org.apache.catalina.authenticator.SavedRequest;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
-import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,14 +61,10 @@ public class SSOAgentValve extends ValveBase
             "org.apache.catalina.authenticator.SingleSignOn";
 
     /**
-     * The lifecycle event support for this component.
-     */
-    protected LifecycleSupport lifecycle = new LifecycleSupport(this);
-
-    /**
      * Component started flag.
      */
     protected boolean started = false;
+
     private CatalinaSSOAgent _agent;
 
     /**
@@ -80,11 +75,6 @@ public class SSOAgentValve extends ValveBase
     // ------------------------------------------------------ SessionListener Methods
 
     public void sessionEvent(SessionEvent event) {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("JOSSO: SSOAgentValve.sessionEvent: " + event);
-        }
-
         // extra protective guard
         try {
             // obtain the local session for the catalina session, and notify the
@@ -109,8 +99,7 @@ public class SSOAgentValve extends ValveBase
 
         if (LOG.isDebugEnabled())
             LOG.debug("JOSSO: SSOAgentValve.sessionEvent: complete");
-
-    }
+   }
 
     // ------------------------------------------------------ ContainerListener Methods
 
@@ -146,40 +135,6 @@ public class SSOAgentValve extends ValveBase
 
 
     /**
-     * Add a lifecycle event listener to this component.
-     *
-     * @param listener The listener to add
-     */
-    public void addLifecycleListener(LifecycleListener listener) {
-
-        lifecycle.addLifecycleListener(listener);
-
-    }
-
-
-    /**
-     * Get the lifecycle listeners associated with this lifecycle. If this
-     * Lifecycle has no listeners registered, a zero-length array is returned.
-     */
-    public LifecycleListener[] findLifecycleListeners() {
-
-        return lifecycle.findLifecycleListeners();
-
-    }
-
-
-    /**
-     * Remove a lifecycle event listener from this component.
-     *
-     * @param listener The listener to remove
-     */
-    public void removeLifecycleListener(LifecycleListener listener) {
-
-        lifecycle.removeLifecycleListener(listener);
-
-    }
-
-    /**
      * Set the Container to which this Valve is attached.
      *
      * @param container The container to which we are attached
@@ -208,7 +163,7 @@ public class SSOAgentValve extends ValveBase
         if (started)
             throw new LifecycleException
                     ("Agent already started");
-        lifecycle.fireLifecycleEvent(START_EVENT, null);
+        fireLifecycleEvent(START_EVENT, null);
         started = true;
 
         try {
@@ -224,6 +179,7 @@ public class SSOAgentValve extends ValveBase
         }
         _agent.start();
         log("Started");
+
         setState(LifecycleState.STARTING);
     }
 
@@ -243,13 +199,12 @@ public class SSOAgentValve extends ValveBase
         if (!started)
             throw new LifecycleException
                     ("Agent not started");
-        lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+        fireLifecycleEvent(STOP_EVENT, null);
         started = false;
+
         _agent.stop();
         log("Stopped");
-
     }
-
 
     // ---------------------------------------------------------- Valve Methods
 
@@ -277,6 +232,7 @@ public class SSOAgentValve extends ValveBase
         HttpServletRequest hreq = request.getRequest();
         HttpServletResponse hres = response.getResponse();
         log("Processing : " + hreq.getContextPath() + " [" + hreq.getRequestURL() + "]");
+
         try {
             // ------------------------------------------------------------------
             // Check with the agent if this context should be processed.
@@ -291,6 +247,7 @@ public class SSOAgentValve extends ValveBase
             if (!_agent.isPartnerApp(vhost, contextPath)) {
                 getNext().invoke(request, response);
                 log("Context is not a josso partner app : " + hreq.getContextPath());
+
                 return;
             }
 
@@ -329,9 +286,11 @@ public class SSOAgentValve extends ValveBase
             // Check if the partner application required the login form
             // ------------------------------------------------------------------
             log("Checking if its a josso_login_request for '" + hreq.getRequestURI() + "'");
+
             if (hreq.getRequestURI().endsWith(_agent.getJossoLoginUri()) ||
                     hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
                 log("josso_login_request received for uri '" + hreq.getRequestURI() + "'");
+
                 //save referer url in case the user clicked on Login from some public resource (page)
                 //so agent can redirect the user back to that page after successful login
                 if (hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
@@ -342,10 +301,13 @@ public class SSOAgentValve extends ValveBase
 
                 String loginUrl = _agent.buildLoginUrl(hreq);
                 log("Redirecting to login url '" + loginUrl + "'");
+
                 //set non cache headers
                 _agent.prepareNonCacheResponse(hres);
                 hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
+
                 return;
+
             }
 
             // ------------------------------------------------------------------
@@ -356,6 +318,7 @@ public class SSOAgentValve extends ValveBase
 
             if (hreq.getRequestURI().endsWith(_agent.getJossoLogoutUri())) {
                 log("josso_logout request received for uri '" + hreq.getRequestURI() + "'");
+
                 String logoutUrl = _agent.buildLogoutUrl(hreq, cfg);
                 log("Redirecting to logout url '" + logoutUrl + "'");
 
@@ -366,6 +329,7 @@ public class SSOAgentValve extends ValveBase
                 //set non cache headers
                 _agent.prepareNonCacheResponse(hres);
                 hres.sendRedirect(hres.encodeRedirectURL(logoutUrl));
+
                 return;
             }
 
@@ -393,7 +357,7 @@ public class SSOAgentValve extends ValveBase
                 // the local session is new so, make the valve listen for its events so that it can
                 // map them to local session events.
                 session.addSessionListener(this);
-                session.getManager().getContainer().addContainerListener(this);
+                session.getManager().getContext().addContainerListener(this);
                 _sessionMap.put(session.getId(), localSession);
 
                 log("Monitoring session " + session.getId());
@@ -405,12 +369,16 @@ public class SSOAgentValve extends ValveBase
             log("Checking if its a josso_authentication for '" + hreq.getRequestURI() + "'");
             if (hreq.getRequestURI().endsWith(_agent.getJossoAuthenticationUri())) {
                 log("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
+
                 CatalinaSSOAgentRequest customAuthRequest = new CatalinaSSOAgentRequest(cfg.getId(),
                         SSOAgentRequest.ACTION_CUSTOM_AUTHENTICATION, jossoSessionId, localSession);
+
                 customAuthRequest.setRequest(hreq);
                 customAuthRequest.setResponse(hres);
                 customAuthRequest.setContext(request.getContext());
+
                 _agent.processRequest(customAuthRequest);
+
                 return;
             }
 
@@ -426,10 +394,12 @@ public class SSOAgentValve extends ValveBase
                 if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                         hreq.getParameter("josso_assertion_id") == null) {
                     log(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
+
                     String requestURI = this.getSavedRequestURL(hreq, session);
                     _agent.prepareNonCacheResponse(hres);
                     hres.sendRedirect(hres.encodeRedirectURL(requestURI));
                     return;
+
                 }
 
                 // This is a standard anonymous request!
@@ -463,6 +433,7 @@ public class SSOAgentValve extends ValveBase
                     }
                 }
                 log("SSO cookie is not present, checking for outbound relaying");
+
                 if (!(hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                         hreq.getParameter("josso_assertion_id") != null)) {
                     log("SSO cookie not present and relaying was not requested, skipping");
@@ -487,6 +458,7 @@ public class SSOAgentValve extends ValveBase
             // Invoke the SSO Agent
             // ------------------------------------------------------------------
             log("Executing agent...");
+
             _agent.setCatalinaContainer(request.getContext());
 
             // ------------------------------------------------------------------
@@ -494,14 +466,18 @@ public class SSOAgentValve extends ValveBase
             // ------------------------------------------------------------------
 
             log("Checking if its a josso_security_check for '" + hreq.getRequestURI() + "'");
+
             if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                     hreq.getParameter("josso_assertion_id") != null) {
                 log("josso_security_check received for uri '" + hreq.getRequestURI() + "' assertion id '" +
                         hreq.getParameter("josso_assertion_id")
                 );
+
                 String assertionId = hreq.getParameter(Constants.JOSSO_ASSERTION_ID_PARAMETER);
+
                 CatalinaSSOAgentRequest relayRequest;
                 log("Outbound relaying requested for assertion id [" + assertionId + "]");
+
                 relayRequest = new CatalinaSSOAgentRequest(cfg.getId(),
                         SSOAgentRequest.ACTION_RELAY, null, localSession, assertionId
                 );
@@ -663,7 +639,6 @@ public class SSOAgentValve extends ValveBase
             return;
 
         } finally {
-
             log("Processed : " + hreq.getContextPath() + " [" + hreq.getRequestURL() + "]");
         }
     }
@@ -681,8 +656,8 @@ public class SSOAgentValve extends ValveBase
         sb.append(container != null ? container.getName() : "");
         sb.append("]");
         return (sb.toString());
-
     }
+
 
     // -------------------------------------------------------- Package Methods
 
@@ -712,6 +687,7 @@ public class SSOAgentValve extends ValveBase
         HttpSession hses = hreq.getSession(create);
 
         log("getSession() : hses " + hses);
+
         if (hses == null)
             return (null);
         // Get catalina Context from request ...
@@ -726,7 +702,6 @@ public class SSOAgentValve extends ValveBase
                 return (null);
             }
         }
-
     }
 
     /**
@@ -749,7 +724,6 @@ public class SSOAgentValve extends ValveBase
         if (_agent != null)
             _agent.log(message, throwable);
     }
-
 
     /**
      * Return the request URI (with the corresponding query string, if any)
@@ -945,8 +919,5 @@ public class SSOAgentValve extends ValveBase
         }
 
         return false;
-
     }
-
-
 }

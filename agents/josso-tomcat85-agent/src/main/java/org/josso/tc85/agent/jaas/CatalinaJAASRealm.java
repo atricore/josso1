@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.tc80.agent.jaas;
+package org.josso.tc85.agent.jaas;
 
 import org.apache.catalina.realm.JAASRealm;
 import org.apache.commons.logging.Log;
@@ -45,7 +45,7 @@ public class CatalinaJAASRealm extends JAASRealm {
      * Construct and return a java.security.Principal instance
      * representing the authenticated user for the specified Subject.  If no
      * such Principal can be constructed, return null.
-     * <p>
+     *
      * The Principal constructed is *not* GenericPrincipal as in Catalina JAASRealm class,
      * but CatalinaSSOUser which is a SSOUser.
      * The Partner Application can access SSOUser-specific properties that are not available

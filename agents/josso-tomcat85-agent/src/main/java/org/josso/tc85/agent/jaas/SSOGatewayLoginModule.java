@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.tc80.agent.jaas;
+package org.josso.tc85.agent.jaas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +42,7 @@ import java.util.Map;
 
 /**
  * SSO Gateway JAAS Login Module.
- * <p>
+ *
  * This Login Module authenticates an SSO Session against the Single Sign-on Gateway
  * by getting the associated user and roles and filling it to the provided Subject.
  * This way clients can obtain the authenticated identity associated with the session and use it
@@ -73,13 +73,16 @@ public class SSOGatewayLoginModule implements LoginModule {
     /**
      * Initialize this  LoginModule
      *
-     * @param subject         the Subject to be authenticated.
+     * @param subject the Subject to be authenticated.
+     *
      * @param callbackHandler a CallbackHandler for communicating
-     *                        with the end user (prompting for user names and
-     *                        passwords, for example).
-     * @param sharedState     shared LoginModule state.
-     * @param options         options specified in the login Configuration
-     *                        for this particular LoginModule.
+     *            with the end user (prompting for user names and
+     *            passwords, for example).
+     *
+     * @param sharedState shared LoginModule state.
+     *
+     * @param options options specified in the login Configuration
+     *        for this particular LoginModule.
      */
     public void initialize(Subject subject, CallbackHandler callbackHandler,
                            Map sharedState, Map options) {
@@ -90,17 +93,19 @@ public class SSOGatewayLoginModule implements LoginModule {
 
     /**
      * Authenticate the user by prompting for the SSO Session Identifier assigned by the SSO Gateway on logon.
-     * <p>
+     *
      * This method obtains from the gateway, using the provided session identifier, the user associated with
      * such session identifier.
      * Only the NameCallBack is used, since its not a user/password pair but only one value containing the session
      * identifier. Any other callback type is ignored.
      *
      * @return true in all cases since this LoginModule
-     * should not be ignored.
-     * @throws FailedLoginException if the authentication fails.
-     * @throws LoginException       if this LoginModule
-     *                              is unable to perform the authentication.
+     *        should not be ignored.
+     *
+     * @exception FailedLoginException if the authentication fails.
+     *
+     * @exception LoginException if this LoginModule
+     *        is unable to perform the authentication.
      */
     public boolean login() throws LoginException {
 
@@ -139,7 +144,7 @@ public class SSOGatewayLoginModule implements LoginModule {
                     "from the user");
         }
 
-        logger.debug("Requested authentication to gateway by " + _requester + " using sso session " + ssoSessionId + "/" + ssoSessionId2);
+        logger.debug("Requested authentication to gateway by " + _requester + " using sso session " + ssoSessionId + "/" + ssoSessionId2 );
 
         try {
 
@@ -186,15 +191,16 @@ public class SSOGatewayLoginModule implements LoginModule {
 
     /**
      * This method is called if the LoginContext's overall authentication succeeded.
-     * <p>
+     *
      * Using the SSO user name, saved by the previosuly executed login() operation, obtains from the gateway
      * the roles associated with the user and fills the Subject with the user and role principals.
      * If this LoginModule's own authentication attempted failed, then this method removes any state that was
      * originally saved.
      *
+     * @exception LoginException if the commit fails.
+     *
      * @return true if this LoginModule's own login and commit
-     * attempts succeeded, or false otherwise.
-     * @throws LoginException if the commit fails.
+     *        attempts succeeded, or false otherwise.
      */
     public boolean commit() throws LoginException {
         if (_succeeded == false) {
@@ -214,12 +220,12 @@ public class SSOGatewayLoginModule implements LoginModule {
                 _ssoRolePrincipals = getRoleSets(_requester);
 
                 // Add to the Subject the SSORoles associated with the SSOUser .
-                for (int i = 0; i < _ssoRolePrincipals.length; i++) {
-                    if (_subject.getPrincipals().contains(_ssoRolePrincipals[i]))
+                for (int i=0; i < _ssoRolePrincipals .length; i++) {
+                    if (_subject.getPrincipals().contains(_ssoRolePrincipals [i]))
                         continue;
 
-                    _subject.getPrincipals().add(_ssoRolePrincipals[i]);
-                    logger.debug("Added SSORole Principal to the Subject : " + _ssoRolePrincipals[i]);
+                    _subject.getPrincipals().add(_ssoRolePrincipals [i]);
+                    logger.debug("Added SSORole Principal to the Subject : " + _ssoRolePrincipals [i]);
                 }
 
                 commitSucceeded = true;
@@ -236,12 +242,13 @@ public class SSOGatewayLoginModule implements LoginModule {
     }
 
     /**
-     * This method is called if the LoginContext's
+     *  This method is called if the LoginContext's
      * overall authentication failed.
      *
+     * @exception LoginException if the abort fails.
+     *
      * @return false if this LoginModule's own login and/or commit attempts
-     * failed, and true otherwise.
-     * @throws LoginException if the abort fails.
+     *        failed, and true otherwise.
      */
     public boolean abort() throws LoginException {
         if (_succeeded == false) {
@@ -260,20 +267,21 @@ public class SSOGatewayLoginModule implements LoginModule {
 
     /**
      * Logout the user.
-     * <p>
+     *
      * This method removes the SSO User and Role Principals from the Subject that were added by the commit()
      * method.
      *
+     * @exception LoginException if the logout fails.
+     *
      * @return true in all cases since this LoginModule
-     * should not be ignored.
-     * @throws LoginException if the logout fails.
+     *          should not be ignored.
      */
     public boolean logout() throws LoginException {
         _subject.getPrincipals().remove(_ssoUserPrincipal);
         logger.debug("Removed SSOUser Principal from Subject : " + _ssoUserPrincipal);
 
         // Remove all the SSORole Principals from the Subject.
-        for (int i = 0; i < _ssoRolePrincipals.length; i++) {
+        for (int i=0; i < _ssoRolePrincipals.length; i++) {
             _subject.getPrincipals().remove(_ssoRolePrincipals[i]);
             logger.debug("Removed SSORole Principal from Subject : " + _ssoRolePrincipals[i]);
         }
@@ -306,7 +314,7 @@ public class SSOGatewayLoginModule implements LoginModule {
                 im = agent.getSSOIdentityManager();
 
             return im.findRolesBySSOSessionId(requester, _currentSSOSessionId);
-        } catch (Exception e) {
+        } catch(Exception e) {
             logger.error("Session login failed for Principal : " + _ssoUserPrincipal, e);
             throw new LoginException("Session login failed for Principal : " + _ssoUserPrincipal);
         }

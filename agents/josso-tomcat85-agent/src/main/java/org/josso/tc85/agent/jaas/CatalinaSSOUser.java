@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.tc80.agent.jaas;
+package org.josso.tc85.agent.jaas;
 
 import org.apache.catalina.Realm;
 import org.apache.catalina.realm.GenericPrincipal;
@@ -66,7 +66,7 @@ public class CatalinaSSOUser extends GenericPrincipal implements SSOUser {
      * Construct and return a java.security.Principal instance
      * representing the authenticated user for the specified Subject.  If no
      * such Principal can be constructed, return null.
-     * <p>
+     *
      * The Principal constructed is *not* GenericPrincipal as in Catalina JAASRealm class,
      * but CatalinaSSOUser which is a SSOUser.
      * The Partner Application can access SSOUser-specific properties that are not available
@@ -142,8 +142,8 @@ public class CatalinaSSOUser extends GenericPrincipal implements SSOUser {
      * Construct a new Principal, associated with the specified Realm, for the
      * specified username and password.
      *
-     * @param realm    The Realm that owns this Principal
-     * @param name     The username of the user represented by this Principal
+     * @param realm The Realm that owns this Principal
+     * @param name The username of the user represented by this Principal
      * @param password Credentials used to authenticate this user
      */
     private CatalinaSSOUser(SSOUser ssoUser, Realm realm, String name, String password) {
@@ -157,13 +157,13 @@ public class CatalinaSSOUser extends GenericPrincipal implements SSOUser {
      * specified username and password, with the specified role names
      * (as Strings).
      *
-     * @param realm    The Realm that owns this principal
-     * @param name     The username of the user represented by this Principal
+     * @param realm The Realm that owns this principal
+     * @param name The username of the user represented by this Principal
      * @param password Credentials used to authenticate this user
-     * @param roles    List of roles (must be Strings) possessed by this user
+     * @param roles List of roles (must be Strings) possessed by this user
      */
     private CatalinaSSOUser(SSOUser ssoUser, Realm realm, String name, String password,
-                            List roles) {
+                           List roles) {
 
         super(name, password, roles);
         _ssoUser = ssoUser;
@@ -171,8 +171,8 @@ public class CatalinaSSOUser extends GenericPrincipal implements SSOUser {
     }
 
     /**
-     * @return always null
      * @deprecated this method always return null
+     * @return always null
      */
     public String getSessionId() {
         return null;

@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.tc80.agent;
+package org.josso.tc85.agent;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -33,12 +33,13 @@ import org.josso.agent.http.HttpSSOAgent;
 import java.security.Principal;
 
 /**
- * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
- * @version CVS $Id: CatalinaSSOAgent.java 974 2009-01-14 00:39:45Z sgonzalez $
  * @org.apache.xbean.XBean element="agent"
- * <p>
+ *
  * Catalina SSO Agent Implementation that authenticates using the configured Catalina Realm's
  * Gateway SSO Login module.
+ *
+ * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
+ * @version CVS $Id: CatalinaSSOAgent.java 974 2009-01-14 00:39:45Z sgonzalez $
  */
 public class CatalinaSSOAgent extends HttpSSOAgent {
 
@@ -50,10 +51,9 @@ public class CatalinaSSOAgent extends HttpSSOAgent {
         super();
     }
 
-
     public CatalinaSSOAgent(Container container) {
         super();
-        _container = container;
+        _container  = container;
 
     }
 
@@ -98,7 +98,7 @@ public class CatalinaSSOAgent extends HttpSSOAgent {
         Principal p = realm.authenticate(r.getSessionId(), r.getSessionId());
 
         if (debug > 0)
-            log("Received principal : " + p + "[" + (p != null ? p.getClass().getName() : "<null>") + "]");
+            log("Received principal : " + p + "[" + ( p != null ? p.getClass().getName() : "<null>" ) +"]");
 
         return p;
     }

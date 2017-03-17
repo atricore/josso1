@@ -20,7 +20,7 @@
  *
  */
 
-package org.josso.tc80.agent;
+package org.josso.tc85.agent;
 
 import org.apache.catalina.Session;
 import org.josso.agent.LocalSession;
@@ -93,7 +93,7 @@ public class LocalSessionImpl implements LocalSession {
     }
 
     public void invalidate() {
-        ((Session) _wrapped).expire();
+        ((Session)_wrapped).expire();
     }
 
     public void setWrapped(Object wrapped) {

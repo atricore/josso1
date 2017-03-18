@@ -131,7 +131,7 @@ public class GenericServletSSOAgent extends JaasHttpSSOAgent {
                 SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
                 if (im == null) {
                     im = agent.getSSOIdentityManager();
-                    if (request.getNodeId() == null && !"".equals(request.getNodeId())) {
+                    if (request.getNodeId() != null && !"".equals(request.getNodeId())) {
                         im = agent.getSSOIdentityManager(request.getNodeId());
                     }
                 }

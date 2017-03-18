@@ -56,8 +56,12 @@ public class NativeHttpSSOAgent extends HttpSSOAgent {
             }
 
             SSOIdentityManagerService im = request.getConfig(this).getIdentityManagerService();
-            if (im == null)
+            if (im == null) {
                 im = getSSOIdentityManager();
+                if (request.getNodeId() != null && !"".equals(request.getNodeId())) {
+                    im = getSSOIdentityManager(request.getNodeId());
+                }
+            }
 
             SSOUser ssoUser = im.findUserInSession(request.getRequester(), ssoSessionId);
             

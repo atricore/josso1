@@ -57,8 +57,12 @@ public class CatalinaNativeRealm extends RealmBase {
             SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
 
             SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
-            if (im == null)
+            if (im == null) {
                 im = agent.getSSOIdentityManager();
+                if (request.getNodeId() != null && !"".equals(request.getNodeId())) {
+                    im = agent.getSSOIdentityManager(request.getNodeId());
+                }
+            }
 			
 			String requester = "";
 			// Check for nulls ?

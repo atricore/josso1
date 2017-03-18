@@ -425,6 +425,7 @@ public class SSOAgentValve extends ValveBase
                 customAuthRequest.setRequest(hreq);
                 customAuthRequest.setResponse(hres);
                 customAuthRequest.setContext(request.getContext());
+                customAuthRequest.setNodeId(nodeId);
 
                 _agent.processRequest(customAuthRequest);
 
@@ -550,6 +551,7 @@ public class SSOAgentValve extends ValveBase
                 relayRequest.setRequest(hreq);
                 relayRequest.setResponse(hres);
                 relayRequest.setContext(request.getContext());
+                relayRequest.setNodeId(nodeId);
 
                 SingleSignOnEntry entry = _agent.processRequest(relayRequest);
                 if (entry == null) {
@@ -630,6 +632,7 @@ public class SSOAgentValve extends ValveBase
             r.setRequest(hreq);
             r.setResponse(hres);
             r.setContext(request.getContext());
+            r.setNodeId(nodeId);
 
             SingleSignOnEntry entry = _agent.processRequest(r);
 

@@ -164,8 +164,12 @@ public class SSOGatewayLoginModule implements LoginModule {
             SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
 
             SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
-            if (im == null)
+            if (im == null) {
                 im = agent.getSSOIdentityManager();
+                if (request.getNodeId() != null && !"".equals(request.getNodeId())) {
+                    im = agent.getSSOIdentityManager(request.getNodeId());
+                }
+            }
             SSOUser ssoUser = im.findUserInSession(_requester, ssoSessionId);
 
             logger.debug("Session authentication succeeded : " + ssoSessionId);
@@ -310,8 +314,12 @@ public class SSOGatewayLoginModule implements LoginModule {
             SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
 
             SSOIdentityManagerService im = request.getConfig(agent).getIdentityManagerService();
-            if (im == null)
+            if (im == null) {
                 im = agent.getSSOIdentityManager();
+                if (request.getNodeId() != null && !"".equals(request.getNodeId())) {
+                    im = agent.getSSOIdentityManager(request.getNodeId());
+                }
+            }
 
             return im.findRolesBySSOSessionId(requester, _currentSSOSessionId);
         } catch(Exception e) {

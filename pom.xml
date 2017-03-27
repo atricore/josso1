@@ -82,6 +82,11 @@
                         <artifactId>axistools-maven-plugin</artifactId>
                         <version>1.1</version>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.10</version>
+                    </plugin>
                 </plugins>
             </build>
             <modules>
@@ -363,6 +368,11 @@
                         <artifactId>axistools-maven-plugin</artifactId>
                         <version>1.1</version>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.10</version>
+                    </plugin>
                 </plugins>
             </build>
             <modules>
@@ -387,6 +397,11 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>axistools-maven-plugin</artifactId>
                         <version>1.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.10</version>
                     </plugin>
                 </plugins>
             </build>
@@ -418,6 +433,11 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>axistools-maven-plugin</artifactId>
                         <version>1.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.10</version>
                     </plugin>
                 </plugins>
             </build>
@@ -1117,6 +1137,24 @@
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-tomcat60-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-tomcat70-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-tomcat80-agent</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
+                <artifactId>josso-tomcat85-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
 

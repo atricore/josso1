@@ -27,18 +27,21 @@ import org.apache.catalina.Session;
 /**
  * Acts as a Catalina Session wrapper.
  *
- * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a> 
+ * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
  * @version CVS $Id: CatalinaLocalSession.java 974 2009-01-14 00:39:45Z sgonzalez $
  */
 public class CatalinaLocalSession extends LocalSessionImpl {
 
-    public CatalinaLocalSession( Session catalinaSession) {
+    public CatalinaLocalSession(Session catalinaSession) {
         super();
 
-       setWrapped(catalinaSession);
-       setMaxInactiveInterval(catalinaSession.getMaxInactiveInterval());
+        setWrapped(catalinaSession);
+        setMaxInactiveInterval(catalinaSession.getMaxInactiveInterval());
+    }
 
-
+    @Override
+    public String toString() {
+        return "CatalinaLocalSession [toString()=" + super.toString() + "]";
     }
 
 }

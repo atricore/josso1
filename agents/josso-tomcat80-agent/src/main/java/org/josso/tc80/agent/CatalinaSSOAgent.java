@@ -25,21 +25,24 @@ package org.josso.tc80.agent;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.Realm;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.http.HttpSSOAgent;
 
 import java.security.Principal;
 
 /**
- * @org.apache.xbean.XBean element="agent"
- *
- * Catalina SSO Agent Implementation that authenticates using the configured Catalina Realm's
- * Gateway SSO Login module.
- *
  * @author <a href="mailto:gbrigand@josso.org">Gianluca Brigandi</a>
  * @version CVS $Id: CatalinaSSOAgent.java 974 2009-01-14 00:39:45Z sgonzalez $
+ * @org.apache.xbean.XBean element="agent"
+ * <p>
+ * Catalina SSO Agent Implementation that authenticates using the configured Catalina Realm's
+ * Gateway SSO Login module.
  */
 public class CatalinaSSOAgent extends HttpSSOAgent {
+
+    private static final Log LOG = LogFactory.getLog(CatalinaSSOAgent.class);
 
     private Container _container;
 
@@ -50,7 +53,7 @@ public class CatalinaSSOAgent extends HttpSSOAgent {
 
     public CatalinaSSOAgent(Container container) {
         super();
-        _container  = container;
+        _container = container;
 
     }
 
@@ -95,25 +98,19 @@ public class CatalinaSSOAgent extends HttpSSOAgent {
         Principal p = realm.authenticate(r.getSessionId(), r.getSessionId());
 
         if (debug > 0)
-            log("Received principal : " + p + "[" + ( p != null ? p.getClass().getName() : "<null>" ) +"]");
+            log("Received principal : " + p + "[" + (p != null ? p.getClass().getName() : "<null>") + "]");
 
         return p;
     }
 
     protected void log(String message) {
-        if (_container != null) {
-            if (_container.getLogger().isDebugEnabled())
-            _container.getLogger().debug(this.toString() + ": " + message);
-        } else
-            System.out.println(this.toString() + ": " + message);
+        if (LOG.isDebugEnabled())
+            LOG.debug(message);
     }
 
     protected void log(String message, Throwable throwable) {
-        if (_container != null) {
-            if (_container.getLogger().isDebugEnabled())
-                _container.getLogger().debug(this.toString() + ": " + message, throwable);
-        } else
-            System.out.println(this.toString() + ": " + message);
+        if (LOG.isDebugEnabled())
+            LOG.debug(message, throwable);
     }
 
     /**

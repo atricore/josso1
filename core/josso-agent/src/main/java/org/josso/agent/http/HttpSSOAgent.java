@@ -64,6 +64,8 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
 
     private String _uriEncoding;
 
+    private String _ssoCookiePath;
+
     private List<FrontChannelParametersBuilder> _builders = new ArrayList<FrontChannelParametersBuilder>();
 
     private List<AutomaticLoginStrategy> _automaticStrategies = new ArrayList<AutomaticLoginStrategy>();
@@ -105,7 +107,6 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         );
 
         if (partnerAppConfig.getSecurityContextPropagationConfig() == null) {
-            // No security propagation configuration found, ignore this.
             return;
         }
 
@@ -479,6 +480,9 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
         if (path == null || "".equals(path))
             path = "/";
 
+        if (_ssoCookiePath != null && !"".equals(_ssoCookiePath))
+            path = _ssoCookiePath;
+
         Cookie ssoCookie = new Cookie(org.josso.gateway.Constants.JOSSO_SINGLE_SIGN_ON_COOKIE, value);
         ssoCookie.setMaxAge(-1);
         ssoCookie.setPath(path);
@@ -785,7 +789,15 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             throw new RuntimeException("Error finding roles for : " + ssoSessionId);
         }
     }
-    
+
+    public String getSsoCookiePath() {
+        return _ssoCookiePath;
+    }
+
+    public void setSsoCookiePath(String ssoCookiePath) {
+        this._ssoCookiePath = ssoCookiePath;
+    }
+
     public String getJossoLoginUri() {
         return _jossoLoginUri;
     }

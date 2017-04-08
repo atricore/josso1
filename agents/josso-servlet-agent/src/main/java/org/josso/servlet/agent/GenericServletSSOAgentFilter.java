@@ -623,7 +623,7 @@ public class GenericServletSSOAgentFilter implements Filter {
      * @param hreq The request to be saved
      * @param hres The http servlet response associated to the request
      */
-    private void saveRequestURL(HttpServletRequest hreq, HttpServletResponse hres) {
+    protected void saveRequestURL(HttpServletRequest hreq, HttpServletResponse hres) {
         StringBuffer sb = new StringBuffer(hreq.getRequestURI());
         if (hreq.getQueryString() != null) {
             String q = hreq.getQueryString();

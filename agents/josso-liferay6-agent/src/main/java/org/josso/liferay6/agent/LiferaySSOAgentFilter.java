@@ -181,11 +181,15 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                     log.debug("Requested liferay login: '" + hreq.getRequestURI() + "'");
                 //save referer url in case the user clicked on Login from some public resource (page)
                 //so agent can redirect the user back to that page after successful login
+
+                saveLoginBackToURL(hreq, hres, session, true);
+
+                /*
                 if (hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
                     saveLoginBackToURL(hreq, hres, session, true);
                 } else {
                     saveLoginBackToURL(hreq, hres, session, false);
-                }
+                } */
 
                 String loginUrl = _agent.buildLoginUrl(hreq);
 
@@ -605,7 +609,14 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
     protected void saveLoginBackToURL(HttpServletRequest request, HttpServletResponse response, HttpSession session, boolean overrideSavedResource) {
 
         String referer = request.getHeader("referer");
+
+        if (log.isDebugEnabled())
+            log.debug("Referer: ["+referer+"]");
+
         if ((getSavedRequestURL(request) == null || overrideSavedResource) && referer != null && !referer.equals("")) {
+
+            if (log.isDebugEnabled())
+                log.debug("Saving Login BackToURL: " + WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI + " ["+referer+"]");
 
             _agent.setAttribute(request, response, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, referer);
         }

@@ -62,6 +62,11 @@
         <s:property name="printer" ref="messagePrinter"/>
     </tomcat-installer>
 
+    <tomcat-installer id="tc85-installer">
+        <s:constructor-arg ref="tc85"/>
+        <s:property name="printer" ref="messagePrinter"/>
+    </tomcat-installer>
+
 
     <tomcat-installer id="tc70-installer">
         <s:constructor-arg ref="tc70"/>
@@ -117,6 +122,22 @@
 
     </platform>
 
+    <platform id="tc85" family="tomcat" platformName="Apache Tomcat" version="8.5.x">
+
+        <bin>${target}/bin</bin>
+        <lib>${target}/lib</lib>
+        <conf>${target}/conf</conf>
+        <deploy>${target}/webapps</deploy>
+        <endorsed>${target}/lib</endorsed>
+
+        <josso-conf>${target}/lib</josso-conf>
+        <josso-lib>${target}/lib</josso-lib>
+        <josso-shared>${target}/lib</josso-shared>
+
+        <josso-war-name>josso</josso-war-name>
+        <josso-war-exploded>true</josso-war-exploded>
+
+    </platform>
 
     <platform id="tc60" family="tomcat" platformName="Apache Tomcat" version="6.0.x">
 

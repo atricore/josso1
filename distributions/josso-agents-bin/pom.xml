@@ -368,7 +368,7 @@
                 <dependency>
                     <groupId>org.josso</groupId>
                     <artifactId>josso-tomcat85-agent</artifactId>
-                    <version>1.8.11-SNAPSHOT</version>
+                    <version>1.8.12-SNAPSHOT</version>
                     <type>jar</type>
                 </dependency>
 

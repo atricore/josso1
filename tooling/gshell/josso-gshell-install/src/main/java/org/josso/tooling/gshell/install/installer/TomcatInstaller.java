@@ -133,11 +133,14 @@ public class TomcatInstaller extends VFSInstaller {
 
             } else if (artifact.getBaseName().startsWith("josso-tomcat70-agent") &&
                     getTargetPlatform().getVersion().startsWith("7.0")) {
-                // We do not have TC8 specific files
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
             } else if (artifact.getBaseName().startsWith("josso-tomcat80-agent") &&
                     getTargetPlatform().getVersion().startsWith("8.0")) {
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+
+            } else if (artifact.getBaseName().startsWith("josso-tomcat85-agent") &&
+                    getTargetPlatform().getVersion().startsWith("8.5")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
             } else {
@@ -182,9 +185,10 @@ public class TomcatInstaller extends VFSInstaller {
 
             } else if (getTargetPlatform().getVersion().startsWith("6.0") ||
                     getTargetPlatform().getVersion().startsWith("7.0") ||
-                    getTargetPlatform().getVersion().startsWith("8.0")) {
+                    getTargetPlatform().getVersion().startsWith("8.0") ||
+                    getTargetPlatform().getVersion().startsWith("8.5")) {
 
-                // Minmal set of dependencies for TC 6/7/8
+                // Minmal set of dependencies for TC 6/7/8/8.5
                 if (artifact.getBaseName().startsWith("spring-")) {
                     removeOldJar(srcFile.getName().getBaseName(), this.targetLibDir, true);
                     installFile(srcFile, this.targetLibDir, replace);
@@ -370,7 +374,6 @@ public class TomcatInstaller extends VFSInstaller {
         String usersClassNames = "org.josso.gateway.identity.service.BaseUserImpl";
         String roleClassNames = "org.josso.gateway.identity.service.BaseRoleImpl";
 
-        // For TC80 we're still using tc7 classes
         String realmClass = "org.josso." + getPlatformId() + ".agent.jaas.CatalinaJAASRealm"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
 
         // Check if josso agent valve is already present

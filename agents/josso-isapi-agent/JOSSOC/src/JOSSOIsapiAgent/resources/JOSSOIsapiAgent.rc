@@ -27,8 +27,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 1 VERSIONINFO
- FILEVERSION 1,8,11,0
- PRODUCTVERSION 1,8,11,0
+ FILEVERSION 1,8,12,0
+ PRODUCTVERSION 1,8,12,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -46,12 +46,12 @@ BEGIN
             VALUE "Comments", "AtricoreTM, Inc. licenses this file to You under the LGPL, Version 2.1 (the ""License""); you may not use this file except in compliance with the License.  You may obtain a copy of the License at\r\n\r\nhttp://www.gnu.org/licenses/lgpl-2.1.txt"
             VALUE "CompanyName", "Atricore, Inc"
             VALUE "FileDescription", "JOSSO IIS Isapi Authorization Authenticaiton Fiter"
-            VALUE "FileVersion", "1.8.11"
-            VALUE "InternalName", "JOSSOIsapi-1.8.11"
+            VALUE "FileVersion", "1.8.12"
+            VALUE "InternalName", "JOSSOIsapi-1.8.12"
             VALUE "LegalCopyright", "Licensed to the Atricore, Inc under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership."
             VALUE "OriginalFilename", "JOSSOIsapiAgent.dll"
             VALUE "ProductName", "JOSSO Isapi Agent"
-            VALUE "ProductVersion", "1.8.11"
+            VALUE "ProductVersion", "1.8.12"
         END
     END
     BLOCK "VarFileInfo"

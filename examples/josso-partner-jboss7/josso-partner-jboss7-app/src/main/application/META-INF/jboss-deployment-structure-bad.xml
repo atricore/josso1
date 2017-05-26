@@ -7,7 +7,7 @@
         </dependencies>
     </deployment-->
 
-    <sub-deployment name="josso-partner-jboss7-web-1.8.12-SNAPSHOT.war">
+    <sub-deployment name="josso-partner-jboss7-web-1.8.12.war">
         <!-- This corresponds to the module for a web deployment -->
         <!-- it can use all the same tags as the <deployment> entry above -->
         <!--dependencies>

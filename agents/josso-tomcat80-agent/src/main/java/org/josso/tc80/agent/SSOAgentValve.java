@@ -393,7 +393,7 @@ public class SSOAgentValve extends ValveBase
                 // the local session is new so, make the valve listen for its events so that it can
                 // map them to local session events.
                 session.addSessionListener(this);
-                session.getManager().getContainer().addContainerListener(this);
+                session.getManager().getContext().addContainerListener(this);
                 _sessionMap.put(session.getId(), localSession);
 
                 log("Monitoring session " + session.getId());

@@ -108,7 +108,8 @@ public class TomcatInstaller extends VFSInstaller {
                 // For Tomcat 6 and 7, jaxws is used now
                 if (getTargetPlatform().getVersion().startsWith("6.0") ||
                     getTargetPlatform().getVersion().startsWith("7.0") ||
-                    getTargetPlatform().getVersion().startsWith("8.0")) {
+                    getTargetPlatform().getVersion().startsWith("8.0") ||
+                        getTargetPlatform().getVersion().startsWith("8.5")) {
 
                     if (artifact.getClassifier().equals("jaxws")) {
                         installFile(srcFile, this.targetJOSSOLibDir, replace);

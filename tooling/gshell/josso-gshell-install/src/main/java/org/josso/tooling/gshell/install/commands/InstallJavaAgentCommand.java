@@ -123,6 +123,10 @@ public class InstallJavaAgentCommand extends InstallCommandSupport {
         for (int i = 0 ; i < trdpartyDir.getChildren().length ; i ++) {
             FileObject trdPartyFile = libs[i];
             String fileName = trdPartyFile.getName().getBaseName();
+
+            log.debug("Processing 3rd party artifact [" + fileName + "]");
+            printer.printMsg("3rd party artifact [" + fileName + "]");
+
             getInstaller().install3rdPartyComponent(createArtifact(trdpartyDir.getURL().toString(), JOSSOScope.AGENT, fileName), isReplaceConfig());
         }
     }

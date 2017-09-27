@@ -23,6 +23,8 @@
 package org.josso.tooling.gshell.install.installer;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +33,7 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
 import org.apache.geronimo.gshell.common.io.PumpStreamHandler;
 import org.josso.tooling.gshell.install.JOSSOArtifact;
+import org.josso.tooling.gshell.install.JOSSOScope;
 import org.josso.tooling.gshell.install.TargetPlatform;
 
 /**
@@ -46,6 +49,8 @@ public class WeblogicInstaller extends VFSInstaller {
 
     protected String wlVersionStr;
 
+    protected String targetJDK = null;
+
     public WeblogicInstaller(TargetPlatform targetPlatform) {
         super(targetPlatform);
     }
@@ -54,11 +59,13 @@ public class WeblogicInstaller extends VFSInstaller {
         super();
     }
 
+    private Map<String, JOSSOArtifact> deps = new HashMap<String, JOSSOArtifact>();
+
     @Override
     public void validatePlatform() throws InstallException {
 
         if (getTargetPlatform().getVersion().startsWith("9.2"))
-            this.wlVersionStr =  "92";
+            this.wlVersionStr = "92";
         else if (getTargetPlatform().getVersion().startsWith("10"))
             this.wlVersionStr = "10";
         else if (getTargetPlatform().getVersion().startsWith("12"))
@@ -76,7 +83,7 @@ public class WeblogicInstaller extends VFSInstaller {
                 getPrinter().printErrStatus("Target conf", "folder does not exist or is not a directory:" + targetLibDir.getName().getFriendlyURI());
                 valid = false;
             }
-    
+
             FileObject weblogicJar = targetDir.resolveFile("server/lib/weblogic.jar");
             if (weblogicJar == null || !weblogicJar.exists() || !weblogicJar.getType().getName().equals(FileType.FILE.getName())) {
                 valid = false;
@@ -114,6 +121,8 @@ public class WeblogicInstaller extends VFSInstaller {
         try {
             log.debug("Init Weblogic installer");
 
+            String targetJDK = getProperty("targetJDK");
+
             String weblogicDomain = getProperty("weblogicDomain");
 
             if (weblogicDomain == null)
@@ -126,7 +135,42 @@ public class WeblogicInstaller extends VFSInstaller {
             // Initialize installer, this will initialize standar folders.
             super.init();
 
+            // TODO : Maybe use this for all agents :
+
+            // TODO : Improve versioning handling
+            clearDeps();
+
+            addDep(new JOSSOArtifact("aopalliance", "1.0", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+
+            addDep(new JOSSOArtifact("commons-beanutils", "1.6.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("commons-codec", "1.4", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("commons-collections", "3.0", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("commons-digester", "1.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("commons-discovery", "0.2", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("commons-httpclient", "3.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("commons-lang", "2.0", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("commons-modeler", "1.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+
+            addDep(new JOSSOArtifact("commons-logging", "1.1.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("commons-logging-api", "1.0.4", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+
+            addDep(new JOSSOArtifact("log4j", "1.2.14", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("slf4j-api", "1.7.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("slf4j-log4j12", "1.7.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+
+            addDep(new JOSSOArtifact("blueprint-parser", "1.3.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("org.apache.aries.blueprint.api", "1.0.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("org.apache.aries.blueprint.noosgi", "1.1.2", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+
+
+            addDep(new JOSSOArtifact("xbean-spring", "3.4.3", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("spring-aop", "2.5.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("spring-beans", "2.5.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("spring-context", "2.5.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("spring-core", "2.5.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+
             targetJOSSOMBeansDir = targetLibDir.resolveFile("mbeantypes");
+            
         } catch (FileSystemException e) {
             throw new InstallException(e.getMessage(), e);
         }
@@ -167,8 +211,8 @@ public class WeblogicInstaller extends VFSInstaller {
                 installFile(srcFile, this.targetJOSSOSharedLibDir, replace);
 
             } else if (artifact.getBaseName().startsWith("josso-agents-bin") &&
-                                   artifact.getClassifier() !=  null &&
-                                   artifact.getClassifier().equals("axis")) {
+                    artifact.getClassifier() != null &&
+                    artifact.getClassifier().equals("axis")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
             } else if (artifact.getBaseName().startsWith("josso-weblogic92-agent") &&
                     getTargetPlatform().getVersion().startsWith("9.2")) {
@@ -198,9 +242,9 @@ public class WeblogicInstaller extends VFSInstaller {
     @Override
     public void install3rdPartyComponent(JOSSOArtifact artifact, boolean replace) throws InstallException {
 
-        // Only use commons logging api (commonst-logging-api) and skip commons-logging
-        if (artifact.getBaseName().startsWith("commons-logging-1") || 
-        		artifact.getBaseName().startsWith("spring-2.0"))
+        // Only use commons logging api (commons-logging-api) and skip commons-logging
+        if (artifact.getBaseName().startsWith("commons-logging-1") ||
+                artifact.getBaseName().startsWith("spring-2.0"))
             return;
 
         if (artifact.getBaseName().startsWith("slf4j"))
@@ -211,6 +255,10 @@ public class WeblogicInstaller extends VFSInstaller {
 
         if (artifact.getBaseName().startsWith("logback"))
             return;
+
+        if (!hasDep(artifact))
+            return;
+
 
         try {
             FileObject srcFile = getFileSystemManager().resolveFile(artifact.getLocation());
@@ -359,18 +407,34 @@ public class WeblogicInstaller extends VFSInstaller {
                    <argument>weblogic.management.commo.WebLogicMBeanMaker</argument>
                 */
 
-                ProcessBuilder generateMBeanDescriptorProcessBuilder = new ProcessBuilder(javaCmd,
-                        "-Dfiles=" + getLocalFilePath(srcDir),
-                        "-DMDF=" + getLocalFilePath(descriptorFile),
-                        "-DtargetNameSpace=urn:org:josso:wls" + wlVersionStr + ":agent:mbeans",
-                        "-DschemaLocation=" + getLocalFilePath(descriptorFile),
-                        "-DpreserveStubs=false",
-                        "-DcreateStubs=true",
-                        "-Dtarget=1.6",
-                        "-target=1.6",
-                        "-classpath",
-                        classpath,
-                        "weblogic.management.commo.WebLogicMBeanMaker");
+
+                ProcessBuilder generateMBeanDescriptorProcessBuilder = null;
+                if (targetJDK != null) {
+                    generateMBeanDescriptorProcessBuilder = new ProcessBuilder(javaCmd,
+                            "-Dfiles=" + getLocalFilePath(srcDir),
+                            "-DMDF=" + getLocalFilePath(descriptorFile),
+                            "-DtargetNameSpace=urn:org:josso:wls" + wlVersionStr + ":agent:mbeans",
+                            "-DschemaLocation=" + getLocalFilePath(descriptorFile),
+                            "-DpreserveStubs=false",
+                            "-DcreateStubs=true",
+                            "-Dtarget=" + targetJDK,
+                            "-Dsource=" + targetJDK,
+                            "-classpath",
+                            classpath,
+                            "weblogic.management.commo.WebLogicMBeanMaker");
+
+                } else {
+                    generateMBeanDescriptorProcessBuilder = new ProcessBuilder(javaCmd,
+                            "-Dfiles=" + getLocalFilePath(srcDir),
+                            "-DMDF=" + getLocalFilePath(descriptorFile),
+                            "-DtargetNameSpace=urn:org:josso:wls" + wlVersionStr + ":agent:mbeans",
+                            "-DschemaLocation=" + getLocalFilePath(descriptorFile),
+                            "-DpreserveStubs=false",
+                            "-DcreateStubs=true",
+                            "-classpath",
+                            classpath,
+                            "weblogic.management.commo.WebLogicMBeanMaker");
+                }
 
                 log.info("Executing: " + generateMBeanDescriptorProcessBuilder.command());
 
@@ -388,7 +452,7 @@ public class WeblogicInstaller extends VFSInstaller {
                 generateMBeanHandler.stop();
                 getPrinter().printActionOkStatus("Generate", "WL MBeans Descriptors", "");
             }
-            
+
             //  ----------------------------------------------------------------
             // 2. Create the MBean JAR File
             //  ----------------------------------------------------------------
@@ -404,17 +468,30 @@ public class WeblogicInstaller extends VFSInstaller {
 
                 */
 
-                ProcessBuilder generateMBeanJarProcessBuilder = new ProcessBuilder(javaCmd,
-                        "-Dfiles=" + getLocalFilePath(srcDir),
-                        "-DMJF=" + getLocalFilePath(mbeanFile),
-                        "-DpreserveStubs=false",
-                        "-DcreateStubs=true",
-                        "-Dtarget=1.6",
-                        "-target=1.6",
-                        "-classpath",
-                        classpath,
-                        "weblogic.management.commo.WebLogicMBeanMaker");
+                ProcessBuilder generateMBeanJarProcessBuilder = null;
 
+                if (targetJDK != null) {
+                    generateMBeanJarProcessBuilder = new ProcessBuilder(javaCmd,
+                            "-Dfiles=" + getLocalFilePath(srcDir),
+                            "-DMJF=" + getLocalFilePath(mbeanFile),
+                            "-DpreserveStubs=false",
+                            "-DcreateStubs=true",
+                            "-Dtarget=" + targetJDK,
+                            "-Dsource=" + targetJDK,
+                            "-classpath",
+                            classpath,
+                            "weblogic.management.commo.WebLogicMBeanMaker");
+                } else {
+                    generateMBeanJarProcessBuilder = new ProcessBuilder(javaCmd,
+                            "-Dfiles=" + getLocalFilePath(srcDir),
+                            "-DMJF=" + getLocalFilePath(mbeanFile),
+                            "-DpreserveStubs=false",
+                            "-DcreateStubs=true",
+                            "-classpath",
+                            classpath,
+                            "weblogic.management.commo.WebLogicMBeanMaker");
+
+                }
                 log.info("Executing: " + generateMBeanJarProcessBuilder.command());
 
                 Process generateMBeanJarProcess = generateMBeanJarProcessBuilder.start();
@@ -444,5 +521,17 @@ public class WeblogicInstaller extends VFSInstaller {
 
         // We need to create WL Mbeans using MBean Maker!
 
+    }
+
+    protected  void clearDeps() {
+        deps.clear();
+    }
+
+    protected void addDep(JOSSOArtifact art){
+        deps.put(art.getBaseName(), art);
+    }
+
+    protected boolean hasDep(JOSSOArtifact art) {
+        return deps.get(art.getBaseName()) != null;
     }
 }

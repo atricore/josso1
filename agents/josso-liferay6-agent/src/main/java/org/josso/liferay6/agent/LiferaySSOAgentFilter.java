@@ -97,7 +97,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                 filterConfig.getServletContext().setAttribute("org.josso.agent", _agent);
 
             } catch (Exception e) {
-                _log.error("Error starting SSO Agent", e);
+                log.error("Error starting SSO Agent", e);
             }
         }
     }

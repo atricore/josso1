@@ -121,7 +121,7 @@ public class WeblogicInstaller extends VFSInstaller {
         try {
             log.debug("Init Weblogic installer");
 
-            String targetJDK = getProperty("targetJDK");
+            targetJDK = getProperty("targetJDK");
 
             String weblogicDomain = getProperty("weblogicDomain");
 
@@ -323,7 +323,7 @@ public class WeblogicInstaller extends VFSInstaller {
             FileObject homeDir = getFileSystemManager().resolveFile(System.getProperty("josso-gsh.home"));
             FileObject srcDir = homeDir.resolveFile("dist/agents/src/josso-weblogic" + wlVersionStr + "-agent-mbeans-src");
             FileObject jossoLibDir = homeDir.resolveFile("dist/agents/bin");
-            FileObject thrdPartyLibDir = jossoLibDir.resolveFile("3rdparty");
+            FileObject thirdPartyLibDir = jossoLibDir.resolveFile("3rdparty");
 
 
             FileObject descriptorFile = srcDir.resolveFile("org/josso/wls" + wlVersionStr + "/agent/mbeans/JOSSOAuthenticatorProviderImpl.xml");
@@ -366,7 +366,7 @@ public class WeblogicInstaller extends VFSInstaller {
             }
 
             // JOSSO 3rd party Jars
-            for (FileObject child : thrdPartyLibDir.getChildren()) {
+            for (FileObject child : thirdPartyLibDir.getChildren()) {
                 if (!child.getName().getBaseName().endsWith(".jar"))
                     continue;
 
@@ -374,7 +374,19 @@ public class WeblogicInstaller extends VFSInstaller {
                 pathSeparator = System.getProperty("path.separator");
             }
 
+            // XMLDB Jars
+            // xmldb-common-20030701.jar   xmldb-xupdate-20040205.jar
 
+            FileObject xmldbCommon = homeDir.resolveFile("dist/agents/lib/xmldb-common-20030701.jar");
+            classpath += pathSeparator + getLocalFilePath(xmldbCommon);
+            pathSeparator = System.getProperty("path.separator");
+
+            FileObject xmldbUpdate = homeDir.resolveFile("dist/agents/lib/xmldb-xupdate-20040205.jar");
+            classpath += pathSeparator + getLocalFilePath(xmldbUpdate);
+            pathSeparator = System.getProperty("path.separator");
+
+
+            // WL Jars
             for (FileObject child : this.targetDir.resolveFile("server/lib").getChildren()) {
                 if (!child.getName().getBaseName().endsWith(".jar"))
                     continue;

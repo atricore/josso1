@@ -169,6 +169,9 @@ public class WeblogicInstaller extends VFSInstaller {
             addDep(new JOSSOArtifact("spring-context", "2.5.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
             addDep(new JOSSOArtifact("spring-core", "2.5.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
 
+            addDep(new JOSSOArtifact("axis", "1.4", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            addDep(new JOSSOArtifact("axis-wsdl4j", "1.5.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+
             targetJOSSOMBeansDir = targetLibDir.resolveFile("mbeantypes");
             
         } catch (FileSystemException e) {

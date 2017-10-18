@@ -115,11 +115,14 @@ public class SSOGatewayLoginModuleImpl implements LoginModule {
         
         String ssoSessionId;
         String ssoSessionId2 = null;
+
         try {
             _callbackHandler.handle(callbacks);
             ssoSessionId = ((NameCallback) callbacks[0]).getName();
             if (((PasswordCallback) callbacks[1]).getPassword() != null)
                 ssoSessionId2 = String.valueOf(((PasswordCallback) callbacks[1]).getPassword());
+
+            logger.debug("Recevied callback claims [" + ssoSessionId + "/" + ssoSessionId2+"]");
 
             _requester = "";
             // Check for nulls ?
@@ -127,7 +130,7 @@ public class SSOGatewayLoginModuleImpl implements LoginModule {
             if (request != null)
                 _requester = request.getRequester();
             else
-                logger.warn("No SSO Agent request found in thread local variable, can't identify requester");
+                logger.debug("No SSO Agent request found in thread local variable, can't identify requester");
 
         } catch (java.io.IOException ioe) {
             throw new LoginException(ioe.toString());
@@ -137,19 +140,27 @@ public class SSOGatewayLoginModuleImpl implements LoginModule {
                     "from the user");
         }
 
-        logger.debug("Requested authentication to gateway by " + _requester + " using sso session " + ssoSessionId + "/" + ssoSessionId2 );
-
         try {
 
-            if (ssoSessionId2 != null && !ssoSessionId2.equals(ssoSessionId))
+            if (ssoSessionId2 != null && !ssoSessionId2.equals(ssoSessionId)) {
+                if (_requester == null || "".equals(_requester)) {
+                    logger.debug("Using Requester from callback " + _requester);
+                    _requester = ssoSessionId;
+                }
+
                 ssoSessionId = ssoSessionId2;
+
+            }
 
             // If no session is found, ignore this module.
             if (ssoSessionId == null) {
-                logger.debug("Session authentication failed : " + ssoSessionId);
+                if (logger.isDebugEnabled())
+                    logger.debug("Session authentication failed : " + ssoSessionId);
                 _succeeded = false;
                 return false;
             }
+
+            logger.debug("Requesting authentication to gateway by [" + _requester + "] using sso session [" + ssoSessionId + "]");
 
             _currentSSOSessionId = ssoSessionId;
 
@@ -157,15 +168,14 @@ public class SSOGatewayLoginModuleImpl implements LoginModule {
             SSOUser jossoUser = im.findUserInSession(_requester, ssoSessionId);
             WLSJOSSOUser wlsUser = new WLSJOSSOUser (jossoUser);
 
-            logger.debug("Session authentication succeeded : " + ssoSessionId);
+            if (logger.isDebugEnabled())
+                logger.debug("Session authentication succeeded : " + ssoSessionId);
+
             _ssoUserPrincipal = wlsUser;
             _succeeded = true;
 
         } catch (SSOIdentityException e) {
             // Ignore this ... (user does not exist for this session)
-            logger.debug(e.getMessage());
-
-            // Only log if debug is enabled ...
             if (logger.isDebugEnabled())
                 logger.debug(e.getMessage(), e);
             
@@ -183,7 +193,7 @@ public class SSOGatewayLoginModuleImpl implements LoginModule {
             _succeeded = false;
             clearCredentials();
             throw new FailedLoginException("Fatal error authenticating session : " + _ssoUserPrincipal + " : " + e.getMessage());
-        } 
+        }
 
         return true;
     }

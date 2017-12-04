@@ -48,29 +48,77 @@ public class JOSSOArtifact {
         if (baseNameFrom < 0) baseNameFrom = 0;
         String baseName = location.substring(baseNameFrom + 1);
 
-        int typeFrom = baseName.lastIndexOf(".");
-        if (typeFrom >= 0 ) {
-            this.type = baseName.substring(typeFrom + 1);
-            baseName = baseName.substring(0, typeFrom);
+
+        if (baseName.endsWith(".jar")) {
+            this.type = "jar";
+            baseName = baseName.substring(0, baseName.length() - 4);
+        } else if (baseName.endsWith(".car")) {
+            this.type = "car";
+            baseName = baseName.substring(0, baseName.length() - 4);
+        } else if (baseName.endsWith(".zip")) {
+            this.type = "zip";
+            baseName = baseName.substring(0, baseName.length() - 7);
+        } else if (baseName.endsWith(".tar.gz")) {
+            this.type = "tar.gz";
+            baseName = baseName.substring(0, baseName.length() - 4);
+        } else if (baseName.endsWith(".dll")) {
+            this.type = "dll";
+            baseName = baseName.substring(0, baseName.length() - 4);
+        } else {
+
+            int typeFrom = baseName.lastIndexOf(".");
+            if (typeFrom >= 0) {
+                this.type = baseName.substring(typeFrom + 1);
+                baseName = baseName.substring(0, typeFrom);
+            }
         }
-        
-        
+
+        // Get classifier/version
+
         int versionFrom = baseName.lastIndexOf("-");
         if (versionFrom >= 0) {
+
             this.version = baseName.substring(versionFrom + 1);
-            // check if this is a version ...
-            if (!version.matches("([0-9])*")) {
-                this.classifier = this.version;
-                baseName = baseName.substring(0, versionFrom);
+            // check if this is a version, it MUST contain a dot at least.
+            baseName = baseName.substring(0, versionFrom);
+
+            boolean snapshot = false;
+
+            if (!version.contains(".")) {
+
+                if (!this.version.equals("SNAPSHOT")) {
+                    this.classifier = this.version;
+                } else {
+                    snapshot = true;
+                }
 
                 versionFrom = baseName.lastIndexOf("-");
                 if (versionFrom >= 0) {
+
                     this.version = baseName.substring(versionFrom + 1);
                     baseName = baseName.substring(0, versionFrom);
+
+                    if (!version.contains(".")) {
+
+                        if (this.version.equals("SNAPSHOT")) {
+                            snapshot = true;
+                        }
+
+                        versionFrom = baseName.lastIndexOf("-");
+                        if (versionFrom >= 0) {
+                            this.version = baseName.substring(versionFrom + 1);
+                            baseName = baseName.substring(0, versionFrom);
+
+                        }
+
+                        if (snapshot) {
+                            version += "-SNAPSHOT";
+                        }
+
+                    }
+
                 }
-
             }
-
 
         }
         

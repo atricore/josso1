@@ -710,6 +710,7 @@ public class SSOAgentValve extends ValveBase
             hreq.setAttribute("org.josso.agent.gateway-login-url", _agent.getGatewayLoginUrl());
             hreq.setAttribute("org.josso.agent.gateway-logout-url", _agent.getGatewayLogoutUrl());
             hreq.setAttribute("org.josso.agent.ssoSessionid", jossoSessionId);
+            hreq.setAttribute("org.josso.agent.requester", r.getRequester());
 
             // ------------------------------------------------------------------
             // Invoke the next Valve in our pipeline

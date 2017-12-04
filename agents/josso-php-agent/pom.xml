@@ -122,7 +122,8 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/unix-src.xml</descriptor>
                             </descriptors>
-                            
+                            <appendAssemblyId>true</appendAssemblyId>
+
                             <tarLongFileMode>gnu</tarLongFileMode>
 
                         </configuration>

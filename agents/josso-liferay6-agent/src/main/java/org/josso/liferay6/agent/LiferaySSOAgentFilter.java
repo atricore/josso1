@@ -97,7 +97,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                 filterConfig.getServletContext().setAttribute("org.josso.agent", _agent);
 
             } catch (Exception e) {
-                _log.error("Error starting SSO Agent", e);
+                log.error("Error starting SSO Agent", e);
             }
         }
     }
@@ -509,6 +509,7 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
             hreq.setAttribute("org.josso.agent.gateway-login-url", _agent.getGatewayLoginUrl());
             hreq.setAttribute("org.josso.agent.gateway-logout-url", _agent.getGatewayLogoutUrl());
             hreq.setAttribute("org.josso.agent.ssoSessionid", jossoSessionId);
+            hreq.setAttribute("org.josso.agent.requester", r.getRequester());
 
             // ------------------------------------------------------------------
             // Invoke the next Valve in our pipeline

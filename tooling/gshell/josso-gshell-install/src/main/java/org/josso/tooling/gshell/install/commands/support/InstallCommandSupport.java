@@ -78,6 +78,9 @@ public abstract class InstallCommandSupport extends JOSSOCommandSupport {
     @Option(name = "-d", aliases = {"--weblogic-domain"}, description = "Weblogic domain path", required = false, argumentRequired = true)
     private String weblogicDomain = "samples/domains/wl_server";
 
+    @Option(name = "-jdk", aliases = {"--target-jdk"}, description = "Agent target JDK", required = false, argumentRequired = true)
+    private String targetJDK = null;
+
     @Option(name = "-u", aliases = {"--user"}, description = "Define user for server login", required = false, argumentRequired = false)
     private String user;
 
@@ -153,6 +156,11 @@ public abstract class InstallCommandSupport extends JOSSOCommandSupport {
                     if (weblogicDomain != null) {
                         log.debug("Using 'weblogicDomain' " + weblogicDomain);
                         installer.setProperty("weblogicDomain", weblogicDomain);
+                    }
+
+                    if (targetJDK != null) {
+                        log.debug("Using 'targetJDK' " + targetJDK);
+                        installer.setProperty("targetJDK", targetJDK);
                     }
 
                     if (user != null) {

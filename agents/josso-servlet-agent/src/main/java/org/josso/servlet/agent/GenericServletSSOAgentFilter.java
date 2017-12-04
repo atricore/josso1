@@ -557,6 +557,7 @@ public class GenericServletSSOAgentFilter implements Filter {
             hreq.setAttribute("org.josso.agent.gateway-login-url", agent.getGatewayLoginUrl() );
             hreq.setAttribute("org.josso.agent.gateway-logout-url", agent.getGatewayLogoutUrl() );
             hreq.setAttribute("org.josso.agent.ssoSessionid", jossoSessionId);
+            hreq.setAttribute("org.josso.agent.requester", r.getRequester());
 
             // ------------------------------------------------------------------
             // Invoke the next Valve in our pipeline

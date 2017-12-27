@@ -351,7 +351,7 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
+            <!--plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
@@ -366,7 +366,6 @@
                                     <version>[1.5,)</version>
                                 </requireJavaVersion>
 
-                                <!-- Require Maven 2.0.9+ -->
                                 <requireMavenVersion>
                                     <version>[2.0.9,)</version>
                                 </requireMavenVersion>
@@ -374,7 +373,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
             <plugin>
                 <groupId>org.apache.geronimo.genesis.plugins</groupId>
                 <artifactId>tools-maven-plugin</artifactId>

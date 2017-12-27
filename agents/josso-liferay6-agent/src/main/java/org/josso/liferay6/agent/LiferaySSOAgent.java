@@ -26,11 +26,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.SingleSignOnEntry;
+import org.josso.agent.http.HttpSSOAgentRequest;
 import org.josso.agent.http.JOSSOSecurityContext;
 import org.josso.agent.http.JaasHttpSSOAgent;
+import org.josso.agent.http.SecurityContextExporterFilter;
 import org.josso.gateway.identity.SSORole;
 
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.security.Principal;
 
 /**
@@ -91,6 +95,20 @@ public class LiferaySSOAgent extends JaasHttpSSOAgent {
         }
 
         return entry;
+    }
+
+    @Override
+    protected void propagateSecurityContext(SSOAgentRequest request, Principal principal) {
+        super.propagateSecurityContext(request, principal);
+
+        // Propagate security context also into session ...
+        HttpSSOAgentRequest servletSSOAgentRequest = (HttpSSOAgentRequest) request;
+        HttpServletRequest hreq = servletSSOAgentRequest.getRequest();
+        Object ctx = hreq.getAttribute(SecurityContextExporterFilter.SECURITY_CONTEXT_CONTENT);
+        HttpSession s = hreq.getSession();
+        s.setAttribute(SecurityContextExporterFilter.SECURITY_CONTEXT_CONTENT, ctx);
+
+        log.info("Published context in session ["+s.getId()+"] " + ctx);
     }
 
     /**

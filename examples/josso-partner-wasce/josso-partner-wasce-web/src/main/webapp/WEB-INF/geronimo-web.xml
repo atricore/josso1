@@ -8,7 +8,7 @@
 		<sys:moduleId>
       		<sys:groupId>org.josso</sys:groupId>
       		<sys:artifactId>josso-partner-wasce-web</sys:artifactId>
-      		<sys:version>1.8.12-SNAPSHOT</sys:version>
+      		<sys:version>1.8.13-SNAPSHOT</sys:version>
       		<sys:type>car</sys:type>
     	</sys:moduleId>
 	    <sys:dependencies>

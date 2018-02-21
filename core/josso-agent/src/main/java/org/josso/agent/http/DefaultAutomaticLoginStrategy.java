@@ -46,12 +46,25 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
     // List of referrers that should be ignored
     private List<String> ignoredReferrers = new ArrayList<String>();
 
+    // List of referrers that should trigger the login
+    private List<String> requiredReferrers = new ArrayList<String>();
+
+    private String myUrlSuffix = "";
+
     public DefaultAutomaticLoginStrategy() {
         super();
     }
 
     public DefaultAutomaticLoginStrategy(String mode) {
         super(mode);
+    }
+
+    public String getMyUrlSuffix() {
+        return myUrlSuffix;
+    }
+
+    public void setMyUrlSuffix(String myUrlSuffix) {
+        this.myUrlSuffix = myUrlSuffix;
     }
 
     /**
@@ -64,6 +77,18 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
 
     public void setIgnoredReferrers(List<String> ignoredReferrers) {
         this.ignoredReferrers = ignoredReferrers;
+    }
+
+    /**
+     * Lit of referrers that will trigger a login
+     * @return
+     */
+    public List<String> getRequiredReferrers() {
+        return requiredReferrers;
+    }
+
+    public void setRequiredReferrers(List<String> requiredReferrers) {
+        this.requiredReferrers = requiredReferrers;
     }
 
     /**
@@ -97,7 +122,7 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
                 return true;
             }
 
-            // If we have a referer host that differs from our we require an autologinSSs
+            // If we have a referer host that differs from ours we require login
             if (referer != null && !NO_REFERER.equals(referer)) {
 
                 for (String ignoredReferrer : ignoredReferrers) {
@@ -109,6 +134,7 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
 
                 }
 
+                // This referrer was already processed, ignore it
             	String oldReferer = getAgent().getAttribute(hreq, "JOSSO_AUTOMATIC_LOGIN_REFERER");
                 if (oldReferer != null && oldReferer.equals(referer)) {
                     
@@ -120,13 +146,24 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
                     return false;
                 }
 
+                for (String requiredReferer : requiredReferrers) {
+                    if (referer.startsWith(requiredReferer)) {
+                        if (log.isDebugEnabled())
+                            log.debug("Referrer is required [" + requiredReferer + "] login is required");
+                        return true;
+                    }
+                }
+
+                // Check if the user is coming from another host
+
+
                 StringBuffer mySelf = hreq.getRequestURL();
                 java.net.URL myUrl = new java.net.URL(mySelf.toString());
 
                 // This should build the base url of the java application
                 String myUrlStrTmp = myUrl.getHost() + ((myUrl.getPort() > 0 && myUrl.getPort() != 80 && myUrl.getPort() != 443) ? ":" + myUrl.getPort() : "") + hreq.getContextPath();
-                String myUrlStrNonSecure = "http://" + myUrlStrTmp;
-                String myUrlStrSecure = "https://" + myUrlStrTmp;
+                String myUrlStrNonSecure = "http://" + myUrlStrTmp + getMyUrlSuffix();
+                String myUrlStrSecure = "https://" + myUrlStrTmp + getMyUrlSuffix();
 
                 if (log.isDebugEnabled()) {
                     log.debug("Processing referrer " + referer + " for host (non-secure) " + myUrlStrNonSecure);
@@ -144,13 +181,15 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
                     getAgent().setAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER", referer);
                     return true;
                 }
+
+
             } else {
             	String oldReferer = getAgent().getAttribute(hreq, "JOSSO_AUTOMATIC_LOGIN_REFERER");
                 if (oldReferer != null && oldReferer.equals(NO_REFERER)) {
                     if (log.isDebugEnabled())
                         log.debug("Referer already processed " + referer);
                     // Note : we are no longer removing the "referer already processed" flag since the next request
-                    // it's likely that there will be no referer (browsers are no longer pushing this) and it will
+                    // it's likely to have no referer (browsers are no longer pushing this) and it will
                     // attempt an automatic login again .
                     //getAgent().removeAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER");
                     return false;

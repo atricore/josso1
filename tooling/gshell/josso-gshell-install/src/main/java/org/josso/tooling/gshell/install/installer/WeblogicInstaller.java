@@ -410,6 +410,9 @@ public class WeblogicInstaller extends VFSInstaller {
             // 1. Create the MBean Descriptor Files
             //  ----------------------------------------------------------------
 
+
+            // TODO : Add -DmbeantypesDir=/opt/Oracle2/Middleware/Oracle_Home/wlserver/server/lib/mbeantypes
+
             {
                 /*
                    <argument>-Dfiles=${basedir}/target/generated-sources</argument>

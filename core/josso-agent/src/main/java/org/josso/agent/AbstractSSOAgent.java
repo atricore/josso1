@@ -327,7 +327,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
 
             for (SSOPartnerAppConfig cfg : _cfg.getSsoPartnerApps()) {
                 if (cfg.getId() == null) {
-                    log("ERROR! You should define an ID for partner application " + cfg.getContext());
+                    log("ERROR! You must define an ID for partner application " + cfg.getContext());
                 }
 
                 cfg.getIdentityProviderService();
@@ -468,7 +468,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
         } catch (Exception e) {
             log("Error processing JOSSO Agent request : " + e.getMessage());
             if (debug > 0)
-                log("Exception recieved while processing JOSSO Agent request : " + e.getMessage(), e);
+                log("Exception received while processing JOSSO Agent request : " + e.getMessage(), e);
 
             return null;
         }
@@ -516,7 +516,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
             return ssoSessionId;
         } catch (AssertionNotValidException e) {
             if (debug > 0)
-                log("Invalid Assertion");
+                log("Invalid Assertion", e);
 
             return null;
 
@@ -582,7 +582,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
 
         } catch (NoSuchSessionException e) {
             if (debug > 0)
-                log("SSO Session is no longer valid");
+                log("SSO Session is no longer valid", e);
 
             deregister(entry.ssoId);
             return null;
@@ -616,7 +616,7 @@ public abstract class AbstractSSOAgent implements SSOAgent {
 
         } catch (NoSuchSessionException e) {
             if (debug > 0)
-                log("SSO Session is no longer valid");
+                log("SSO Session is no longer valid", e);
 
             throw e;
 

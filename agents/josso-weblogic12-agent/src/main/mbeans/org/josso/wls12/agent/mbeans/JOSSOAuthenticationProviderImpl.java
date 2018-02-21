@@ -151,7 +151,7 @@ public class JOSSOAuthenticationProviderImpl implements AuthenticationProviderV2
         // and to use the control flag from the JOSSO authenticator's mbean.
         return new
                 AppConfigurationEntry(
-                    "org.josso.wls12.agent.jaas.SSOGatewayLoginModuleImpl",
+                    "org.josso.wls12.agent.jaas.SSOGatewayLoginModuleNoCustomPrincipalsImpl",
                     controlFlag,
                     options );
     }

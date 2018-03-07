@@ -24,7 +24,7 @@
 <s:beans xmlns:s="http://www.springframework.org/schema/beans"
          xmlns:tc85="urn:org:josso:agent:tomcat85"
          xmlns:agent="urn:org:josso:agent:core"
-         xmlns:protocol="urn:org:josso:protocol:client"
+         xmlns:protocol="urn:org:josso:protocol:client:jaxws"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
          urn:org:josso:agent:tomcat85 http://www.josso.org/schema/josso-tomcat85-agent.xsd
@@ -39,10 +39,10 @@
 
         <!-- Gateway service locator -->
         <gatewayServiceLocator>
-            <!-- Other properties for ws-service-locator :
+            <!-- Other properties for jaxws-service-locator :
             username, password, servicesWebContext, transportSecurity
             -->
-            <protocol:ws-service-locator endpoint="localhost:8080" />
+            <protocol:jaxws-service-locator endpoint="localhost:8080" />
         </gatewayServiceLocator>
 
         <configuration>

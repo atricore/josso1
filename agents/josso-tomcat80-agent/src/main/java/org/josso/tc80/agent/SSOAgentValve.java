@@ -425,8 +425,12 @@ public class SSOAgentValve extends ValveBase
                 // This means that the user could not be identified ... go back to the original resource
                 if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                         hreq.getParameter("josso_assertion_id") == null) {
-                    log(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
                     String requestURI = this.getSavedRequestURL(hreq, session);
+                    if (requestURI == null) {
+                        requestURI = cfg.getDefaultResource();
+                        log("Using default resource " + requestURI);
+                    }
+                    log(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed, redirecting to ["+ requestURI + "]");
                     _agent.prepareNonCacheResponse(hres);
                     hres.sendRedirect(hres.encodeRedirectURL(requestURI));
                     return;

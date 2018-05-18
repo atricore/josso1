@@ -862,16 +862,19 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
                                   String name,
                                   String value) {
 
+
+        String attrName = getStatePrefix() + name;
+
         if (isStateOnClient()) {
 
             Set<String> removed = (Set<String>) hreq.getAttribute("org.josso.attrs.removed");
             if (removed == null)
                 removed = new HashSet<String>();
 
-            if (removed.contains(name))
-                removed.remove(name);
+            if (removed.contains(attrName))
+                removed.remove(attrName);
 
-            log("Storing attribute "  + name + "=" + value + " client side");
+            log("Storing attribute "  + attrName + "=" + value + " client side");
             if (hres == null)
                 throw new IllegalArgumentException("HTTP Servlet response cannot be null.  Are you using any deprecated operations?");
             
@@ -886,7 +889,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
 	        }
             
             // Store value as session cookie
-            Cookie cookie = new Cookie(name, cookieValue);
+            Cookie cookie = new Cookie(attrName, cookieValue);
             cookie.setPath(hreq.getContextPath().equals("") ? "/" : hreq.getContextPath());
             cookie.setMaxAge(-1);
             cookie.setSecure(hreq.isSecure());
@@ -894,13 +897,13 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             hres.addCookie(cookie);
 
             // Local copy
-            hreq.setAttribute(name, value);
+            hreq.setAttribute(attrName, value);
 
         } else {
 
-            log("Storing attribute "  + name + "=" + value + " server side");
+            log("Storing attribute "  + attrName + "=" + value + " server side");
             // Use HTTP Session ( TODO : Use LocalSession instead ? )
-            hreq.getSession().setAttribute(name, value);
+            hreq.getSession().setAttribute(attrName, value);
         }
 
     }
@@ -914,17 +917,20 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      * @return attribute value
      */
     public String getAttribute(HttpServletRequest hreq, String name) {
+
+        String attrName = getStatePrefix() + name;
+
         if (isStateOnClient()) {
 
             Set<String> removed = (Set<String>) hreq.getAttribute("org.josso.attrs.removed");
             if (removed == null)
                 removed = new HashSet<String>();
 
-            if (removed.contains(name))
+            if (removed.contains(attrName))
                 return null;
 
             // If a local value is present, use it.
-            String vlocal = (String) hreq.getAttribute(name);
+            String vlocal = (String) hreq.getAttribute(attrName);
             if (vlocal != null && !"".equals(vlocal))
                 return vlocal;
 
@@ -932,7 +938,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             Cookie[] cookies = hreq.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals(name)) {
+                    if (cookie.getName().equals(attrName)) {
                         String cookieValue = cookie.getValue();
                         String value = null;
                         try {
@@ -953,7 +959,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             return null;
         } else {
             // Use HTTP Session ( TODO : Use LocalSession instead ? )
-            return (String) hreq.getSession().getAttribute(name);
+            return (String) hreq.getSession().getAttribute(attrName);
         }
 
     }

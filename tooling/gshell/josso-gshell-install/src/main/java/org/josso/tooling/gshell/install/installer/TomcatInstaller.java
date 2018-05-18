@@ -109,7 +109,8 @@ public class TomcatInstaller extends VFSInstaller {
                 if (getTargetPlatform().getVersion().startsWith("6.0") ||
                     getTargetPlatform().getVersion().startsWith("7.0") ||
                     getTargetPlatform().getVersion().startsWith("8.0") ||
-                        getTargetPlatform().getVersion().startsWith("8.5")) {
+                        getTargetPlatform().getVersion().startsWith("8.5") ||
+                        getTargetPlatform().getVersion().startsWith("9.0")) {
 
                     if (artifact.getClassifier().equals("jaxws")) {
                         installFile(srcFile, this.targetJOSSOLibDir, replace);
@@ -143,7 +144,9 @@ public class TomcatInstaller extends VFSInstaller {
             } else if (artifact.getBaseName().startsWith("josso-tomcat85-agent") &&
                     getTargetPlatform().getVersion().startsWith("8.5")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
-
+            } else if (artifact.getBaseName().startsWith("josso-tomcat85-agent") &&
+                        getTargetPlatform().getVersion().startsWith("9.0")) {
+                    installFile(srcFile, this.targetJOSSOLibDir, replace);
             } else {
                 log.debug("Artifact is not valid for selected platform : " + artifact);
             }
@@ -187,9 +190,10 @@ public class TomcatInstaller extends VFSInstaller {
             } else if (getTargetPlatform().getVersion().startsWith("6.0") ||
                     getTargetPlatform().getVersion().startsWith("7.0") ||
                     getTargetPlatform().getVersion().startsWith("8.0") ||
-                    getTargetPlatform().getVersion().startsWith("8.5")) {
+                    getTargetPlatform().getVersion().startsWith("8.5") ||
+                    getTargetPlatform().getVersion().startsWith("9.0")) {
 
-                // Minmal set of dependencies for TC 6/7/8/8.5
+                // Minmal set of dependencies for TC 6/7/8/8.5/9
                 if (artifact.getBaseName().startsWith("spring-")) {
                     removeOldJar(srcFile.getName().getBaseName(), this.targetLibDir, true);
                     installFile(srcFile, this.targetLibDir, replace);
@@ -375,7 +379,11 @@ public class TomcatInstaller extends VFSInstaller {
         String usersClassNames = "org.josso.gateway.identity.service.BaseUserImpl";
         String roleClassNames = "org.josso.gateway.identity.service.BaseRoleImpl";
 
-        String realmClass = "org.josso." + getPlatformId() + ".agent.jaas.CatalinaJAASRealm"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
+        // TODO : Just for now:
+        String tcVersion = getPlatformId();
+        if (tcVersion.equals("tc90")) tcVersion = "tc85";
+
+        String realmClass = "org.josso." + tcVersion + ".agent.jaas.CatalinaJAASRealm"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
 
         // Check if josso agent valve is already present
 
@@ -448,7 +456,12 @@ public class TomcatInstaller extends VFSInstaller {
         XPath xpath = XPathFactory.newInstance().newXPath();
 
         // Check if josso agent valve is already present
-        String valveClass = "org.josso." + getPlatformId() + ".agent.SSOAgentValve"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
+
+        // TODO : Just for now:
+        String tcVersion = getPlatformId();
+        if (tcVersion.equals("tc90")) tcVersion = "tc85";
+
+        String valveClass = "org.josso." + tcVersion + ".agent.SSOAgentValve"; // TODO : Be carefull with platform ID, this could not match the agent pacakge
         XPathExpression findAgentValve = xpath.compile("/Server/Service/Engine/Host/Valve[@className=\""+valveClass+"\"]");
         NodeList agentValves = (NodeList) findAgentValve.evaluate(serverXmlDom, XPathConstants.NODESET);
 

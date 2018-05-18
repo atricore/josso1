@@ -108,8 +108,12 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
             // The first time we access a partner application, we should attempt an automatic login.
         	Boolean autoLoginExecuted = Boolean.parseBoolean(getAgent().getAttribute(hreq, "JOSSO_AUTOMATIC_LOGIN_EXECUTED"));
             String referer = hreq.getHeader("referer");
+
             if (referer == null || "".equals(referer))
                 referer = NO_REFERER;
+
+            if (referer.indexOf(';') >= 0)
+                referer = referer.substring(0, referer.indexOf(';'));
 
             // If no referer host is found but we did not executed auto login yet, give it a try.
             if (autoLoginExecuted == null || !autoLoginExecuted) {
@@ -129,6 +133,7 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
                     if (referer.startsWith(ignoredReferrer)) {
                         if (log.isDebugEnabled())
                             log.debug("Referer should be ignored " + referer);
+
                         return false;
                     }
 
@@ -148,6 +153,8 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
 
                 for (String requiredReferer : requiredReferrers) {
                     if (referer.startsWith(requiredReferer)) {
+                        getAgent().setAttribute(hreq, hres, "JOSSO_AUTOMATIC_LOGIN_REFERER", referer);
+
                         if (log.isDebugEnabled())
                             log.debug("Referrer is required [" + requiredReferer + "] login is required");
                         return true;
@@ -188,6 +195,7 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
                 if (oldReferer != null && oldReferer.equals(NO_REFERER)) {
                     if (log.isDebugEnabled())
                         log.debug("Referer already processed " + referer);
+
                     // Note : we are no longer removing the "referer already processed" flag since the next request
                     // it's likely to have no referer (browsers are no longer pushing this) and it will
                     // attempt an automatic login again .
@@ -204,14 +212,14 @@ public class DefaultAutomaticLoginStrategy extends AbstractAutomaticLoginStrateg
             }
 
         } catch (MalformedURLException e) {
-            this.log.debug("Error creating Referer URL : "+ e.getMessage(), e);
+            this.log.error("Error creating Referer URL : "+ e.getMessage(), e);
         } catch (Exception e) {
-            this.log.debug("Cannot verify request for automatic login : " + e.getMessage(), e);
+            this.log.error("Cannot verify request for automatic login : " + e.getMessage(), e);
         }
 
         if (log.isDebugEnabled())
             log.debug("Do not Require Autologin!");
 
-        return false;        
+        return false;
     }
 }

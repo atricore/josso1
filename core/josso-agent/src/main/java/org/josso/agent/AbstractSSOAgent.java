@@ -103,6 +103,8 @@ public abstract class AbstractSSOAgent implements SSOAgent {
     private long _sessionAccessMinInterval = DEFAULT_SESSION_ACCESS_MIN_INTERVAL;
 
     private boolean _isStateOnClient = false;
+
+    private String _statePrefix = "";
     
     // --------- <Some statistical information, exposed through MBeans >
     private long _requestCount;
@@ -806,6 +808,14 @@ public abstract class AbstractSSOAgent implements SSOAgent {
 	public boolean isStateOnClient() {
 		return _isStateOnClient;
 	}
+
+	public String getStatePrefix() {
+        return _statePrefix;
+    }
+
+    public void setStatePrefix(String prefix) {
+        this._statePrefix = prefix;
+    }
 
     public void setIsStateOnClient(boolean isStateOnClient) {
         _isStateOnClient = isStateOnClient;

@@ -455,10 +455,16 @@ public class SSOAgentValve extends ValveBase
                 if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                     hreq.getParameter("josso_assertion_id") == null) {
 
-                    if (debug >= 1)
-                        log(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
 
                     String requestURI = this.getSavedRequestURL(hreq, session);
+                    if (requestURI == null) {
+                        requestURI = cfg.getDefaultResource();
+                        if (debug >= 1)
+                            log("Using default resource " + requestURI);
+                    }
+
+                    if (debug >= 1)
+                        log(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed, redirecting to ["+ requestURI + "]");
                     _agent.prepareNonCacheResponse(hres);
                     hres.sendRedirect(hres.encodeRedirectURL(requestURI));
                     return;
@@ -839,6 +845,7 @@ public class SSOAgentValve extends ValveBase
 	        }
 	        savedURL = sb.toString();
     	}
+
         return savedURL;
     }
     
@@ -883,26 +890,16 @@ public class SSOAgentValve extends ValveBase
             saved.addLocale(locale);
         }
 
-        /** Need more catalina classes
-        if ("POST".equalsIgnoreCase(request.getMethod())) {
-            ByteChunk body = new ByteChunk();
-            body.setLimit(request.getConnector().getMaxSavePostSize());
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            InputStream is = request.getInputStream();
-
-            while ( (bytesRead = is.read(buffer) ) >= 0) {
-                body.append(buffer, 0, bytesRead);
-            }
-            saved.setContentType(request.getContentType());
-            saved.setBody(body);
-        } */
 
         saved.setMethod(request.getMethod());
         saved.setQueryString(request.getQueryString());
-        saved.setRequestURI(request.getRequestURI());
-        
+
+        // Remove bogus session id
+        String requestURI = request.getRequestURI();
+        if (requestURI.indexOf(';') >= 0)
+            requestURI = requestURI.substring(0, requestURI.indexOf(';'));
+        saved.setRequestURI(requestURI);
+
         // Stash the SavedRequest in our session for later use
         session.setNote(org.apache.catalina.authenticator.Constants.FORM_REQUEST_NOTE, saved);
         

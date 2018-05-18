@@ -316,11 +316,16 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	            if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
 	                hreq.getParameter("josso_assertion_id") == null) {
 
-	                if (log.isDebugEnabled())
-	                    log.debug(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed");
-
 	                String requestURI = this.getSavedRequestURL(hreq);
-	                _agent.prepareNonCacheResponse(hres);
+					if (requestURI == null) {
+						requestURI = cfg.getDefaultResource();
+						if (log.isDebugEnabled())
+							log.debug("Using default resource " + requestURI);
+					}
+
+					if (log.isDebugEnabled())
+						log.debug(_agent.getJossoSecurityCheckUri() + " received without assertion.  Login Optional Process failed, redirecting to ["+ requestURI + "]");
+					_agent.prepareNonCacheResponse(hres);
 	                hres.sendRedirect(hres.encodeRedirectURL(requestURI));
 	                AuthStatus status = AuthStatus.SEND_CONTINUE;
                     return status;

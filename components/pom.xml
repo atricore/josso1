@@ -100,6 +100,8 @@
         <module>josso-spring-security-v2</module>
         <module>josso-spring-security-v3</module>
 
+        <module>josso-jasperserver-authn-v6</module>
+
         <module>josso-seraph-extension</module>
 
         <module>josso-ws</module>

@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.agent.Lookup;
 
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -80,7 +81,27 @@ public class WebAccessControlUtil {
      * @return
      */
     public static JOSSOSecurityContext getSecurityContext(HttpServletRequest request) {
-        return (JOSSOSecurityContext) request.getSession().getAttribute(
+
+        JOSSOSecurityContext secCtx =  (JOSSOSecurityContext) request.getSession().getAttribute(
                 WebAccessControlUtil.KEY_JOSSO_SECURITY_CONTEXT);
+
+        return secCtx;
+    }
+
+    public static String getSsoSessionId(HttpServletRequest request) {
+        JOSSOSecurityContext ctx = getSecurityContext(request);
+        if (ctx != null)
+            return ctx.getSSOSession();
+
+        return null;
+    }
+
+    public static Subject getSsoSubject(HttpServletRequest request) {
+        JOSSOSecurityContext ctx = getSecurityContext(request);
+        if (ctx != null)
+            return ctx.getSubject();
+
+        return null;
+
     }
 }

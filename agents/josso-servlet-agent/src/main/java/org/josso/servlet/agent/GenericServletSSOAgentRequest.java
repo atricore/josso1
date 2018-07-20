@@ -22,11 +22,7 @@
 
 package org.josso.servlet.agent;
 
-import org.josso.agent.SSOAgentRequestImpl;
 import org.josso.agent.LocalSession;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.josso.agent.http.HttpSSOAgentRequest;
 import org.josso.agent.http.JOSSOSecurityContext;

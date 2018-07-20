@@ -79,6 +79,8 @@ public class JaasHttpSSOAgent extends HttpSSOAgent {
             Subject s = lc.getSubject();
 
             JOSSOSecurityContext ctx = new JOSSOSecurityContext(s);
+            ctx.setSSOSession(ssoSessionId);
+
             return ctx.getCurrentPrincipal();
 
         } catch (LoginException e) {

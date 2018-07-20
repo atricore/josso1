@@ -69,7 +69,7 @@
         <blueprint.core.version>1.4.3</blueprint.core.version>
         <blueprint.parser.version>1.3.1</blueprint.parser.version>
 
-	<update>001</update>
+        <update>001</update>
     </properties>
 
     <profiles>
@@ -408,10 +408,10 @@
             <dependencyManagement>
                 <dependencies>
                     <dependency>
-                    <groupId>org.josso</groupId>
-                    <artifactId>josso-tomcat70-agent</artifactId>
-                    <version>${pom.version}</version>
-                </dependency>
+                        <groupId>org.josso</groupId>
+                        <artifactId>josso-tomcat70-agent</artifactId>
+                        <version>${pom.version}</version>
+                    </dependency>
                 </dependencies>
             </dependencyManagement>
             <modules>
@@ -424,7 +424,7 @@
                 <module>applications</module>
             </modules>
         </profile>
-        
+
         <profile>
             <id>tests</id>
             <build>
@@ -675,7 +675,7 @@
             </snapshots>
         </repository>
 
-      <repository>
+        <repository>
             <id>forge</id>
             <url>http://repository.sonatype.org/content/groups/public</url>
             <snapshots>
@@ -684,6 +684,15 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
+        </repository>
+
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>remote-snapshot-repos</name>
+            <url>https://jaspersoft.artifactoryonline.com/jaspersoft/jrs-ce-releases/</url>
         </repository>
 
         <!--repository>
@@ -881,12 +890,12 @@
                 <version>${pom.version}</version>
             </dependency>
 
-			<dependency>
+            <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-virtual-identitystore</artifactId>
                 <version>${pom.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-identitymgr</artifactId>
@@ -1180,7 +1189,7 @@
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jbportal27-agent</artifactId>
                 <version>${pom.version}</version>
-            </dependency>			
+            </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
@@ -1252,22 +1261,29 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-jasperserver-authn-v6</artifactId>
+                <version>${pom.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-seraph-extension</artifactId>
                 <version>${pom.version}</version>
             </dependency>
 
-			<dependency>
+            <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-wasce-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jaspi-agent</artifactId>
                 <version>${pom.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jboss5-agent</artifactId>
@@ -1356,7 +1372,7 @@
                 <version>${pom.version}</version>
                 <type>ear</type>
             </dependency>
-           
+
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss7-ejb</artifactId>
@@ -1377,7 +1393,7 @@
                 <version>${pom.version}</version>
                 <type>ear</type>
             </dependency>
- 
+
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl81-ejb</artifactId>
@@ -1489,14 +1505,14 @@
                 <version>${pom.version}</version>
                 <type>jar</type>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-applet-web</artifactId>
                 <version>${pom.version}</version>
                 <type>war</type>
             </dependency>
-            
+
             <!-- Third party dependencies -->
 
             <dependency>

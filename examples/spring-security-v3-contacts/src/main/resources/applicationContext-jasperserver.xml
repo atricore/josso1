@@ -1,0 +1,138 @@
+<!--
+  ~ Copyright (C) 2005 - 2014 TIBCO Software Inc. All rights reserved.
+  ~ http://www.jaspersoft.com.
+  ~
+  ~ Unless you have purchased  a commercial license agreement from Jaspersoft,
+  ~ the following license terms  apply:
+  ~
+  ~ This program is free software: you can redistribute it and/or  modify
+  ~ it under the terms of the GNU Affero General Public License  as
+  ~ published by the Free Software Foundation, either version 3 of  the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero  General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU Affero General Public  License
+  ~  along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!--
+  - This file is a sample of PreAuthentication API configuration.  The API deals with cases
+  - when the external user comes to Jasper Server already authenticated & authorized.  Very
+  - often the user name, roles, etc. is encrypted as a token parameter in the request; so, there is
+  - no need to redirect user to SSO servers or extract user details from external datasources.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <!-- marker disabling JIAuthenticationSynchronizer: pre-5.1 external auth config-->
+    <alias name="${bean.authenticationProcessingFilter}" alias="proxyAuthenticationProcessingFilter"/>
+
+    <bean id="proxyPreAuthenticatedProcessingFilter" class="org.josso.spring.security.JOSSOAuthenticationFilter">
+        <constructor-arg>
+            <array value-type="org.springframework.security.web.authentication.logout.LogoutHandler">
+                <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+            </array>
+        </constructor-arg>
+        <property name="userDetailsService">
+            <ref local="jossoUserDetailsService"/>
+        </property>
+        <!--property name="jsonRedirectUrl" ref="authSuccessJsonRedirectUrl"/-->
+    </bean>
+
+    <bean id="jossoAuthenticationProvider" class="org.josso.spring.security.JOSSOAuthenticationProvider"/>
+
+    <bean id="jossoUserDetailsService" class="org.josso.spring.security.JOSSOUserDetailsService">
+        <property name="requester" value="contactssp"/>
+        <property name="gatewayServiceLocator"><ref local="jossoGatewayServiceLocator"/></property>
+    </bean>
+
+    <bean name="gatewayServiceLocator" class="org.josso.gateway.jaxws.JAXWSWebserviceGatewayServiceLocator">
+        <description>If your server does not have internet access, use the following expression (replace [path-to-lib]
+            jar:file:/[path-to-lib]/josso-agents-bin-1.8.13-SNAPSHOT-jaxws.jar!/org/josso/gateway/ws/_1_2/wsdl/josso-1.2.wsdl</description>
+        <property name="wsdlLocation">
+            <value>http://www.josso.org/wsdl/josso-1.2/josso-1.2.wsdl</value>
+        </property>
+        <property name="endpoint">
+            <value>localhost:8081</value>
+        </property>
+        <property name="sessionManagerServicePath">
+            <value>IDBUS/IDA-1/JR-TC/JOSSO/SSOSessionManager/SOAP</value>
+        </property>
+        <property name="identityManagerServicePath">
+            <value>IDBUS/IDA-1/JR-TC/JOSSO/SSOIdentityManager/SOAP</value>
+        </property>
+        <property name="identityProviderServicePath">
+            <value>IDBUS/IDA-1/JR-TC/JOSSO/SSOIdentityProvider/SOAP</value>
+        </property>
+    </bean>
+
+    <!-- ############ Synchronizer ############ -->
+    <bean id="externalDataSynchronizer"
+          class="com.jaspersoft.jasperserver.api.security.externalAuth.ExternalDataSynchronizerImpl">
+        <property name="externalUserProcessors">
+            <list>
+                <ref local="externalUserSetupProcessor"/>   <!-- REQUIRED processor -->
+                <ref local="externalProfileAttributeProcessor"/>  <!-- OPTIONAL processor: comment out if no profile attributes are expected -->
+                <!-- Example processor for creating user folder.
+                Other custom processors can be created and
+                added to the list.-->
+                <!--<ref local="externalUserFolderProcessor"/>-->
+            </list>
+        </property>
+    </bean>
+
+    <bean id="abstractExternalProcessor" class="com.jaspersoft.jasperserver.api.security.externalAuth.processors.AbstractExternalUserProcessor" abstract="true">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="userAuthorityService" ref="${bean.userAuthorityService}"/>
+        <property name="tenantService" ref="${bean.tenantService}"/>
+        <property name="profileAttributeService" ref="profileAttributeService"/>
+        <property name="objectPermissionService" ref="objectPermissionService"/>
+    </bean>
+
+    <bean id="externalUserSetupProcessor" class="com.jaspersoft.jasperserver.api.security.externalAuth.processors.ExternalUserSetupProcessor" parent="abstractExternalProcessor">
+        <property name="userAuthorityService">
+            <ref bean="${bean.internalUserAuthorityService}"/>
+        </property>
+        <property name="defaultInternalRoles">
+            <list>
+                <value>ROLE_USER</value>
+            </list>
+        </property>
+
+        <property name="organizationRoleMap">
+            <map>
+                <!-- Example of mapping customer roles to JRS roles -->
+                <entry>
+                    <key>
+                        <value>ROLE_ADMIN_EXTERNAL_ORGANIZATION</value>
+                    </key>
+                    <!-- JRS role that the <key> external role is mapped to-->
+                    <value>ROLE_ADMINISTRATOR</value>
+                </entry>
+            </map>
+        </property>
+
+        <property name="permittedRolesRegex">
+            <list>
+                <value>JRS_.*</value>
+                <value>EXT_.*</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="externalProfileAttributeProcessor" class="com.jaspersoft.jasperserver.api.security.externalAuth.processors.ExternalProfileAttributeProcessor" parent="abstractExternalProcessor">
+    </bean>
+
+    <!-- EXAMPLE Processor
+    <bean id="externalUserFolderProcessor"
+          class="com.jaspersoft.jasperserver.api.security.externalAuth.processors.ExternalUserFolderProcessor"
+          parent="abstractExternalProcessor">
+        <property name="repositoryService" ref="${bean.unsecureRepositoryService}"/>
+    </bean>
+    -->
+</beans>

@@ -30,6 +30,7 @@ import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
 import org.josso.gateway.identity.service.SSOIdentityManagerService;
 
+import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -145,6 +146,18 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
             }
 
             HttpServletRequest hreq = servletSSOAgentRequest.getRequest();
+
+            // Publish ctx in session
+            Set<Principal> principals = new HashSet<Principal>();
+            principals.add(principal);
+
+            SSORole[] ssoRolePrincipals = getRoleSets(request.getRequester(), request.getSessionId(), request.getNodeId());
+            Collections.addAll(principals, ssoRolePrincipals);
+            Subject subject = new Subject(true, principals, Collections.emptySet(), Collections.emptySet());
+
+            JOSSOSecurityContext ctx = new JOSSOSecurityContext(subject);
+            ctx.setSSOSession(request.getSessionId());
+            ((HttpSSOAgentRequest) request).getRequest().getSession().setAttribute(WebAccessControlUtil.KEY_JOSSO_SECURITY_CONTEXT, ctx);
 
             if (binding.equalsIgnoreCase("HTTP_HEADERS")) {
 

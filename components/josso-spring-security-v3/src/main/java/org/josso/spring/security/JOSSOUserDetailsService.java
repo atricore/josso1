@@ -63,7 +63,7 @@ public class JOSSOUserDetailsService implements UserDetailsService {
             // since a principal name will be supplied instead of a single sign-on session identifier.
             SSOUser user = getIdentityManager().findUserInSession(_requester, username);
             //SSOUser user = getIdentityManager().findUser(_requester, "", username);
-            SSORole[] roles = _im.findRolesBySSOSessionId(_requester, username);
+            SSORole[] roles = getIdentityManager().findRolesBySSOSessionId(_requester, username);
             return toUserDetails(user, roles);
         } catch (NoSuchUserException e) {
             logger.error(e.getMessage(), e);

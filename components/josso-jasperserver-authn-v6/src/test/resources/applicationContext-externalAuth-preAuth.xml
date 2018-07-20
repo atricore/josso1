@@ -1,0 +1,141 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <!-- marker disabling JIAuthenticationSynchronizer: pre-5.1 external auth config-->
+    <alias name="${bean.authenticationProcessingFilter}" alias="proxyAuthenticationProcessingFilter"/>
+
+    <bean id="proxyPreAuthenticatedProcessingFilter" class="org.josso.jasper.server.authn.JasperServerAuthnFilter">
+        <!-- request parameter containing pre-authenticated token with user info -->
+        <property name="principalParameter" value="pp"/>
+        <!-- tokenInRequestParam=false - principalParameter is read from header only.
+             tokenInRequestParam=true - principalParameter is read from request url parameters only.
+             If tokenInRequestParam is not specified, the authentication token is looked up in request header
+             and, then, if not found, in request params -->
+        <property name="tokenInRequestParam" value="true"/>
+
+        <!-- Works with the plain-text tokens by default -->
+        <!-- Substitute with your token decryption implementation of com.jaspersoft.jasperserver.api.common.crypto.CipherI interface -->
+        <property name="tokenDecryptor">
+            <bean class="com.jaspersoft.jasperserver.api.common.crypto.PlainTextNonCipher"/>
+        </property>
+
+        <property name="externalDataSynchronizer">
+            <ref local="externalDataSynchronizer"/>
+        </property>
+
+        <property name="authenticationManager">
+            <ref local="preAuthenticatedManager"/>
+        </property>
+
+        <property name="authenticationDetailsSource">
+            <bean class="com.jaspersoft.jasperserver.api.security.externalAuth.wrappers.spring.JSAuthenticationDetailsSourceImpl">
+                <property name="clazz">
+                    <value>com.jaspersoft.jasperserver.api.security.externalAuth.preauth.BasePreAuthenticatedGrantesAuthorityDetails</value>
+                </property>
+            </bean>
+        </property>
+        <property name="jsonRedirectUrl" ref="authSuccessJsonRedirectUrl"/>
+    </bean>
+
+    <!--
+    JOSSO_PROPERTY_idpAlias=http://localhost:8081/IDBUS/IDA-1/IDP-1/SAML2/MD|JOSSO_PROPERTY_totp_key=jasperadmin|JOSSO_PROPERTY_countryName=jasperadmin jasperadmin|JOSSO_PROPERTY_commonName=jasperadmin jasperadmin|JOSSO_PROPERTY_preventNewSession=false|JOSSO_PROPERTY_firstName=jasperadmin|JOSSO_PROPERTY_accountDisabled=false|JOSSO_PROPERTY_accountExpires=false|JOSSO_PROPERTY_oasis_wss_oauth2_token_profile_1_1#OAUTH2_0=TZPHrqNYAET/5W0ZyUQDLc0CMBeTk8Fwd+Scs0fz72N1b2Zb50i1qfrnJ+uT+RrXaui5tvj59cOJ7s9fP0tV9NG6zdmf8NlFifvksP8TP2q37Mt2OD+wWJytYvkA9KURw3pji0dcieLfX38dmqz/ajyh28DQWpt1kWzNOH3K2nrrKf4VVTxKjOjGsF09Std9xVqO50V73uv1VBnh24SUbC5xdz/twiscTU6YGRhEp4hK6DAMBVBCstBDNk+QizFiWWCBWDO2wrJuO5SxQM/+NiHipzBidsa0FQUFg4RwgVc+J7SdeuJoKgTuvfPWDeUwlGPlXGa2bB7yWnsKnShZZy0zPuFkI4mdIJSPd+CVapWlQOGF8QXLaDduGoh02SaaAqpZlWg1v+yADFQE9PhZjh+FUlqFKc/tJFe58pd90sEHo4bthOZg7ZRaNbkg5rJPvFWy2sVzFZ9pA1u06f254p49gxdgsRxMWo8GoZqO5YqlEN9b7lSCOb7WZDYhvYo3UMGKvJU8muykYHHh3FahAviyLm8nOxGHRx8qiCTSIUgjjgD2oAdFs7XSBGHh2ZuD8RbWRThtsQhsDW6Tyeoh1UycBR0czCWH3uU9F0g9i/dxAJoseddeOq7r3s3tUl2PMeOM0fVgxJkotPeGZrCyJXUNnEPjInyJ34vtpiJDMh1scePRSDaEFN+ekx2h4BSUKQyI4LDTQ3pFNTg/h9HMGxQLJvPfOrwfRO+mwcj1TpiilLQQ3jRr58XYmn1R+dx3KHJ5Qux86MOPsF04EcY73NcFczfURti2lH5o9APjgOnHRm27FZYDxgx0qAInk454pw+9O8evOEaSFWvLzZwD+UiEq/qkMyZMcWNZeOS8v+NakzrJfPNp1poU3Vm1RZIFl5xKnNTjGdxgJq8Obdpwk8LU5bCWz6VtrfsJzUdzdNr8GCqU5z/KIyezO8UmAT6sCb4RY22/k8KH0wax2GC2/u5/jMKoDj1qxvhGQzLrqGEc58uMpY/x8FRdEKnaSd7Jrk9PXwteY2hbeghgl+6kjHDaQkiEPwdI/46I/LRmeWAS+DIjy5AF33FrtS5wiK7V79umWd5Ga5b+/FrnLfv3Pw==|JOSSO_USER=jasperadmin|JOSSO_PROPERTY_idpName=idp-1|JOSSO_PROPERTY_lastName=jasperadmin|JOSSO_PROPERTY_authnCtxClass=urn:oasis:names:tc:SAML:2.0:ac:classes:Password|JOSSO_PROPERTY_email=jasperadmin@atricore.com|JOSSO_PROPERTY_language=en|JOSSO_PROPERTY_oasis_wss_oauth2_token_profile_1_1#OAUTH2_0_ID=id-66e12089-ebee-4edf-93ba-53c2d698f568
+    -->
+
+    <bean id="preAuthenticatedManager" class="com.jaspersoft.jasperserver.api.security.externalAuth.wrappers.spring.JSProviderManager">
+        <property name="providers">
+            <list>
+                <!-- This bean calls upon preAuthenticatedUserDetailsService to create user details based on
+                 a token extracted from request by proxyPreAuthenticatedProcessingFilter -->
+                <bean class="com.jaspersoft.jasperserver.api.security.externalAuth.wrappers.spring.preauth.JSPreAuthenticatedAuthenticationProvider">
+                    <property name="preAuthenticatedUserDetailsService">
+                        <!-- Token format configuration example for token: u=obama|r=PRESIDENT,HUSBAND|pa1=USA,Kenya|pa2=Washington -->
+
+                        <bean class="com.jaspersoft.jasperserver.api.security.externalAuth.preauth.JSPreAuthenticatedUserDetailsService">
+                            <property name="tokenPairSeparator" value="|"/>
+                            <property name="tokenFormatMapping">
+                                <map>
+                                    <entry key="username" value="JOSSO_USER" />
+                                    <entry key="roles" value="r" />
+                                    <entry key="orgId" value="JOSSO_PROPERTY_orgId"/>
+                                    <!--entry key="expireTime" value="exp" /-->
+                                    <entry key="profile.attribs" >
+                                        <map>
+                                            <entry key="email" value="JOSSO_PROPERTY_email" />
+                                        </map>
+                                    </entry>
+                                </map>
+                            </property>
+                            <property name="tokenExpireTimestampFormat" value="yyyyMMddHHmmssZ"/>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ############ Synchronizer ############ -->
+    <bean id="externalDataSynchronizer"
+          class="com.jaspersoft.jasperserver.api.security.externalAuth.ExternalDataSynchronizerImpl">
+        <property name="externalUserProcessors">
+            <list>
+                <ref local="externalUserSetupProcessor"/>   <!-- REQUIRED processor -->
+                <ref local="externalProfileAttributeProcessor"/>  <!-- OPTIONAL processor: comment out if no profile attributes are expected -->
+                <!-- Example processor for creating user folder.
+                Other custom processors can be created and
+                added to the list.-->
+                <!--<ref local="externalUserFolderProcessor"/>-->
+            </list>
+        </property>
+    </bean>
+
+    <bean id="abstractExternalProcessor" class="com.jaspersoft.jasperserver.api.security.externalAuth.processors.AbstractExternalUserProcessor" abstract="true">
+        <property name="repositoryService" ref="${bean.repositoryService}"/>
+        <property name="userAuthorityService" ref="${bean.userAuthorityService}"/>
+        <property name="tenantService" ref="${bean.tenantService}"/>
+        <property name="profileAttributeService" ref="profileAttributeService"/>
+        <property name="objectPermissionService" ref="objectPermissionService"/>
+    </bean>
+
+    <bean id="externalUserSetupProcessor" class="com.jaspersoft.jasperserver.api.security.externalAuth.processors.ExternalUserSetupProcessor" parent="abstractExternalProcessor">
+        <property name="userAuthorityService">
+            <ref bean="${bean.internalUserAuthorityService}"/>
+        </property>
+        <property name="defaultInternalRoles">
+            <list>
+                <value>ROLE_USER</value>
+            </list>
+        </property>
+
+        <property name="organizationRoleMap">
+            <map>
+                <!-- Example of mapping customer roles to JRS roles -->
+                <entry>
+                    <key>
+                        <value>ROLE_ADMIN_EXTERNAL_ORGANIZATION</value>
+                    </key>
+                    <!-- JRS role that the <key> external role is mapped to-->
+                    <value>ROLE_ADMINISTRATOR</value>
+                </entry>
+            </map>
+        </property>
+
+        <property name="permittedRolesRegex">
+            <list>
+                <value>JRS_.*</value>
+                <value>EXT_.*</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="externalProfileAttributeProcessor" class="com.jaspersoft.jasperserver.api.security.externalAuth.processors.ExternalProfileAttributeProcessor" parent="abstractExternalProcessor">
+    </bean>
+
+    <!-- EXAMPLE Processor
+    <bean id="externalUserFolderProcessor"
+          class="com.jaspersoft.jasperserver.api.security.externalAuth.processors.ExternalUserFolderProcessor"
+          parent="abstractExternalProcessor">
+        <property name="repositoryService" ref="${bean.unsecureRepositoryService}"/>
+    </bean>
+    -->
+</beans>

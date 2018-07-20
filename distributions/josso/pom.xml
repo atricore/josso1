@@ -260,6 +260,11 @@
 
         <dependency>
             <groupId>org.josso</groupId>
+            <artifactId>josso-jasperserver-authn-v6</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.josso</groupId>
             <artifactId>josso-seraph-extension</artifactId>
             <!-- Exclude all atlassian artifacts -->
             <exclusions>

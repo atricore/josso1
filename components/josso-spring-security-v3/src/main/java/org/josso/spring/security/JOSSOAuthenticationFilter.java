@@ -26,9 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.josso.agent.http.JOSSOSecurityContext;
 import org.josso.agent.http.WebAccessControlUtil;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,15 +35,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
-import org.springframework.util.Assert;
 import org.springframework.web.filter.GenericFilterBean;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
-import java.security.Principal;
+
 
 /**
  * This is a processing filter that will inject user identity into Spring Security.
@@ -103,9 +99,9 @@ public class JOSSOAuthenticationFilter extends GenericFilterBean {
         // We have to provide Authentication information based on JOSSO auth information ...
 
         // Obtain a JOSSO security context instance, if none is found is because user has not been authenticated.
-        JOSSOSecurityContext sctx = WebAccessControlUtil.getSecurityContext((HttpServletRequest) request);
-
-        logger.debug("Current JOSSO Security Context is " + sctx );
+        String ssoSessionId = (String) request.getAttribute("org.josso.agent.ssoSessionid");
+        String requester = (String) request.getAttribute("org.josso.agent.requester");
+        logger.debug("Current JOSSO Session is " + ssoSessionId);
 
         // This is the authentication information used by ACEGI
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -119,7 +115,7 @@ public class JOSSOAuthenticationFilter extends GenericFilterBean {
             }
 
             // If there is no principal, we may need to logout this user ... TODO detect anonymous principals ?
-            if (sctx == null && authentication.isAuthenticated()) {
+            if (ssoSessionId == null && authentication.isAuthenticated()) {
 
                 // If an authenticated Authentication is present, we must issue a logout !
                 if (logger.isDebugEnabled()) {
@@ -138,7 +134,7 @@ public class JOSSOAuthenticationFilter extends GenericFilterBean {
         }
 
         // We have a principal but no Spring Security authentication, propagate identity from JOSSO to Spring Security.
-        if (sctx != null) {
+        if (ssoSessionId != null) {
 
             // If a saved request is present, we use the saved request to redirect the user to the original resource.
             SavedRequest savedRequest =
@@ -147,12 +143,18 @@ public class JOSSOAuthenticationFilter extends GenericFilterBean {
             if (savedRequest != null)
                 logger.debug("Redirecting to original resource " + savedRequest.getRedirectUrl());
 
+            if (userDetailsService instanceof JOSSOUserDetailsService) {
+                JOSSOUserDetailsService jossoUserDetailsService = (JOSSOUserDetailsService) userDetailsService;
+                if (requester != null && jossoUserDetailsService.getRequester() != requester) {
+                    logger.warn("Overriding configured requeter");
+                    jossoUserDetailsService.setRequester(requester);
+                }
+            }
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(sctx.getSSOSession());
-//            String jossoSessionId = (String) request.getAttribute("org.josso.agent.ssoSessionid");
+            UserDetails userDetails = userDetailsService.loadUserByUsername(ssoSessionId);
 
             // New authenticated autentication instance.
-            Authentication jossoAuth = new JOSSOAuthenticationToken(sctx.getSSOSession(), userDetails, userDetails.getAuthorities());
+            Authentication jossoAuth = new JOSSOAuthenticationToken(ssoSessionId, userDetails, userDetails.getAuthorities());
 
             // Store to SecurityContextHolder
             SecurityContextHolder.getContext().setAuthentication(jossoAuth);

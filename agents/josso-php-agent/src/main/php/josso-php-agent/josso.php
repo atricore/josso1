@@ -290,9 +290,9 @@ function createFrontChannelParams() {
 }
 
 function prepareNonCacheResponse() {
-    header("Cache-Control", "no-cache");
-    header("Pragma", "no-cache");
-    header("Expires", "0");
+    header("Cache-Control: no-cache");
+    header("Pragma: no-cache");
+    header("Expires: 0");
 }
 
 ?>

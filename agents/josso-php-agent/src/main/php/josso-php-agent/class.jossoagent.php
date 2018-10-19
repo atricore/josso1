@@ -30,7 +30,7 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 /**
  * Include NUSOAP soap client.
  */
-require_once('nusoap/nusoap.php');
+require_once('nusoap-legacy/nusoap.php');
 
 require_once('autologin/class.default_automatic_login_strategy.php');
 require_once('autologin/class.urlbased_automatic_login_strategy.php');

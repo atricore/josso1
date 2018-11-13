@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.josso.agent.SSOAgentRequest;
 import org.josso.agent.http.HttpSSOAgent;
 import org.josso.agent.SSOPartnerAppConfig;
+import org.josso.gateway.identity.service.SSOIdentityManagerService;
 import org.josso.servlet.agent.GenericServletSSOAgentRequest;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
@@ -34,6 +35,7 @@ import weblogic.servlet.security.ServletAuthentication;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.List;
 
 /**
  * @org.apache.xbean.XBean element="agent"
@@ -62,7 +64,8 @@ public class WLSSSOAgent extends HttpSSOAgent {
     /**
      * This method builds a login URL based on a HttpServletRequest.  The url contains all necessary parameters
      * required by the front-channel part of the SSO protocol.
-     */
+     *
+     // REMOVED, IN JOSSO 2 ,
     public String buildLoginUrl(HttpServletRequest hreq) {
         String loginUrl =  getGatewayLoginUrl();
         String onErrorUrl = getGatewayLoginErrorUrl();
@@ -76,6 +79,7 @@ public class WLSSSOAgent extends HttpSSOAgent {
 
         return loginUrl;
     }
+     */
 
     /**
      * By default we do require to authenticate all requests.
@@ -100,7 +104,7 @@ public class WLSSSOAgent extends HttpSSOAgent {
 
             if (result == ServletAuthentication.AUTHENTICATED) {
 
-                Principal p = this.getSSOIdentityManager().findUserInSession(request.getRequester(), ssoSessionId);
+                Principal p = lookupSsoIdentityManager(request.getRequester()).findUserInSession(request.getRequester(), ssoSessionId);
 
                 if (logger.isDebugEnabled())
                     logger.debug("WLS Principal is " + p.getName());
@@ -165,5 +169,24 @@ public class WLSSSOAgent extends HttpSSOAgent {
      */
     protected void log(String message, Throwable throwable) {
         logger.info(message, throwable);
+    }
+
+    protected SSOIdentityManagerService lookupSsoIdentityManager(String requester) throws Exception {
+
+        if (requester != null) {
+            List<SSOPartnerAppConfig> appCfs = getConfiguration().getSsoPartnerApps();
+            for (SSOPartnerAppConfig appCfg  : appCfs) {
+                if (appCfg.getId().equals(requester))
+                    if (appCfg.getId().equals(requester)) {
+                        if (appCfg.getIdentityManagerService() != null)
+                            return appCfg.getIdentityManagerService();
+                        break;
+                    }
+
+            }
+        }
+
+
+        return getSSOIdentityManager();
     }
 }

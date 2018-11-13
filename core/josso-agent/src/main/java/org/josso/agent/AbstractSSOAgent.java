@@ -492,7 +492,6 @@ public abstract class AbstractSSOAgent implements SSOAgent {
     protected String resolveAssertion(SSOPartnerAppConfig appConfig, String requester, String assertionId, String nodeId) {
 
         try {
-
             if (debug > 0)
                 log("Dereferencing assertion for id '" + assertionId + "'");
 

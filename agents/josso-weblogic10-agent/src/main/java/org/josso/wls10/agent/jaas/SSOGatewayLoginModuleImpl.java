@@ -23,9 +23,7 @@ package org.josso.wls10.agent.jaas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.josso.agent.AbstractSSOAgent;
-import org.josso.agent.Lookup;
-import org.josso.agent.SSOAgentRequest;
+import org.josso.agent.*;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
@@ -36,6 +34,7 @@ import javax.security.auth.callback.*;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -164,7 +163,7 @@ public class SSOGatewayLoginModuleImpl implements LoginModule {
 
             _currentSSOSessionId = ssoSessionId;
 
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOIdentityManagerService im = lookupSsoIdentityManager(_requester);
             SSOUser jossoUser = im.findUserInSession(_requester, ssoSessionId);
             WLSJOSSOUser wlsUser = new WLSJOSSOUser (jossoUser);
 
@@ -323,7 +322,7 @@ public class SSOGatewayLoginModuleImpl implements LoginModule {
     protected WLSJOSSORole[] getRoleSets() throws LoginException {
         try {
             // obtain user roles principals and add it to the subject
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOIdentityManagerService im = lookupSsoIdentityManager(_requester);
 
             SSORole [] roles = im.findRolesBySSOSessionId(_requester, _currentSSOSessionId);
             WLSJOSSORole [] wlsRoles = new WLSJOSSORole [roles.length];
@@ -341,4 +340,26 @@ public class SSOGatewayLoginModuleImpl implements LoginModule {
             throw new LoginException("Session login failed for Principal : " + _ssoUserPrincipal);
         }
 
-    }}
+    }
+
+    protected SSOIdentityManagerService lookupSsoIdentityManager(String requester) throws Exception {
+
+        SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+
+        if (requester != null) {
+            List<SSOPartnerAppConfig> appCfs = agent.getConfiguration().getSsoPartnerApps();
+            for (SSOPartnerAppConfig appCfg  : appCfs) {
+                if (appCfg.getId().equals(requester)) {
+                    if (appCfg.getIdentityManagerService() != null)
+                        return appCfg.getIdentityManagerService();
+                    break;
+                }
+
+            }
+        }
+
+        return agent.getSSOIdentityManager();
+    }
+
+
+}

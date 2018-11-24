@@ -58,6 +58,8 @@ public class Robot {
 	private String modifiedDate;
 	private String modifiedBy;
 
+	private String pattern;
+
 	/**
 	 * @return the id
 	 */
@@ -393,4 +395,5 @@ public class Robot {
 	public void setModifiedBy(String modifiedBy) {
 		this.modifiedBy = modifiedBy;
 	}
+
 }

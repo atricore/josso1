@@ -306,22 +306,30 @@ public class NtlmProtocolHandler implements ProtocolHandler, InitializingBean {
                 if (loadBalance) {
                     NtlmChallenge chal = (NtlmChallenge) ssn.getAttribute("NtlmHttpChal");
                     if (chal == null) {
+                        logger.debug("SMB:getChallengeForDomain START");
                         chal = SmbSession.getChallengeForDomain();
+                        logger.debug("SMB:getChallengeForDomain END");
                         ssn.setAttribute("NtlmHttpChal", chal);
                     }
                     dc = chal.dc;
                     challenge = chal.challenge;
                 } else {
                     dc = UniAddress.getByName(domainController, true);
+                    logger.debug("SMB:getChallenge " + dc.getHostAddress() + " START");
                     challenge = SmbSession.getChallenge(dc);
+                    logger.debug("SMB:getChallenge END");
                 }
 
                 // NTLM Authentication
+                logger.debug("NtlmSsp:authenticate START");
                 if ((ntlm = NtlmSsp.authenticate(req, resp, challenge)) == null) {
                     // Auth Failed
                     req.setAttribute(NTLM_ERROR_FLAG, "AUTHN_ERROR");
+                    logger.debug("NtlmSsp:authenticate END (ERR)");
                     return true;
                 }
+                logger.debug("NtlmSsp:authenticate END");
+
                 /* negotiation complete, remove the challenge object */
                 ssn.removeAttribute("NtlmHttpChal");
             } else {
@@ -392,7 +400,9 @@ public class NtlmProtocolHandler implements ProtocolHandler, InitializingBean {
     }
 
     private boolean authenticate(UniAddress dc, NtlmPasswordAuthentication ntlm) throws SmbException {
+        logger.debug("SMB:logon START!");
         SmbSession.logon(dc, ntlm);
+        logger.debug("SMB:logon END!");
 
         if (logger.isDebugEnabled()) {
             logger.debug("[authenticate()]" + ntlm + " successfully authenticated against " + dc);

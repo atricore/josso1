@@ -53,7 +53,7 @@
 
     <bean name="gatewayServiceLocator" class="org.josso.gateway.jaxws.JAXWSWebserviceGatewayServiceLocator">
         <description>If your server does not have internet access, use the following expression (replace [path-to-lib]
-            jar:file:/[path-to-lib]/josso-agents-bin-1.8.13-SNAPSHOT-jaxws.jar!/org/josso/gateway/ws/_1_2/wsdl/josso-1.2.wsdl</description>
+            jar:file:/[path-to-lib]/josso-agents-bin-1.8.14-SNAPSHOT-jaxws.jar!/org/josso/gateway/ws/_1_2/wsdl/josso-1.2.wsdl</description>
         <property name="wsdlLocation">
             <value>http://www.josso.org/wsdl/josso-1.2/josso-1.2.wsdl</value>
         </property>

@@ -57,7 +57,6 @@ class JOSSOAssertionConsumerService
             $_COOKIE['JOSSO_SESSIONID'] = $ssoSessionId;
         }
 
-        error_log('Original: ' . $_SESSION['JOSSO_ORIGINAL_URL']);
         if (isset($_SESSION['JOSSO_ORIGINAL_URL'])) {
 
             $backToUrl = $_SESSION['JOSSO_ORIGINAL_URL'];

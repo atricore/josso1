@@ -276,7 +276,16 @@
                 <include>${pom.groupId}:josso-php-agent:zip</include>
             </includes>
         </dependencySet>
-        
+
+        <dependencySet>
+            <outputDirectory>/dist/agents/src</outputDirectory>
+            <unpack>false</unpack>
+            <includes>
+                <include>${pom.groupId}:josso-laravel-agent:zip</include>
+            </includes>
+        </dependencySet>
+
+
         <dependencySet>
             <outputDirectory>/dist/agents/src</outputDirectory>
             <unpack>false</unpack>

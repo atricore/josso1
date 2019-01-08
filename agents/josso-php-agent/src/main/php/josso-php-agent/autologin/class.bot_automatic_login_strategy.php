@@ -55,7 +55,7 @@ class bot_automatic_login_strategy extends abstract_automatic_login_strategy {
 	* 
 	* @access public
 	*/
-	function bot_automatic_login_strategy() {
+	function __construct() {
 	}
 
 	/**

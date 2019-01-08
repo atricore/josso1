@@ -65,6 +65,7 @@
                 <module>josso-weblogic10-agent</module>
                 <module>josso-weblogic12-agent</module>
                 <module>josso-php-agent</module>
+                <module>josso-laravel-agent</module>
                 <module>josso-phpBB-agent</module>
                 <module>josso-microsoft-agent</module>
                 <module>josso-apache22-agent</module>
@@ -100,6 +101,7 @@
                 <module>josso-jbportal27-agent</module>
                 <module>josso-geronimo2-agent</module>
                 <module>josso-php-agent</module>
+                <module>josso-laravel-agent</module>
                 <module>josso-phpBB-agent</module>
                 <module>josso-microsoft-agent</module>
                 <module>josso-apache22-agent</module>
@@ -147,6 +149,7 @@
             <id>php</id>
             <modules>
                 <module>josso-php-agent</module>
+                <module>josso-laravel-agent</module>
             </modules>
         </profile>
 

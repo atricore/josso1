@@ -47,7 +47,7 @@ class urlbased_automatic_login_strategy extends abstract_automatic_login_strateg
 	* 
 	* @access public
 	*/
-	function urlbased_automatic_login_strategy() {
+	function __construct() {
 	}
 
 	/**

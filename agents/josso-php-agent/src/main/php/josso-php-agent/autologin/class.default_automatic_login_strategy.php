@@ -37,7 +37,7 @@ class default_automatic_login_strategy extends abstract_automatic_login_strategy
 	*
 	* @access public
 	*/
-	function default_automatic_login_strategy() {
+	function __construct() {
 	}
 
 	/**

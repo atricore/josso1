@@ -225,9 +225,9 @@ class jossoagent  {
      * @return jossoagent a new Josso PHP Agent instance.
      */
     public static function init($josso_gatewayLoginUrl, $josso_gatewayLogoutUrl, $josso_endpoint, $josso_wsdl_url, $josso_proxyhost,
-               $josso_proxyport, $josso_proxyusername, $josso_proxypassword, $josso_agentBasecode, $josso_p3pHeaderValue,
-               $josso_sessionManagerServicePath, $josso_identityManagerServicePath, $josso_identityProviderServicePath,
-               $josso_automaticLoginStrategies, $josso_partner_app_ids, $josso_partnerapp_vhosts, $josso_sessionAccessMinInterval,
+                                $josso_proxyport, $josso_proxyusername, $josso_proxypassword, $josso_agentBasecode, $josso_p3pHeaderValue,
+                                $josso_sessionManagerServicePath, $josso_identityManagerServicePath, $josso_identityProviderServicePath,
+                                $josso_automaticLoginStrategies, $josso_partner_app_ids, $josso_partnerapp_vhosts, $josso_sessionAccessMinInterval,
                                 $forceUnsecureSSOCookie, $josso_ignoredResources, $josso_defaultResource) {
 
         if (!isset(self::$agent))
@@ -275,10 +275,10 @@ class jossoagent  {
      * @param    string $josso_proxypassword
      */
     function __construct($josso_gatewayLoginUrl, $josso_gatewayLogoutUrl, $josso_endpoint,$josso_wsdl_url,
-                        $josso_proxyhost, $josso_proxyport, $josso_proxyusername, $josso_proxypassword, $josso_agentBasecode, $josso_p3pHeaderValue,
-                        $josso_sessionManagerServicePath, $josso_identityManagerServicePath, $josso_identityProviderServicePath,
-                        $josso_automaticLoginStrategies, $josso_partner_app_ids, $josso_partnerapp_vhosts, $josso_sessionAccessMinInterval,
-                        $forceUnsecureSSOCookie, $josso_ignoredResources, $josso_defaultResource) {
+                         $josso_proxyhost, $josso_proxyport, $josso_proxyusername, $josso_proxypassword, $josso_agentBasecode, $josso_p3pHeaderValue,
+                         $josso_sessionManagerServicePath, $josso_identityManagerServicePath, $josso_identityProviderServicePath,
+                         $josso_automaticLoginStrategies, $josso_partner_app_ids, $josso_partnerapp_vhosts, $josso_sessionAccessMinInterval,
+                         $forceUnsecureSSOCookie, $josso_ignoredResources, $josso_defaultResource) {
 
         // WS Config
         $this->endpoint = $josso_endpoint;
@@ -788,6 +788,20 @@ class jossoagent  {
 
     }
 
+    function resolveWsdlObj() {
+
+        if (substr( $this->wsdlUrl, 0, 4 ) === "http")
+            return $this->wsdlUrl;
+
+        if (substr($this->wsdlUrl, 0, 1) === "/") {
+            $wsdl_location = realpath($this->wsdlUrl);
+            return new wsdl($wsdl_location);
+        }
+
+        $wsdl_location = realpath(__DIR__ . DIRECTORY_SEPARATOR . $this->wsdlUrl);
+        return new wsdl($wsdl_location);
+    }
+
     /**
      * Gets the soap client to access identity service.
      *
@@ -797,7 +811,10 @@ class jossoagent  {
         // Lazy load the propper soap client
         if (!isset($this->identityMgrClient)) {
             if (isset($this->wsdlUrl)) {
-                $this->identityMgrClient = new nusoap_client($this->wsdlUrl , true,
+
+                $wsdl_obj = $this->resolveWsdlObj();
+
+                $this->identityMgrClient = new nusoap_client($wsdl_obj , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
 
                 if (isset($this->endpoint) && isset($this->identityManagerServicePath)) {
@@ -832,7 +849,10 @@ class jossoagent  {
         // Lazy load the propper soap client
         if (!isset($this->identityProviderClient)) {
             if (isset($this->wsdlUrl)) {
-                $this->identityProviderClient = new nusoap_client($this->wsdlUrl , true,
+
+                $wsdl_obj = $this->resolveWsdlObj();
+
+                $this->identityProviderClient = new nusoap_client($wsdl_obj , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
 
                 if (isset($this->endpoint) && isset($this->identityProviderServicePath)) {
@@ -859,7 +879,6 @@ class jossoagent  {
         return $this->identityProviderClient;
     }
 
-
     /**
      * Gets the soap client to access session service.
      *
@@ -870,7 +889,10 @@ class jossoagent  {
         if (!isset($this->sessionMgrClient)) {
             // SSOSessionManager SOAP Client
             if (isset($this->wsdlUrl)) {
-                $this->sessionMgrClient = new nusoap_client($this->wsdlUrl , true,
+
+                $wsdl_obj = $this->resolveWsdlObj();
+
+                $this->sessionMgrClient = new nusoap_client($wsdl_obj , true,
                     $this->proxyhost, $this->proxyport, $this->proxyusername, $this->proxypassword);
 
                 if (isset($this->endpoint) && isset($this->sessionManagerServicePath)) {
@@ -971,7 +993,7 @@ class jossoagent  {
         if (!isset($requester)) {
             $requester = $partnerAppIDs['/'];
             if (isset($requester));
-                $contextPath = '/';
+            $contextPath = '/';
         }
 
         if (!isset($contextPath) || $contextPath == "") {
@@ -1054,7 +1076,7 @@ class jossoagent  {
     }
 
     public function getIdentityProviderDebugStr() {
-        return $this->getIdentityProviderSoapClient()->debug_str;
+        return $this->getIdentityProvdierSoapClient()->debug_str;
     }
 
     public function getSessionMgrDebugStr() {

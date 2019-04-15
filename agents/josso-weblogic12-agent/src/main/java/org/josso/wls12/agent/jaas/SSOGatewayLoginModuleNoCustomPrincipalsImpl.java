@@ -23,9 +23,7 @@ package org.josso.wls12.agent.jaas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.josso.agent.AbstractSSOAgent;
-import org.josso.agent.Lookup;
-import org.josso.agent.SSOAgentRequest;
+import org.josso.agent.*;
 import org.josso.gateway.identity.SSORole;
 import org.josso.gateway.identity.SSOUser;
 import org.josso.gateway.identity.exceptions.SSOIdentityException;
@@ -36,6 +34,7 @@ import javax.security.auth.callback.*;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import java.util.List;
 import java.util.Map;
 import weblogic.security.principal.WLSUserImpl;
 import weblogic.security.principal.WLSGroupImpl;
@@ -159,7 +158,7 @@ public class SSOGatewayLoginModuleNoCustomPrincipalsImpl implements LoginModule 
 
             _currentSSOSessionId = ssoSessionId;
 
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOIdentityManagerService im = lookupSsoIdentityManager(_requester);
             SSOUser jossoUser = im.findUserInSession(_requester, ssoSessionId);
             WLSUser wlsUser = new WLSUserImpl (jossoUser.getName());
 
@@ -319,7 +318,7 @@ public class SSOGatewayLoginModuleNoCustomPrincipalsImpl implements LoginModule 
     protected WLSGroup[] getRoleSets() throws LoginException {
         try {
             // obtain user roles principals and add it to the subject
-            SSOIdentityManagerService im = Lookup.getInstance().lookupSSOAgent().getSSOIdentityManager();
+            SSOIdentityManagerService im = lookupSsoIdentityManager(_requester);
 
             SSORole [] roles = im.findRolesBySSOSessionId(_requester, _currentSSOSessionId);
             WLSGroup [] wlsRoles = new WLSGroupImpl [roles.length];
@@ -337,4 +336,24 @@ public class SSOGatewayLoginModuleNoCustomPrincipalsImpl implements LoginModule 
             throw new LoginException("Session login failed for Principal : " + _ssoUserPrincipal);
         }
 
-    }}
+    }
+
+    protected SSOIdentityManagerService lookupSsoIdentityManager(String requester) throws Exception {
+
+        SSOAgent agent = Lookup.getInstance().lookupSSOAgent();
+
+        if (requester != null) {
+            List<SSOPartnerAppConfig> appCfs = agent.getConfiguration().getSsoPartnerApps();
+            for (SSOPartnerAppConfig appCfg  : appCfs) {
+                if (appCfg.getId().equals(requester)) {
+                    if (appCfg.getIdentityManagerService() != null)
+                        return appCfg.getIdentityManagerService();
+                    break;
+                }
+            }
+        }
+
+        return agent.getSSOIdentityManager();
+    }
+
+}

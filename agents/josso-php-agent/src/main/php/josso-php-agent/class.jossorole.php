@@ -42,7 +42,7 @@ class jossorole {
 	 *
 	 * @access public
 	 */
-	function jossorole($n) {
+	function __construct($n) {
 		$this->name = $n;
 	}
 	

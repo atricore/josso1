@@ -43,7 +43,7 @@ abstract class abstract_automatic_login_strategy {
 	* 
 	* @access public
 	*/
-	function abstract_automatic_login_strategy() {
+	function __construct() {
 	}
 
 	/**

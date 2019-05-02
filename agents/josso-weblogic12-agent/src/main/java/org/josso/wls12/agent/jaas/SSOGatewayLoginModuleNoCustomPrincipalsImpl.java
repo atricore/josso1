@@ -52,7 +52,7 @@ import weblogic.security.spi.WLSGroup;
  */
 public class SSOGatewayLoginModuleNoCustomPrincipalsImpl implements LoginModule {
 
-    private static final Log logger = LogFactory.getLog(org.josso.wls12.agent.jaas.SSOGatewayLoginModuleImpl.class);
+    private static final Log logger = LogFactory.getLog(SSOGatewayLoginModuleNoCustomPrincipalsImpl.class);
 
     // initial state
     private Subject _subject;

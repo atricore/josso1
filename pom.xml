@@ -1242,6 +1242,13 @@
 
             <dependency>
                 <groupId>org.josso</groupId>
+                <artifactId>josso-laravel-agent</artifactId>
+                <version>${pom.version}</version>
+                <type>zip</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.josso</groupId>
                 <artifactId>josso-phpBB-agent</artifactId>
                 <version>${pom.version}</version>
                 <type>zip</type>

@@ -49,7 +49,7 @@ class jossouser {
 	*
 	* @access public
 	*/
-	function jossouser($n, $p) {
+	function __construct($n, $p) {
 		$this->name = $n;
 		$this->properties = $p;
 	}

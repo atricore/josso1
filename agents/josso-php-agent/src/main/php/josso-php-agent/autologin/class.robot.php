@@ -179,7 +179,7 @@ class robot {
 	* 
 	* @access public
 	*/
-	function robot() {
+	function __construct() {
 	}
 	
 	/**

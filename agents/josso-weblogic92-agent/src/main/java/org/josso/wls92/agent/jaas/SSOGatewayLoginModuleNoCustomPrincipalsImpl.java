@@ -131,8 +131,12 @@ public class SSOGatewayLoginModuleNoCustomPrincipalsImpl implements LoginModule 
             SSOAgentRequest request = AbstractSSOAgent._currentRequest.get();
             if (request != null)
                 _requester = request.getRequester();
-            else
-                logger.warn("No SSO Agent request found in thread local variable, can't identify requester");
+            else {
+                // This means that this is not targeted to the agent!
+                logger.debug("No SSO Agent request found in thread local variable, assuming non SSO login");
+                _succeeded = false;
+                return false;
+            }
 
         } catch (java.io.IOException ioe) {
             throw new LoginException(ioe.toString());

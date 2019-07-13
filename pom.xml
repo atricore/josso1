@@ -69,7 +69,7 @@
         <blueprint.core.version>1.4.3</blueprint.core.version>
         <blueprint.parser.version>1.3.1</blueprint.parser.version>
 
-        <update>001</update>
+        <update>026</update>
     </properties>
 
     <profiles>

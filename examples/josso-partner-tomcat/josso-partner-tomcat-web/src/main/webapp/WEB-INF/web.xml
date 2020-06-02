@@ -81,6 +81,7 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
             <web-resource-name>public-resources</web-resource-name>
 
             <url-pattern>/resources/*</url-pattern>
+            <url-pattern>/state/*</url-pattern>
             <url-pattern>/partner-login.jsp</url-pattern>
 
             <http-method>HEAD</http-method>

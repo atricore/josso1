@@ -459,6 +459,7 @@
                             </artifact-alias>
                         </plugin-artifact>
                     </commonInstance>
+
                     <instance>
                         <plugin-artifact>
                             <copy-file relative-to="server" dest-dir="var/catalina">tomcat-base/</copy-file>

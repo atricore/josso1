@@ -167,6 +167,6 @@
 
 
 </div>
-
+<iframe src="<%=request.getContextPath()%>/state/sso-state-iframe.jsp" style="display: none;">RP CheckSession iFrame</iframe>
 </body>
 </html>

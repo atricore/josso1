@@ -25,10 +25,10 @@ package org.josso.agent.http;
 /**
  * Represents one bot.
  * Used for Bot automatic login strategy.
- * 
- * TODO: Some values can consist of multiple 
+ *
+ * TODO: Some values can consist of multiple
  * values separated by a comma or space.
- * We should support this better and 
+ * We should support this better and
  * change some types to List<String>?
  */
 public class Robot {
@@ -396,4 +396,11 @@ public class Robot {
 		this.modifiedBy = modifiedBy;
 	}
 
+    public String getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
 }

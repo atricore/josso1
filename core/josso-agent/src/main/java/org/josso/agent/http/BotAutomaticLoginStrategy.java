@@ -27,7 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  * This will not require an automatic login when a bot is crawling the site.
  *
  * @org.apache.xbean.XBean element="bot-automaticlogin-strategy"
- * 
+ *
  * @author <a href="mailto:sgonzaelz@atricore.org">Sebastian Gonzalez Oyuela</a>
  * @version $Id$
  */
@@ -48,9 +52,11 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
 	private static final Log log = LogFactory.getLog(BotAutomaticLoginStrategy.class);
 
 	private String file = "/bots.properties";
-	
+
 	private Map<String, Robot> bots;
-	
+
+	private Set<Pattern> patterns;
+
     public BotAutomaticLoginStrategy() {
         super();
     }
@@ -58,7 +64,7 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
     public BotAutomaticLoginStrategy(String mode) {
         super(mode);
     }
-    
+
     /**
      * Components must evaluate if automatic login is required for the received request.
      *
@@ -74,14 +80,21 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
     		log.debug("Autologin not required for bot: " + userAgent);
     		return false;
     	}
+    	for (Pattern pattern : patterns) {
+    	    Matcher m = pattern.matcher(userAgent.trim());
+    	    if (m.matches()) {
+    	        return false;
+            }
+        }
     	return true;
     }
-    
+
     /**
      * Loads bots from the file.
      */
     private void loadRobots() {
     	bots = new HashMap<String, Robot>();
+    	patterns = new HashSet<Pattern>();
         InputStream is = null;
         try {
             is = this.getClass().getResourceAsStream(file);
@@ -89,7 +102,7 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
                 throw new IOException("Cannot find resource: " + file + ". Make sure this file is installed with JOSSO Agent!");
 
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            
+
             String line = null;
             Robot robot = new Robot();
             String name = null;
@@ -106,12 +119,17 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
             		}
             	} else {
             		bots.put(robot.getUserAgent(), robot);
+            		if (robot.getPattern() != null) {
+                        Pattern p = Pattern.compile(robot.getPattern());
+                        patterns.add(p);
+                    }
+
             		robot = new Robot();
             		name = null;
             		value = null;
             	}
             }
-            
+
             log.info("Loaded bots file: " + file);
         } catch (IOException e) {
             log.error("Cannot load bot properties from " + file + " : " + e.getMessage(), e);
@@ -120,10 +138,10 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
             if (is != null) try { is.close(); } catch (IOException e) { /**/}
         }
     }
-    
+
     /**
      * Sets robot property value.
-     * 
+     *
      * @param robot robot
      * @param name property name
      * @param value property value
@@ -133,9 +151,9 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
     	if (robot == null || name == null || value == null) {
     		return;
     	}
-    	
+
     	value = value.trim();
-    	
+
     	if (name.startsWith("robot-id")) {
     		robot.setId(value);
 		} else if (name.startsWith("robot-name")) {
@@ -172,7 +190,9 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
 			robot.setFrom(value);
 		} else if (name.startsWith("robot-useragent")) {
 			robot.setUserAgent(value);
-		} else if (name.startsWith("robot-language")) {
+		} else if (name.startsWith("robot-pattern-useragent")) {
+            robot.setPattern(value);
+        } else if (name.startsWith("robot-language")) {
 			robot.setLanguage(value);
 		} else if (name.startsWith("robot-description")) {
 			if (append && robot.getDescription() != null) {
@@ -194,7 +214,7 @@ public class BotAutomaticLoginStrategy extends AbstractAutomaticLoginStrategy {
 			robot.setModifiedBy(value);
 		}
     }
-    
+
 	/**
 	 * @return the file
 	 */

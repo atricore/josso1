@@ -1303,11 +1303,11 @@
                 <version>${pom.version}</version>
             </dependency>
 
-            <dependency>
+            <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-applet-agent</artifactId>
                 <version>${pom.version}</version>
-            </dependency>
+            </dependency-->
 
             <dependency>
                 <groupId>org.josso</groupId>

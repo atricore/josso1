@@ -994,7 +994,18 @@ public class SSOAgentValve extends ValveBase
     protected boolean isResourceIgnored(SSOPartnerAppConfig cfg, Request request) {
         // There are some web-resources to ignore.
         String[] ignoredWebResources = cfg.getIgnoredWebRources();
+        String[] ignoredHttpMethods = cfg.getIgnoredHttpMethods();
 
+        log("Found [" +  (ignoredHttpMethods!= null ? ignoredHttpMethods.length+"" : "no") + "] ignored http methods ");
+
+        if (ignoredHttpMethods != null && ignoredHttpMethods.length > 0) {
+            String httpMethod = request.getMethod();
+
+            for (String ignoredHttpMethod : ignoredHttpMethods) {
+                if (httpMethod.equalsIgnoreCase(ignoredHttpMethod))
+                    return true;
+            }
+        }
 
         log("Found [" + (ignoredWebResources != null ? ignoredWebResources.length + "" : "no") + "] ignored web resources ");
 

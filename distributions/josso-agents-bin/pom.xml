@@ -123,10 +123,10 @@
             <artifactId>josso-jboss5-agent</artifactId>
         </dependency>
 
-        <dependency>
+        <!--dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-applet-agent</artifactId>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.josso</groupId>

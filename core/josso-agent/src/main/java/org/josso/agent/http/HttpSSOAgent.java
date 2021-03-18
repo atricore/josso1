@@ -680,6 +680,19 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
     public boolean isResourceIgnored(SSOPartnerAppConfig cfg, HttpServletRequest request) {
         // There are some url-patterns to ignore
         String[] ignoredUrlPatterns = cfg.getIgnoredUrlPatterns();
+        String[] ignoredHttpMethods = cfg.getIgnoredHttpMethods();
+
+        if (debug >= 1)
+            log("Found [" +  (ignoredHttpMethods!= null ? ignoredHttpMethods.length+"" : "no") + "] ignored http methods ");
+
+        if (ignoredHttpMethods != null && ignoredHttpMethods.length > 0) {
+            String httpMethod = request.getMethod();
+
+            for (String ignoredHttpMethod : ignoredHttpMethods) {
+                if (httpMethod.equalsIgnoreCase(ignoredHttpMethod))
+                    return true;
+            }
+        }
 
         if (debug >= 1)
             log("Found [" +  (ignoredUrlPatterns!= null ? ignoredUrlPatterns.length+"" : "no") + "] ignored url patterns ");

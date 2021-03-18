@@ -46,6 +46,7 @@ public class SSOPartnerAppConfig implements Serializable {
     private String _vhost;
     private String[] _ignoredWebResources;
     private String[] _ignoredUrlPatterns;
+    private String[] _ignoredHttpMethods;
 
     private String _gatewayLoginUrl;
     private String _gatewayLogoutUrl;
@@ -77,7 +78,8 @@ public class SSOPartnerAppConfig implements Serializable {
      * @param context
      */
     public SSOPartnerAppConfig(String id, String vhost, String context, String[] ignoredWebResources,
-    						   String[] ignoredUrlPatterns, 
+    						   String[] ignoredUrlPatterns,
+    						   String[] ignoredHttpMethods,
     						   SecurityContextPropagationConfig securityContextPropagationConfig) {
         this();
         _id = id;
@@ -85,6 +87,7 @@ public class SSOPartnerAppConfig implements Serializable {
         _context = context;
         _ignoredWebResources = ignoredWebResources;
         _ignoredUrlPatterns = ignoredUrlPatterns;
+        _ignoredHttpMethods = ignoredHttpMethods;
         _securityContextPropagationConfig = securityContextPropagationConfig;
     }
 
@@ -96,8 +99,8 @@ public class SSOPartnerAppConfig implements Serializable {
      * @param context
      * @deprecated use constructor receiving id
      */
-    public SSOPartnerAppConfig(String context, String[] ignoredWebResources, String[] ignoredUrlPatterns) {
-        this(context, null, context, ignoredWebResources, ignoredUrlPatterns, null);
+    public SSOPartnerAppConfig(String context, String[] ignoredWebResources, String[] ignoredUrlPatterns, String[] ignoredHttpMethods) {
+        this(context, null, context, ignoredWebResources, ignoredUrlPatterns, ignoredHttpMethods, null);
     }
 
     /**
@@ -154,7 +157,11 @@ public class SSOPartnerAppConfig implements Serializable {
     public void setIgnoredUrlPatterns(String[] _ignoredUrlPatterns) {
         this._ignoredUrlPatterns = _ignoredUrlPatterns;
     }
-    
+
+    public void setIgnoredHttpMethods(String[] ignoredHttpMethods) {
+        this._ignoredHttpMethods = ignoredHttpMethods;
+    }
+
     public void setSecurityContextPropagationConfig(SecurityContextPropagationConfig _securityContextPropagationConfig) {
         this._securityContextPropagationConfig = _securityContextPropagationConfig;
     }
@@ -204,6 +211,10 @@ public class SSOPartnerAppConfig implements Serializable {
      */
     public String[] getIgnoredUrlPatterns() {
         return _ignoredUrlPatterns;
+    }
+
+    public String[] getIgnoredHttpMethods() {
+        return _ignoredHttpMethods;
     }
 
     public String getGatewayLoginUrl() {
@@ -312,14 +323,20 @@ public class SSOPartnerAppConfig implements Serializable {
     public String toString() {
         String r = "";
         String r2 = "";
+        String r3 = "";
         for (int i = 0; i < _ignoredWebResources.length; i++) {
             r += _ignoredWebResources[i] + ",";
         }
         for (int i = 0; i < _ignoredUrlPatterns.length; i++) {
             r2 += _ignoredUrlPatterns[i] + ",";
         }
-        return _id + ":" + (_vhost != null ? _vhost : "") + _context + (_ignoredWebResources.length > 0 ? " [" + r + "]" : "") +
-        		(_ignoredUrlPatterns.length > 0 ? " [" + r2 + "]" : "") + 
+        for (int i = 0; i < _ignoredHttpMethods.length; i++) {
+            r3 += _ignoredHttpMethods[i] + ",";
+        }
+        return _id + ":" + (_vhost != null ? _vhost : "") + _context +
+                (_ignoredWebResources.length > 0 ? " [" + r + "]" : "") +
+        		(_ignoredUrlPatterns.length > 0 ? " [" + r2 + "]" : "") +
+                (_ignoredHttpMethods.length > 0 ? " [" + r3 + "]" : "") +
                 (_securityContextPropagationConfig != null ? " [" + _securityContextPropagationConfig + "]" : ""
                 );
     }

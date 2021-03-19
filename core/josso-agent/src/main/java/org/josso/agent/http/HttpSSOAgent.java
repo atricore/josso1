@@ -67,6 +67,10 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
 
     private String _ssoCookiePath;
 
+    private boolean _ssoCookieHttpOnly = true;
+
+    private String _ssoCookieSameSite;
+
     private List<FrontChannelParametersBuilder> _builders = new ArrayList<FrontChannelParametersBuilder>();
 
     private List<AutomaticLoginStrategy> _automaticStrategies = new ArrayList<AutomaticLoginStrategy>();
@@ -485,8 +489,14 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
      *
      * @param path  the path associated with the cookie, normaly the partner application context.
      * @param value the SSO Session ID
-     * @return
+     *
+     * @return cookie object
+     *
+     * @deprecated  does not support HttpOnly and SameSite
+     *
+     * @see #newJossoCookieHeader(String, String, boolean)
      */
+    @Deprecated
     public Cookie newJossoCookie(String path, String value, boolean secure) {
 
         // Some browsers don't like cookies without paths. This is useful for partner applications configured in the root context
@@ -506,6 +516,30 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
 
 
         return ssoCookie;
+    }
+
+    /**
+     * This creates a new JOSSO Cookie for the given path and value.
+     *
+     * @param path  the path associated with the cookie, normaly the partner application context.
+     * @param value the SSO Session ID
+     *
+     * @return cookie object
+     */
+    public String newJossoCookieHeader(String path, String value, boolean secure) {
+        if (path == null || "".equals(path))
+            path = "/";
+
+        if (_ssoCookiePath != null && !"".equals(_ssoCookiePath))
+            path = _ssoCookiePath;
+
+        return org.josso.gateway.Constants.JOSSO_SINGLE_SIGN_ON_COOKIE + "=" + value + ";" +
+                (secure ? " Secure;": "") +
+                (_ssoCookieHttpOnly ? "HttpOnly;" : "") +
+                (_ssoCookieSameSite != null ? "SameSite="+_ssoCookieSameSite +";" : "") +
+                "Expires=-1;" +
+                "Path=" + path + ";"
+                ;
     }
     
     @SuppressWarnings("unchecked")
@@ -822,6 +856,26 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
 
     public void setSsoCookiePath(String ssoCookiePath) {
         this._ssoCookiePath = ssoCookiePath;
+    }
+
+    public boolean isSsoCookieHttpOnly() {
+        return _ssoCookieHttpOnly;
+    }
+
+    public boolean getSsoCookieHttpOnly() {
+        return _ssoCookieHttpOnly;
+    }
+
+    public void setSsoCookieHttpOnly(boolean _ssoCookieHttpOnly) {
+        this._ssoCookieHttpOnly = _ssoCookieHttpOnly;
+    }
+
+    public String getSsoCookieSameSite() {
+        return _ssoCookieSameSite;
+    }
+
+    public void setSsoCookieSameSite(String _ssoCookieSameSite) {
+        this._ssoCookieSameSite = _ssoCookieSameSite;
     }
 
     public String getJossoLoginUri() {

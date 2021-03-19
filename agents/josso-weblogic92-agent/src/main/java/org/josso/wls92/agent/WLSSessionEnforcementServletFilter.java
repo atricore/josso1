@@ -152,8 +152,8 @@ public class WLSSessionEnforcementServletFilter implements Filter {
                 String requestedResourceUrl;
 
                 // Clear previous COOKIE ...
-                Cookie ssoCookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
-                hres.addCookie(ssoCookie);
+                String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), "-", hreq.isSecure());
+                hres.addHeader("Set-Cookie", ssoCookie);
                 session.invalidate();
                 requestedResourceUrl = _agent.buildBackToURL(hreq, "");
                 hres.sendRedirect(hres.encodeRedirectURL(requestedResourceUrl));

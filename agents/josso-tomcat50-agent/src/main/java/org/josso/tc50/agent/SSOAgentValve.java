@@ -392,8 +392,8 @@ public class SSOAgentValve extends ValveBase
                     log("Redirecting to logout url '" + logoutUrl + "'");
 
                 // Clear previous COOKIE ...
-                Cookie ssoCookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
-                hres.addCookie(ssoCookie);
+                String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), "-", hreq.isSecure());
+                hres.addHeader("Set-Cookie", ssoCookie);
 
                 //set non cache headers
                 _agent.prepareNonCacheResponse(hres);
@@ -602,8 +602,8 @@ public class SSOAgentValve extends ValveBase
 
                 // The cookie is valid to for the partner application only ... in the future each partner app may
                 // store a different auth. token (SSO SESSION) value
-                cookie = _agent.newJossoCookie(hreq.getContextPath(), entry.ssoId, hreq.isSecure());
-                hres.addCookie(cookie);
+                String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), entry.ssoId, hreq.isSecure());
+                hres.addHeader("Set-Cookie", ssoCookie);
 
                 //Redirect user to the saved splash resource (in case of auth request) or to request URI otherwise
                 String requestURI = getSavedSplashResource(hreq);
@@ -692,8 +692,8 @@ public class SSOAgentValve extends ValveBase
 
                 if (cookie != null) {
                 	// cookie is not valid
-                	cookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
-                	hres.addCookie(cookie);
+                	String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), "-", hreq.isSecure());
+                    hres.addHeader("Set-Cookie", ssoCookie);
                 }
                 
                 if (cookie != null || (getSavedRequestURL(hreq, session) == null && _agent.isAutomaticLoginRequired(hreq, hres))) {

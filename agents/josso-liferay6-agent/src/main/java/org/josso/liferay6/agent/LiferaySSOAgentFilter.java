@@ -217,8 +217,8 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
                     log.debug("Redirecting to logout url '" + logoutUrl + "'");
 
                 // Clear previous COOKIE ...
-                Cookie ssoCookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
-                hres.addCookie(ssoCookie);
+                String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), "-", hreq.isSecure());
+                hres.addHeader("Set-Cookie", ssoCookie);
 
                 // invalidate session (unbind josso security context)
                 session.invalidate();
@@ -394,8 +394,8 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
 
                 // The cookie is valid to for the partner application only ... in the future each partner app may
                 // store a different auth. token (SSO SESSION) value
-                cookie = _agent.newJossoCookie(hreq.getContextPath(), entry.ssoId, hreq.isSecure());
-                hres.addCookie(cookie);
+                String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), entry.ssoId, hreq.isSecure());
+                hres.addHeader("Set-Cookie", ssoCookie);
 
                 // Redirect the user to the original request URI (which will cause
                 // the original request to be restored)
@@ -483,8 +483,8 @@ public class LiferaySSOAgentFilter extends BasePortalFilter {
 
                 if (cookie != null) {
                     // cookie is not valid
-                    cookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
-                    hres.addCookie(cookie);
+                    String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), "-", hreq.isSecure());
+                    hres.addHeader("Set-Cookie", ssoCookie);
                 }
 
                 if (cookie != null || (getSavedRequestURL(hreq) == null && _agent.isAutomaticLoginRequired(hreq, hres))) {

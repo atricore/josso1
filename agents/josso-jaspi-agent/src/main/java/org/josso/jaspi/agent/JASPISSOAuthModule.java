@@ -218,8 +218,8 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	            }
 
 	            // Clear previous COOKIE ...
-	            Cookie ssoCookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
-	            hres.addCookie(ssoCookie);
+	            String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), "-", hreq.isSecure());
+				hres.addHeader("Set-Cookie", ssoCookie);
 	            
 	            // invalidate session (unbind josso security context)
                 session.invalidate();
@@ -461,8 +461,8 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 
 	            // The cookie is valid to for the partner application only ... in the future each partner app may
 	            // store a different auth. token (SSO SESSION) value
-	            cookie = _agent.newJossoCookie(hreq.getContextPath(), entry.ssoId, hreq.isSecure());
-	            hres.addCookie(cookie);
+	            String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), entry.ssoId, hreq.isSecure());
+				hres.addHeader("Set-Cookie", ssoCookie);
 
 	            //Redirect user to the saved splash resource (in case of auth request) or to request URI otherwise
 	            String requestURI = getSavedSplashResource(hreq);
@@ -559,8 +559,8 @@ public class JASPISSOAuthModule extends JOSSOServerAuthModule {
 	            
 	            if (cookie != null) {
 	            	// cookie is not valid
-	            	cookie = _agent.newJossoCookie(hreq.getContextPath(), "-", hreq.isSecure());
-	            	hres.addCookie(cookie);
+	            	String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), "-", hreq.isSecure());
+					hres.addHeader("Set-Cookie", ssoCookie);
 	            }
 	            
 	            if (cookie != null || (getSavedRequestURL(hreq) == null && _agent.isAutomaticLoginRequired(hreq, hres))) {

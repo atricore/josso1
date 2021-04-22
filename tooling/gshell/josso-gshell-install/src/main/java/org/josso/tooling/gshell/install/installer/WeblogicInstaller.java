@@ -70,6 +70,8 @@ public class WeblogicInstaller extends VFSInstaller {
             this.wlVersionStr = "10";
         else if (getTargetPlatform().getVersion().startsWith("12"))
             this.wlVersionStr = "12";
+        else if (getTargetPlatform().getVersion().startsWith("14"))
+            this.wlVersionStr = "14";
         else
             throw new InstallException("Unsupported Weblogic version " + getTargetPlatform().getVersion());
 
@@ -227,6 +229,10 @@ public class WeblogicInstaller extends VFSInstaller {
 
             } else if (artifact.getBaseName().startsWith("josso-weblogic12-agent") &&
                     getTargetPlatform().getVersion().startsWith("12.")) {
+                installFile(srcFile, this.targetJOSSOLibDir, replace);
+
+            } else if (artifact.getBaseName().startsWith("josso-weblogic14-agent") &&
+                    getTargetPlatform().getVersion().startsWith("14.")) {
                 installFile(srcFile, this.targetJOSSOLibDir, replace);
 
             } else if (artifact.getBaseName().startsWith("josso-servlet-agent")) {

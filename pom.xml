@@ -201,6 +201,30 @@
                         <type>jar</type>
                     </dependency>
 
+                    <dependency>
+                        <groupId>org.josso</groupId>
+                        <artifactId>josso-weblogic14-agent</artifactId>
+                        <version>${pom.version}</version>
+                        <classifier>mbeans-src</classifier>
+                        <type>zip</type>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.josso</groupId>
+                        <artifactId>josso-weblogic14-agent</artifactId>
+                        <version>${pom.version}</version>
+                        <classifier>mbeans-src</classifier>
+                        <type>tar.gz</type>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.josso</groupId>
+                        <artifactId>josso-weblogic14-agent</artifactId>
+                        <version>${pom.version}</version>
+                        <type>jar</type>
+                    </dependency>
+
+
                 </dependencies>
             </dependencyManagement>
         </profile>
@@ -342,6 +366,44 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic12-agent</artifactId>
+                        <version>${pom.version}</version>
+                        <type>jar</type>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+
+            <modules>
+                <module>core</module>
+                <module>components</module>
+                <module>agents</module>
+            </modules>
+
+        </profile>
+
+        <profile>
+            <id>weblogic14</id>
+
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.josso</groupId>
+                        <artifactId>josso-weblogic14-agent</artifactId>
+                        <version>${pom.version}</version>
+                        <classifier>mbeans-src</classifier>
+                        <type>zip</type>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.josso</groupId>
+                        <artifactId>josso-weblogic14-agent</artifactId>
+                        <version>${pom.version}</version>
+                        <classifier>mbeans-src</classifier>
+                        <type>tar.gz</type>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.josso</groupId>
+                        <artifactId>josso-weblogic14-agent</artifactId>
                         <version>${pom.version}</version>
                         <type>jar</type>
                     </dependency>

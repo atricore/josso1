@@ -19,7 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.josso.wls10.agent;
+package org.josso.wls14.agent;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -71,10 +71,12 @@ public class  WLSAgentServletFilter implements Filter {
      */
     private WLSSSOAgent _agent;
 
+    private static final Log log = LogFactory.getLog(WLSSSOAgent.class);
+
     /**
      * Logger
      */
-    private static final Log log = LogFactory.getLog(WLSAgentServletFilter.class);
+    //private static final Log log = LogFactory.getLog(WLSAgentServletFilter.class);
 
     public WLSAgentServletFilter() {
 
@@ -94,7 +96,9 @@ public class  WLSAgentServletFilter implements Filter {
 
                 // We need at least an abstract SSO Agent
                 _agent = (WLSSSOAgent) lookup.lookupSSOAgent();
+
                 if (log.isDebugEnabled()) _agent.setDebug(1);
+
                 _agent.start();
 
                 // Publish agent in servlet context
@@ -119,8 +123,8 @@ public class  WLSAgentServletFilter implements Filter {
         HttpServletResponse hres =
                 (HttpServletResponse) response;
 
-        if (log.isDebugEnabled())
-            log.debug("Processing : " + hreq.getContextPath());
+        if (_agent.getDebug() > 0)
+            _agent.log("Processing : " + hreq.getContextPath());
 
         try {
             // ------------------------------------------------------------------
@@ -134,20 +138,21 @@ public class  WLSAgentServletFilter implements Filter {
 
             if (!_agent.isPartnerApp(request.getServerName(), contextPath)) {
                 filterChain.doFilter(hreq, hres);
-                log.warn("JOSSO WLS 10 Filter is running on a non-JOSSO Partner application!");
+                _agent.log("JOSSO WLS Filter is running on a non-JOSSO Partner application!");
+                log.warn("JOSSO WLS Filter is running on a non-JOSSO Partner application!");
 
                 return;
             }
 
             String nodeId = hreq.getParameter("josso_node");
             if (nodeId != null) {
-                if (log.isDebugEnabled())
-                    log.debug("Storing JOSSO Node id : " + nodeId);
+                if (_agent.getDebug() > 0)
+                    _agent.log("Storing JOSSO Node id : " + nodeId);
                 _agent.setAttribute(hreq, hres, "JOSSO_NODE",  nodeId);
             } else {
                 nodeId = _agent.getAttribute(hreq, "JOSSO_NODE");
-                if (log.isDebugEnabled())
-                    log.debug("Found JOSSO Node id : " + nodeId);
+                if (_agent.getDebug() > 0)
+                    _agent.log("Found JOSSO Node id : " + nodeId);
             }
 
 
@@ -165,14 +170,14 @@ public class  WLSAgentServletFilter implements Filter {
             // ------------------------------------------------------------------
             // Check if the partner application required the login form
             // ------------------------------------------------------------------
-            if (log.isDebugEnabled())
-                log.debug("Checking if its a josso_login_request for '" + hreq.getRequestURI() + "'");
+            if (_agent.getDebug() > 0)
+                _agent.log("Checking if its a josso_login_request for '" + hreq.getRequestURI() + "'");
 
             if (hreq.getRequestURI().endsWith(_agent.getJossoLoginUri()) ||
             		hreq.getRequestURI().endsWith(_agent.getJossoUserLoginUri())) {
 
-                if (log.isDebugEnabled())
-                    log.debug("josso_login_request received for uri '" + hreq.getRequestURI() + "'");
+                if (_agent.getDebug() > 0)
+                    _agent.log("josso_login_request received for uri '" + hreq.getRequestURI() + "'");
 
                 //save referer url in case the user clicked on Login from some public resource (page)
                 //so agent can redirect the user back to that page after successful login
@@ -184,8 +189,8 @@ public class  WLSAgentServletFilter implements Filter {
                 
                 String loginUrl = _agent.buildLoginUrl(hreq);
 
-                if (log.isDebugEnabled())
-                    log.debug("Redirecting to login url '" + loginUrl + "'");
+                if (_agent.getDebug() > 0)
+                    _agent.log("Redirecting to login url '" + loginUrl + "'");
 
                 //set non cache headers
                 _agent.prepareNonCacheResponse(hres);
@@ -197,18 +202,18 @@ public class  WLSAgentServletFilter implements Filter {
             // ------------------------------------------------------------------
             // Check if the partner application required a logout
             // ------------------------------------------------------------------
-            if (log.isDebugEnabled())
-                log.debug("Checking if its a josso_logout request for '" + hreq.getRequestURI() + "'");
+            if (_agent.getDebug() > 0)
+                _agent.log("Checking if its a josso_logout request for '" + hreq.getRequestURI() + "'");
 
             if (hreq.getRequestURI().endsWith(_agent.getJossoLogoutUri())) {
 
-                if (log.isDebugEnabled())
-                    log.debug("josso_logout request received for uri '" + hreq.getRequestURI() + "'");
+                if (_agent.getDebug() > 0)
+                    _agent.log("josso_logout request received for uri '" + hreq.getRequestURI() + "'");
 
                 String logoutUrl = _agent.buildLogoutUrl(hreq, cfg);
 
-                if (log.isDebugEnabled())
-                    log.debug("Redirecting to logout url '" + logoutUrl + "'");
+                if (_agent.getDebug() > 0)
+                    _agent.log("Redirecting to logout url '" + logoutUrl + "'");
 
                 // Clear previous COOKIE ...
                 String ssoCookie = _agent.newJossoCookieHeader(hreq.getContextPath(), "-", hreq.isSecure());
@@ -230,44 +235,35 @@ public class  WLSAgentServletFilter implements Filter {
             // ------------------------------------------------------------------
             // Check for the single sign on cookie
             // ------------------------------------------------------------------
-            if (log.isDebugEnabled())
-                log.debug("Checking for SSO cookie");
+            if (_agent.getDebug() > 0)
+                _agent.log("Checking for SSO cookie");
             Cookie cookie = null;
             Cookie cookies[] = hreq.getCookies();
             if (cookies == null)
                 cookies = new Cookie[0];
-
-            if (log.isDebugEnabled())
-                log.debug("Checking for SSO cookie. cookies.length" + cookies.length);
             for (int i = 0; i < cookies.length; i++) {
-                if (log.isDebugEnabled())
-                    log.debug("Checking for SSO cookie. cookies["+i+"].name=" + cookies[i].getName());
-
                 if (org.josso.gateway.Constants.JOSSO_SINGLE_SIGN_ON_COOKIE.equals(cookies[i].getName())) {
                     cookie = cookies[i];
-                    if (log.isDebugEnabled())
-                        log.debug("SSO cookie found. cookies["+i+"].value=["+cookie.getValue()+"]");
-
                     break;
                 }
             }
-
+            
             String jossoSessionId = (cookie == null) ? null : cookie.getValue();
-            if (log.isDebugEnabled())
-                log.debug("Session is: " + session);
+            if (_agent.getDebug() > 0)
+                _agent.log("Session is: " + session);
             LocalSession localSession = new GenericServletLocalSession(session);
 
             // ------------------------------------------------------------------
             // Check if the partner application submitted custom login form
             // ------------------------------------------------------------------
 
-            if (log.isDebugEnabled()){
-                log.debug("Checking if its a josso_authentication for '" + hreq.getRequestURI() + "'");
+            if (_agent.getDebug() > 0){
+                _agent.log("Checking if its a josso_authentication for '" + hreq.getRequestURI() + "'");
             }
             if (hreq.getRequestURI().endsWith(_agent.getJossoAuthenticationUri())) {
 
-                if (log.isDebugEnabled())
-                    log.debug("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
+                if (_agent.getDebug() > 0)
+                    _agent.log("josso_authentication received for uri '" + hreq.getRequestURI() + "'");
 
                 SSOAgentRequest customAuthRequest = doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_CUSTOM_AUTHENTICATION,
                         jossoSessionId, localSession, null, nodeId, hreq, hres);
@@ -282,8 +278,8 @@ public class  WLSAgentServletFilter implements Filter {
                 // Trigger LOGIN OPTIONAL if required
                 // ------------------------------------------------------------------
 
-            	 if (log.isDebugEnabled())
-            		 log.debug("SSO cookie is not present, verifying optional login process ");
+            	 if (_agent.getDebug() > 0)
+            		 _agent.log("SSO cookie is not present, verifying optional login process ");
 
                 // We have no cookie, remember me is enabled and a security check without assertion was received ...
                 // This means that the user could not be identified ... go back to the original resource
@@ -312,32 +308,32 @@ public class  WLSAgentServletFilter implements Filter {
                     if (!_agent.isResourceIgnored(cfg, hreq) && 
                     		_agent.isAutomaticLoginRequired(hreq, hres)) {
 
-                        if (log.isDebugEnabled())
-                        	log.debug("SSO cookie is not present, attempting automatic login");
+                        if (_agent.getDebug() > 0)
+                        	_agent.log("SSO cookie is not present, attempting automatic login");
 
                         // Save current request, so we can go back to it later ...
                         saveRequestURL(hreq, hres);
                         String loginUrl = _agent.buildLoginOptionalUrl(hreq);
 
-                        if (log.isDebugEnabled())
-                        	log.debug("Redirecting to login url '" + loginUrl + "'");
+                        if (_agent.getDebug() > 0)
+                        	_agent.log("Redirecting to login url '" + loginUrl + "'");
                         
                         //set non cache headers
                         _agent.prepareNonCacheResponse(hres);
                         hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
                         return;
                     } else {
-                    	if (log.isDebugEnabled())
-                    		log.debug("SSO cookie is not present, but login optional process is not required");
+                    	if (_agent.getDebug() > 0)
+                    		_agent.log("SSO cookie is not present, but login optional process is not required");
                     }
                 }
                 
-                if (log.isDebugEnabled())
-                log.debug("SSO cookie is not present, checking for outbound relaying");
+                if (_agent.getDebug() > 0)
+                _agent.log("SSO cookie is not present, checking for outbound relaying");
 
                 if (!(hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                     hreq.getParameter("josso_assertion_id") != null)) {
-                    log.debug("SSO cookie not present and relaying was not requested, skipping");
+                    _agent.log("SSO cookie not present and relaying was not requested, skipping");
                     filterChain.doFilter(hreq, hres);
                     return;
                 }
@@ -357,20 +353,20 @@ public class  WLSAgentServletFilter implements Filter {
             // ------------------------------------------------------------------
             // Invoke the SSO Agent
             // ------------------------------------------------------------------
-            if (log.isDebugEnabled())
-                log.debug("Executing agent...");
+            if (_agent.getDebug() > 0)
+                _agent.log("Executing agent...");
 
             // ------------------------------------------------------------------
             // Check if a user has been authenitcated and should be checked by the agent.
             // ------------------------------------------------------------------
-            if (log.isDebugEnabled())
-                log.debug("Checking if its a josso_security_check for '" + hreq.getRequestURI() + "'");
+            if (_agent.getDebug() > 0)
+                _agent.log("Checking if its a josso_security_check for '" + hreq.getRequestURI() + "'");
 
             if (hreq.getRequestURI().endsWith(_agent.getJossoSecurityCheckUri()) &&
                 hreq.getParameter("josso_assertion_id") != null) {
 
-                if (log.isDebugEnabled())
-                    log.debug("josso_security_check received for uri '" + hreq.getRequestURI() + "' assertion id '" +
+                if (_agent.getDebug() > 0)
+                    _agent.log("josso_security_check received for uri '" + hreq.getRequestURI() + "' assertion id '" +
                             hreq.getParameter("josso_assertion_id")
                     );
 
@@ -378,24 +374,26 @@ public class  WLSAgentServletFilter implements Filter {
 
                 SSOAgentRequest relayRequest;
 
-                if (log.isDebugEnabled())
-                    log.debug("Outbound relaying requested for assertion id [" + assertionId + "]");
+                if (_agent.getDebug() > 0)
+                    _agent.log("Outbound relaying requested for assertion id [" + assertionId + "]");
 
                 relayRequest = doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_RELAY, null, localSession, assertionId, nodeId, hreq, hres);
 
                 SingleSignOnEntry entry = _agent.processRequest(relayRequest);
                 if (entry == null) {
                     // This is wrong! We should have an entry here!
+                    _agent.log("ERROR : Outbound relaying failed for assertion id [" + assertionId + "], no Principal found.");
                     log.error("Outbound relaying failed for assertion id [" + assertionId + "], no Principal found.");
-                    // Throw an exception and let the container send the INTERNAL SERVER ERROR
+
+                    // Throw an exception and let the container send the INERNAL SERVER ERROR
                     throw new ServletException("Outbound relaying failed. No Principal found. Verify your SSO Agent Configuration!");
                 }
 
-                if (log.isDebugEnabled())
-                    log.debug("Outbound relaying successful for assertion id [" + assertionId + "]");
+                if (_agent.getDebug() > 0)
+                    _agent.log("Outbound relaying succesfull for assertion id [" + assertionId + "]");
 
-                if (log.isDebugEnabled())
-                    log.debug("Assertion id [" + assertionId + "] mapped to SSO session id [" + entry.ssoId + "]");
+                if (_agent.getDebug() > 0)
+                    _agent.log("Assertion id [" + assertionId + "] mapped to SSO session id [" + entry.ssoId + "]");
 
                 // The cookie is valid to for the partner application only ... in the future each partner app may
                 // store a different auth. token (SSO SESSION) value
@@ -426,8 +424,8 @@ public class  WLSAgentServletFilter implements Filter {
 		                    }
 		                }
 		
-		                if (log.isDebugEnabled())
-	                        log.debug("No saved request found, using : '" + requestURI + "'");
+		                if (_agent.getDebug() > 0)
+	                        _agent.log("No saved request found, using : '" + requestURI + "'");
                 	}
                 }
 
@@ -439,12 +437,12 @@ public class  WLSAgentServletFilter implements Filter {
                 String postAuthURI = cfg.getPostAuthenticationResource();
                 if (postAuthURI != null) {
                     String postAuthURL = _agent.buildPostAuthUrl(hres, requestURI, postAuthURI);
-                    if (log.isDebugEnabled())
-                        log.debug("Redirecting to post-auth-resource '" + postAuthURL  + "'");
+                    if (_agent.getDebug() > 0)
+                        _agent.log("Redirecting to post-auth-resource '" + postAuthURL  + "'");
                     hres.sendRedirect(postAuthURL);
                 } else {
-                	if (log.isDebugEnabled())
-                         log.debug("Redirecting to original '" + requestURI + "'");
+                	if (_agent.getDebug() > 0)
+                         _agent.log("Redirecting to original '" + requestURI + "'");
                     hres.sendRedirect(hres.encodeRedirectURL(requestURI));
                 }
 
@@ -453,13 +451,13 @@ public class  WLSAgentServletFilter implements Filter {
 
 
             SSOAgentRequest r;
-            log.debug("Creating Security Context for Session [" + session + "]");
+            _agent.log("Creating Security Context for Session [" + session + "]");
             r =  doMakeSSOAgentRequest(cfg.getId(), SSOAgentRequest.ACTION_ESTABLISH_SECURITY_CONTEXT, jossoSessionId, localSession, null, nodeId, hreq, hres);
 
             SingleSignOnEntry entry = _agent.processRequest(r);
 
-            if (log.isDebugEnabled())
-                log.debug("Executed agent.");
+            if (_agent.getDebug() > 0)
+                _agent.log("Executed agent.");
 
             // Get session map for this servlet context.
             Map sessionMap = (Map) hreq.getSession().getServletContext().getAttribute(KEY_SESSION_MAP);
@@ -473,18 +471,21 @@ public class  WLSAgentServletFilter implements Filter {
             // ------------------------------------------------------------------
             // Has a valid user already been authenticated?
             // ------------------------------------------------------------------
-            if (log.isDebugEnabled())
-                log.debug("Process request for '" + hreq.getRequestURI() + "'");
+            if (_agent.getDebug() > 0)
+                _agent.log("Process request for '" + hreq.getRequestURI() + "'");
 
             if (entry != null) {
-                if (log.isDebugEnabled())
-                    log.debug("Principal '" + entry.principal +
+                if (_agent.getDebug() > 0)
+                    _agent.log("Principal '" + entry.principal +
                         "' has already been authenticated");
                 // TODO : Not supported
                 // (request).setAuthType(entry.authType);
                 // (request).setUserPrincipal(entry.principal);
             } else {
-            	log.info("No Valid SSO Session, attempt an optional login?");
+
+                if (_agent.getDebug() > 0)
+            	    _agent.log("No Valid SSO Session, attempt an optional login?");
+
                 // This is a standard anonymous request!
 
             	if (cookie != null) {
@@ -495,22 +496,22 @@ public class  WLSAgentServletFilter implements Filter {
             	
             	if (cookie != null || (getSavedRequestURL(hreq) == null && _agent.isAutomaticLoginRequired(hreq, hres))) {
 
-                    if (log.isDebugEnabled())
-                    	log.debug("SSO Session is not valid, attempting automatic login");
+                    if (_agent.getDebug() > 0)
+                    	_agent.log("SSO Session is not valid, attempting automatic login");
 
                     // Save current request, so we can go back to it later ...
                     saveRequestURL(hreq, hres);
                     String loginUrl = _agent.buildLoginOptionalUrl(hreq);
 
-                    if (log.isDebugEnabled())
-                    	log.debug("Redirecting to login url '" + loginUrl + "'");
+                    if (_agent.getDebug() > 0)
+                    	_agent.log("Redirecting to login url '" + loginUrl + "'");
 
                     _agent.prepareNonCacheResponse(hres);
                     hres.sendRedirect(hres.encodeRedirectURL(loginUrl));
                     return;
                 } else {
-                    if (log.isDebugEnabled())
-                    	log.debug("SSO cookie is not present, but login optional process is not required");
+                    if (_agent.getDebug() > 0)
+                    	_agent.log("SSO cookie is not present, but login optional process is not required");
                 }
 
             }
@@ -527,8 +528,8 @@ public class  WLSAgentServletFilter implements Filter {
             // ------------------------------------------------------------------
             filterChain.doFilter(hreq, hres);
         } finally {
-            if (log.isDebugEnabled())
-                log.debug("Processed : " + hreq.getContextPath());
+            if (_agent.getDebug() > 0)
+                _agent.log("Processed : " + hreq.getContextPath());
         }
     }
 
@@ -580,8 +581,8 @@ public class  WLSAgentServletFilter implements Filter {
             sb.append(q);
         }
         
-        if (log.isDebugEnabled())
-            log.debug("Storing Original resources '"+sb.toString()+"'");
+        if (_agent.getDebug() > 0)
+            _agent.log("Storing Original resources '"+sb.toString()+"'");
 
         _agent.setAttribute(hreq, hres, WebAccessControlUtil.KEY_JOSSO_SAVED_REQUEST_URI, sb.toString());
     }

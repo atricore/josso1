@@ -324,7 +324,7 @@ public class WeblogicInstaller extends VFSInstaller {
 
         try {
 
-            if (!artifact.getBaseName().contains(this.wlVersionStr))
+            if (!artifact.getBaseName().contains("josso-weblogic" + this.wlVersionStr))
                 return;
 
             // Prepare paths

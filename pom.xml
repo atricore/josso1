@@ -112,7 +112,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic81-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -120,7 +120,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic81-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -128,14 +128,14 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic81-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
 
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic92-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -143,7 +143,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic92-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -151,14 +151,14 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic92-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
 
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic10-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -166,7 +166,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic10-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -174,14 +174,14 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic10-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
 
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic12-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -189,7 +189,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic12-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -197,14 +197,14 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic12-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
 
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic14-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -212,7 +212,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic14-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -220,7 +220,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic14-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
 
@@ -236,7 +236,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic81-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -244,7 +244,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic81-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -252,7 +252,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic81-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
 
@@ -273,7 +273,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic92-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -281,7 +281,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic92-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -289,7 +289,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic92-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
 
@@ -312,7 +312,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic10-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -320,7 +320,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic10-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -328,7 +328,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic10-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
                 </dependencies>
@@ -350,7 +350,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic12-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -358,7 +358,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic12-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -366,7 +366,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic12-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
                 </dependencies>
@@ -388,7 +388,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic14-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>zip</type>
                     </dependency>
@@ -396,7 +396,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic14-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <classifier>mbeans-src</classifier>
                         <type>tar.gz</type>
                     </dependency>
@@ -404,7 +404,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-weblogic14-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                         <type>jar</type>
                     </dependency>
                 </dependencies>
@@ -472,7 +472,7 @@
                     <dependency>
                         <groupId>org.josso</groupId>
                         <artifactId>josso-tomcat70-agent</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>
@@ -841,248 +841,248 @@
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-common</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-core</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-db-assertionstore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-assertionidgen</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-memory-assertionstore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-assertionmgr</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-auditmgr</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-logger-audittrailhandler</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-authenticator</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-basic-authscheme</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-bind-authscheme</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-ntlm-authscheme</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-strong-authscheme</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-rememberme-authscheme</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-eventmgr</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-protocol</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-db-identitystore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-ldap-identitystore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-memory-identitystore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-virtual-identitystore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-identitymgr</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-identityprovider</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-appctx-secdomainmatcher</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-secdomainregistry</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-secdomainselector</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-simple-secdomainmatcher</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-vhost-secdomainmatcher</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-db-sessionstore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-sessionidgen</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-memory-sessionstore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-sessionmgr</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-serialized-sessionstore</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-passwordmanager</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-default-passwordgenerator</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-email-passworddistributor</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-simple-lostpasswordprocess</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-ws</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-protocol-jaxws-client</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-ws-v1_2</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-protocol-client</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-gateway-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
@@ -1092,13 +1092,13 @@
             <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agent-j14compat</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency-->
 
             <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <classifier>3rdparty-j14</classifier>
                 <type>zip</type>
             </dependency-->
@@ -1106,7 +1106,7 @@
             <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <classifier>3rdparty-j14axis</classifier>
                 <type>zip</type>
             </dependency-->
@@ -1115,7 +1115,7 @@
             <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <classifier>3rdparty-j14</classifier>
                 <type>tar.gz</type>
             </dependency-->
@@ -1123,7 +1123,7 @@
             <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <classifier>3rdparty-j14axis</classifier>
                 <type>tar.gz</type>
             </dependency-->
@@ -1131,14 +1131,14 @@
             <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-j14bin</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>jar</type>
             </dependency-->
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-bin</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <classifier>3rdparty</classifier>
                 <type>zip</type>
             </dependency>
@@ -1146,7 +1146,7 @@
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-bin</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <classifier>3rdparty</classifier>
                 <type>tar.gz</type>
             </dependency>
@@ -1155,7 +1155,7 @@
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-bin</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <classifier>axis</classifier>
                 <type>jar</type>
             </dependency>
@@ -1164,7 +1164,7 @@
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agents-bin</artifactId>
                 <classifier>jaxws</classifier>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>jar</type>
             </dependency>
 
@@ -1172,230 +1172,230 @@
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agent-shared</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agentj14-shared</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency-->
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-tomcat50-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-tomcat55-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-tomcat60-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-tomcat70-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-tomcat80-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-tomcat85-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jboss32-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jboss40-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jboss42-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jbportal27-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-servlet-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-geronimo-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-liferay5-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-liferay6-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-gatein-agent-main</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-gatein-agent-authenticator</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-alfresco-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-php-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-laravel-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-phpBB-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>zip</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-spring-security-v2</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-spring-security-v3</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jasperserver-authn-v6</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-seraph-extension</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-wasce-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jaspi-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jboss5-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jboss7-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!--dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-applet-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency-->
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-jetty6-agent</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- JOSSO Reference Console -->
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-console-ejb</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-console-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-console-ear</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ear</type>
             </dependency>
 
@@ -1403,182 +1403,182 @@
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss-ejb</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss-app</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ear</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss5-ejb</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss5-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss5-app</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ear</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss7-ejb</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss7-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jboss7-app</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ear</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl81-ejb</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl81-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl81-app</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ear</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl92-ejb</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl92-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl92-app</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ear</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl10-ejb</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl10-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl10-app</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ear</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl12-ejb</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl12-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-wl12-app</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>ear</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-tomcat-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-jetty-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>spring-security-contacts</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-applet-example</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>jar</type>
             </dependency>
 
             <dependency>
                 <groupId>org.josso</groupId>
                 <artifactId>josso-partner-applet-web</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
 

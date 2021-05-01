@@ -59,17 +59,17 @@
         <!-- Some agent components -->
 
         <fileSet>
-            <directory>${project.build.directory}/3rdparty/josso-agents-bin-${pom.version}/</directory>
+            <directory>${project.build.directory}/3rdparty/josso-agents-bin-${project.version}/</directory>
             <outputDirectory>/dist/agents/bin/3rdparty/</outputDirectory>
         </fileSet>
 
         <!--fileSet>
-            <directory>${project.build.directory}/jdk14/3rdparty/josso-agents-j14bin-${pom.version}/</directory>
+            <directory>${project.build.directory}/jdk14/3rdparty/josso-agents-j14bin-${project.version}/</directory>
             <outputDirectory>/dist/agents/bin/jdk14/3rdparty/</outputDirectory>
         </fileSet-->
 
         <!--fileSet>
-            <directory>${project.build.directory}/jdk14/3rdparty-axis/josso-agents-j14bin-${pom.version}/</directory>
+            <directory>${project.build.directory}/jdk14/3rdparty-axis/josso-agents-j14bin-${project.version}/</directory>
             <outputDirectory>/dist/agents/bin/jdk14/3rdparty-axis/</outputDirectory>
         </fileSet-->
 

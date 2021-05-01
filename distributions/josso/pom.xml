@@ -70,19 +70,19 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-gshell-bootstrap</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-gshell-core</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-gshell-install</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -312,42 +312,42 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-php-agent</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-laravel-agent</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-phpBB-agent</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-microsoft-agent</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-apache22-agent</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>tar.gz</type>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-apache22-agent</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
 
@@ -357,7 +357,7 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-gateway-web</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
@@ -404,28 +404,28 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-partner-php</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-partner-asp</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-partner-wasce-web</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-partner-applet-web</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
@@ -467,7 +467,7 @@
                                 <artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-agents-bin</artifactId>
-                                    <version>${pom.version}</version>
+                                    <version>${project.version}</version>
                                     <classifier>3rdparty</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>${project.build.directory}/3rdparty</outputDirectory>
@@ -476,7 +476,7 @@
                                 <!--artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-agents-j14bin</artifactId>
-                                    <version>${pom.version}</version>
+                                    <version>${project.version}</version>
                                     <classifier>3rdparty-j14</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>${project.build.directory}/jdk14/3rdparty</outputDirectory>
@@ -485,7 +485,7 @@
                                 <!--artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-agents-j14bin</artifactId>
-                                    <version>${pom.version}</version>
+                                    <version>${project.version}</version>
                                     <classifier>3rdparty-j14axis</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>${project.build.directory}/jdk14/3rdparty-axis</outputDirectory>
@@ -494,7 +494,7 @@
                                 <artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-wasce-agent</artifactId>
-                                    <version>${pom.version}</version>
+                                    <version>${project.version}</version>
                                     <classifier>repo</classifier>
                                     <type>tar.gz</type>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
@@ -514,7 +514,7 @@
                                 <artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-wasce-agent</artifactId>
-                                    <version>${pom.version}</version>
+                                    <version>${project.version}</version>
                                     <type>car</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/josso-wasce2-agent</outputDirectory>
@@ -539,7 +539,7 @@
                                 <descriptor>src/main/assembly/unix-bin.xml</descriptor>
                                 <descriptor>src/main/assembly/windows-bin.xml</descriptor>
                             </descriptors>
-                            <finalName>${pom.artifactId}-${pom.version}</finalName>
+                            <finalName>${pom.artifactId}-${project.version}</finalName>
                             <tarLongFileMode>gnu</tarLongFileMode>
                         </configuration>
                     </execution>

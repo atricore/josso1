@@ -54,7 +54,7 @@
                                 <descriptor>unix-src.xml</descriptor>
                                 <descriptor>windows-src.xml</descriptor>
                             </descriptors>
-                            <finalName>${pom.artifactId}-${pom.version}</finalName>
+                            <finalName>${pom.artifactId}-${project.version}</finalName>
                             <tarLongFileMode>gnu</tarLongFileMode>
                         </configuration>
                     </execution>

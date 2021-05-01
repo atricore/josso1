@@ -89,7 +89,7 @@
                                 <artifactItem>
                                     <groupId>org.josso</groupId>
                                     <artifactId>josso-ws-v1_2</artifactId>
-                                    <version>${pom.version}</version>
+                                    <version>${project.version}</version>
                                     <outputDirectory>${project.build.directory}/josso-ws</outputDirectory>
                                     <overWrite>true</overWrite>
                                 </artifactItem>

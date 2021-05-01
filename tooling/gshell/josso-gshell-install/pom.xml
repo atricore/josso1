@@ -64,13 +64,13 @@
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-gshell-core</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.josso</groupId>
             <artifactId>josso-core</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
 

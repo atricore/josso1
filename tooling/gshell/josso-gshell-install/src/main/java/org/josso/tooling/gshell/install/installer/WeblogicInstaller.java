@@ -483,7 +483,7 @@ public class WeblogicInstaller extends VFSInstaller {
             {
                 /*
                <argument>-Dfiles=${project.build.directory}/generated-sources</argument>
-               <argument>-DMJF=${project.build.directory}/josso-weblogic92-agent-mbeans-${pom.version}.jar</argument>
+               <argument>-DMJF=${project.build.directory}/josso-weblogic92-agent-mbeans-${project.version}.jar</argument>
                <argument>-DpreserveStubs=false</argument>
                <argument>-DcreateStubs=true</argument>
                <argument>-classpath</argument>

@@ -537,7 +537,7 @@ public abstract class HttpSSOAgent extends AbstractSSOAgent {
                 (secure ? " Secure;": "") +
                 (_ssoCookieHttpOnly ? "HttpOnly;" : "") +
                 (_ssoCookieSameSite != null ? "SameSite="+_ssoCookieSameSite +";" : "") +
-                "Expires=-1;" +
+                (value.equals("-") ? "Expires=-1;" : "") +
                 "Path=" + path + ";"
                 ;
     }

@@ -70,7 +70,7 @@
                 <module>josso-phpBB-agent</module>
                 <module>josso-microsoft-agent</module>
                 <module>josso-apache22-agent</module>
-                <module>josso-wasce2-agent</module>
+                <!--module>josso-wasce2-agent</module-->
                 <module>josso-jaspi-agent</module>
                 <!--module>josso-applet-agent</module-->
                 <module>josso-gatein-agent</module>
@@ -106,7 +106,7 @@
                 <module>josso-phpBB-agent</module>
                 <module>josso-microsoft-agent</module>
                 <module>josso-apache22-agent</module>
-                <module>josso-wasce2-agent</module>
+                <!--module>josso-wasce2-agent</module-->
                 <module>josso-jaspi-agent</module>
                 <module>josso-jboss5-agent</module>
                 <!--module>josso-applet-agent</module-->

@@ -32,4 +32,9 @@
         <principal-name>role1</principal-name>
     </security-role-assignment>
 
+    <security-role-assignment>
+        <role-name>role2</role-name>
+        <principal-name>role2</principal-name>
+    </security-role-assignment>
+
 </weblogic-web-app>

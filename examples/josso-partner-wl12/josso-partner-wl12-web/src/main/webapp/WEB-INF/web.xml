@@ -32,6 +32,10 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
     <display-name>JOSSO Partner Application</display-name>
 
+    <servlet>
+        <servlet-name>josso-images</servlet-name>
+        <servlet-class>org.josso.examples.wl12.images.ImageServlet</servlet-class>
+    </servlet>
 
     <!-- ================================================================================ -->
     <!-- JOSSO Servlet Filter setup for WebLogic 9.2 and 10                              -->
@@ -79,6 +83,11 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     </filter-mapping>
     -->
 
+    <servlet-mapping>
+        <servlet-name>josso-images</servlet-name>
+        <url-pattern>/display-img</url-pattern>
+    </servlet-mapping>
+
     <security-constraint>
         <!-- Sample Security Constraint -->
         <web-resource-collection>
@@ -114,6 +123,8 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 
             <url-pattern>/josso/*</url-pattern>
             <url-pattern>/protected/*</url-pattern>
+            <url-pattern>/protected-josso/*</url-pattern>
+            <url-pattern>/display-img/*</url-pattern>
 
             <!-- Needed by WLS integration -->
             <!--url-pattern>/josso-wls/*</url-pattern-->
@@ -155,6 +166,11 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
     <security-role >
         <description>Role 1</description>
         <role-name>role1</role-name>
+    </security-role>
+
+    <security-role >
+        <description>Role 2</description>
+        <role-name>role2</role-name>
     </security-role>
 
 </web-app>

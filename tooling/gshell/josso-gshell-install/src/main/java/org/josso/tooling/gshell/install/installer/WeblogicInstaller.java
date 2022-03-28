@@ -154,9 +154,9 @@ public class WeblogicInstaller extends VFSInstaller {
             addDep(new JOSSOArtifact("commons-logging", "1.1.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
             addDep(new JOSSOArtifact("commons-logging-api", "1.0.4", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
 
-            addDep(new JOSSOArtifact("log4j", "1.2.14", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
-            addDep(new JOSSOArtifact("slf4j-api", "1.7.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
-            addDep(new JOSSOArtifact("slf4j-log4j12", "1.7.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            //addDep(new JOSSOArtifact("log4j", "1.2.14", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            //addDep(new JOSSOArtifact("slf4j-api", "1.7.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
+            //addDep(new JOSSOArtifact("slf4j-log4j12", "1.7.5", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
 
             addDep(new JOSSOArtifact("blueprint-parser", "1.3.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));
             addDep(new JOSSOArtifact("org.apache.aries.blueprint.api", "1.0.1", null, "jar", JOSSOScope.AGENT, targetLibDir.getURL().toString()));

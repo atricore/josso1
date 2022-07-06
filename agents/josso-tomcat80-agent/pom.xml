@@ -38,7 +38,7 @@
     <description>Tomcat 8 Agent</description>
 
     <properties>
-        <tomcat-version>8.0.29</tomcat-version>
+        <tomcat-version>8.5.9</tomcat-version>
     </properties>
 
 

@@ -8,7 +8,6 @@ all: build
 
 # Build the project
 build:
-	ls ~/.m2/repository
 	$(MVN) -o clean install -Dmaven.test.skip=true
 
 # Clean the project

@@ -8,7 +8,7 @@ all: build
 
 # Build the project
 build:
-	$(MVN) -o clean install -Dmaven.test.skip=true
+	$(MVN) -o clean install -Dmaven.test.skip=true -P all
 
 # Clean the project
 clean:

@@ -38,7 +38,7 @@
     <description>Tomcat 7 Agent</description>
 
     <properties>
-        <tomcat-version>7.0.75</tomcat-version>
+        <tomcat-version>7.0.81</tomcat-version>
     </properties>
 
 

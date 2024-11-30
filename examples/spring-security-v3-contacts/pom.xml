@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <spring.version>3.0.7.RELEASE</spring.version>
+        <spring.version>5.2.22.RELEASE</spring.version>
         <jstl.version>1.2</jstl.version>
         <jetty.version>6.1.26</jetty.version>
         <ehcache.version>1.6.2</ehcache.version>

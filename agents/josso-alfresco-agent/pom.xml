@@ -38,7 +38,7 @@
     <description>Alfresco Agent</description>
 
     <properties>
-        <spring-version>2.5.5</spring-version>
+        <spring-version>3.2.5.RELEASE</spring-version>
         <alfresco-version>3.3-SNAPSHOT</alfresco-version>
     </properties>
 

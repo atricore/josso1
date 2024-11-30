@@ -32,7 +32,7 @@
     <name>JOSSO :: JOSSified Spring Security V2 (ACEGI) - Contacts sample</name>
     <packaging>war</packaging>
     <properties>
-        <sample-spring-version>2.0.8</sample-spring-version>
+        <sample-spring-version>5.3.18</sample-spring-version>
     </properties>
 
     <dependencies>

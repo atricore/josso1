@@ -1,8 +1,5 @@
-target/
-.idea/
-*.iml
-*~
-.DS_Store
-.git.cache
 .env
-.direnv
+.idea
+.settings
+.classpath
+.project

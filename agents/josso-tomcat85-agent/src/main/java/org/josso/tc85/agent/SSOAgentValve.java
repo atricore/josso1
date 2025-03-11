@@ -88,6 +88,7 @@ public class SSOAgentValve extends ValveBase
                     if (LOG.isDebugEnabled())
                         LOG.debug("JOSSO: SSOAgentValve.sessionEvent: session not null. can expire.");
                 }
+                event.getSession().getManager().getContext().removeContainerListener(this);
             }
 
         } catch (Exception ex) {
@@ -357,7 +358,20 @@ public class SSOAgentValve extends ValveBase
                 // the local session is new so, make the valve listen for its events so that it can
                 // map them to local session events.
                 session.addSessionListener(this);
-                session.getManager().getContext().addContainerListener(this);
+                boolean listenerExists = false;
+                ContainerListener[] ls = session.getManager().getContext().findContainerListeners();
+                // Check if the listener is already added
+                for (ContainerListener listener : ls) {
+                    if (listener == this) {
+                        listenerExists = true;
+                        break;
+                    }
+                }
+                // Only add the listener if it doesn't already exist
+                if (!listenerExists) {
+                    session.getManager().getContext().addContainerListener(this);
+                }
+
                 _sessionMap.put(session.getId(), localSession);
 
                 log("Monitoring session " + session.getId());
